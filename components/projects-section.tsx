@@ -18,7 +18,7 @@ const featuredProjects: FeaturedProject[] = [
     title: "Unified Brand System",
     description:
       "Architected a comprehensive design system from the ground up - tokens, components, and documentation - adopted across six product teams and cutting design-to-dev handoff time in half.",
-    tags: ["Figma", "React", "Storybook", "Tokens Studio", "TypeScript"],
+    tags: ["Next.js", "React", "TypeScript", "Tailwind CSS", "PostgreSQL"],
     image: "/images/project-brand-system.jpg",
     imageAlt: "Brand design system component library overview",
     category: "Design System",
@@ -59,6 +59,7 @@ const allProjects: Project[] = [
     image: "/images/project-motion.jpg",
     imageAlt: "Abstract animation wave forms representing the motion library",
     category: "Open Source",
+    tags: ["React", "TypeScript", "Tailwind CSS"],
   },
   {
     id: "typography",
@@ -68,6 +69,7 @@ const allProjects: Project[] = [
     image: "/images/project-typography.jpg",
     imageAlt: "Editorial typography specimens on cream background",
     category: "Design Tool",
+    tags: ["Next.js", "React", "Tailwind CSS"],
   },
   {
     id: "mobile-app",
@@ -77,6 +79,7 @@ const allProjects: Project[] = [
     image: "/images/project-mobile.jpg",
     imageAlt: "Forma mobile app UI on iPhone",
     category: "Mobile Design",
+    tags: ["React", "TypeScript", "PostgreSQL"],
   },
   {
     id: "ui-kit",
@@ -86,6 +89,7 @@ const allProjects: Project[] = [
     image: "/images/project-brand-system.jpg",
     imageAlt: "UI Kit Pro component library",
     category: "Product",
+    tags: ["React", "Tailwind CSS", "TypeScript"],
   },
   {
     id: "deploy-blueprint",
@@ -95,6 +99,7 @@ const allProjects: Project[] = [
     image: "/images/project-dashboard.jpg",
     imageAlt: "Deploy Blueprint starter template",
     category: "Starter Template",
+    tags: ["Next.js", "React", "PostgreSQL", "Tailwind CSS"],
   },
   {
     id: "ecommerce-grid",
@@ -104,6 +109,7 @@ const allProjects: Project[] = [
     image: "/images/project-ecommerce.jpg",
     imageAlt: "Meridian Storefront version 2",
     category: "Web Development",
+    tags: ["Next.js", "TypeScript", "PostgreSQL"],
   },
 ];
 

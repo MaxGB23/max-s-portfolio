@@ -66,21 +66,20 @@ const RecentProjects = () => {
               </p>
 
               <div className="flex items-center justify-between mt-7 mb-3">
-                <div className="flex items-center">
+                <div className="flex items-center gap-2">
                   {item.iconLists.map((icon: string, index: number) => {
                     const Icon = iconMap[icon];
                     return (
                       <div
                         key={index}
-                        className="border border-white/[.2] rounded-full bg-black lg:w-10 lg:h-10 w-8 h-8 flex justify-center items-center"
-                        style={{
-                          transform: `translateX(-${5 * index + 2}px)`,
-                        }}
+                        className="border border-white/20 rounded-full bg-black lg:w-10 lg:h-10 w-8 h-8 flex justify-center items-center shadow-sm"
                       >
                         {Icon ? (
-                          <Icon className="p-2 w-full h-full" />
+                          <Icon className="w-5 h-5 opacity-90" />
                         ) : (
-                          <span className="text-[8px] text-white/50">{icon.charAt(0)}</span>
+                          <span className="text-[8px] text-white/50 uppercase tracking-tighter">
+                            {icon.substring(0, 2)}
+                          </span>
                         )}
                       </div>
                     );
@@ -89,7 +88,7 @@ const RecentProjects = () => {
 
                 <div className="flex justify-center items-center">
                   <p className="flex lg:text-xl md:text-xs text-sm text-purple">
-                    Check Live Site
+                    Visitar proyecto
                   </p>
                   <ArrowRight className="ms-3" color="#CBACF9" />
                 </div>

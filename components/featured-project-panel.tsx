@@ -2,6 +2,21 @@
 
 import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
+import {
+  ReactIcon,
+  TypeScriptIcon,
+  NextJsIcon,
+  PostgresIcon,
+  TailwindIcon
+} from "@/components/icons";
+
+const iconMap: Record<string, React.FC<React.SVGProps<SVGSVGElement>>> = {
+  "React": ReactIcon,
+  "TypeScript": TypeScriptIcon,
+  "Next.js": NextJsIcon,
+  "PostgreSQL": PostgresIcon,
+  "Tailwind CSS": TailwindIcon,
+};
 
 export interface FeaturedProject {
   id: string;
@@ -67,19 +82,26 @@ export function FeaturedProjectPanel({ project }: FeaturedProjectPanelProps) {
           </p>
 
           {/* Tech stack tags */}
-          <ul
-            className="flex flex-wrap gap-2 mb-10"
-            aria-label="Technologies used"
-          >
-            {project.tags.map((tag) => (
-              <li
-                key={tag}
-                className="px-3 py-1 rounded-lg text-xs font-medium bg-secondary text-secondary-foreground border border-border"
-              >
-                {tag}
-              </li>
-            ))}
-          </ul>
+          <div className="flex items-center gap-1.5 mb-10" aria-label="Technologies used">
+            {project.tags.map((tag, index) => {
+              const Icon = iconMap[tag];
+              return (
+                <div
+                  key={index}
+                  className="flex items-center bg-gray-900 justify-center w-10 h-10 rounded-full shadow-sm bg-card hover:scale-110 transition-transform duration-200 cursor-default group"
+                  title={tag} // tooltip on hover
+                >
+                  {Icon ? (
+                    <Icon className="w-5 h-5 text-foreground opacity-90 group-hover:opacity-100 mix-blend-plus-lighter" />
+                  ) : (
+                    <span className="text-[10px] font-bold text-foreground/70 uppercase tracking-tighter">
+                      {tag.substring(0, 2)}
+                    </span>
+                  )}
+                </div>
+              );
+            })}
+          </div>
 
           {/* CTA */}
           <div>
@@ -88,8 +110,7 @@ export function FeaturedProjectPanel({ project }: FeaturedProjectPanelProps) {
               aria-label={`Ver caso de estudio de ${project.title}`}
               className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-xl bg-foreground text-background text-sm font-semibold hover:opacity-80 transition-opacity duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
             >
-              Ver Caso de Estudio
-              <ArrowUpRight size={16} aria-hidden="true" />
+              Visitar proyecto              <ArrowUpRight size={16} aria-hidden="true" />
             </a>
           </div>
         </div>

@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { DarkModeToggle } from "@/components/dark-mode-toggle";
+// import { DarkModeToggle } from "@/components/dark-mode-toggle";
 import { useGsapAnimation } from "@/hooks/use-gsap-animation";
 
 const navLinks = [
@@ -84,9 +84,9 @@ export function Navbar() {
           ))}
         </nav>
 
-        {/* Right side: dark mode + contact */}
+        {/* Right side: dark mode (hidden) + contact */}
         <div className="hidden md:flex items-center gap-3">
-          <DarkModeToggle />
+          {/* <DarkModeToggle /> */}
           <Link
             href="#contacto"
             className="inline-flex items-center px-5 py-2 rounded-full bg-foreground text-background text-sm font-medium hover:opacity-80 transition-opacity duration-200"
@@ -97,7 +97,7 @@ export function Navbar() {
 
         {/* Mobile menu button */}
         <div className="flex md:hidden items-center gap-2">
-          <DarkModeToggle />
+          {/* <DarkModeToggle /> */}
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-expanded={mobileOpen}

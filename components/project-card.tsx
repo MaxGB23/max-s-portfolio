@@ -2,6 +2,21 @@
 
 import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
+import {
+  ReactIcon,
+  TypeScriptIcon,
+  NextJsIcon,
+  PostgresIcon,
+  TailwindIcon
+} from "@/components/icons";
+
+const iconMap: Record<string, React.FC<React.SVGProps<SVGSVGElement>>> = {
+  "React": ReactIcon,
+  "TypeScript": TypeScriptIcon,
+  "Next.js": NextJsIcon,
+  "PostgreSQL": PostgresIcon,
+  "Tailwind CSS": TailwindIcon,
+};
 
 export interface Project {
   id: string;
@@ -10,6 +25,7 @@ export interface Project {
   image: string;
   imageAlt: string;
   category: string;
+  tags?: string[];
   href?: string;
 }
 
@@ -55,9 +71,31 @@ export function ProjectCard({ project }: ProjectCardProps) {
         >
           {project.title}
         </h3>
-        <p className="text-sm leading-relaxed text-muted-foreground flex-1">
+        <p className="text-sm leading-relaxed text-muted-foreground flex-1 mb-4">
           {project.description}
         </p>
+
+        {/* Tech stack tags - Icons with gap */}
+        <div className="flex items-center gap-2" aria-label="Technologies used">
+          {project.tags?.map((tag, index) => {
+            const Icon = iconMap[tag];
+            return (
+              <div
+                key={index}
+                className="flex items-center justify-center w-8 h-8 rounded-full border border-black bg-card shadow-sm shadow-gray-700 hover:scale-110 transition-all duration-300 cursor-default group"
+                title={tag}
+              >
+                {Icon ? (
+                  <Icon className="w-4 h-4 text-foreground opacity-80 group-hover:opacity-100 transition-opacity" />
+                ) : (
+                  <span className="text-[9px] font-bold text-foreground/60 uppercase tracking-tighter">
+                    {tag.substring(0, 2)}
+                  </span>
+                )}
+              </div>
+            );
+          })}
+        </div>
 
         {/* Footer link */}
         <div className="mt-4 pt-4 border-t border-border flex items-center justify-between">
