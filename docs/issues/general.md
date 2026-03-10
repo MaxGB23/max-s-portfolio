@@ -1,0 +1,1 @@
+navbar en mobile al estar hasta top el bg es invisible, todo normal pero al desplegar el menu tiene su fondo y queda raro ya que el navbar se mantiene transparente arriba. Buscar soluciones para el tema del navbar en mobile.

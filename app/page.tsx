@@ -6,13 +6,16 @@ import { ProductsSection } from "@/components/products-section";
 import { PricingSection } from "@/components/pricing-section";
 import { Footer } from "@/components/footer";
 import { ScrollProgress } from "@/components/scroll-progress";
-
+import { Projects } from "@/components/projects-prueba";
+import RecentProjects from "@/components/recent-projects";
 export default function Home() {
   return (
     <main className="min-h-screen bg-background text-foreground">
       <ScrollProgress />
       <Navbar />
       <HeroSection />
+      <RecentProjects />
+      <Projects />
       <AboutSection />
 
       <ProjectsSection />

@@ -41,7 +41,7 @@ export function AboutSection() {
       id="sobre-mi"
       ref={containerRef}
       aria-label="Sobre mí"
-      className="relative min-h-[70vh] flex flex-col items-center justify-center px-4 py-16 md:py-24"
+      className="relative flex flex-col items-center justify-center px-4 py-16 md:py-24"
     >
       {/* Main layout */}
       <div className="relative z-10 flex flex-col md:flex-row items-center justify-center w-full max-w-7xl mx-auto gap-8 md:gap-20">
@@ -61,16 +61,16 @@ export function AboutSection() {
 
         {/* Right Column: Info */}
         <div className="about-info flex flex-col items-center md:items-start text-center md:text-left z-10 max-w-2xl">
-          <p className="about-label uppercase tracking-[0.2em] font-medium text-muted-foreground mb-4 text-xs md:text-xl">
+          <p className="about-label uppercase tracking-[0.2em] font-medium text-muted-foreground mb-4 text-xs sm:text-sm lg:text-base">
             Conóceme
           </p>
 
-          <h2 className="about-title font-serif font-black uppercase text-[clamp(3.5rem,8vw,6.5rem)] leading-[0.9] tracking-tighter text-foreground mb-6">
+          <h2 className="about-title font-serif font-black uppercase text-4xl sm:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl leading-[0.9] tracking-tighter text-foreground mb-6">
             Sobre <br />
             <span style={{ color: "var(--accent-purple)" }}>Mí</span>
           </h2>
 
-          <div className="about-description text-base md:text-lg leading-relaxed text-muted-foreground max-w-lg space-y-4">
+          <div className="about-description text-sm sm:text-base lg:text-lg 2xl:text-xl leading-relaxed text-muted-foreground max-w-lg space-y-4">
             <p>
               Soy un desarrollador de software con experiencia creando aplicaciones web escalables y eficientes. Mi enfoque principal es crear interfaces atractivas que brinden la mejor experiencia de usuario.
             </p>

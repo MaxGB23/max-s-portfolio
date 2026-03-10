@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { useGsapAnimation } from "@/hooks/use-gsap-animation";
 import Aurora from "@/components/animations/Aurora";
 import { useState, useEffect } from "react";
+import { NextJsIcon, ReactIcon, TypeScriptIcon, PostgresIcon } from "@/components/icons";
 
 export function HeroSection() {
   const [mounted, setMounted] = useState(false);
@@ -94,7 +95,7 @@ export function HeroSection() {
       id="inicio"
       ref={containerRef}
       aria-label="Introducción"
-      className="relative min-h-svh max-h-[900px] flex flex-col items-center justify-center pt-16 px-4"
+      className="relative min-h-[85vh] flex flex-col items-center justify-center pt-16 px-4"
     >
       {/* Background Aurora */}
       <div
@@ -115,20 +116,20 @@ export function HeroSection() {
       </div>
       {/* Main hero layout */}
       <div className="relative z-10 flex flex-col items-center w-full">
-        <div className="relative flex flex-col md:flex-row items-center justify-center w-full max-w-7xl mx-auto gap-8 md:gap-20">
+        <div className="relative flex flex-col md:flex-row items-center justify-center w-full max-w-7xl mx-auto gap-8 md:gap-12 lg:gap-20">
 
           {/* Left Column: Info */}
           <div className="hero-info flex flex-col items-center md:items-start text-center md:text-left z-10 max-w-2xl">
-            <p className="hero-label uppercase tracking-[0.2em] font-medium text-muted-foreground mb-4 text-xs md:text-xl" style={{ opacity: 0, visibility: 'hidden' }}>
+            <p className="hero-label uppercase tracking-[0.2em] font-medium text-muted-foreground mb-4 text-xs sm:text-sm lg:text-base" style={{ opacity: 0, visibility: 'hidden' }}>
               Max González Ballesteros
             </p>
 
-            <h1 className="hero-title font-serif font-black uppercase text-[clamp(3.5rem,8vw,6.5rem)] leading-[0.9] tracking-tighter text-foreground mb-6" style={{ opacity: 0, visibility: 'hidden' }}>
+            <h1 className="hero-title font-serif font-black uppercase text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl leading-[0.9] tracking-tighter text-foreground mb-6" style={{ opacity: 0, visibility: 'hidden' }}>
               Full Stack <br />
               <span style={{ color: "var(--accent-purple)" }}>Developer</span>
             </h1>
 
-            <p className="hero-description text-base md:text-lg leading-relaxed text-muted-foreground max-w-lg" style={{ opacity: 0, visibility: 'hidden' }}>
+            <p className="hero-description text-sm sm:text-base lg:text-lg 2xl:text-xl leading-relaxed text-muted-foreground max-w-[400px] lg:max-w-lg" style={{ opacity: 0, visibility: 'hidden' }}>
               {"Creo aplicaciones web rápidas, modernas y enfocadas en la experiencia del usuario. Especializado en Next.js y React."}
             </p>
           </div>
@@ -184,6 +185,19 @@ export function HeroSection() {
           </span>
         </div>
 
+        {/* Tech Stack Ticker */}
+        <div className="hero-chips flex flex-col justify-center items-center md:items-start gap-3 w-full" style={{ opacity: 0, visibility: 'hidden' }}>
+          <p className="text-xs uppercase tracking-widest text-muted-foreground/60 font-semibold">
+            Stack Principal
+          </p>
+          <div className="flex flex-wrap items-center justify-center md:justify-start gap-6">
+            <NextJsIcon className="h-6 w-auto opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-300" />
+            <ReactIcon className="h-6 w-auto opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-300" />
+            <TypeScriptIcon className="h-6 w-auto opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-300" />
+            <PostgresIcon className="h-6 w-auto opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-300" />
+          </div>
+        </div>
+
         {/* CTA buttons */}
         <div className="hero-cta mt-8 flex flex-wrap items-center justify-center gap-4" style={{ opacity: 0, visibility: 'hidden' }}>
           <Link
@@ -216,6 +230,6 @@ export function HeroSection() {
         </div>
 
       </div>
-    </section>
+    </section >
   );
 }

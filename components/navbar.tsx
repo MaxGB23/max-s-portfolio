@@ -11,9 +11,10 @@ import { useGsapAnimation } from "@/hooks/use-gsap-animation";
 
 const navLinks = [
   { label: "Inicio", href: "/" },
-  { label: "Productos", href: "#productos" },
+  { label: "Sobre mí", href: "#sobremi" },
   { label: "Proyectos", href: "#proyectos" },
   { label: "Precios", href: "#precios" },
+  { label: "Contacto", href: "#contacto" },
 ];
 
 export function Navbar() {
@@ -38,12 +39,14 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const isBgActive = scrolled || mobileOpen;
+
   return (
     <header
       ref={navRef}
       className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-colors duration-300",
-        scrolled
+        isBgActive
           ? "bg-[var(--nav-bg)] backdrop-blur-md border-b border-border shadow-sm"
           : "bg-transparent"
       )}
@@ -53,22 +56,13 @@ export function Navbar() {
         aria-label="Main navigation"
       >
         {/* Logo */}
-        <Link
-          href="/"
-          className="flex items-center gap-3 group"
-          aria-label="Funko - Inicio"
-        >
-          <div className="relative w-9 h-9 rounded-full overflow-hidden ring-2 ring-border transition-all duration-200 group-hover:ring-[var(--accent-purple)]">
-            <Image
-              src="/images/avatar.jpg"
-              alt="Funko avatar"
-              fill
-              className="object-cover"
-              sizes="36px"
-            />
+        <Link href="/" className="flex items-center gap-3 group" aria-label="Inicio">
+          <div className="relative flex h-3 w-3 items-center justify-center">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full size-2 bg-emerald-500"></span>
           </div>
-          <span className="font-serif font-semibold text-sm tracking-tight text-foreground hidden sm:block">
-            Funko
+          <span className="font-sans font-medium text-lg tracking-wider text-foreground hidden sm:block">
+            Disponible
           </span>
         </Link>
 
@@ -78,7 +72,7 @@ export function Navbar() {
             <Link
               key={link.label}
               href={link.href}
-              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors duration-200 relative group"
+              className="text-sm font-medium transition-colors duration-100 relative group"
             >
               {link.label}
               {/* Underline - CSS transition, no library overhead needed here */}
