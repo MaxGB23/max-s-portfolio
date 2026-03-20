@@ -10,12 +10,12 @@ import { Projects } from "@/components/projects-prueba";
 import RecentProjects from "@/components/recent-projects";
 export default function Home() {
   return (
-    <main className="min-h-screen bg-background text-foreground">
+    <main className="min-h-screen bg-background text-foreground overflow-x-hidden">
       <ScrollProgress />
       <Navbar />
       <HeroSection />
-      <RecentProjects />
-      <Projects />
+      {/* <RecentProjects />
+      <Projects /> */}
       <AboutSection />
 
       <ProjectsSection />

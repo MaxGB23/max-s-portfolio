@@ -99,7 +99,7 @@ function PricingCard({ tier }: { tier: PricingTier }) {
       className={cn(
         "pricing-card relative flex flex-col rounded-2xl p-8 border cursor-pointer will-change-transform",
         tier.highlighted
-          ? "border-[var(--accent-purple)] shadow-2xl"
+          ? "border-purple-accent shadow-2xl"
           : "border-border bg-card"
       )}
       style={tier.highlighted ? { backgroundColor: "var(--accent-purple)" } : {}}
@@ -164,8 +164,7 @@ function PricingCard({ tier }: { tier: PricingTier }) {
           >
             <Check
               size={15}
-              className="mt-0.5 shrink-0"
-              style={tier.highlighted ? { color: "white" } : { color: "var(--accent-purple)" }}
+              className={cn("mt-0.5 shrink-0", tier.highlighted ? "text-white" : "text-purple-accent")}
               aria-hidden="true"
             />
             <span>{feature}</span>
@@ -178,7 +177,7 @@ function PricingCard({ tier }: { tier: PricingTier }) {
         className={cn(
           "w-full py-3.5 rounded-xl text-sm font-semibold transition-colors duration-200",
           tier.highlighted
-            ? "bg-white text-[var(--accent-purple)] hover:bg-white/90 shadow-md"
+            ? "bg-white text-purple-accent hover:bg-white/90 shadow-md"
             : "border border-border text-foreground hover:bg-secondary"
         )}
         aria-label={`${tier.cta} - ${tier.name} plan`}
@@ -246,8 +245,7 @@ export function PricingSection() {
         {/* Section header */}
         <header className="pricing-header text-center mb-16">
           <span
-            className="inline-block text-xs uppercase tracking-[0.2em] font-medium mb-4"
-            style={{ color: "var(--accent-purple)" }}
+            className="inline-block text-xs uppercase tracking-[0.2em] font-medium mb-4 text-purple-accent"
           >
             Precios
           </span>

@@ -74,6 +74,11 @@
   --sidebar-accent-foreground: oklch(0.96 0 0);
   --sidebar-border: oklch(0.25 0.005 270);
   --sidebar-ring: oklch(0.62 0.22 270);
+  /* Custom portfolio tokens - dark overrides */
+  --color-purple-accent: oklch(0.62 0.22 270);
+  --color-purple-accent-light: oklch(0.22 0.08 270);
+  --color-nav: oklch(0.11 0.005 270 / 0.85);
+  --color-hero-text: oklch(0.96 0 0);
 }
 
 @theme inline {
@@ -116,15 +121,46 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  /* Custom portfolio tokens - mapped to CSS variables for dark mode support */
+  --color-nav: var(--nav-bg);
+  --color-purple-accent: var(--accent-purple);
+  --color-purple-accent-light: var(--accent-purple-light);
+  --color-hero-text: var(--hero-text);
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
+
+  /* ======== Custom scrollbar ======== */
+  /* Estándar (Firefox y Chromium nuevo) */
   html {
+    scrollbar-width: thin;
+    scrollbar-color: var(--muted-foreground) transparent;
     scroll-behavior: auto;
   }
+
+  /* WebKit (Brave, Chrome, Safari, Edge) */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--muted-foreground);
+    border-radius: 10px;
+    border: 1px solid var(--background);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--foreground);
+  }
+
   body {
     @apply bg-background text-foreground;
   }

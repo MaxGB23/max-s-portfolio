@@ -81,11 +81,7 @@ function ProductCard({ product }: { product: Product }) {
     >
       {/* Tag */}
       <span
-        className="self-start px-3 py-1 rounded-full text-xs font-medium mb-5"
-        style={{
-          backgroundColor: "var(--accent-purple-light)",
-          color: "var(--accent-purple)",
-        }}
+        className="self-start px-3 py-1 rounded-full text-xs font-medium mb-5 bg-purple-accent-light text-purple-accent"
       >
         {product.tag}
       </span>
@@ -106,8 +102,7 @@ function ProductCard({ product }: { product: Product }) {
           <li key={feature} className="flex items-start gap-2.5 text-sm text-foreground">
             <Check
               size={15}
-              className="mt-0.5 shrink-0"
-              style={{ color: "var(--accent-purple)" }}
+              className="mt-0.5 shrink-0 text-purple-accent"
               aria-hidden="true"
             />
             <span>{feature}</span>
@@ -117,11 +112,11 @@ function ProductCard({ product }: { product: Product }) {
 
       {/* CTA */}
       <button
-        className="mt-auto inline-flex items-center justify-between w-full px-5 py-3 rounded-xl border border-border text-sm font-semibold text-foreground hover:bg-secondary hover:border-[var(--accent-purple)] transition-colors duration-200"
+        className="mt-auto inline-flex items-center justify-between w-full px-5 py-3 rounded-xl border border-border text-sm font-semibold text-foreground hover:bg-secondary hover:border-purple-accent transition-colors duration-200"
         aria-label={`Saber más sobre ${product.name}`}
       >
         Saber más
-        <ArrowUpRight size={16} style={{ color: "var(--accent-purple)" }} aria-hidden="true" />
+        <ArrowUpRight size={16} className="text-purple-accent" aria-hidden="true" />
       </button>
     </article>
   );
@@ -168,8 +163,7 @@ export function ProductsSection() {
         {/* Section header */}
         <header className="products-header text-center mb-16">
           <span
-            className="inline-block text-xs uppercase tracking-[0.2em] font-medium mb-4"
-            style={{ color: "var(--accent-purple)" }}
+            className="inline-block text-xs uppercase tracking-[0.2em] font-medium mb-4 text-purple-accent"
           >
             Lo que construyo
           </span>

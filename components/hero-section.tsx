@@ -9,6 +9,16 @@ import Aurora from "@/components/animations/Aurora";
 import { useState, useEffect } from "react";
 import { NextJsIcon, ReactIcon, TypeScriptIcon, PostgresIcon } from "@/components/icons";
 
+const HERO_DATA = {
+  role: "Full Stack Developer",
+  title: {
+    first: "Max González",
+    last: "Ballesteros",
+  },
+  description: "Creo aplicaciones web rápidas, modernas y enfocadas en la experiencia del usuario. Especializado en Next.js y React.",
+  description2: "Desarrollo aplicaciones web rápidas y escalables con Next.js y React, cuidando el rendimiento, la experiencia de usuario y calidad del código."
+};
+
 export function HeroSection() {
   const [mounted, setMounted] = useState(false);
   const [isDark, setIsDark] = useState(false);
@@ -50,7 +60,7 @@ export function HeroSection() {
     tl.to(".hero-portrait", {
       autoAlpha: 1,
       x: 0,
-      duration: 0.8,
+      duration: 0.5,
       startAt: { x: 40 },
     })
       .to(
@@ -65,22 +75,22 @@ export function HeroSection() {
       )
       .to(
         ".hero-title",
-        { autoAlpha: 1, x: 0, duration: 0.6, startAt: { x: -20 } },
+        { autoAlpha: 1, x: 0, duration: 0.4, startAt: { x: -20 } },
         "-=0.3"
       )
       .to(
         ".hero-description",
-        { autoAlpha: 1, y: 0, duration: 0.45, startAt: { y: 10 } },
+        { autoAlpha: 1, y: 0, duration: 0.2, startAt: { y: 10 } },
         "-=0.2"
       )
       .to(
         ".hero-chips",
-        { autoAlpha: 1, y: 0, duration: 0.4, startAt: { y: 10 } },
+        { autoAlpha: 1, y: 0, duration: 0.1, startAt: { y: 10 } },
         "-=0.2"
       )
       .to(
         ".hero-cta",
-        { autoAlpha: 1, y: 0, duration: 0.4, startAt: { y: 10 } },
+        { autoAlpha: 1, y: 0, duration: 0.3, startAt: { y: 10 } },
         "-=0.2"
       )
       .to(
@@ -95,11 +105,11 @@ export function HeroSection() {
       id="inicio"
       ref={containerRef}
       aria-label="Introducción"
-      className="relative min-h-[85vh] flex flex-col items-center justify-center pt-16 px-4"
+      className="border border-indigo-500 relative min-h-[85vh] flex flex-col items-center justify-center pt-[88px] sm:pt-24 2xl:pt-40 px-4"
     >
       {/* Background Aurora */}
       <div
-        className="absolute inset-0 z-0 pointer-events-none"
+        className="absolute inset-0 z-0 pointer-events-none border"
         style={{
           maskImage: "linear-gradient(to bottom, black 60%, transparent 100%)",
           WebkitMaskImage: "linear-gradient(to bottom, black 60%, transparent 100%)"
@@ -115,28 +125,60 @@ export function HeroSection() {
         )}
       </div>
       {/* Main hero layout */}
-      <div className="relative z-10 flex flex-col items-center w-full">
-        <div className="relative flex flex-col md:flex-row items-center justify-center w-full max-w-7xl mx-auto gap-8 md:gap-12 lg:gap-20">
+      <div className="border border-green-500 relative z-10 flex flex-col items-center w-full gap-10 2xl:gap-14">
+        <div className="border border-yellow-500 relative flex flex-col md:flex-row items-center justify-center w-full max-w-7xl mx-auto gap-8 md:gap-12 lg:gap-20">
 
           {/* Left Column: Info */}
           <div className="hero-info flex flex-col items-center md:items-start text-center md:text-left z-10 max-w-2xl">
-            <p className="hero-label uppercase tracking-[0.2em] font-medium text-muted-foreground mb-4 text-xs sm:text-sm lg:text-base" style={{ opacity: 0, visibility: 'hidden' }}>
-              Max González Ballesteros
-            </p>
 
-            <h1 className="hero-title font-serif font-black uppercase text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl leading-[0.9] tracking-tighter text-foreground mb-6" style={{ opacity: 0, visibility: 'hidden' }}>
-              Full Stack <br />
-              <span style={{ color: "var(--accent-purple)" }}>Developer</span>
+            <p className="hero-label text-muted-foreground brightness-125 uppercase tracking-[0.2em] 2xl:tracking-widest font-medium mb-4 text-[15px] sm:text-base lg:text-xl 2xl:text-2xl" style={{ opacity: 0, visibility: 'hidden' }}>
+              {HERO_DATA.role}
+            </p>
+            <h1 className="hero-title font-serif grid grid-cols-1 gap-3 font-black uppercase text-5xl sm:text-6xl lg:text-7xl 2xl:text-8xl leading-[0.9] tracking-tighter text-foreground mb-6" style={{ opacity: 0, visibility: 'hidden' }}>
+              <span>{HERO_DATA.title.first}</span>
+              <span className="text-purple-accent  sm:tracking-[0.01em]">{HERO_DATA.title.last}</span>
             </h1>
 
-            <p className="hero-description text-sm sm:text-base lg:text-lg 2xl:text-xl leading-relaxed text-muted-foreground max-w-[400px] lg:max-w-lg" style={{ opacity: 0, visibility: 'hidden' }}>
-              {"Creo aplicaciones web rápidas, modernas y enfocadas en la experiencia del usuario. Especializado en Next.js y React."}
+            <p className="hero-description border border-red-500 px-4 sm:px-16 md:px-0 max-w-lg text-sm sm:text-base lg:text-lg 2xl:text-xl leading-relaxed brightness-125 text-muted-foreground md:max-w-[400px] 2xl:max-w-[625px] lg:max-w-[480px]" style={{ opacity: 0, visibility: 'hidden' }}>
+              {HERO_DATA.description2}
             </p>
+
+
+            {/* CTA buttons */}
+            {/* <div className="hero-cta mt-6 flex flex-wrap items-center justify-center gap-4" style={{ opacity: 0, visibility: 'hidden' }}>
+              <Link
+                href="#productos"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-foreground text-background text-sm font-semibold hover:opacity-80 transition-opacity duration-200 shadow-md"
+              >
+                Ver Proyectos
+                <ArrowDown size={15} aria-hidden="true" />
+              </Link>
+              <a
+                href="/cv.pdf"
+                download
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-border text-foreground text-sm font-semibold hover:bg-secondary transition-colors duration-200"
+              >
+                Descargar CV
+                <Download size={15} aria-hidden="true" />
+              </a>
+            </div> */}
+
+            {/* Tech Stack Ticker */}
+            {/* <div className="hero-chips flex items-center gap-3 w-full mt-8" style={{ opacity: 0, visibility: 'hidden' }}>
+
+              <div className="flex gap-6 justify-start">
+                <NextJsIcon className="h-6 w-auto opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-200" />
+                <ReactIcon className="h-6 w-auto opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-200" />
+                <TypeScriptIcon className="h-6 w-auto opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-200" />
+                <PostgresIcon className="h-6 w-auto opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-200" />
+              </div>
+            </div> */}
+
           </div>
 
           {/* Right Column: Portrait */}
           <div
-            className="hero-portrait relative rounded-4xl shrink-0 shadow-xl w-[clamp(240px,30vw,400px)] aspect-8/9 z-0 mt-4 md:mt-0"
+            className="hero-portrait relative rounded-4xl shrink-0 shadow-xl w-[240px] sm:w-[300px] md:w-[260px] lg:w-[300px] 2xl:w-[400px] aspect-8/9 z-0 mt-4 md:mt-0"
             style={{ opacity: 0, visibility: 'hidden' }}
           >
             <div className="w-full h-full rounded-4xl overflow-hidden relative">
@@ -173,53 +215,54 @@ export function HeroSection() {
         </div>
 
         {/* Skill chips */}
-        <div className="hero-chips mt-8 flex flex-wrap items-center justify-center gap-2" style={{ opacity: 0, visibility: 'hidden' }}>
+        {/* <div className="hero-chips mt-8 flex flex-wrap items-center justify-center gap-2" style={{ opacity: 0, visibility: 'hidden' }}>
           <span className="px-4 py-1.5 rounded-full border border-border text-xs font-medium text-muted-foreground tracking-wide">
             Frontend Developer
           </span>
           <span
-            className="px-4 py-1.5 rounded-full text-xs font-medium tracking-wide text-white"
-            style={{ backgroundColor: "var(--accent-purple)" }}
+            className="px-4 py-1.5 rounded-full text-xs font-medium tracking-wide text-white bg-purple-accent"
           >
             Full Stack Developer
           </span>
-        </div>
+        </div> */}
 
-        {/* Tech Stack Ticker */}
-        <div className="hero-chips flex flex-col justify-center items-center md:items-start gap-3 w-full" style={{ opacity: 0, visibility: 'hidden' }}>
-          <p className="text-xs uppercase tracking-widest text-muted-foreground/60 font-semibold">
-            Stack Principal
-          </p>
-          <div className="flex flex-wrap items-center justify-center md:justify-start gap-6">
-            <NextJsIcon className="h-6 w-auto opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-300" />
-            <ReactIcon className="h-6 w-auto opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-300" />
-            <TypeScriptIcon className="h-6 w-auto opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-300" />
-            <PostgresIcon className="h-6 w-auto opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-300" />
-          </div>
-        </div>
 
         {/* CTA buttons */}
-        <div className="hero-cta mt-8 flex flex-wrap items-center justify-center gap-4" style={{ opacity: 0, visibility: 'hidden' }}>
+        <div className="hero-cta flex flex-wrap items-center justify-center gap-4" style={{ opacity: 0, visibility: 'hidden' }}>
           <Link
             href="#productos"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-foreground text-background text-sm font-semibold hover:opacity-80 transition-opacity duration-200 shadow-md"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-foreground text-background text-sm 2xl:text-base font-semibold hover:opacity-80 transition-opacity duration-200 shadow-md"
           >
-            Ver Productos
+            Ver Proyectos
             <ArrowDown size={15} aria-hidden="true" />
           </Link>
           <a
             href="/cv.pdf"
             download
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-border text-foreground text-sm font-semibold hover:bg-secondary transition-colors duration-200"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-border text-foreground text-sm 2xl:text-base font-semibold hover:bg-secondary transition-colors duration-200"
           >
             Descargar CV
             <Download size={15} aria-hidden="true" />
           </a>
         </div>
 
+
+        {/* Tech Stack Ticker */}
+        <div className="hero-chips flex flex-col justify-center items-center gap-3 w-full " style={{ opacity: 0, visibility: 'hidden' }}>
+          <p className="text-xs uppercase tracking-widest text-muted-foreground/60 font-semibold 2xl:text-base">
+            Stack Principal
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-6">
+            <NextJsIcon className="size-6 2xl:size-7 w-auto opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-200" />
+            <ReactIcon className="size-6 2xl:size-7 w-auto opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-200" />
+            <TypeScriptIcon className="size-6 2xl:size-7 w-auto opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-200" />
+            <PostgresIcon className="size-6 2xl:size-7 w-auto opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-200" />
+          </div>
+        </div>
+
         {/* Scroll indicator */}
-        <div className="hero-scroll mt-16 mb-8 flex flex-col items-center gap-2 text-muted-foreground" style={{ opacity: 0, visibility: 'hidden' }}>
-          <span className="text-xs tracking-widest uppercase">Deslizar</span>
+        <div className="hero-scroll flex flex-col items-center gap-2 text-muted-foreground" style={{ opacity: 0, visibility: 'hidden' }}>
+          <span className="text-xs 2xl:text-base tracking-widest uppercase">Deslizar</span>
           <motion.div
             className="w-px h-8 bg-border"
             animate={{ scaleY: [1, 0.4, 1] }}

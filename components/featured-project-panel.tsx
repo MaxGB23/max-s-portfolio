@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
+import { FadeIn } from "@/components/motion-primitives";
 import {
   ReactIcon,
   TypeScriptIcon,
@@ -32,9 +33,17 @@ export interface FeaturedProject {
 
 interface FeaturedProjectPanelProps {
   project: FeaturedProject;
+  children?: React.ReactNode;
 }
 
-export function FeaturedProjectPanel({ project }: FeaturedProjectPanelProps) {
+export function FeaturedProjectPanel({ project, children }: FeaturedProjectPanelProps) {
+  // Extract last word for the purple accent styling
+  const words = project.title.trim().split(/\s+/);
+  const lastWord = words.pop();
+  const mainTitle = words.join(" ");
+
+  const ContentWrapper = project.index === 1 ? FadeIn : "div";
+
   return (
     /**
      * .featured-panel - target for GSAP ScrollTrigger pinning.
@@ -42,27 +51,30 @@ export function FeaturedProjectPanel({ project }: FeaturedProjectPanelProps) {
      * min-h-screen keeps each panel full-viewport.
      */
     <article
-      className="featured-panel relative flex items-center min-h-screen w-full px-6 md:px-12 lg:px-20"
+      className="featured-panel relative flex items-center min-h-screen w-full px-6 md:px-12 lg:px-20 border border-red-500"
       data-panel-id={project.id}
       style={{ backgroundColor: project.bgColor }}
       aria-labelledby={`featured-title-${project.id}`}
     >
-      <div className="panel-content w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center py-24 md:py-28">
+      <ContentWrapper className="border border-blue-400 panel-content w-full max-w-7xl mx-auto flex flex-col justify-center py-24 md:py-28">
+        
+        {children && (
+          <div className="w-full mb-12 md:mb-16">
+            {children}
+          </div>
+        )}
 
-        {/* Left - Text */}
-        <div className="flex flex-col justify-center order-2 lg:order-1">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+          {/* Left - Text */}
+          <div className="flex flex-col justify-center order-2 lg:order-1">
 
           {/* Index + Category */}
           <div className="flex items-center gap-4 mb-6">
-            <span className="text-xs font-mono text-muted-foreground tabular-nums">
+            <span className="text-xs 2xl:text-base font-mono text-muted-foreground tabular-nums">
               {String(project.index).padStart(2, "0")}
             </span>
             <span
-              className="px-3 py-1 rounded-full text-xs font-semibold tracking-wide"
-              style={{
-                backgroundColor: "var(--accent-purple-light)",
-                color: "var(--accent-purple)",
-              }}
+              className="px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide bg-purple-accent text-white"
             >
               {project.category}
             </span>
@@ -73,11 +85,12 @@ export function FeaturedProjectPanel({ project }: FeaturedProjectPanelProps) {
             id={`featured-title-${project.id}`}
             className="font-serif font-black text-4xl md:text-5xl xl:text-6xl text-foreground leading-[1.05] tracking-tight text-balance mb-6"
           >
-            {project.title}
+            {mainTitle && <span>{mainTitle} </span>}
+            <span className="text-purple-accent brightness-125">{lastWord}</span>
           </h2>
 
           {/* Description */}
-          <p className="text-base md:text-lg leading-relaxed text-muted-foreground mb-8 max-w-md">
+          <p className="text-sm sm:text-base lg:text-lg 2xl:text-xl leading-relaxed text-muted-foreground mb-8 max-w-md">
             {project.description}
           </p>
 
@@ -136,7 +149,8 @@ export function FeaturedProjectPanel({ project }: FeaturedProjectPanelProps) {
           </div>
         </div>
 
-      </div>
+        </div>
+      </ContentWrapper>
 
       {/* Bottom separator line */}
       <div className="absolute bottom-0 left-6 right-6 md:left-12 md:right-12 h-px bg-border" aria-hidden="true" />

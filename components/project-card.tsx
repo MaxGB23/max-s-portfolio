@@ -51,12 +51,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
         {/* Category badge overlaid on image */}
         <div className="absolute top-3 left-3">
           <span
-            className="px-2.5 py-1 rounded-full text-xs font-semibold backdrop-blur-sm"
-            style={{
-              backgroundColor: "oklch(0.58 0.22 270 / 0.12)",
-              color: "var(--accent-purple)",
-              border: "1px solid oklch(0.58 0.22 270 / 0.25)",
-            }}
+            className="px-2.5 py-1 rounded-full text-xs font-semibold backdrop-blur-sm bg-[oklch(0.58_0.22_270/0.12)] border border-[oklch(0.58_0.22_270/0.25)] text-purple-accent"
           >
             {project.category}
           </span>
