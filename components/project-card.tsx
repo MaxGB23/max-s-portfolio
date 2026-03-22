@@ -7,7 +7,8 @@ import {
   TypeScriptIcon,
   NextJsIcon,
   PostgresIcon,
-  TailwindIcon
+  TailwindIcon,
+  PrismaIcon
 } from "@/components/icons";
 
 const iconMap: Record<string, React.FC<React.SVGProps<SVGSVGElement>>> = {
@@ -16,6 +17,7 @@ const iconMap: Record<string, React.FC<React.SVGProps<SVGSVGElement>>> = {
   "Next.js": NextJsIcon,
   "PostgreSQL": PostgresIcon,
   "Tailwind CSS": TailwindIcon,
+  "Prisma": PrismaIcon,
 };
 
 export interface Project {
@@ -40,7 +42,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
       aria-labelledby={`project-title-${project.id}`}
     >
       {/* Image */}
-      <div className="relative w-full aspect-[16/10] overflow-hidden bg-muted">
+      <div className="relative w-full aspect-16/10 overflow-hidden bg-muted">
         <Image
           src={project.image}
           alt={project.imageAlt}

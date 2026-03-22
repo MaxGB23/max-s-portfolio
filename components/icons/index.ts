@@ -3,6 +3,7 @@ export * from "./mysql-icon";
 export * from "./nextjs-icon";
 export * from "./php-icon";
 export * from "./postgres-icon";
+export * from "./prisma-icon";
 export * from "./react-icon";
 export * from "./tailwind-icon";
 export * from "./typescript-icon";

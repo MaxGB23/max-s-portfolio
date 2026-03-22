@@ -18,36 +18,36 @@ const featuredProjects: FeaturedProject[] = [
     title: "Sistema de Gestión Clínica",
     description:
       "Plataforma web full-stack en producción para la gestión integral de citas, pacientes y control de pagos. Diseñada para escalar en negocios de salud y rehabilitación.",
-    tags: ["Next.js", "React", "TypeScript", "PostgreSQL", "Tailwind CSS"],
+    tags: ["Next.js", "React", "TypeScript", "PostgreSQL", "Prisma", "Tailwind CSS"],
     image: "/images/projects/prueba1.png",
     imageAlt: "Dashboard principal y agenda del Sistema de Gestión Clínica",
     category: "Full Stack / SaaS",
     bgColor: "var(--background)",
   },
   {
-    id: "ecommerce",
+    id: "presidencia",
     index: 2,
-    title: "Meridian Commerce",
+    title: "Gestión de Apoyos Sociales",
     description:
-      "End-to-end storefront for a luxury lifestyle brand - performance-first Next.js, seamless Stripe checkout, and a CMS-driven catalog that the team could update without touching code.",
-    tags: ["Next.js", "Tailwind CSS", "Stripe", "Sanity CMS", "Vercel"],
-    image: "/images/project-ecommerce.jpg",
-    imageAlt: "Meridian Commerce e-commerce storefront interface",
-    category: "Web Development",
+      "Plataforma web full-stack para digitalizar la gestión de solicitudes sociales en gobierno. Elimina procesos manuales, genera documentos legales y mejora la eficiencia operativa.",
+    tags: ["Next.js", "React", "TypeScript", "PostgreSQL", "Prisma", "Tailwind CSS"],
+    image: "/images/projects/prueba3.png",
+    imageAlt: "Dashboard de métricas y gestión de solicitudes del Sistema de Apoyos Sociales",
+    category: "Full Stack / GovTech",
     bgColor: "var(--background)",
   },
-  {
-    id: "dashboard",
-    index: 3,
-    title: "Atlas Analytics",
-    description:
-      "Real-time SaaS analytics dashboard with role-based access, interactive chart suite, and a data pipeline handling 50k events per minute with sub-second latency.",
-    tags: ["React", "D3.js", "Supabase", "Node.js", "WebSockets"],
-    image: "/images/project-dashboard.jpg",
-    imageAlt: "Atlas Analytics dark-mode SaaS dashboard",
-    category: "SaaS Product",
-    bgColor: "var(--background)",
-  },
+  // {
+  //   id: "dashboard",
+  //   index: 3,
+  //   title: "Atlas Analytics",
+  //   description:
+  //     "Real-time SaaS analytics dashboard with role-based access, interactive chart suite, and a data pipeline handling 50k events per minute with sub-second latency.",
+  //   tags: ["React", "D3.js", "Supabase", "Node.js", "WebSockets"],
+  //   image: "/images/project-dashboard.jpg",
+  //   imageAlt: "Atlas Analytics dark-mode SaaS dashboard",
+  //   category: "SaaS Product",
+  //   bgColor: "var(--background)",
+  // },
 ];
 
 const allProjects: Project[] = [
@@ -255,7 +255,7 @@ export function ProjectsSection() {
               <span>Proyectos</span>
               <span className="text-purple-accent brightness-110">Destacados</span>
             </h2>
-            <p className="text-sm sm:text-base lg:text-lg 2xl:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+            <p className="text-sm sm:text-base lg:text-lg 2xl:text-xl text-muted-foreground max-w-lg lg:max-w-xl 2xl mx-auto leading-relaxed">
               Una selección de mis trabajos más relevantes, donde el diseño minimalista se encuentra con el desarrollo de alto rendimiento.
             </p>
           </FadeIn>
