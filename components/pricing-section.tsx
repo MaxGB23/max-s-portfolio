@@ -243,21 +243,13 @@ export function PricingSection() {
       <div className="max-w-6xl mx-auto">
 
         {/* Section header */}
-        <header className="pricing-header text-center mb-16">
-          <span
-            className="inline-block text-xs uppercase tracking-[0.2em] font-medium mb-4 text-purple-accent"
-          >
-            Precios
-          </span>
-          <h2
-            id="pricing-heading"
-            className="font-serif font-black text-4xl md:text-5xl text-foreground text-balance"
-          >
-            Planes simples y transparentes
+        <header className="pricing-header flex flex-col items-center text-center mb-16">
+          <h2 id="pricing-heading" className="flex flex-col md:flex-row gap-2 md:gap-3 justify-center items-center font-serif font-black uppercase text-5xl sm:text-5xl lg:text-6xl 2xl:text-7xl leading-[0.9] tracking-tighter text-foreground mb-5">
+            <span>Planes</span>
+            <span className="text-purple-accent brightness-110">Simples</span>
           </h2>
-          <p className="mt-4 text-muted-foreground text-base leading-relaxed max-w-lg mx-auto">
-            Sin cargos ocultos. Cancela en cualquier momento. Elige el plan que se adapte a tu flujo de trabajo y escala
-            a medida que creces.
+          <p className="text-sm sm:text-base lg:text-lg 2xl:text-xl text-muted-foreground max-w-lg lg:max-w-xl 2xl mx-auto leading-relaxed">
+            Sin cargos ocultos. Cancela en cualquier momento. Elige el plan que se adapte a tu flujo de trabajo y escala a medida que creces.
           </p>
         </header>
 

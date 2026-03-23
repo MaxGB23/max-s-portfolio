@@ -141,28 +141,23 @@ function ProjectsGrid() {
 // ---------------------------------------------------------------------------
 function ProjectsTransition() {
   return (
-    <div className="relative py-20 md:py-24 px-6 text-center" aria-hidden="false">
+    <div className="relative t-20 md:pt-24 px-6 text-center" aria-hidden="false">
       {/* Horizontal rule */}
       <div className="max-w-7xl mx-auto">
         <div className="h-px bg-border mb-20" />
       </div>
 
-      <FadeIn>
-        <span
-          className="inline-block text-xs uppercase tracking-[0.2em] font-medium mb-4 text-purple-accent"
-        >
-          Todos los proyectos
-        </span>
-        <h2
-          id="all-projects-heading"
-          className="font-serif font-black text-4xl md:text-5xl text-foreground text-balance mb-4"
-        >
-          Explora todos los proyectos
-        </h2>
-        <p className="text-base text-muted-foreground max-w-sm mx-auto leading-relaxed">
-          Un vistazo completo al trabajo entregado - desde sistemas de diseño hasta aplicaciones en producción.
-        </p>
-      </FadeIn>
+      <div className="max-w-7xl mx-auto flex flex-col items-center text-center">
+        <FadeIn>
+          <h2 id="all-projects-heading" className="flex flex-col gap-2 md:gap-3 justify-center items-center font-serif font-black uppercase text-5xl sm:text-5xl lg:text-6xl 2xl:text-7xl leading-[0.9] tracking-tighter text-foreground mb-5">
+            <span>Todos los</span>
+            <span className="text-purple-accent brightness-110">Proyectos</span>
+          </h2>
+          {/* <p className="text-sm sm:text-base lg:text-lg 2xl:text-xl text-muted-foreground max-w-lg lg:max-w-xl 2xl mx-auto leading-relaxed">
+            Un vistazo completo al trabajo entregado - desde sistemas de diseño hasta aplicaciones en producción.
+          </p> */}
+        </FadeIn>
+      </div>
     </div>
   );
 }

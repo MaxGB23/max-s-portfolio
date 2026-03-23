@@ -72,7 +72,7 @@ export function FeaturedProjectPanel({ project, children }: FeaturedProjectPanel
 
             {/* Index + Category */}
             <div className="flex items-center gap-4 mb-6">
-              <span className="text-xs 2xl:text-base font-mono text-muted-foreground tabular-nums">
+              <span className="text-sm 2xl:text-lg font-mono text-muted-foreground tabular-nums font-bold ">
                 {String(project.index).padStart(2, "0")}
               </span>
               <span
