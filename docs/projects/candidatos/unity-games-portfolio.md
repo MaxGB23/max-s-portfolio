@@ -52,7 +52,7 @@ Proyectos universitarios donde el objetivo fue superar el "juego de muestra": en
 - **Programé la IA rival con Reinforcement Learning:** misma interfaz `IInput` que el jugador, observaciones por raycasts + velocidad local + dirección al checkpoint, recompensas por progreso y penalizaciones por choque, modos Training/Inferencing.
 - **Cumyxel — 100% de la programación de gameplay:** salto variable en dos fases, plataformas one-way, enemigos con FSM, cámara con efecto ripple de agua (shader + `Graphics.Blit`).
 - **Modelé en Blender:** `grinchcar`, `Trineo2`, `motonieve`, `Patineta`, `Mono`, `Pista`, `SantaFinal`, `Montaña Grinch`; HUD navideño, trailer y créditos en video y audio propios.
-- **Publiqué y documenté:** repos en GitHub, demo jugable en Google Drive, arquitectura y deuda técnica con análisis crítico honesto.
+- **Publiqué y documenté:** repos en GitHub, demo jugable en Google Drive y arquitectura documentada con contexto técnico.
 
 ### Solution — Grinchmas Kart
 
@@ -79,11 +79,14 @@ Proyectos universitarios donde el objetivo fue superar el "juego de muestra": en
 | ML-Agents · Barracuda · Burst | ~1,055 LOC en 11 scripts de gameplay |
 | Blender (modelos y animaciones) | Pixel-art a mano + assets libres |
 
-### Análisis crítico — honestidad técnica (parte del valor)
+### Análisis crítico — ⛔ NO_PUBLICO (no exponer en el portfolio; material de entrevista)
+
+> Regla del usuario (2026-08-28): **siempre dar la mejor cara**. Los reclutadores no ven esta sección.
+> Uso: si preguntan por riesgos/mejoras en entrevista, aquí está el material para responder con honestidad y solvencia.
 
 - **Kart:** IA sin modelo entrenado en el repo (integración correcta a nivel de API, entrenamiento externo documentado como roadmap); tags vacíos en `TagManager` mientras scripts comparan por tag; escenas hardcodeadas en `GameFlowManager`; modelo del reno (`RenoFinal.blend`) de origen no verificado, excluido de la distribución pública y pendiente de reemplazo (uso no comercial).
 - **2D:** dependencia no declarada (Cinemachine usado pero no instalado); GUID roto de `WayPoint.cs` (scripts missing); tags/layers sin definir; sistema de daño/vida pendiente.
-- La auditoría documenta exactamente qué deuda existe y cómo resolverla — capacidad de autocrítica técnica, no solo de construir.
+- Mejoras priorizadas: resolver tags, alinear input, instalar/quitar Cinemachine, regenerar `.meta`, completar el loop de combate, exportar el modelo ML.
 
 ### Licencias
 
