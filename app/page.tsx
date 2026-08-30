@@ -25,14 +25,14 @@ export default function Home() {
         <hr className="border-border" />
       </div>
 
-      <ProductsSection />
+      {/* <ProductsSection /> */}
 
       {/* Divider */}
       <div className="max-w-6xl mx-auto px-6">
         <hr className="border-border" />
       </div>
 
-      <PricingSection />
+      {/* <PricingSection /> */}
       <Footer />
     </main>
   );

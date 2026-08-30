@@ -64,7 +64,7 @@ export function Footer() {
 
         <FadeIn delay={0.15}>
           <p className="mt-10 text-center text-xs text-muted-foreground">
-            &copy; {new Date().getFullYear()} Funko. Todos los derechos reservados.
+            &copy; {new Date().getFullYear()} MaxGB23. Todos los derechos reservados.
           </p>
         </FadeIn>
       </div>

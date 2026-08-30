@@ -74,7 +74,7 @@ export function AboutSection() {
         <div className="about-portrait relative rounded-4xl shrink-0 shadow-xl w-[360px] sm:w-[390px] md:w-[360px] lg:w-[450px] 2xl:w-[550px] aspect-11/9 border border-red-500 z-0" style={{ opacity: 0, visibility: 'hidden' }}>
           <div className="w-full h-full rounded-4xl overflow-hidden relative">
             <Image
-              src="/images/insano.png"
+              src="/images/about-max.png"
               alt="Max González Ballesteros - Sobre Mí"
               fill
               className="object-cover object-top 2xl:object-right"
