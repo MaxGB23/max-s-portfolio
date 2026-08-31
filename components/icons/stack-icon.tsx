@@ -55,6 +55,21 @@ const iconMap: Record<string, React.FC<React.SVGProps<SVGSVGElement>>> = {
   "ML-Agents": MlAgentsIcon,
 }
 
+const brandSlug: Record<string, string> = {
+  React: "react.svg",
+  TypeScript: "typescript.svg",
+  Prisma: "prisma.svg",
+  Vue: "vue.svg",
+  "Vue 3": "vue.svg",
+  Laravel: "laravel.svg",
+  "C#": "csharp.svg",
+  "Node.js": "nodejs.svg",
+  pnpm: "pnpm.svg",
+  Vitest: "vitest.svg",
+  "GitHub Actions": "github-actions.svg",
+  Bootstrap: "bootstrap.svg",
+}
+
 interface StackIconProps {
   name: string
   className?: string
@@ -62,6 +77,20 @@ interface StackIconProps {
 }
 
 export function StackIcon({ name, className, labelClassName }: StackIconProps) {
+  const brandFile = brandSlug[name]
+
+  if (brandFile) {
+    return (
+      <img
+        src={`/brands/${brandFile}`}
+        alt=""
+        aria-hidden="true"
+        draggable={false}
+        className={className}
+      />
+    )
+  }
+
   const Icon = iconMap[name]
 
   if (Icon) {
