@@ -6,112 +6,40 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { FeaturedProjectPanel, type FeaturedProject } from "@/components/featured-project-panel";
 import { ProjectCard, type Project } from "@/components/project-card";
 import { FadeIn, FadeInStagger, FadeInItem } from "@/components/motion-primitives";
+import { projects, getFeaturedProjects } from "@/data/projects";
 
 // ---------------------------------------------------------------------------
-// Data
+// Data - single source of truth: data/projects.ts
 // ---------------------------------------------------------------------------
 
-const featuredProjects: FeaturedProject[] = [
-  {
-    id: "caf",
-    index: 1,
-    title: "Sistema de Gestión Clínica",
-    description:
-      "Plataforma web full-stack en producción para la gestión integral de citas, pacientes y control de pagos. Diseñada para escalar en negocios de salud y rehabilitación.",
-    tags: ["Next.js", "React", "TypeScript", "PostgreSQL", "Prisma", "Tailwind CSS"],
-    image: "/images/projects/prueba1.png",
-    imageAlt: "Dashboard principal y agenda del Sistema de Gestión Clínica",
-    category: "Full Stack / SaaS",
+const featuredProjects: FeaturedProject[] = getFeaturedProjects()
+  .map((project, index) => ({
+    id: project.id,
+    index: index + 1,
+    title: project.title,
+    description: project.hook,
+    metric: project.metric,
+    tags: project.tags,
+    image: project.image,
+    imageAlt: project.imageAlt,
+    category: project.category,
     bgColor: "var(--background)",
-  },
-  {
-    id: "presidencia",
-    index: 2,
-    title: "Gestión de Apoyos Sociales",
-    description:
-      "Plataforma web full-stack para digitalizar la gestión de solicitudes sociales en gobierno. Elimina procesos manuales, genera documentos legales y mejora la eficiencia operativa.",
-    tags: ["Next.js", "React", "TypeScript", "PostgreSQL", "Prisma", "Tailwind CSS"],
-    image: "/images/projects/prueba3.png",
-    imageAlt: "Dashboard de métricas y gestión de solicitudes del Sistema de Apoyos Sociales",
-    category: "Full Stack / GovTech",
-    bgColor: "var(--background)",
-  },
-  // {
-  //   id: "dashboard",
-  //   index: 3,
-  //   title: "Atlas Analytics",
-  //   description:
-  //     "Real-time SaaS analytics dashboard with role-based access, interactive chart suite, and a data pipeline handling 50k events per minute with sub-second latency.",
-  //   tags: ["React", "D3.js", "Supabase", "Node.js", "WebSockets"],
-  //   image: "/images/project-dashboard.jpg",
-  //   imageAlt: "Atlas Analytics dark-mode SaaS dashboard",
-  //   category: "SaaS Product",
-  //   bgColor: "var(--background)",
-  // },
-];
+  }));
 
-const allProjects: Project[] = [
-  {
-    id: "motion-lib",
-    title: "Motion Library",
-    description:
-      "A zero-dependency animation toolkit with 50+ presets and composable React hooks for scroll, hover, and entrance effects.",
-    image: "/images/project-motion.jpg",
-    imageAlt: "Abstract animation wave forms representing the motion library",
-    category: "Open Source",
-    tags: ["React", "TypeScript", "Tailwind CSS"],
-  },
-  {
-    id: "typography",
-    title: "Editorial Type Scale",
-    description:
-      "A fluid typographic scale system for editorial web interfaces - fully responsive, contrast-compliant, and export-ready for Figma.",
-    image: "/images/project-typography.jpg",
-    imageAlt: "Editorial typography specimens on cream background",
-    category: "Design Tool",
-    tags: ["Next.js", "React", "Tailwind CSS"],
-  },
-  {
-    id: "mobile-app",
-    title: "Forma Mobile App",
-    description:
-      "iOS productivity app with habit tracking, clean onboarding, and a fully custom SwiftUI component set built from a Figma source of truth.",
-    image: "/images/project-mobile.jpg",
-    imageAlt: "Forma mobile app UI on iPhone",
-    category: "Mobile Design",
-    tags: ["React", "TypeScript", "PostgreSQL"],
-  },
-  {
-    id: "ui-kit",
-    title: "UI Kit Pro",
-    description:
-      "200+ production-ready React components with full Figma source files and live Storybook documentation.",
-    image: "/images/project-brand-system.jpg",
-    imageAlt: "UI Kit Pro component library",
-    category: "Product",
-    tags: ["React", "Tailwind CSS", "TypeScript"],
-  },
-  {
-    id: "deploy-blueprint",
-    title: "Deploy Blueprint",
-    description:
-      "Next.js starter with auth, payments, CI/CD and database pre-wired - go from idea to production in hours, not days.",
-    image: "/images/project-dashboard.jpg",
-    imageAlt: "Deploy Blueprint starter template",
-    category: "Starter Template",
-    tags: ["Next.js", "React", "PostgreSQL", "Tailwind CSS"],
-  },
-  {
-    id: "ecommerce-grid",
-    title: "Meridian Storefront v2",
-    description:
-      "Second iteration of the Meridian Commerce platform - internationalization, A/B testing, and a redesigned mobile checkout flow.",
-    image: "/images/project-ecommerce.jpg",
-    imageAlt: "Meridian Storefront version 2",
-    category: "Web Development",
-    tags: ["Next.js", "TypeScript", "PostgreSQL"],
-  },
-];
+const allProjects: Project[] = projects
+  .filter((project) => project.id !== "caf" && project.id !== "presidencia")
+  .map((project) => ({
+    id: project.id,
+    title: project.title,
+    description: project.hook,
+    metric: project.metric,
+    image: project.image,
+    imageAlt: project.imageAlt,
+    category: project.category,
+    tags: project.tags,
+    links: project.links,
+    featured: project.featured,
+  }));
 
 // ---------------------------------------------------------------------------
 // ProjectsGrid - all projects responsive grid
@@ -141,7 +69,7 @@ function ProjectsGrid() {
 // ---------------------------------------------------------------------------
 function ProjectsTransition() {
   return (
-    <div className="relative t-20 md:pt-24 px-6 text-center" aria-hidden="false">
+    <div className="relative t-20 md:pt-24 px-6 text-center">
       {/* Horizontal rule */}
       <div className="max-w-7xl mx-auto">
         <div className="h-px bg-border mb-20" />
@@ -153,9 +81,6 @@ function ProjectsTransition() {
             <span>Todos los</span>
             <span className="text-purple-accent brightness-110">Proyectos</span>
           </h2>
-          {/* <p className="text-sm sm:text-base lg:text-lg 2xl:text-xl text-muted-foreground max-w-lg lg:max-w-xl 2xl mx-auto leading-relaxed">
-            Un vistazo completo al trabajo entregado - desde sistemas de diseño hasta aplicaciones en producción.
-          </p> */}
         </FadeIn>
       </div>
     </div>
@@ -241,9 +166,9 @@ export function ProjectsSection() {
   }, []);
 
   return (
-    <div ref={sectionRef} className="border border-yellow-500">
+    <div ref={sectionRef}>
       {/* Main Section Title */}
-      <div className="px-6 md:px-12 lg:px-20 w-full flex justify-center border border-transparent">
+      <div className="px-6 md:px-12 lg:px-20 w-full flex justify-center">
         <div className="max-w-7xl mx-auto flex flex-col items-center text-center">
           <FadeIn>
             <h2 id="featured-projects-label" className="flex flex-col gap-2 md:gap-3 justify-center items-center font-serif font-black uppercase text-5xl sm:text-5xl lg:text-6xl 2xl:text-7xl leading-[0.9] tracking-tighter text-foreground mb-5">

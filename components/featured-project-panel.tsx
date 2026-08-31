@@ -1,31 +1,17 @@
 "use client";
 
 import Image from "next/image";
-import { ArrowUpRight } from "lucide-react";
+import Link from "next/link";
+import { ChevronRight } from "lucide-react";
 import { FadeIn } from "@/components/motion-primitives";
-import {
-  ReactIcon,
-  TypeScriptIcon,
-  NextJsIcon,
-  PostgresIcon,
-  TailwindIcon,
-  PrismaIcon
-} from "@/components/icons";
-
-const iconMap: Record<string, React.FC<React.SVGProps<SVGSVGElement>>> = {
-  "React": ReactIcon,
-  "TypeScript": TypeScriptIcon,
-  "Next.js": NextJsIcon,
-  "PostgreSQL": PostgresIcon,
-  "Tailwind CSS": TailwindIcon,
-  "Prisma": PrismaIcon,
-};
+import { StackIcon } from "@/components/icons";
 
 export interface FeaturedProject {
   id: string;
   index: number;
   title: string;
   description: string;
+  metric: string;
   tags: string[];
   image: string;
   imageAlt: string;
@@ -53,12 +39,12 @@ export function FeaturedProjectPanel({ project, children }: FeaturedProjectPanel
      * min-h-screen keeps each panel full-viewport.
      */
     <article
-      className="featured-panel relative flex items-center min-h-screen w-full px-6 md:px-12 lg:px-20 border border-red-500"
+      className="featured-panel relative flex items-center min-h-screen w-full px-6 md:px-12 lg:px-20"
       data-panel-id={project.id}
       style={{ backgroundColor: project.bgColor }}
       aria-labelledby={`featured-title-${project.id}`}
     >
-      <ContentWrapper className="border border-blue-400 panel-content w-full max-w-7xl mx-auto flex flex-col justify-center py-24 md:py-28">
+      <ContentWrapper className="panel-content w-full max-w-7xl mx-auto flex flex-col justify-center py-24 md:py-28">
 
         {children && (
           <div className="w-full mb-12 md:mb-16">
@@ -66,13 +52,13 @@ export function FeaturedProjectPanel({ project, children }: FeaturedProjectPanel
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-0 border border-yellow-400 justify-center items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-0 justify-center items-center">
           {/* Left - Text */}
-          <div className="flex flex-col order-2 lg:order-1 border border-green-400">
+          <div className="flex flex-col order-2 lg:order-1">
 
             {/* Index + Category */}
             <div className="flex items-center gap-4 mb-6">
-              <span className="text-sm 2xl:text-lg font-mono text-muted-foreground tabular-nums font-bold ">
+              <span className="text-sm 2xl:text-lg font-mono text-muted-foreground tabular-nums font-bold">
                 {String(project.index).padStart(2, "0")}
               </span>
               <span
@@ -85,48 +71,51 @@ export function FeaturedProjectPanel({ project, children }: FeaturedProjectPanel
             {/* Title */}
             <h2
               id={`featured-title-${project.id}`}
-              className="border border-red-500 font-serif font-black text-4xl md:text-5xl xl:text-6xl text-foreground leading-[1.05] tracking-tight text-balance mb-6"
+              className="font-serif font-black text-4xl md:text-5xl xl:text-6xl text-foreground leading-[1.05] tracking-tight text-balance mb-6"
             >
               {mainTitle && <span>{mainTitle} </span>}
               <span className="text-purple-accent brightness-125">{lastWord}</span>
             </h2>
 
             {/* Description */}
-            <p className="border border-red-500 text-sm sm:text-base lg:text-lg 2xl:text-xl leading-relaxed text-muted-foreground mb-8 mr-6 sm:mr-0 lg:max-w-xl 2xl:max-w-[600px]">
+            <p className="text-sm sm:text-base lg:text-lg 2xl:text-xl leading-relaxed text-muted-foreground mb-6 mr-6 sm:mr-0 lg:max-w-xl 2xl:max-w-[600px]">
               {project.description}
             </p>
 
+            {/* Key metric */}
+            <div className="inline-flex self-start items-center gap-2 rounded-full border border-purple-accent/30 bg-purple-accent/10 px-4 py-2 mb-8">
+              <span className="text-xs sm:text-sm font-semibold text-purple-accent">
+                {project.metric}
+              </span>
+            </div>
+
             {/* Tech stack tags */}
             <div className="flex items-center gap-1.5 mb-10" aria-label="Technologies used">
-              {project.tags.map((tag, index) => {
-                const Icon = iconMap[tag];
-                return (
-                  <div
-                    key={index}
-                    className="flex items-center bg-gray-900 justify-center w-10 h-10 rounded-full shadow-sm bg-card hover:scale-110 transition-transform duration-200 cursor-default group"
-                    title={tag} // tooltip on hover
-                  >
-                    {Icon ? (
-                      <Icon className="w-5 h-5 text-foreground opacity-90 group-hover:opacity-100 mix-blend-plus-lighter" />
-                    ) : (
-                      <span className="text-[10px] font-bold text-foreground/70 uppercase tracking-tighter">
-                        {tag.substring(0, 2)}
-                      </span>
-                    )}
-                  </div>
-                );
-              })}
+              {project.tags.map((tag, index) => (
+                <div
+                  key={index}
+                  className="flex items-center justify-center w-10 h-10 rounded-full shadow-sm bg-card hover:scale-110 transition-transform duration-200 cursor-default group"
+                  title={tag}
+                >
+                  <StackIcon
+                    name={tag}
+                    className="w-5 h-5 text-foreground opacity-90 group-hover:opacity-100 mix-blend-plus-lighter"
+                    labelClassName="text-[10px] font-bold text-foreground/70 uppercase tracking-tighter"
+                  />
+                </div>
+              ))}
             </div>
 
             {/* CTA */}
             <div>
-              <a
-                href="#"
+              <Link
+                href={`/proyectos/${project.id}`}
                 aria-label={`Ver caso de estudio de ${project.title}`}
                 className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-xl bg-foreground text-background text-sm font-semibold hover:opacity-80 transition-opacity duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
               >
-                Visitar proyecto              <ArrowUpRight size={16} aria-hidden="true" />
-              </a>
+                Ver caso de estudio
+                <ChevronRight size={16} aria-hidden="true" />
+              </Link>
             </div>
           </div>
 

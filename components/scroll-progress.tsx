@@ -10,7 +10,7 @@ export function ScrollProgress() {
   const barRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    let ctx: import("gsap").Context | undefined;
+    let ctx: { revert(): void } | undefined;
 
     const init = async () => {
       const { gsap } = await import("gsap");
@@ -46,9 +46,8 @@ export function ScrollProgress() {
     >
       <div
         ref={barRef}
-        className="h-full origin-left"
+        className="h-full origin-left bg-purple-accent"
         style={{
-          backgroundColor: "var(--accent-purple)",
           transform: "scaleX(0)",
         }}
       />
