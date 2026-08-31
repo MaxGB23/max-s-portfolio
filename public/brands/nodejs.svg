@@ -1,28 +1,41 @@
-<svg width="200" height="200" viewBox="0 0 44 50" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <clipPath id="hexClip">
-      <path d="M22.8725 0.4166C22.136 0 21.2616 0 20.5253 0.4166L1.1505 11.6694C0.4142 12.0862 0 12.8733 0 13.707V36.2584C0 37.0921 0.4602 37.8791 1.1505 38.296L20.5253 49.5487C21.2616 49.9653 22.136 49.9653 22.8725 49.5487L42.2471 38.296C42.9836 37.8791 43.3976 37.0921 43.3976 36.2584V13.707C43.3976 12.8733 42.9375 12.0862 42.2471 11.6694L22.8725 0.4166Z" />
-    </clipPath>
-    <linearGradient id="main" x1="30.33" y1="8.56" x2="14.9" y2="44.7" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#3F8B3D"/>
-      <stop offset="0.64" stop-color="#3F873F"/>
-      <stop offset="0.93" stop-color="#3DA92E"/>
-      <stop offset="1" stop-color="#3DAE2B"/>
-    </linearGradient>
-    <linearGradient id="r1" x1="18.8" y1="26.8" x2="68" y2="0.4" gradientUnits="userSpaceOnUse">
-      <stop offset="0.14" stop-color="#3F873F"/>
-      <stop offset="0.4" stop-color="#52A044"/>
-      <stop offset="0.71" stop-color="#64B749"/>
-      <stop offset="0.91" stop-color="#6ABF4B"/>
-    </linearGradient>
-    <linearGradient id="r2" x1="0.25" y1="24.5" x2="44" y2="24.5" gradientUnits="userSpaceOnUse">
-      <stop offset="0.09" stop-color="#6ABF4B"/>
-      <stop offset="0.29" stop-color="#64B749"/>
-      <stop offset="0.6" stop-color="#52A044"/>
-      <stop offset="0.86" stop-color="#3F873F"/>
-    </linearGradient>
-  </defs>
-  <path fill="url(#main)" d="M22.8725 0.4166C22.136 0 21.2616 0 20.5253 0.4166L1.1505 11.6694C0.4142 12.0862 0 12.8733 0 13.707V36.2584C0 37.0921 0.4602 37.8791 1.1505 38.296L20.5253 49.5487C21.2616 49.9653 22.136 49.9653 22.8725 49.5487L42.2471 38.296C42.9836 37.8791 43.3976 37.0921 43.3976 36.2584V13.707C43.3976 12.8733 42.9375 12.0862 42.2471 11.6694L22.8725 0.4166Z" />
-  <polygon fill="url(#r1)" clip-path="url(#hexClip)" points="21.698901,-1.046618 43.20532,11.948247 21.698901,51.072715 0.152778,38.055107" />
-  <polygon fill="url(#r2)" clip-path="url(#hexClip)" points="21.698901,-1.046618 0.152778,11.948247 21.698901,51.072715 43.20532,38.055107" />
-</svg>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+<svg width="800px" height="800px" viewBox="-3.8 -1.5 40.921 40.921" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient id="b" x1="271.97" x2="211.104" y1="217.606" y2="341.772" gradientUnits="userSpaceOnUse">
+<stop offset=".3" stop-color="#3e863d"/>
+<stop offset=".5" stop-color="#55934f"/>
+<stop offset=".8" stop-color="#5aad45"/>
+</linearGradient>
+<linearGradient id="d" x1="186.484" x2="297.349" y1="321.381" y2="239.465" gradientUnits="userSpaceOnUse">
+<stop offset=".57" stop-color="#3e863d"/>
+<stop offset=".72" stop-color="#619857"/>
+<stop offset="1" stop-color="#76ac64"/>
+</linearGradient>
+<linearGradient id="f" x1="197.051" x2="288.72" y1="279.652" y2="279.652" gradientUnits="userSpaceOnUse">
+<stop offset=".16" stop-color="#6bbf47"/>
+<stop offset=".38" stop-color="#79b461"/>
+<stop offset=".47" stop-color="#75ac64"/>
+<stop offset=".7" stop-color="#659e5a"/>
+<stop offset=".9" stop-color="#3e863d"/>
+</linearGradient>
+<clipPath id="a">
+<path d="m239.03 226.605-42.13 24.317a5.085 5.085 0 0 0-2.546 4.406v48.668c0 1.817.968 3.496 2.546 4.406l42.133 24.336a5.1 5.1 0 0 0 5.09 0l42.126-24.336a5.096 5.096 0 0 0 2.54-4.406v-48.668c0-1.816-.97-3.496-2.55-4.406l-42.12-24.317a5.123 5.123 0 0 0-5.1 0"/>
+</clipPath>
+<clipPath id="c">
+<path d="M195.398 307.086c.403.523.907.976 1.5 1.316l36.14 20.875 6.02 3.46c.9.52 1.926.74 2.934.665.336-.027.672-.09 1-.183l44.434-81.36c-.34-.37-.738-.68-1.184-.94l-27.586-15.93-14.582-8.39a5.318 5.318 0 0 0-1.32-.53zm0 0"/>
+</clipPath>
+<clipPath id="e">
+<path d="M241.066 225.953a5.14 5.14 0 0 0-2.035.652l-42.01 24.247 45.3 82.51c.63-.09 1.25-.3 1.81-.624l42.13-24.336a5.105 5.105 0 0 0 2.46-3.476l-46.18-78.89a5.29 5.29 0 0 0-1.03-.102l-.42.02"/>
+</clipPath>
+</defs>
+<g clip-path="url(#a)" transform="translate(-68.564 -79.701) scale(.35278)">
+<path fill="url(#b)" d="m331.363 246.793-118.715-58.19-60.87 124.174L270.49 370.97zm0 0"/>
+</g>
+<g clip-path="url(#c)" transform="translate(-68.564 -79.701) scale(.35278)">
+<path fill="url(#d)" d="m144.07 264.004 83.825 113.453 110.86-81.906-83.83-113.45zm0 0"/>
+</g>
+<g clip-path="url(#e)" transform="translate(-68.564 -79.701) scale(.35278)">
+<path fill="url(#f)" d="M197.02 225.934v107.43h91.683v-107.43zm0 0"/>
+</g>
+</svg>
