@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 import { useGsapAnimation } from "@/hooks/use-gsap-animation";
 import Aurora from "@/components/animations/Aurora";
 import { useState, useEffect } from "react";
-import { NextJsIcon, ReactIcon, TypeScriptIcon, PostgresIcon } from "@/components/icons";
+import { StackIcon } from "@/components/icons";
 
 const HERO_DATA = {
   role: "Full Stack Developer",
@@ -167,10 +167,10 @@ export function HeroSection() {
             {/* <div className="hero-chips flex items-center gap-3 w-full mt-8" style={{ opacity: 0, visibility: 'hidden' }}>
 
               <div className="flex gap-6 justify-start">
-                <NextJsIcon className="h-6 w-auto opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-200" />
-                <ReactIcon className="h-6 w-auto opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-200" />
-                <TypeScriptIcon className="h-6 w-auto opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-200" />
-                <PostgresIcon className="h-6 w-auto opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-200" />
+                <StackIcon name="Next.js" className="h-6 w-auto opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-200" />
+                <StackIcon name="React" className="h-6 w-auto opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-200" />
+                <StackIcon name="TypeScript" className="h-6 w-auto opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-200" />
+                <StackIcon name="PostgreSQL" className="h-6 w-auto opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-200" />
               </div>
             </div> */}
 
@@ -253,10 +253,10 @@ export function HeroSection() {
             Stack Principal
           </p>
           <div className="flex flex-wrap items-center justify-center gap-6">
-            <NextJsIcon className="size-6 2xl:size-7 w-auto opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-200" />
-            <ReactIcon className="size-6 2xl:size-7 w-auto opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-200" />
-            <TypeScriptIcon className="size-6 2xl:size-7 w-auto opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-200" />
-            <PostgresIcon className="size-6 2xl:size-7 w-auto opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-200" />
+            <StackIcon name="Next.js" className="size-6 2xl:size-7 w-auto opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-200" />
+            <StackIcon name="React" className="size-6 2xl:size-7 w-auto opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-200" />
+            <StackIcon name="TypeScript" className="size-6 2xl:size-7 w-auto opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-200" />
+            <StackIcon name="PostgreSQL" className="size-6 2xl:size-7 w-auto opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-200" />
           </div>
         </div>
 

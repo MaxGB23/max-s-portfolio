@@ -349,7 +349,7 @@ export const projects: Project[] = [
     category: "Dev Tools / VS Code",
     hook: "Tema oscuro semántico original para VS Code: 4 variantes derivadas de una paleta jerárquica definida en un único config (SSOT).",
     metric: "4 variantes desde 1 paleta SSOT",
-    tags: ["VS Code", "Theme", "pnpm", "Token Colors"],
+    tags: ["VS Code", "pnpm", "Token Colors"],
     image: "",
     imageAlt: "Editor de VS Code mostrando las variantes de funky-theme",
     links: [
@@ -391,7 +391,7 @@ export const projects: Project[] = [
     category: "Game Dev / Unity",
     hook: "Dos juegos Unity end-to-end de un equipo universitario (ABMODEL Games): kart 3D con IA rival entrenada con Reinforcement Learning y plataformero 2D pixel-art.",
     metric: "IA rival con Reinforcement Learning (ML-Agents)",
-    tags: ["Unity", "C#", "Blender", "ML-Agents", "URP"],
+    tags: ["Unity", "C#", "Blender", "ML-Agents"],
     image: "",
     imageAlt: "Gameplay de Grinchmas Kart (3D) y Cumyxel (2D)",
     links: [
