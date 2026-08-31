@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="100%" height="100%">
+  <defs>
+    <!-- Gradiente de fondo -->
+    <linearGradient id="purpleGradient" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#9147ff" />
+      <stop offset="100%" stop-color="#7752fe" />
+    </linearGradient>
+  </defs>
+
+  <!-- Círculo de fondo -->
+  <circle cx="128" cy="128" r="128" fill="url(#purpleGradient)" />
+
+  <!-- Icono de doble chevron -->
+  <g fill="#ffffff">
+    <!-- Primer chevron (izquierdo) -->
+    <polygon points="48,84 94,84 136,128 94,172 48,172 90,128" />
+    
+    <!-- Segundo chevron (derecho) -->
+    <polygon points="118,84 164,84 206,128 164,172 118,172 160,128" />
+  </g>
+</svg>
