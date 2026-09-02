@@ -4,6 +4,8 @@
 
 export interface ProjectLink {
   label: string;
+  /** Categoría del enlace para elegir icono: "code" | "demo" | "site" | "landing" | "app" | ... */
+  kind?: string;
   url: string;
   external?: boolean;
 }
@@ -51,22 +53,66 @@ export const projects: Project[] = [
     category: "Full Stack / SaaS",
     hook: "Plataforma web full-stack en producción para la gestión integral de citas, pacientes y control de pagos en centros de salud.",
     metric: "+8 meses en producción sin caídas",
-    tags: ["Next.js", "React", "TypeScript", "PostgreSQL", "Prisma", "Tailwind CSS"],
-    image: "/images/projects/caf/dashboard.png",
+    tags: [
+      "Next.js",
+      "React",
+      "TypeScript",
+      "PostgreSQL",
+      "Prisma",
+      "Tailwind CSS",
+    ],
+    image: "/images/projects/caf/prueba2.webp",
     imageAlt: "Dashboard principal y agenda del Sistema de Gestión Clínica",
+    featured: true,
     links: [
-      { label: "Repo", url: "https://github.com/MaxGB23/centro-caf", external: true },
+      {
+        label: "Ver código",
+        kind: "code",
+        url: "https://github.com/MaxGB23/centro-caf",
+        external: true,
+      },
+      {
+        label: "Ver código de la landing",
+        kind: "code",
+        url: "https://github.com/MaxGB23/centro-caf-landing-page",
+        external: true,
+      },
+      {
+        label: "Ver landing",
+        kind: "landing",
+        url: "https://centrocafacambaro.vercel.app",
+        external: true,
+      },
+      {
+        label: "Probar la app",
+        kind: "app",
+        url: "https://caf-usage-test.vercel.app/dashboard",
+        external: true,
+      },
     ],
     detail: {
       headline: "Gestión Clínica Inteligente y Escalable",
       summary:
         "Plataforma web full-stack construida desde cero que reemplaza el uso de Excel y agendas manuales en un centro real de fisioterapia y rehabilitación. En uso diario por el staff médico con más de **8 meses en producción sin una sola caída**, incluso durante major releases con cambios críticos en la base de datos.",
       metrics: [
-        { value: "+8 meses", label: "en producción sin caídas, incluyendo major releases" },
+        {
+          value: "+8 meses",
+          label: "en producción sin caídas, incluyendo major releases",
+        },
         { value: "100%", label: "uptime (Vercel + NeonDB)" },
-        { value: "-40%", label: "latencia de recuperación de registros de pacientes (índices + caching server-side)" },
-        { value: "0", label: "incidentes en migraciones con breaking changes de BD" },
-        { value: "Diario", label: "uso del staff médico (administrativo y fisioterapeutas)" },
+        {
+          value: "-40%",
+          label:
+            "latencia de recuperación de registros de pacientes (índices + caching server-side)",
+        },
+        {
+          value: "0",
+          label: "incidentes en migraciones con breaking changes de BD",
+        },
+        {
+          value: "Diario",
+          label: "uso del staff médico (administrativo y fisioterapeutas)",
+        },
       ],
       problem:
         "Las clínicas pequeñas y medianas dependen de herramientas genéricas, procesos manuales en papel o múltiples aplicaciones desconectadas para agendar, llevar historiales médicos y cobrar. Esto genera pérdidas de tiempo, dobles reservas y descontrol financiero. No existía una solución a medida accesible para centros que trabajan por sesiones o paquetes.",
@@ -94,9 +140,18 @@ export const projects: Project[] = [
         "Despliegue: Vercel",
       ],
       gallery: [
-        { src: "/images/projects/caf/analytics.png", alt: "Analíticas de ingresos del Sistema de Gestión Clínica" },
-        { src: "/images/projects/caf/agenda.png", alt: "Agenda de citas del Sistema de Gestión Clínica" },
-        { src: "/images/projects/caf/analiticas-caf.png", alt: "Panel de analíticas adicional del Sistema de Gestión Clínica" },
+        {
+          src: "/images/projects/caf/analytics.png",
+          alt: "Analíticas de ingresos del Sistema de Gestión Clínica",
+        },
+        {
+          src: "/images/projects/caf/agenda.png",
+          alt: "Agenda de citas del Sistema de Gestión Clínica",
+        },
+        {
+          src: "/images/projects/caf/analiticas-caf.png",
+          alt: "Panel de analíticas adicional del Sistema de Gestión Clínica",
+        },
       ],
       cta: "¿Buscas modernizar tu clínica o necesitas un sistema a medida? Hablemos.",
     },
@@ -107,21 +162,44 @@ export const projects: Project[] = [
     category: "Full Stack / GovTech",
     hook: "Plataforma web full-stack para digitalizar la gestión de solicitudes sociales en gobierno. Elimina procesos manuales, genera documentos legales y mejora la eficiencia operativa.",
     metric: "100% digitalización del flujo de solicitudes",
-    tags: ["Next.js", "React", "TypeScript", "PostgreSQL", "Prisma", "Tailwind CSS"],
+    tags: [
+      "Next.js",
+      "React",
+      "TypeScript",
+      "PostgreSQL",
+      "Prisma",
+      "Tailwind CSS",
+    ],
     image: "/images/projects/presidencia-acambaro/presidencia-light.png",
-    imageAlt: "Dashboard de métricas y gestión de solicitudes del Sistema de Apoyos Sociales",
+    imageAlt:
+      "Dashboard de métricas y gestión de solicitudes del Sistema de Apoyos Sociales",
+    featured: true,
     links: [
-      { label: "Repo", url: "https://github.com/MaxGB23/Presidencia-Municipal-Acambaro", external: true },
+      {
+        label: "Ver código",
+        kind: "code",
+        url: "https://github.com/MaxGB23/Presidencia-Municipal-Acambaro",
+        external: true,
+      },
     ],
     detail: {
       headline: "Digitalización, Transparencia y Eficiencia Gubernamental",
       summary:
         "Plataforma full-stack escalable construida para la Presidencia Municipal de Acámbaro, desarrollada durante una estadía profesional (enero – abril 2025). Lideré su creación para automatizar el ciclo completo de los apoyos sociales: digitalización total de los flujos de aprobación, mejora de los tiempos de respuesta y paneles analíticos en tiempo real para la toma de decisiones institucionales.",
       metrics: [
-        { value: "100%", label: "digitalización del flujo de solicitudes de apoyo social" },
+        {
+          value: "100%",
+          label: "digitalización del flujo de solicitudes de apoyo social",
+        },
         { value: "0", label: "uso de papel en el proceso administrativo" },
-        { value: "Tiempo real", label: "paneles estadísticos para la toma de decisiones" },
-        { value: "PDF + firma", label: "documentos legales generados automáticamente" },
+        {
+          value: "Tiempo real",
+          label: "paneles estadísticos para la toma de decisiones",
+        },
+        {
+          value: "PDF + firma",
+          label: "documentos legales generados automáticamente",
+        },
       ],
       problem:
         "El gobierno municipal dependía de procesos manuales intensivos en papel para gestionar las solicitudes ciudadanas. Esto ocasionaba tiempos de respuesta lentos, pérdida de trazabilidad administrativa y una carencia total de reportes o métricas para evaluar la asignación de recursos y el rendimiento institucional.",
@@ -149,23 +227,35 @@ export const projects: Project[] = [
         "Despliegue y gestión: Vercel, Scrum + Jira",
       ],
       gallery: [
-        { src: "/images/projects/presidencia-acambaro/presidencia-light.png", alt: "Panel de métricas del Sistema de Apoyos Sociales (tema claro)" },
-        { src: "/images/projects/presidencia-acambaro/presidencia-dark.png", alt: "Panel de métricas del Sistema de Apoyos Sociales (tema oscuro)" },
+        {
+          src: "/images/projects/presidencia-acambaro/presidencia-light.png",
+          alt: "Panel de métricas del Sistema de Apoyos Sociales (tema claro)",
+        },
+        {
+          src: "/images/projects/presidencia-acambaro/presidencia-dark.png",
+          alt: "Panel de métricas del Sistema de Apoyos Sociales (tema oscuro)",
+        },
       ],
       cta: "¿Buscas digitalizar procesos administrativos complejos o requieres software seguro a medida? Hablemos.",
     },
   },
   {
     id: "funky-ai",
-    title: "funky-ai",
+    title: "Funky AI",
     category: "Dev Tools / AI Engineering",
     hook: "Framework CLI para desarrollo de software asistido por IA: pipeline SDD con contexto just-in-time, memoria persistente y planificación de proyectos en un solo comando.",
-    metric: "-40% consumo de tokens (contexto just-in-time, estimación interna)",
+    metric:
+      "-40% consumo de tokens (contexto just-in-time, estimación interna)",
     tags: ["Node.js", "TypeScript", "CLI", "pnpm", "Vitest", "GitHub Actions"],
-    image: "",
+    image: "/images/projects/funky-ai/funky-ai-main.jpg",
     imageAlt: "Terminal del CLI de funky-ai mostrando el pipeline SDD",
     links: [
-      { label: "Repo", url: "https://github.com/MaxGB23/funky-ai", external: true },
+      {
+        label: "Ver código",
+        kind: "code",
+        url: "https://github.com/MaxGB23/funky-ai",
+        external: true,
+      },
     ],
     featured: true,
     detail: {
@@ -173,11 +263,26 @@ export const projects: Project[] = [
       summary:
         "funky-ai unifica reglas agénticas, plantillas spec-driven y herramientas de planificación en un único CLI de Node.js (pnpm), sin superficie GUI. Orquesta el desarrollo como un pipeline determinista — proposal → specs → design → tasks → apply → verify → archive — cargando contexto just-in-time para proteger la ventana de tokens, con memoria persistente basada en archivos Markdown y endurecimiento de dependencias para proyectos pnpm. Todas las cifras de impacto son estimaciones internas del autor, no métricas externas.",
       metrics: [
-        { value: "-40%", label: "consumo de tokens vs. contexto always-loaded (SDD just-in-time)" },
-        { value: "30–50%", label: "menor costo de recall de memoria (funkygram vs. recargar contexto monolítico)" },
-        { value: "~50%", label: "más rápido de idea difusa a arquitectura costeada (funky-forge)" },
+        {
+          value: "-40%",
+          label:
+            "consumo de tokens vs. contexto always-loaded (SDD just-in-time)",
+        },
+        {
+          value: "30–50%",
+          label:
+            "menor costo de recall de memoria (funkygram vs. recargar contexto monolítico)",
+        },
+        {
+          value: "~50%",
+          label:
+            "más rápido de idea difusa a arquitectura costeada (funky-forge)",
+        },
         { value: "~30%", label: "menos riesgo de supply chain (funky secure)" },
-        { value: "-40%", label: "rework fuera de alcance (TDD + issue-first workflow)" },
+        {
+          value: "-40%",
+          label: "rework fuera de alcance (TDD + issue-first workflow)",
+        },
       ],
       problem:
         "Las tareas grandes de IA asistida que arrancan de un único prompt masivo fallan de forma predecible: la ventana de contexto se desborda, el modelo alucina sobre partes que ya no recuerda y no hay punto natural de intervención humana. Los agentes no tienen memoria confiable entre sesiones, cada sesión re-aprende desde cero recargando contexto caro, y la planificación de proyectos ocurre ad-hoc, después de elegir el stack.",
@@ -203,7 +308,24 @@ export const projects: Project[] = [
         "Memoria: archivos Markdown (shards + índice central)",
         "Pipeline: plantillas SDD en Markdown, contexto just-in-time",
       ],
-      gallery: [],
+      gallery: [
+        {
+          src: "/images/projects/funky-ai/funky-ai-main.jpg",
+          alt: "Pipeline SDD de funky-ai desde la terminal",
+        },
+        {
+          src: "/images/projects/funky-ai/funky-sdd.jpg",
+          alt: "Ejecución del pipeline SDD de funky-ai",
+        },
+        {
+          src: "/images/projects/funky-ai/funky-ai.jpg",
+          alt: "Vista general del CLI de funky-ai",
+        },
+        {
+          src: "/images/projects/funky-ai/funky-ai.webp",
+          alt: "Interfaz de terminal de funky-ai",
+        },
+      ],
       cta: "¿Buscas incorporar IA en tu flujo de desarrollo con proceso y sin caos? Este framework es mi laboratorio público.",
     },
   },
@@ -214,19 +336,36 @@ export const projects: Project[] = [
     hook: "PWA full-stack para una empresa de TI: landing pública + sistema de gestión interno, instalable en dispositivos.",
     metric: "PWA instalable (manifest + service worker)",
     tags: ["Laravel", "Vue 3", "Inertia.js", "MySQL", "Laravel Breeze"],
-    image: "",
+    image: "/images/projects/oneclickti/hero.png",
     imageAlt: "Landing pública y panel de gestión de One Click Ti",
     links: [
-      { label: "Repo", url: "https://github.com/MaxGB23/ABMODEL", external: true },
+      {
+        label: "Ver código",
+        kind: "code",
+        url: "https://github.com/MaxGB23/ABMODEL",
+        external: true,
+      },
     ],
     detail: {
-      headline: "Presencia digital y gestión interna en una sola PWA instalable",
+      headline:
+        "Presencia digital y gestión interna en una sola PWA instalable",
       summary:
         "PWA full-stack desarrollada por contrato para One Click Ti (Querétaro, sep – dic 2024). Integra una landing page pública con un sistema de gestión interno en una sola aplicación instalable, con autenticación y control de acceso por roles. Mi primera aproximación profesional a Laravel + Vue con arquitectura PWA.",
       metrics: [
-        { value: "PWA", label: "completa: manifest + service worker, instalable en dispositivos" },
-        { value: "2", label: "superficies integradas: landing pública + sistema de gestión interno" },
-        { value: "Contrato", label: "entregado a cliente real (sep – dic 2024)" },
+        {
+          value: "PWA",
+          label:
+            "completa: manifest + service worker, instalable en dispositivos",
+        },
+        {
+          value: "2",
+          label:
+            "superficies integradas: landing pública + sistema de gestión interno",
+        },
+        {
+          value: "Contrato",
+          label: "entregado a cliente real (sep – dic 2024)",
+        },
       ],
       problem:
         "La empresa necesitaba dos cosas en una: una presencia pública profesional (landing) y herramientas internas de gestión, sin mantener sistemas separados. Una PWA instalable evita pasar por una app store y funciona offline-first como aplicación de escritorio/móvil.",
@@ -249,7 +388,24 @@ export const projects: Project[] = [
         "Autenticación: Laravel Breeze",
         "PWA: manifest + service worker",
       ],
-      gallery: [],
+      gallery: [
+        {
+          src: "/images/projects/oneclickti/hero.png",
+          alt: "Landing pública de One Click Ti",
+        },
+        {
+          src: "/images/projects/oneclickti/proyectos.png",
+          alt: "Sección de proyectos de la landing de One Click Ti",
+        },
+        {
+          src: "/images/projects/oneclickti/contacto.png",
+          alt: "Sección de contacto de One Click Ti",
+        },
+        {
+          src: "/images/projects/oneclickti/crud.png",
+          alt: "Sistema de gestión interno de One Click Ti",
+        },
+      ],
       cta: "¿Necesitas una PWA instalable que combine presencia digital y gestión interna? Hablemos.",
     },
   },
@@ -260,18 +416,28 @@ export const projects: Project[] = [
     hook: "Sitio full-stack para una empresa de servicios automotrices: landing pública + panel admin con CMS propio hecho desde cero en PHP puro.",
     metric: "De días a minutos en actualización de contenido",
     tags: ["PHP", "MySQL", "JavaScript", "Bootstrap", "HTML5", "CSS3"],
-    image: "",
+    image: "/images/projects/autoshop/HomeCensured.png",
     imageAlt: "Landing pública y panel de administración de AutoShop",
     links: [],
     detail: {
-      headline: "Presencia digital y gestión de contenido sin depender de un desarrollador",
+      headline:
+        "Presencia digital y gestión de contenido sin depender de un desarrollador",
       summary:
         "Sitio web full-stack para una empresa de servicios automotrices en Maravatío, Michoacán (prácticas profesionales, may – ago 2023). Incluye landing pública y un panel de administración con CMS desarrollado desde cero en PHP puro — sin framework — con el que el personal no técnico pasó a gestionar servicios, promociones y consultas por sí mismo.",
       metrics: [
-        { value: "Días → minutos", label: "actualización de contenido por staff no técnico (CMS propio)" },
+        {
+          value: "Días → minutos",
+          label: "actualización de contenido por staff no técnico (CMS propio)",
+        },
         { value: "0", label: "frameworks: CMS completo en PHP puro + MySQL" },
-        { value: "2", label: "superficies: landing pública + panel de administración" },
-        { value: "2", label: "niveles de rol (admin/staff), sin cuentas para clientes" },
+        {
+          value: "2",
+          label: "superficies: landing pública + panel de administración",
+        },
+        {
+          value: "2",
+          label: "niveles de rol (admin/staff), sin cuentas para clientes",
+        },
       ],
       problem:
         "La empresa automotriz no tenía presencia digital profesional ni forma de actualizar su propio contenido: cualquier cambio en servicios, promociones o consultas requería intervención técnica y tardaba días en el mejor caso.",
@@ -292,21 +458,40 @@ export const projects: Project[] = [
         "Frontend: HTML5, CSS3, JavaScript, Bootstrap",
         "Base de datos: MySQL",
       ],
-      gallery: [],
+      gallery: [
+        {
+          src: "/images/projects/autoshop/HomeCensured.png",
+          alt: "Landing pública de AutoShop",
+        },
+        {
+          src: "/images/projects/autoshop/ServiciosCensured.png",
+          alt: "Sección de servicios de AutoShop",
+        },
+        {
+          src: "/images/projects/autoshop/crud.png",
+          alt: "Panel de administración (CMS) de AutoShop",
+        },
+      ],
       cta: "¿Te interesa ver cómo se construye un CMS a medida partiendo de cero, sin framework? Hablemos.",
     },
   },
   {
     id: "color-highlight-v2",
-    title: "color-highlight v2",
+    title: "Color Highlight v2",
     category: "Dev Tools / VS Code",
     hook: "Fork modernizado de la extensión de VS Code que resalta colores en el editor; reconstruido con TypeScript, esbuild y pnpm.",
     metric: "Render sin lag — debounce de 150ms",
     tags: ["TypeScript", "esbuild", "pnpm", "VS Code"],
-    image: "",
+    image:
+      "/images/projects/color-highlight-v2/main.jpg",
     imageAlt: "Editor de VS Code con colores resaltados por la extensión",
     links: [
-      { label: "Repo", url: "https://github.com/MaxGB23/color-highlight-v2", external: true },
+      {
+        label: "Ver código",
+        kind: "code",
+        url: "https://github.com/MaxGB23/color-highlight-v2",
+        external: true,
+      },
     ],
     detail: {
       headline: "Un fork modernizado, con crédito a los autores originales",
@@ -315,8 +500,14 @@ export const projects: Project[] = [
       metrics: [
         { value: "150ms", label: "debounce → render sin lag en el editor" },
         { value: "WCAG", label: "auto-contraste sobre el color resaltado" },
-        { value: ".vsix", label: "distribución agnóstica de la tienda (store-agnostic)" },
-        { value: "GPL-3.0", label: "fork con crédito explícito a los autores originales" },
+        {
+          value: ".vsix",
+          label: "distribución agnóstica de la tienda (store-agnostic)",
+        },
+        {
+          value: "GPL-3.0",
+          label: "fork con crédito explícito a los autores originales",
+        },
       ],
       problem:
         "La extensión original resolvía un problema real — ver los colores del código directamente en el editor — pero su base había envejecido: sin tipado, build lento y dependencias pesadas. Modernizarla la hace mantenible y rápida sin abandonar la licencia ni el crédito a sus autores.",
@@ -345,23 +536,32 @@ export const projects: Project[] = [
   },
   {
     id: "funky-theme",
-    title: "funky-theme",
+    title: "Funky Theme",
     category: "Dev Tools / VS Code",
     hook: "Tema oscuro semántico original para VS Code: 4 variantes derivadas de una paleta jerárquica definida en un único config (SSOT).",
     metric: "4 variantes desde 1 paleta SSOT",
     tags: ["VS Code", "pnpm", "Token Colors"],
-    image: "",
+    image: "/images/projects/funky-theme/icon.png",
     imageAlt: "Editor de VS Code mostrando las variantes de funky-theme",
     links: [
-      { label: "Repo", url: "https://github.com/MaxGB23/funky-theme", external: true },
+      {
+        label: "Ver código",
+        kind: "code",
+        url: "https://github.com/MaxGB23/funky-theme",
+        external: true,
+      },
     ],
     detail: {
-      headline: "Un tema original, con la paleta gobernada por una única fuente de verdad",
+      headline:
+        "Un tema original, con la paleta gobernada por una única fuente de verdad",
       summary:
         "Tema oscuro semántico original para VS Code, publicado bajo MIT. Cuatro variantes derivadas de una paleta jerárquica definida en un solo archivo de configuración (SSOT): se toca un valor y todo el tema se mantiene coherente, sin colores duplicados entre cientos de archivos.",
       metrics: [
         { value: "4", label: "variantes del tema" },
-        { value: "1", label: "fuente de verdad: paleta jerárquica en un único config" },
+        {
+          value: "1",
+          label: "fuente de verdad: paleta jerárquica en un único config",
+        },
         { value: "MIT", label: "tema original, sin créditos a terceros" },
       ],
       problem:
@@ -386,64 +586,185 @@ export const projects: Project[] = [
     },
   },
   {
-    id: "unity-games",
-    title: "Grinchmas Kart & Cumyxel",
+    id: "grinchmas-kart",
+    title: "Grinchmas Kart",
     category: "Game Dev / Unity",
-    hook: "Dos juegos Unity end-to-end de un equipo universitario (ABMODEL Games): kart 3D con IA rival entrenada con Reinforcement Learning y plataformero 2D pixel-art.",
+    hook: "Kart racing 3D end-to-end (ABMODEL Games) con IA rival entrenada con Reinforcement Learning (ML-Agents), físicas arcade y modelos 3D propios en Blender.",
     metric: "IA rival con Reinforcement Learning (ML-Agents)",
-    tags: ["Unity", "C#", "Blender", "ML-Agents"],
-    image: "",
-    imageAlt: "Gameplay de Grinchmas Kart (3D) y Cumyxel (2D)",
+    tags: ["Unity", "C#", "Blender", "ML-Agents", "URP"],
+    image: "/images/projects/grinchmas-kart/inicio.png",
+    imageAlt:
+      "Gameplay de Grinchmas Kart: kart 3D en pista navideña con IA rival",
     links: [
-      { label: "Grinchmas Kart", url: "https://github.com/MaxGB23/Grinchmas-Kart", external: true },
-      { label: "Cumyxel", url: "https://github.com/MaxGB23/Cumyxel", external: true },
-      { label: "Cumyxel (MIT)", url: "https://github.com/MaxGB23/Cumyxel-code", external: true },
-      { label: "Demo", url: "https://drive.google.com/drive/folders/1bSRON0fCKFBL4qX8gPyTn4LXYGR9Vv6O?usp=sharing", external: true },
+      {
+        label: "Ver código",
+        kind: "code",
+        url: "https://github.com/MaxGB23/Grinchmas-Kart",
+        external: true,
+      },
+      {
+        label: "Ver demo",
+        kind: "demo",
+        url: "https://drive.google.com/drive/folders/1bSRON0fCKFBL4qX8gPyTn4LXYGR9Vv6O?usp=sharing",
+        external: true,
+      },
     ],
     detail: {
-      headline: "Dos juegos end-to-end, liderazgo real y una IA entrenada con Reinforcement Learning",
+      headline:
+        "Un kart 3D donde el rival aprende a conducir con Reinforcement Learning",
       summary:
-        "Grinchmas Kart (3D, sep – dic 2023) y Cumyxel (2D, ene – abr 2024), desarrollados por ABMODEL Games — equipo universitario de 4 integrantes — con el autor al **~80% del kart** (código, gameplay, IA, dirección y modelos 3D) y **toda la programación de gameplay del 2D**. Todo revisado contra el código fuente real y publicado en GitHub.",
+        "Grinchmas Kart (3D, sep – dic 2023) es un kart racing end-to-end desarrollado por ABMODEL Games — equipo universitario de 4 integrantes — con el autor a cargo de ~80% del proyecto: código, gameplay, integración de ML-Agents, flujo de niveles, dirección e integración, y modelos 3D propios en Blender. El objetivo fue superar el 'juego de muestra' oficial (Karting Microgame 5.0.1): físicas arcade creíbles y un rival que aprendiera a conducir con Reinforcement Learning.",
       metrics: [
-        { value: "RL", label: "IA rival entrenada con Reinforcement Learning (ML-Agents)" },
-        { value: "5", label: "niveles encadenados en el kart, hasta créditos" },
-        { value: "~80%", label: "del kart: código, gameplay, IA, flujo, dirección + modelos 3D" },
-        { value: "1,055", label: "LOC de gameplay en el 2D (11 scripts) + pixel-art a mano" },
-        { value: "MIT", label: "repo Cumyxel-code: solo código de gameplay, reusable" },
+        {
+          value: "RL",
+          label: "IA rival entrenada con Reinforcement Learning (ML-Agents)",
+        },
+        {
+          value: "5",
+          label: "niveles encadenados dentro de una misma partida",
+        },
+        {
+          value: "~80%",
+          label:
+            "del proyecto: código, gameplay, IA, flujo, dirección + modelos 3D",
+        },
+        {
+          value: "Blender",
+          label: "modelos 3D propios: cart, trineo, motonieve, monte, pista",
+        },
       ],
       problem:
-        "Proyectos universitarios donde el objetivo fue superar el \"juego de muestra\": en el 3D, físicas arcade creíbles y **un rival que aprendiera a conducir con RL** — el template oficial (Karting Microgame 5.0.1) no traía IA y hubo que diseñarla desde cero. En el 2D, un plataformero con *game-feel* (salto variable) y enemigos con comportamiento real (FSM), no sprites decorativos.",
+        "El template oficial (Karting Microgame 5.0.1) no traía IA: había que diseñar desde cero un rival que aprendiera a conducir. Construir un kart racing creíble exige físicas arcade bien parametrizadas y un loop de partida completo — no un demo técnico.",
       role: [
-        "**Grinchmas Kart — lideré el proyecto (~80%):** código, gameplay, integración de ML-Agents, flujo de niveles, dirección e integración, más modelos 3D propios.",
-        "**Programé la IA rival con Reinforcement Learning:** misma interfaz `IInput` que el jugador, observaciones por raycasts + velocidad local + dirección al checkpoint, recompensas por progreso y penalizaciones por choque, modos Training/Inferencing.",
-        "**Cumyxel — 100% de la programación de gameplay:** salto variable en dos fases, plataformas one-way, enemigos con FSM, cámara con efecto ripple de agua (shader + `Graphics.Blit`).",
-        "**Modelé en Blender:** `grinchcar`, `Trineo2`, `motonieve`, `Patineta`, `Mono`, `Pista`, `SantaFinal`, `Montaña Grinch`; HUD navideño, trailer y créditos en video y audio propios.",
-        "**Publiqué y documenté:** repos en GitHub, demo jugable en Google Drive y arquitectura documentada con contexto técnico.",
+        "Lideré el proyecto (~80%): código, gameplay, integración de ML-Agents, flujo de niveles, dirección e integración.",
+        "Programé la IA rival con Reinforcement Learning: misma interfaz `IInput` que el jugador, observaciones por raycasts + velocidad local + dirección al checkpoint, recompensas por progreso y penalizaciones por choque, modos Training/Inferencing.",
+        "Modelé en Blender: `grinchcar`, `Trineo2`, `motonieve`, `Patineta`, `Mono`, `Pista`, `SantaFinal`, `Montaña Grinch`; HUD navideño, trailer y créditos en video y audio propios.",
+        "Diseñé el flujo de partida encadenando 5 niveles hasta los créditos (modifiqué `GameFlowManager`).",
       ],
       solution: [
         "**Arquitectura en capas** con `asmdefs` bien definidos (KartGame, KartGame.Editor, KartGame.AI, KartGame.AI.Editor).",
         "**IA con RL (lo más destacado):** el rival comparte la misma interfaz de input que el jugador — el `ArcadeKart` recibe un `InputData` sin distinguir quién lo conduce. Observaciones por raycasts (detección de colisiones), velocidad local y dirección al siguiente checkpoint en capa exclusiva; recompensa por acercarse/pasar el checkpoint y por velocidad, penalización por choque. Checkpoints + raycasts en vez de NavMesh: es una carrera (seguir la línea evitando choques), no una búsqueda de camino — la elección estándar para racing con RL.",
         "**Física arcade:** Rigidbody + 4 WheelColliders, suspensión parametrizada (tunable sin código), derrape con VFX, power-ups extensibles (`struct Stats`), `KartBounce` y reorientación aérea al caer.",
-        "**Flujo de partida:** 5 niveles encadenados dentro de una misma partida, victoria/derrota y pantalla de créditos con video (modifiqué `GameFlowManager` para encadenar por nombre).",
+        "**Flujo de partida:** 5 niveles encadenados dentro de una misma partida, victoria/derrota y pantalla de créditos con video.",
+        "**Modelos 3D y dirección:** assets originales en Blender, arte navideño y trailer/créditos en video y audio propios.",
+      ],
+      stack: [
+        "Unity 2021.3.8f1 LTS (URP, Forward, lineal)",
+        "C# · Cinemachine · ProBuilder · Timeline · TextMeshPro",
+        "ML-Agents · Barracuda · Burst",
+        "Blender (modelos y animaciones)",
+      ],
+      gallery: [
+        {
+          src: "/images/projects/grinchmas-kart/inicio.png",
+          alt: "Pantalla de inicio de Grinchmas Kart",
+        },
+        {
+          src: "/images/projects/grinchmas-kart/nivel1.png",
+          alt: "Gameplay del nivel 1 de Grinchmas Kart",
+        },
+        {
+          src: "/images/projects/grinchmas-kart/countdown.png",
+          alt: "Cuenta atrás de la carrera en Grinchmas Kart",
+        },
+        {
+          src: "/images/projects/grinchmas-kart/victoria.png",
+          alt: "Pantalla de victoria de Grinchmas Kart",
+        },
+      ],
+      cta: "¿Quieres ver cómo se entrena una IA para jugar con Reinforcement Learning dentro de un juego Unity? Hablemos.",
+    },
+  },
+  {
+    id: "cumyxel",
+    title: "Cumyxel",
+    category: "Game Dev / Unity",
+    hook: "Plataformero 2D pixel-art con programación de gameplay 100% propia: salto variable, enemigos con FSM y efecto ripple de agua en la cámara.",
+    metric: "1,055 LOC de gameplay (11 scripts) + pixel-art a mano",
+    tags: ["Unity", "C#", "Physics2D", "Tilemap", "Mecanim"],
+    image: "/images/projects/cumyxel/nivel1.png",
+    imageAlt:
+      "Gameplay de Cumyxel: plataformero 2D pixel-art con enemigos y salto variable",
+    links: [
+      {
+        label: "Ver código",
+        kind: "code",
+        url: "https://github.com/MaxGB23/Cumyxel",
+        external: true,
+      },
+      {
+        label: "Cumyxel (MIT)",
+        kind: "code",
+        url: "https://github.com/MaxGB23/Cumyxel-code",
+        external: true,
+      },
+      {
+        label: "Ver demo",
+        kind: "demo",
+        url: "https://drive.google.com/drive/folders/1bSRON0fCKFBL4qX8gPyTn4LXYGR9Vv6O?usp=sharing",
+        external: true,
+      },
+    ],
+    detail: {
+      headline:
+        "Game-feel 2D: salto variable, enemigos con comportamiento real y pixel-art cuidado",
+      summary:
+        "Cumyxel (2D, ene – abr 2024) es un plataformero 2D pixel-art desarrollado por ABMODEL Games — equipo universitario de 4 integrantes — del que el autor escribió el 100% de la programación de gameplay. El foco fue el *game-feel*: salto variable en dos fases, enemigos con comportamiento real (FSM), plataformas one-way y una cámara con efecto ripple de agua.",
+      metrics: [
+        {
+          value: "1,055",
+          label: "LOC de gameplay (11 scripts) + pixel-art a mano",
+        },
+        { value: "100%", label: "de la programación de gameplay" },
+        {
+          value: "FSM",
+          label: "enemigos con máquina de estados: idle → chase → ataque",
+        },
+        {
+          value: "MIT",
+          label: "repo Cumyxel-code: solo código de gameplay, reusable",
+        },
+      ],
+      problem:
+        "El objetivo fue superar un 'juego de muestra' con *game-feel* real: un plataformero cuyo salto tuviera dos fases, cuyos enemigos persiguieran y atacaran con un comportamiento de máquina de estados (no sprites decorativos), y una cámara con efectos visuales (ripple de agua) que machasen la sensación de calidad.",
+      role: [
+        "Escribí el 100% de la programación de gameplay: salto variable en dos fases, plataformas one-way, enemigos con FSM y la cámara con efecto ripple de agua.",
+        "Implementé el ground-check con `OverlapCircle` + gizmos de depuración.",
+        "Publiqué y documenté: repo de contenido y un repo MIT con solo el código de gameplay (Cumyxel-code), separando código del contenido.",
+      ],
+      solution: [
         "**Salto variable** con corrección de gravedad en dos fases (subida sin tecla / caída) — física 2D cuidada, *game-feel*.",
         "**Enemigos con FSM** por anillos de distancia: idle → chase → ataque (esqueleto arquero y murciélago), proyectiles por corrutinas.",
         "**Plataformas one-way** con `Physics2D.IgnoreCollision` y par trigger/collider.",
         "**Cámara ortográfica** con efecto ripple de agua (post-proceso: shader + `Graphics.Blit`).",
-        "**Ground-check** con `OverlapCircle` + gizmos de depuración; Tilemap, Mecanim; escenarios pixel-art dibujados a mano.",
+        "**Ground-check** con `OverlapCircle` + gizmos; Tilemap, Mecanim; escenarios pixel-art dibujados a mano.",
         "**Cumyxel-code:** repo público MIT con solo el código de gameplay — separa código del contenido y muestra mentalidad open-source.",
       ],
       stack: [
-        "Grinchmas Kart — Unity 2021.3.8f1 LTS (URP, Forward, lineal)",
-        "Grinchmas Kart — C# · Cinemachine · ProBuilder · Timeline · TextMeshPro",
-        "Grinchmas Kart — ML-Agents · Barracuda · Burst",
-        "Grinchmas Kart — Blender (modelos y animaciones)",
-        "Cumyxel — Unity 2022.3.19f1 LTS (Built-in RP, lineal)",
-        "Cumyxel — C# · uGUI + TextMeshPro · Mecanim · Tilemap · Physics2D",
-        "Cumyxel — ~1,055 LOC en 11 scripts de gameplay",
-        "Cumyxel — Pixel-art a mano + assets libres",
+        "Unity 2022.3.19f1 LTS (Built-in RP, lineal)",
+        "C# · uGUI + TextMeshPro · Mecanim · Tilemap · Physics2D",
+        "~1,055 LOC en 11 scripts de gameplay",
+        "Pixel-art a mano + assets libres",
       ],
-      gallery: [],
-      cta: "¿Quieres ver mis inicios en game dev con Unity, C# y Blender — y el primer entrenamiento de IA que escribí? Hablemos.",
+      gallery: [
+        {
+          src: "/images/projects/cumyxel/nivel1.png",
+          alt: "Nivel 1 de Cumyxel",
+        },
+        {
+          src: "/images/projects/cumyxel/bossfight.png",
+          alt: "Boss fight de Cumyxel",
+        },
+        {
+          src: "/images/projects/cumyxel/pve.png",
+          alt: "Combate del jugador contra enemigos en Cumyxel",
+        },
+        {
+          src: "/images/projects/cumyxel/npc-interaction.png",
+          alt: "Interacción con NPC en Cumyxel",
+        },
+      ],
+      cta: "¿Quieres ver cómo se construye un plataformero 2D con game-feel real, FSM y pixel-art a mano? Hablemos.",
     },
   },
 ];
@@ -453,5 +774,5 @@ export function getProjectById(id: string): Project | undefined {
 }
 
 export function getFeaturedProjects(): Project[] {
-  return projects.filter((project) => project.id === "caf" || project.id === "presidencia");
+  return projects.filter((project) => project.featured);
 }

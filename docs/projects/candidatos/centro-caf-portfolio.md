@@ -17,8 +17,8 @@
 | `tags` | Next.js · React · TypeScript · PostgreSQL · Prisma · Tailwind CSS |
 | `image` | `/images/projects/prueba1.png` — ⚠️ reemplazar por screenshot real de mayor calidad |
 | `imageAlt` | Dashboard principal y agenda del Sistema de Gestión Clínica |
-| `links` | Live: TBD · Repo: [centro-caf](https://github.com/MaxGB23/centro-caf) (público) |
-
+| `links` | Live: TBD · Repo: [centro-caf](https://github.com/MaxGB23/centro-caf) (público)  [centro-caf-landing](https://github.com/MaxGB23/centro-caf-landing-page) |
+Demos -> Landing: centrocafacambaro.vercel.app,  Sistema clínico app: https://caf-usage-test.vercel.app/dashboard
 ---
 
 ## 2. Detail — Vista detallada
