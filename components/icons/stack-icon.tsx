@@ -20,7 +20,7 @@ const brandSlug: Record<string, string> = {
   pnpm: "pnpm.svg",
   Vitest: "vitest.svg",
   esbuild: "esbuild.svg",
-  "GitHub Actions": "github-actions.svg",
+  "GitHub Actions": "github.svg",
   "VS Code": "vscode.svg",
   JavaScript: "javascript.svg",
   Bootstrap: "bootstrap.svg",
