@@ -10,3 +10,6 @@ node_modules/
 .DS_Store
 .atl
 *.tsbuildinfo
+
+# Scratch css in components/
+components/a.css
