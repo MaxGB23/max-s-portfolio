@@ -28,7 +28,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
 
   return (
     <article
-      className={`project-card group relative flex flex-col bg-card border rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 ease-out hover:-translate-y-1.5 hover:shadow-lg hover:shadow-black/8 ${
+      className={`project-card group relative flex flex-col h-full bg-card border rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 ease-out hover:-translate-y-1.5 hover:shadow-lg hover:shadow-black/8 ${
         project.featured ? "border-purple-accent/40 ring-1 ring-purple-accent/20" : "border-border"
       }`}
       aria-labelledby={`project-title-${project.id}`}
@@ -52,14 +52,14 @@ export function ProjectCard({ project }: ProjectCardProps) {
         )}
         {/* Category badge overlaid on image */}
         <div className="absolute top-3 left-3">
-          <span className="px-2.5 py-1 rounded-full text-xs font-semibold backdrop-blur-sm bg-[oklch(0.58_0.22_270/0.12)] border border-[oklch(0.58_0.22_270/0.25)] text-purple-accent">
+          <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-purple-accent text-white shadow-sm">
             {project.category}
           </span>
         </div>
         {/* Featured badge */}
         {project.featured && (
           <div className="absolute top-3 right-3">
-            <span className="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-purple-accent text-white shadow-sm">
+            <span className="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-foreground text-background shadow-sm">
               Destacado
             </span>
           </div>
@@ -74,7 +74,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
         >
           {project.title}
         </h3>
-        <p className="text-sm leading-relaxed text-muted-foreground flex-1 mb-4">
+        <p className="text-sm leading-relaxed text-muted-foreground flex-1 mb-4 line-clamp-3">
           {project.description}
         </p>
 
@@ -119,15 +119,13 @@ export function ProjectCard({ project }: ProjectCardProps) {
               target="_blank"
               rel="noopener noreferrer"
               aria-label={`${project.title} — ${externalLink.label}`}
-              className="inline-flex items-center justify-center w-7 h-7 rounded-lg transition-colors duration-200 group-hover:bg-foreground group-hover:text-background hover:bg-foreground hover:text-background"
-              style={{ backgroundColor: "var(--secondary)" }}
+              className="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-secondary text-foreground transition-colors duration-200 group-hover:bg-foreground group-hover:text-background"
             >
               <ArrowUpRight size={13} />
             </a>
           ) : (
             <span
-              className="inline-flex items-center justify-center w-7 h-7 rounded-lg transition-colors duration-200 group-hover:bg-foreground group-hover:text-background"
-              style={{ backgroundColor: "var(--secondary)" }}
+              className="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-secondary text-foreground transition-colors duration-200 group-hover:bg-foreground group-hover:text-background"
               aria-hidden="true"
             >
               <ChevronRight size={13} />

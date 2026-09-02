@@ -154,7 +154,7 @@ export function HeroSection() {
                 <ArrowDown size={15} aria-hidden="true" />
               </Link>
               <a
-                href="/cv.pdf"
+href="/documents/Maximiliano_Gonzalez_AI_Engineer_Resume.pdf"
                 download
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-border text-foreground text-sm font-semibold hover:bg-secondary transition-colors duration-200"
               >
@@ -237,7 +237,7 @@ export function HeroSection() {
             <ArrowDown size={15} aria-hidden="true" />
           </Link>
           <a
-            href="/cv.pdf"
+            href="/documents/Maximiliano_Gonzalez_AI_Engineer_Resume.pdf"
             download
             className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-border text-foreground text-sm 2xl:text-base font-semibold hover:bg-secondary transition-colors duration-200"
           >

@@ -1,14 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { Github, Twitter, Linkedin } from "lucide-react";
+import { Github, Linkedin } from "lucide-react";
 import { motion } from "framer-motion";
 import { FadeIn } from "@/components/motion-primitives";
 
 const socialLinks = [
-  { label: "GitHub", href: "https://github.com", icon: Github },
-  { label: "Twitter / X", href: "https://twitter.com", icon: Twitter },
-  { label: "LinkedIn", href: "https://linkedin.com", icon: Linkedin },
+  { label: "GitHub", href: "https://github.com/MaxGB23", icon: Github },
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/maxballesteros", icon: Linkedin },
 ];
 
 export function Footer() {
@@ -31,10 +30,10 @@ export function Footer() {
 
             {/* Contact link */}
             <a
-              href="mailto:hello@duncanrobert.dev"
+              href="mailto:maxgonzalezballesteros@gmail.com"
               className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200"
             >
-              hello@duncanrobert.dev
+              maxgonzalezballesteros@gmail.com
             </a>
 
             {/* Social links */}
