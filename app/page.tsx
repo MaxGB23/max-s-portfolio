@@ -28,7 +28,7 @@ export default function Home() {
         <hr className="border-border" />
       </div>
 
-      {/* <PricingSection /> */}
+      <PricingSection />
       <Footer />
     </main>
   );

@@ -22,28 +22,48 @@ export interface FeaturedProject {
 interface FeaturedProjectPanelProps {
   project: FeaturedProject;
   children?: React.ReactNode;
+  /**
+   * Optional heading rendered as an absolute overlay pinned to the top of the
+   * panel. Because it does NOT participate in the document flow, the panel's
+   * own content stays perfectly centered — the heading floats above it (ideal
+   * for the section title on the first stacking panel) and scrolls/scales away
+   * together with the panel as the stack advances.
+   */
+  overlay?: React.ReactNode;
 }
 
-export function FeaturedProjectPanel({ project, children }: FeaturedProjectPanelProps) {
+export function FeaturedProjectPanel({ project, children, overlay }: FeaturedProjectPanelProps) {
   // Extract last word for the purple accent styling
   const words = project.title.trim().split(/\s+/);
   const lastWord = words.pop();
   const mainTitle = words.join(" ");
 
+
   const ContentWrapper = project.index === 1 ? FadeIn : "div";
 
+  /**
+   * .featured-panel - target for GSAP ScrollTrigger pinning.
+   * data-panel-id - unique identifier per panel for GSAP selectors.
+   * min-h-screen + centering keeps every stacking panel full-viewport.
+   */
   return (
-    /**
-     * .featured-panel - target for GSAP ScrollTrigger pinning.
-     * data-panel-id - unique identifier per panel for GSAP selectors.
-     * min-h-screen keeps each panel full-viewport.
-     */
     <article
       className="featured-panel relative flex items-center min-h-screen w-full px-6 md:px-12 lg:px-20"
       data-panel-id={project.id}
       style={{ backgroundColor: project.bgColor }}
       aria-labelledby={`featured-title-${project.id}`}
     >
+      {/* Section heading overlay (desktop lg+ only): absolute over the top of the
+          first card, does not shift the centered content. Being part of this panel,
+          it stacks/scales away together with card 1 as GSAP advances — it does not
+          linger over the following cards. On mobile (<lg) it is hidden so it never
+          overlaps the image; the standalone heading above the stack handles it. */}
+      {overlay && (
+        <div className="hidden lg:flex absolute top-0 left-0 right-0 z-20 pointer-events-none justify-center">
+          {overlay}
+        </div>
+      )}
+
       <ContentWrapper className="panel-content w-full max-w-7xl mx-auto flex flex-col justify-center py-24 md:py-28">
 
         {children && (
@@ -121,15 +141,23 @@ export function FeaturedProjectPanel({ project, children }: FeaturedProjectPanel
 
           {/* Right - Image mockup */}
           <div className="relative order-1 lg:order-2">
-            <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl ring-1 ring-black/5">
-              <Image
-                src={project.image}
-                alt={project.imageAlt}
-                fill
-                className="object-cover"
-                sizes="(max-width: 1024px) 100vw, 50vw"
-                priority={project.index === 1}
-              />
+            <div className="relative w-full aspect-4/3 rounded-2xl overflow-hidden shadow-2xl ring-1 ring-black/5">
+              {project.image ? (
+                <Image
+                  src={project.image}
+                  alt={project.imageAlt}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  priority={project.index === 1}
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-purple-accent/10 to-transparent">
+                  <span className="font-mono text-xs uppercase tracking-widest text-muted-foreground/70 px-4 text-center">
+                    {project.category}
+                  </span>
+                </div>
+              )}
             </div>
             {/* Subtle floating index badge */}
             <div
