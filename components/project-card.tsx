@@ -76,7 +76,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
         {/* Key metric */}
         {project.metric && (
           <div className="mb-4">
-            <span className="inline-flex items-center rounded-full border border-purple-accent/25 bg-purple-accent/10 px-3 py-2 text-[11px] 2xl:text-xs font-semibold text-indigo-400">
+            <span className="inline-flex items-center rounded-full border border-purple-accent/25 bg-purple-accent/10 px-3 py-2 text-[11px] 2xl:text-xs font-semibold text-purple-accent">
               {project.metric}
             </span>
           </div>

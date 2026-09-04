@@ -237,7 +237,7 @@ export function ProjectDetail({ project }: { project: Project }) {
           so it never drifts away from the content on ultra-wide screens.
           Inverted button (light bg) for strong contrast against the dark page. */}
       <div className="fixed inset-x-0 top-4 md:top-6 z-50 pointer-events-none">
-        <div className="mx-auto w-full max-w-[1600px]">
+        <div className="mx-auto w-full max-w-[1600px] pl-5">
           <button
             ref={backBtnRef}
             type="button"
@@ -469,8 +469,8 @@ export function ProjectDetail({ project }: { project: Project }) {
                 href="/#proyectos"
                 className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-xl bg-foreground text-background text-sm font-semibold hover:opacity-80 transition-opacity duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
               >
-                Volver a proyectos
                 <ArrowLeft size={16} aria-hidden="true" />
+                Volver a proyectos                
               </Link>
             </div>
           </section>
