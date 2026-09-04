@@ -12,3 +12,15 @@ Cuando respondas en español, usa siempre español neutro. Evita el voseo y los 
 ### Dependencias
 - Siempre usar pnpm.
 - Nunca pushear a main con errores de lint o build.
+
+### Worktrees (pruebas A/B en vivo)
+- Los worktrees viven en `M:\worktrees\maxgb23-portfolio` — NUNCA dentro del repo ni en `~`.
+- Convención de nombre: `<nombre-experimento>` (ej: `fluid-typo`).
+- Estrategia para probar 2 versiones en vivo:
+  1. Commitear el estado actual (punto de retorno limpio).
+  2. `git worktree add "M:\worktrees\maxgb23-portfolio\<nombre>" -b feat/<experimento>` desde el commit base.
+  3. `pnpm install` en el worktree (node_modules/.next son por-checkout).
+  4. Dev servers en paralelo: principal `:3000`, worktree `:3001` (`pnpm dev --port 3001`).
+  5. Aplicar cambios SOLO en el worktree; comparar en vivo contra `:3000`.
+  6. Al aprobar: merge a la rama principal y `git worktree remove` para limpiar.
+- Al borrar un worktree: `git worktree remove <ruta>`; si tiene cambios sin mergear, confirmar antes con el usuario.
