@@ -1,5 +1,7 @@
 # Sistema de Tipografía Responsiva
 
+> ⚠️ **BORRADOR TEÓRICO — Desactualizado.** Este documento propone un sistema ideal (hero `9xl`, secciones `8xl`, etc.) que **NO coincide** con el código actual. Para la referencia real de qué tamaños usa cada sección, ver **[typography-families.md](typography-families.md)**.
+
 Estrategia de font sizes por breakpoint para garantizar legibilidad y jerarquía visual consistente en todos los dispositivos.
 
 ---
