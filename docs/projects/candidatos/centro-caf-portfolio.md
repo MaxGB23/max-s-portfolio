@@ -61,6 +61,12 @@ Las clínicas pequeñas y medianas dependen de herramientas genéricas, procesos
 - **Panel de control (dashboard):** analíticas de ingresos mensuales, pacientes activos, ganancias y métricas operativas, con filtros por periodo (30 días, 3 meses, 1 año) y tarjetas + gráficos.
 - **Landing page pública:** optimizada para SEO, enfocada a captación de nuevos pacientes e integrada con el sistema interno.
 - **Seguridad y roles:** accesos por tipo de usuario y manejo seguro de sesiones.
+- **Cuenta de usuario autocontrolada (perfil):** el propio usuario edita su **nombre** y **contraseña** desde su perfil, con una vista de tipo red social (foto de perfil y portada). El **correo queda bloqueado para el usuario**: tiene el input deshabilitado con un mensaje que indica solicitar el cambio a un administrador.
+
+### Decisiones de diseño
+
+- **El correo no se edita desde el perfil del usuario.** Es el identificador único que ata la trazabilidad de cada cuenta (historial, pagos, permisos); permitir cambiarlo libremente rompería esa trazabilidad y generaría ambigüedad entre registros. Por eso el input aparece deshabilitado con un mensaje que remite a solicitar el cambio a un administrador, quien lo gestiona centralizadamente.
+- **La vista de perfil usa estética de red social** (foto de perfil y portada) para que la cuenta se sienta propia y moderna. En la demo las imágenes son estáticas: el upload real a storage quedó como siguiente paso, priorizando features de negocio sobre el mantenimiento de un storage en línea.
 
 ### Stack
 

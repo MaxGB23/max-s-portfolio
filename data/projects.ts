@@ -130,6 +130,7 @@ export const projects: Project[] = [
         "**Panel de control (dashboard):** analíticas de ingresos mensuales, pacientes activos, ganancias y métricas operativas, con filtros por periodo (30 días, 3 meses, 1 año) y tarjetas + gráficos.",
         "**Landing page pública:** optimizada para SEO, enfocada a captación de nuevos pacientes e integrada con el sistema interno.",
         "**Seguridad y roles:** accesos por tipo de usuario y manejo seguro de sesiones.",
+        "**Cuenta de usuario autocontrolada (perfil):** edición de nombre y contraseña desde el propio perfil, con vista de tipo red social (foto de perfil y portada). El correo queda bloqueado para el usuario (input deshabilitado) y su cambio se solicita a un administrador, preservando la trazabilidad de la cuenta.",
       ],
       stack: [
         "Framework: Next.js, React",
@@ -141,11 +142,16 @@ export const projects: Project[] = [
       ],
       gallery: [
         {
-          src: "/images/projects/caf/analytics.png",
-          alt: "Analíticas de ingresos del Sistema de Gestión Clínica",
+          src: "/images/projects/caf/editar_profile.png",
+          alt: "Edición de perfil de usuario",
         },
         {
-          src: "/images/projects/caf/agenda.png",
+          src: "/images/projects/caf/dashboard-light.png",
+          alt: "Dashboard Principal",
+        },
+
+        {
+          src: "/images/projects/caf/agenda-light.png",
           alt: "Agenda de citas del Sistema de Gestión Clínica",
         },
         {
@@ -482,8 +488,7 @@ export const projects: Project[] = [
     hook: "Fork modernizado de la extensión de VS Code que resalta colores en el editor; reconstruido con TypeScript, esbuild y pnpm.",
     metric: "Render sin lag — debounce de 150ms",
     tags: ["TypeScript", "esbuild", "pnpm", "VS Code"],
-    image:
-      "/images/projects/color-highlight-v2/main.jpg",
+    image: "/images/projects/color-highlight-v2/main.jpg",
     imageAlt: "Editor de VS Code con colores resaltados por la extensión",
     links: [
       {
