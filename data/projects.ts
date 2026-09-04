@@ -336,7 +336,7 @@ export const projects: Project[] = [
     hook: "PWA full-stack para una empresa de TI: landing pública + sistema de gestión interno, instalable en dispositivos.",
     metric: "PWA instalable (manifest + service worker)",
     tags: ["Laravel", "Vue 3", "Inertia.js", "MySQL", "Laravel Breeze"],
-    image: "/images/projects/oneclickti/hero.png",
+    image: "/images/projects/oneclickti/proyectos.png",
     imageAlt: "Landing pública y panel de gestión de One Click Ti",
     links: [
       {
@@ -411,7 +411,7 @@ export const projects: Project[] = [
   },
   {
     id: "autoshop",
-    title: "AutoShop",
+    title: "AutoShop Taller",
     category: "Full Stack / PHP",
     hook: "Sitio full-stack para una empresa de servicios automotrices: landing pública + panel admin con CMS propio hecho desde cero en PHP puro.",
     metric: "De días a minutos en actualización de contenido",
@@ -591,7 +591,7 @@ export const projects: Project[] = [
     category: "Game Dev / Unity",
     hook: "Kart racing 3D end-to-end (ABMODEL Games) con IA rival entrenada con Reinforcement Learning (ML-Agents), físicas arcade y modelos 3D propios en Blender.",
     metric: "IA rival con Reinforcement Learning (ML-Agents)",
-    tags: ["Unity", "C#", "Blender", "ML-Agents", "URP"],
+    tags: ["Unity", "C#", "Blender", "ML-Agents"],
     image: "/images/projects/grinchmas-kart/inicio.png",
     imageAlt:
       "Gameplay de Grinchmas Kart: kart 3D en pista navideña con IA rival",
@@ -677,11 +677,11 @@ export const projects: Project[] = [
   },
   {
     id: "cumyxel",
-    title: "Cumyxel",
+    title: "Cumyxel 2D",
     category: "Game Dev / Unity",
     hook: "Plataformero 2D pixel-art con programación de gameplay 100% propia: salto variable, enemigos con FSM y efecto ripple de agua en la cámara.",
     metric: "1,055 LOC de gameplay (11 scripts) + pixel-art a mano",
-    tags: ["Unity", "C#", "Physics2D", "Tilemap", "Mecanim"],
+    tags: ["Unity", "C#", "Blender"],
     image: "/images/projects/cumyxel/nivel1.png",
     imageAlt:
       "Gameplay de Cumyxel: plataformero 2D pixel-art con enemigos y salto variable",

@@ -82,12 +82,12 @@ function ContactBanner() {
         <div className="flex flex-col lg:flex-row items-start lg:items-center gap-5 lg:gap-8 rounded-2xl border border-dashed border-purple-accent/40 bg-card p-5 md:p-6">
           {/* Copy */}
           <div className="flex-1 min-w-0">
-            <span className="inline-flex items-center rounded-full border border-purple-accent/25 bg-purple-accent/10 px-2.5 py-1 text-[11px] font-semibold text-purple-accent mb-3">
+            <span className="inline-flex items-center rounded-full border border-purple-accent/25 bg-purple-accent/10 px-3 py-2 text-[11px] font-semibold text-indigo-400 mb-3">
               Disponible para proyectos
             </span>
             <h3 className="font-serif font-bold text-xl text-foreground text-balance">
               ¿Trabajamos juntos?
-            </h3>
+            </h3> 
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground max-w-xl">
               ¿Tienes un proyecto en mente? Escríbeme y hablemos de tu idea.
             </p>
@@ -109,7 +109,7 @@ function ContactBanner() {
                 aria-label={copied ? "Correo copiado" : "Copiar correo"}
                 className={`inline-flex items-center justify-center w-11 rounded-xl border text-sm font-semibold transition-colors duration-200 ${
                   copied
-                    ? "border-emerald-500/40 bg-emerald-500/15 text-emerald-500"
+                    ? "border-purple-accent/40 bg-purple-accent/15 text-indigo-400"
                     : "border-border bg-secondary text-foreground hover:bg-foreground hover:text-background hover:border-purple-accent"
                 }`}
               >
