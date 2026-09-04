@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { useScrollToAnchor, useScrollToTop } from "@/hooks/use-lenis";
 // import { DarkModeToggle } from "@/components/dark-mode-toggle";
 
 const navLinks = [
@@ -21,6 +22,8 @@ export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [visible, setVisible] = useState(true);
   const navRef = useRef<HTMLDivElement>(null);
+  const scrollToAnchor = useScrollToAnchor(64); // compensa la altura del navbar
+  const scrollToTop = useScrollToTop();
 
   // Cerrar el menú al hacer clic o tocar fuera del Navbar
   useEffect(() => {
@@ -73,6 +76,26 @@ export function Navbar() {
   // Fondo desktop: condicional por scroll o menú abierto
   const isBgActive = scrolled || mobileOpen;
 
+  // Intercepta clicks en anchors para scrollear con Lenis (desktop).
+  // Devuelve false si el link no es un anchor manejable (navegación normal de Next).
+  const handleAnchorClick = (e: React.MouseEvent, href: string) => {
+    if (scrollToAnchor(href)) {
+      e.preventDefault();
+      setMobileOpen(false);
+    }
+  };
+
+  // Híbrido para "Inicio" (/): si ya estamos en la home, hace scroll al top
+  // (sin recargar); si estamos en otra página, deja la navegación normal de Next.
+  const handleHomeClick = (e: React.MouseEvent, href: string) => {
+    const isHome = window.location.pathname === "/";
+    if (href === "/" && isHome) {
+      e.preventDefault();
+      scrollToTop();
+      setMobileOpen(false);
+    }
+  };
+
   return (
     <motion.header
       ref={navRef}
@@ -105,7 +128,12 @@ export function Navbar() {
         aria-label="Main navigation"
       >
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-3 group" aria-label="Inicio">
+        <Link
+          href="/"
+          onClick={(e) => handleHomeClick(e, "/")}
+          className="flex items-center gap-3 group"
+          aria-label="Inicio"
+        >
           <div className="relative flex lg:size-2.5 size-2 items-center justify-center">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full lg:size-2 size-1.5 bg-emerald-500"></span>
@@ -124,6 +152,10 @@ export function Navbar() {
             <Link
               key={link.label}
               href={link.href}
+              onClick={(e) => {
+                handleAnchorClick(e, link.href);
+                handleHomeClick(e, link.href);
+              }}
               className="text-base font-medium transition-colors duration-100 relative group"
             >
               {link.label}
@@ -139,6 +171,7 @@ export function Navbar() {
           {/* <DarkModeToggle /> */}
           <Link
             href="#contacto"
+            onClick={(e) => handleAnchorClick(e, "#contacto")}
             className="inline-flex items-center px-5 py-2 rounded-full bg-foreground text-background text-[15px] font-medium hover:opacity-80 transition-opacity duration-200"
           >
             Contacto
@@ -186,7 +219,10 @@ export function Navbar() {
                 <Link
                   key={link.label}
                   href={link.href}
-                  onClick={() => setMobileOpen(false)}
+                  onClick={(e) => {
+                    handleAnchorClick(e, link.href);
+                    handleHomeClick(e, link.href);
+                  }}
                   className="text-base pl-5 text-foreground font-medium hover:text-foreground transition-colors"
                 >
                   {link.label}
@@ -194,7 +230,7 @@ export function Navbar() {
               ))}
               <Link
                 href="#contacto"
-                onClick={() => setMobileOpen(false)}
+                onClick={(e) => handleAnchorClick(e, "#contacto")}
                 className="inline-flex items-center justify-center px-5 py-2.5 rounded-full bg-foreground text-background text-sm font-medium hover:opacity-80 transition-opacity w-full"
               >
                 Contacto

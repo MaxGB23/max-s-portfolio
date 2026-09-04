@@ -1,11 +1,14 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Lenis from "lenis";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { LenisProvider } from "@/hooks/use-lenis";
 
 export function SmoothScroll({ children }: { children: React.ReactNode }) {
+  const [lenis, setLenis] = useState<Lenis | null>(null);
+
   useEffect(() => {
     // We only enable Lenis on desktop (>=768px) to preserve native momentum scrolling on mobile
     if (window.innerWidth < 768) {
@@ -15,20 +18,22 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
     gsap.registerPlugin(ScrollTrigger);
 
     // Initialize Lenis with optimal settings from docs
-    const lenis = new Lenis({
+    const lenisInstance = new Lenis({
       duration: 1,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
       wheelMultiplier: 1,
     });
 
+    setLenis(lenisInstance);
+
     // Synchronize Lenis with GSAP ScrollTrigger
-    lenis.on("scroll", ScrollTrigger.update);
+    lenisInstance.on("scroll", ScrollTrigger.update);
 
     // Bucle nativo estándar, más robusto para que Lenis tome el control 100%
     let rafId: number;
     function raf(time: number) {
-      lenis.raf(time);
+      lenisInstance.raf(time);
       rafId = requestAnimationFrame(raf);
     }
     rafId = requestAnimationFrame(raf);
@@ -39,10 +44,12 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
     // Cleanup on unmount
     return () => {
       cancelAnimationFrame(rafId);
-      lenis.off("scroll", ScrollTrigger.update);
-      lenis.destroy();
+      lenisInstance.off("scroll", ScrollTrigger.update);
+      lenisInstance.destroy();
     };
   }, []);
 
-  return <>{children}</>;
+  // Lenis provider wraps children; on mobile (lenis is null) the hook returns null
+  // and the navbar falls back to native scrollIntoView.
+  return <LenisProvider lenis={lenis as any}>{children}</LenisProvider>;
 }
