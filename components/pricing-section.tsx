@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useGsapAnimation } from "@/hooks/use-gsap-animation";
+import { useScrollToAnchor } from "@/hooks/use-lenis";
 
 interface PricingTier {
   name: string;
@@ -13,58 +14,62 @@ interface PricingTier {
   features: string[];
   cta: string;
   highlighted: boolean;
+  proof?: string;
 }
 
 const tiers: PricingTier[] = [
   {
-    name: "Basic",
-    price: "$29",
-    period: "/ mes",
-    description: "Perfecto para desarrolladores independientes y freelancers que están comenzando.",
+    name: "Landing Page",
+    price: "$6,000",
+    period: "MXN · por proyecto",
+    description: "Página única que presenta tu negocio y convierte visitas en contactos.",
     features: [
-      "Acceso al UI Kit (50 componentes)",
-      "Soporte en la comunidad de Discord",
-      "Actualizaciones mensuales",
-      "Licencia personal",
+      "Diseño responsivo a medida",
+      "SEO básico y velocidad optimizada",
+      "Formulario de contacto funcional",
+      "Despliegue incluido",
+      "Entrega en 1–2 semanas",
     ],
-    cta: "Empezar",
+    cta: "Solicitar cotización",
     highlighted: false,
+    proof: "Respaldado por: landings de AutoShop, One Click Ti y CAF.",
   },
   {
-    name: "Pro",
-    price: "$79",
-    period: "/ mes",
-    description: "Para constructores serios que necesitan el conjunto completo de herramientas y soporte prioritario.",
+    name: "Sistema Web a Medida",
+    price: "$20,000",
+    period: "MXN · por proyecto",
+    description: "Plataforma con panel de administración, usuarios y base de datos. Mi especialidad.",
     features: [
-      "UI Kit completo (200+ componentes)",
-      "Animaciones de Motion Studio incluidas",
-      "Soporte prioritario por email y chat",
-      "Acceso a archivos fuente de Figma",
-      "Licencia comercial",
+      "Panel de administración + PostgreSQL",
+      "Autenticación y roles de usuario",
+      "Dashboards y reportes",
+      "Stack Next.js + TypeScript",
+      "Soporte post-entrega incluido",
     ],
-    cta: "Iniciar Prueba Pro",
+    cta: "Cotizar mi proyecto",
     highlighted: true,
+    proof: "Respaldado por: CAF en producción y plataforma de Presidencia Municipal.",
   },
   {
-    name: "Premium",
-    price: "$199",
-    period: "/ mes",
-    description: "Acceso de nivel empresarial con soporte dedicado y trabajo personalizado.",
+    name: "Automatización con IA",
+    price: "$25,000",
+    period: "MXN · por proyecto",
+    description: "Un flujo de tu negocio automatizado con IA, acotado y medible. Sin humo.",
     features: [
-      "Todo lo de Pro",
-      "Kit de inicio Deploy Blueprint",
-      "Llamada de incorporación 1 a 1 (mensual)",
-      "Solicitudes de componentes personalizados",
-      "Asientos de equipo ilimitados",
-      "Licencia de marca blanca",
+      "Piloto acotado: un proceso, un objetivo",
+      "Chatbot o integración LLM sobre tus datos",
+      "Estimación de costos de tokens incluida",
+      "Documentación del piloto entregada",
     ],
-    cta: "Contactar por Premium",
+    cta: "Agendar llamada",
     highlighted: false,
+    proof: "Respaldado por: framework funky-ai (SDD, agentes).",
   },
 ];
 
 function PricingCard({ tier }: { tier: PricingTier }) {
   const cardRef = useRef<HTMLElement>(null);
+  const scrollToAnchor = useScrollToAnchor(64);
 
   // GSAP hover micro-interaction.
   const handleMouseEnter = async () => {
@@ -108,7 +113,7 @@ function PricingCard({ tier }: { tier: PricingTier }) {
       {/* Popular badge */}
       {tier.highlighted && (
         <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 bg-foreground text-background text-xs font-semibold rounded-full shadow whitespace-nowrap">
-          Most Popular
+          Más popular
         </span>
       )}
 
@@ -133,23 +138,33 @@ function PricingCard({ tier }: { tier: PricingTier }) {
       </div>
 
       {/* Price */}
-      <div className="mb-7 flex items-end gap-1">
+      <div className="mb-7">
         <span
           className={cn(
-            "font-serif font-black text-5xl leading-none",
-            tier.highlighted ? "text-white" : "text-foreground"
-          )}
-        >
-          {tier.price}
-        </span>
-        <span
-          className={cn(
-            "text-sm mb-1.5",
+            "block text-xs font-medium uppercase tracking-widest mb-1",
             tier.highlighted ? "text-white/70" : "text-muted-foreground"
           )}
         >
-          {tier.period}
+          desde
         </span>
+        <div className="flex items-end gap-1">
+          <span
+            className={cn(
+              "font-serif font-black text-5xl leading-none",
+              tier.highlighted ? "text-white" : "text-foreground"
+            )}
+          >
+            {tier.price}
+          </span>
+          <span
+            className={cn(
+              "text-sm mb-1.5",
+              tier.highlighted ? "text-white/70" : "text-muted-foreground"
+            )}
+          >
+            {tier.period}
+          </span>
+        </div>
       </div>
 
       {/* Feature list */}
@@ -174,6 +189,7 @@ function PricingCard({ tier }: { tier: PricingTier }) {
 
       {/* CTA */}
       <button
+        onClick={() => scrollToAnchor("#contacto")}
         className={cn(
           "w-full py-3.5 rounded-xl text-sm font-semibold transition-colors duration-200",
           tier.highlighted
@@ -184,6 +200,18 @@ function PricingCard({ tier }: { tier: PricingTier }) {
       >
         {tier.cta}
       </button>
+
+      {/* Proof line */}
+      {tier.proof && (
+        <p
+          className={cn(
+            "mt-4 text-xs leading-relaxed",
+            tier.highlighted ? "text-white/70" : "text-muted-foreground"
+          )}
+        >
+          {tier.proof}
+        </p>
+      )}
     </article>
   );
 }
@@ -245,11 +273,11 @@ export function PricingSection() {
         {/* Section header */}
         <header className="pricing-header flex flex-col items-center text-center mb-16">
           <h2 id="pricing-heading" className="flex flex-col md:flex-row gap-2 md:gap-3 justify-center items-center font-serif font-black uppercase text-5xl sm:text-5xl lg:text-6xl 2xl:text-7xl leading-[0.9] tracking-tighter text-foreground mb-5">
-            <span>Planes</span>
-            <span className="text-purple-accent brightness-110">Simples</span>
+            <span>Servicios</span>
+            <span className="text-purple-accent brightness-110">a medida</span>
           </h2>
           <p className="text-sm sm:text-base lg:text-lg 2xl:text-xl text-muted-foreground max-w-lg lg:max-w-xl 2xl mx-auto leading-relaxed">
-            Sin cargos ocultos. Cancela en cualquier momento. Elige el plan que se adapte a tu flujo de trabajo y escala a medida que creces.
+            Precios base por proyecto en MXN. Cada proyecto se cotiza según alcance — sin letras chicas.
           </p>
         </header>
 
@@ -264,7 +292,7 @@ export function PricingSection() {
 
         {/* Footer note */}
         <p className="mt-10 text-center text-xs text-muted-foreground">
-          Todos los planes incluyen una prueba gratuita de 14 días. No se requiere tarjeta de crédito para comenzar.
+          Precios base de referencia. La cotización final depende del alcance. Escríbeme y respondo en 24–48 h.
         </p>
 
       </div>
