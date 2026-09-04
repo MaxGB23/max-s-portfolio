@@ -25,14 +25,23 @@ interface ProjectCardProps {
 
 export function ProjectCard({ project }: ProjectCardProps) {
   const externalLink = project.links?.find((link) => link.external);
-
   return (
+    
     <article
       className={`project-card group relative flex flex-col h-full bg-card border rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 ease-out hover:-translate-y-1.5 hover:shadow-lg hover:shadow-black/8 ${
         project.featured ? "border-purple-accent/40 ring-1 ring-purple-accent/20" : "border-border"
       }`}
       aria-labelledby={`project-title-${project.id}`}
     >
+      {/* Whole-card link to the detail page — the primary interaction: clicking
+          anywhere on the card navigates to the case study. The external link in
+          the footer sits above this overlay (z-20) to stay independently clickable. */}
+      <Link
+        href={`/proyectos/${project.id}`}
+        aria-label={`Ver caso de estudio de ${project.title}`}
+        className="absolute inset-0 z-10 rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-accent/60"
+      />
+
       {/* Image */}
       <div className="relative w-full aspect-16/10 overflow-hidden bg-muted">
         {project.image ? (
@@ -45,22 +54,8 @@ export function ProjectCard({ project }: ProjectCardProps) {
           />
         ) : (
           <div className="flex items-center justify-center h-full w-full bg-gradient-to-br from-purple-accent/10 to-transparent">
-            <span className="font-mono text-xs uppercase tracking-widest text-muted-foreground/70 px-4 text-center">
+            <span className="font-mono text-xs 2xl:text-sm uppercase tracking-widest text-muted-foreground/70 px-4 text-center">
               {project.category}
-            </span>
-          </div>
-        )}
-        {/* Category badge overlaid on image */}
-        <div className="absolute top-3 left-3">
-          <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-purple-accent text-white shadow-sm">
-            {project.category}
-          </span>
-        </div>
-        {/* Featured badge */}
-        {project.featured && (
-          <div className="absolute top-3 right-3">
-            <span className="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-foreground text-background shadow-sm">
-              Destacado
             </span>
           </div>
         )}
@@ -70,18 +65,18 @@ export function ProjectCard({ project }: ProjectCardProps) {
       <div className="flex flex-col flex-1 p-5">
         <h3
           id={`project-title-${project.id}`}
-          className="font-serif font-bold text-lg text-foreground mb-2 text-balance group-hover:text-foreground transition-colors"
-        >
+          className="font-serif font-bold text-lg 2xl:text-xl text-foreground mb-2 text-balance group-hover:text-foreground transition-colors"
+        > 
           {project.title}
         </h3>
-        <p className="text-sm leading-relaxed text-muted-foreground flex-1 mb-4 line-clamp-3">
+        <p className="text-sm 2xl:text-base leading-relaxed text-muted-foreground flex-1 mb-4 line-clamp-3">
           {project.description}
         </p>
 
         {/* Key metric */}
         {project.metric && (
           <div className="mb-4">
-            <span className="inline-flex items-center rounded-full border border-purple-accent/25 bg-purple-accent/10 px-2.5 py-1 text-[11px] font-semibold text-purple-accent">
+            <span className="inline-flex items-center rounded-full border border-purple-accent/25 bg-purple-accent/10 px-3 py-2 text-[11px] 2xl:text-xs font-semibold text-indigo-400">
               {project.metric}
             </span>
           </div>
@@ -92,45 +87,35 @@ export function ProjectCard({ project }: ProjectCardProps) {
           {project.tags?.map((tag, index) => (
             <div
               key={index}
-              className="flex items-center justify-center w-8 h-8 rounded-full border border-black bg-card shadow-sm shadow-gray-700 hover:scale-110 transition-all duration-300 cursor-default group"
+              className="flex items-center justify-center w-8 h-8 2xl:w-10 2xl:h-10 rounded-full border border-black bg-card shadow-sm shadow-gray-700 hover:scale-110 transition-all duration-300 cursor-default group"
               title={tag}
             >
               <StackIcon
                 name={tag}
-                className="w-4 h-4 text-foreground opacity-80 group-hover:opacity-100 transition-opacity"
-                labelClassName="text-[9px] font-bold text-foreground/60 uppercase tracking-tighter"
+                className="w-4 h-4 2xl:w-5 2xl:h-5 text-foreground opacity-80 group-hover:opacity-100 transition-opacity"
+                labelClassName="text-[9px] 2xl:text-[10px] font-bold text-foreground/60 uppercase tracking-tighter"
               />
             </div>
           ))}
         </div>
 
         {/* Footer */}
-        <div className="mt-4 pt-4 border-t border-border flex items-center justify-between">
-          <Link
-            href={`/proyectos/${project.id}`}
-            aria-label={`Ver caso de estudio de ${project.title}`}
-            className="text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors duration-200"
-          >
-            Ver caso de estudio
-          </Link>
+        <div className="mt-4 pt-4 border-t border-border flex items-center justify-between gap-3">
+          <span className="inline-flex items-center gap-1.5 text-xs 2xl:text-sm font-semibold text-muted-foreground/90 group-hover:text-foreground transition-colors duration-200">
+            Caso de estudio
+            <ChevronRight size={13} aria-hidden="true" />
+          </span>
           {externalLink ? (
             <a
               href={externalLink.url}
               target="_blank"
               rel="noopener noreferrer"
               aria-label={`${project.title} — ${externalLink.label}`}
-              className="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-secondary text-foreground transition-colors duration-200 group-hover:bg-foreground group-hover:text-background"
+              className="relative z-20 inline-flex items-center justify-center w-7 h-7 2xl:w-8 2xl:h-8 rounded-lg bg-secondary text-foreground transition-colors duration-200 hover:bg-foreground hover:text-background"
             >
               <ArrowUpRight size={13} />
             </a>
-          ) : (
-            <span
-              className="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-secondary text-foreground transition-colors duration-200 group-hover:bg-foreground group-hover:text-background"
-              aria-hidden="true"
-            >
-              <ChevronRight size={13} />
-            </span>
-          )}
+          ) : null}
         </div>
       </div>
     </article>
