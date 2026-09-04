@@ -165,3 +165,36 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* ============================================================
+   Layout Debug Overlay (manual QA)
+   ------------------------------------------------------------
+   Only renders when the root <html> element carries data-debug.
+   Levels follow container nesting depth so the hierarchy is easy
+   to read at a glance:
+     l1 = <section> root        (red)
+     l2 = main layout wrapper   (green)
+     l3 = sub-block / column    (yellow)
+     l4 = leaf element          (blue)
+
+   Activate: add data-debug to <html> in app/layout.tsx.
+   Deactivate: remove it. No component edits needed.
+   ============================================================ */
+@layer utilities {
+  [data-debug] .debug-l1 {
+    outline: 1px solid #f87171;
+    outline-offset: -1px;
+  }
+  [data-debug] .debug-l2 {
+    outline: 1px solid #22c55e;
+    outline-offset: -1px;
+  }
+  [data-debug] .debug-l3 {
+    outline: 1px solid #eab308;
+    outline-offset: -1px;
+  }
+  [data-debug] .debug-l4 {
+    outline: 1px solid #60a5fa;
+    outline-offset: -1px;
+  }
+}

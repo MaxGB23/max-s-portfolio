@@ -15,6 +15,11 @@ const spaceGrotesk = Space_Grotesk({
   variable: '--font-space-grotesk',
 })
 
+// Layout debug overlay for manual QA.
+// Flip to `true` to render the colored container outlines (debug-l1..4) in
+// hero/about while adjusting the layout; flip back to `false` for production.
+const LAYOUT_DEBUG = false
+
 export const metadata: Metadata = {
   title: "Max's Portfolio",
   description:
@@ -27,7 +32,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning {...(LAYOUT_DEBUG ? { 'data-debug': '' } : {})}>
       <body className={`${inter.variable} ${spaceGrotesk.variable} font-sans antialiased`}>
         <ThemeProvider
           attribute="class"

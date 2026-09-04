@@ -65,13 +65,13 @@ export function AboutSection() {
       id="sobre-mi"
       ref={containerRef}
       aria-label="Sobre mí"
-      className="relative border border-red-500  flex flex-col items-center justify-center px-4 py-16 md:py-24"
+      className="debug-l1 relative flex flex-col items-center justify-center px-4 py-16 md:py-24"
     >
       {/* Main layout */}
-      <div className="relative border border-blue-400 z-10 flex flex-col-reverse md:flex-row items-center justify-center w-full max-w-7xl mx-auto gap-10 2xl:gap-20">
+      <div className="debug-l2 relative z-10 flex flex-col-reverse md:flex-row items-center justify-center w-full max-w-7xl mx-auto gap-10 2xl:gap-20">
 
         {/* Left Column: Portrait */}
-        <div className="about-portrait relative rounded-4xl shrink-0 shadow-xl w-[360px] sm:w-[390px] md:w-[360px] lg:w-[450px] 2xl:w-[550px] aspect-11/9 border border-red-500 z-0" style={{ opacity: 0, visibility: 'hidden' }}>
+        <div className="about-portrait debug-l4 relative rounded-4xl shrink-0 shadow-xl w-[360px] sm:w-[390px] md:w-[360px] lg:w-[450px] 2xl:w-[550px] aspect-11/9 z-0" style={{ opacity: 0, visibility: 'hidden' }}>
           <div className="w-full h-full rounded-4xl overflow-hidden relative">
             <Image
               src="/images/about-max.png"
@@ -94,7 +94,7 @@ export function AboutSection() {
             <span className="text-purple-accent"> {ABOUT_DATA.title.second}</span>
           </h2>
 
-          <div className="border border-red-500 px-4 sm:px-16 md:px-0 about-description text-sm sm:text-base lg:text-lg 2xl:text-xl leading-relaxed text-muted-foreground max-w-lg space-y-4" style={{ opacity: 0, visibility: 'hidden' }}>
+          <div className="debug-l4 px-4 sm:px-16 md:px-0 about-description text-sm sm:text-base lg:text-lg 2xl:text-xl leading-relaxed text-muted-foreground max-w-lg space-y-4" style={{ opacity: 0, visibility: 'hidden' }}>
             {ABOUT_DATA.paragraphs.map((text, index) => (
               <p key={index}>{text}</p>
             ))}

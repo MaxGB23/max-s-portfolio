@@ -105,7 +105,7 @@ export function HeroSection() {
       id="inicio"
       ref={containerRef}
       aria-label="Introducción"
-      className="border border-indigo-500 relative min-h-[85vh] flex flex-col items-center justify-center pt-[88px] sm:pt-24 2xl:pt-40 px-4"
+      className="debug-l1 relative min-h-[85vh] flex flex-col items-center justify-center pt-[88px] sm:pt-24 2xl:pt-40 px-4"
     >
       {/* Background Aurora */}
       <div
@@ -125,8 +125,8 @@ export function HeroSection() {
         )}
       </div>
       {/* Main hero layout */}
-      <div className="border border-green-500 relative z-10 flex flex-col items-center w-full gap-10 2xl:gap-14">
-        <div className="border border-yellow-500 relative flex flex-col md:flex-row items-center justify-center w-full max-w-7xl mx-auto gap-8 md:gap-12 lg:gap-20">
+      <div className="debug-l2 relative z-10 flex flex-col items-center w-full gap-10 2xl:gap-14">
+        <div className="debug-l3 relative flex flex-col md:flex-row items-center justify-center w-full max-w-7xl mx-auto gap-8 md:gap-12 lg:gap-20">
 
           {/* Left Column: Info */}
           <div className="hero-info flex flex-col items-center md:items-start text-center md:text-left z-10 max-w-2xl">
@@ -139,7 +139,7 @@ export function HeroSection() {
               <span className="text-purple-accent  sm:tracking-[0.01em]">{HERO_DATA.title.last}</span>
             </h1>
 
-            <p className="hero-description border border-red-500 px-4 sm:px-16 md:px-0 max-w-lg text-sm sm:text-base lg:text-lg 2xl:text-xl leading-relaxed brightness-125 text-muted-foreground md:max-w-[400px] 2xl:max-w-[625px] lg:max-w-[480px]" style={{ opacity: 0, visibility: 'hidden' }}>
+            <p className="hero-description debug-l4 px-4 sm:px-16 md:px-0 max-w-lg text-sm sm:text-base lg:text-lg 2xl:text-xl leading-relaxed brightness-125 text-muted-foreground md:max-w-[400px] 2xl:max-w-[625px] lg:max-w-[480px]" style={{ opacity: 0, visibility: 'hidden' }}>
               {HERO_DATA.description2}
             </p>
 
