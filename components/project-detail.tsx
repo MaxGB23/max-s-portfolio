@@ -42,7 +42,7 @@ function renderInline(text: string) {
 
 function SectionTitle({ children }: { children: ReactNode }) {
   return (
-    <h2 className="font-serif font-bold text-2xl md:text-3xl text-foreground mb-5">
+    <h2 className="font-serif font-bold text-2xl md:text-3xl 2xl:text-4xl text-foreground mb-5">
       {children}
     </h2>
   );
@@ -60,11 +60,11 @@ function StackChips({ tags }: { tags: string[] }) {
           <span className="flex items-center justify-center shrink-0">
             <StackIcon
               name={tag}
-              className="w-6 h-6 text-foreground"
-              labelClassName="flex items-center justify-center w-6 h-6 rounded-full bg-muted text-[9px] font-bold text-foreground/70 uppercase tracking-tighter"
+              className="w-6 h-6 2xl:w-7 2xl:h-7 text-foreground"
+              labelClassName="flex items-center justify-center w-6 h-6 2xl:w-7 2xl:h-7 rounded-full bg-muted text-[9px] 2xl:text-[10px] font-bold text-foreground/70 uppercase tracking-tighter"
             />
           </span>
-          <span className="text-sm text-foreground">{tag}</span>
+          <span className="text-sm 2xl:text-base text-foreground">{tag}</span>
         </div>
       ))}
     </div>
@@ -244,7 +244,7 @@ export function ProjectDetail({ project }: { project: Project }) {
             onClick={handleBack}
             aria-label="Volver a proyectos (conserva la posición de scroll)"
             title="Volver a proyectos"
-            className="pointer-events-auto inline-flex items-center gap-2 h-11 px-5 rounded-full text-background bg-foreground text-sm font-semibold hover:bg-purple-accent hover:text-white transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+            className="pointer-events-auto inline-flex items-center gap-2 h-11 px-5 rounded-full text-background bg-foreground text-sm 2xl:text-base font-semibold hover:bg-purple-accent hover:text-white transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
           >
             <ArrowLeft size={16} aria-hidden="true" />
             Volver
@@ -256,15 +256,15 @@ export function ProjectDetail({ project }: { project: Project }) {
       <section className="detail-hero px-6 md:px-12 lg:px-20 pt-20 md:pt-24 pb-12">
         <div className="max-w-7xl mx-auto">
           <div className="mb-6">
-            <span className="px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide bg-purple-accent text-white">
+            <span className="px-3.5 py-1.5 rounded-full text-xs 2xl:text-sm font-semibold tracking-wide bg-purple-accent text-white">
               {project.category}
             </span>
           </div>
-          <h1 className="font-serif font-black text-4xl md:text-6xl xl:text-7xl text-foreground leading-[1.02] tracking-tight text-balance">
+          <h1 className="font-serif font-black text-4xl md:text-6xl xl:text-7xl 2xl:text-8xl text-foreground leading-[1.02] tracking-tight text-balance">
             {mainTitle && <span>{mainTitle} </span>}
             <span className="text-purple-accent brightness-110">{lastWord}</span>
           </h1>
-          <p className="mt-6 text-base md:text-xl text-muted-foreground max-w-2xl leading-relaxed">
+          <p className="mt-6 text-base md:text-xl 2xl:text-2xl text-muted-foreground max-w-2xl leading-relaxed">
             {detail.headline}
           </p>
           {tags.length > 0 && (
@@ -297,11 +297,11 @@ export function ProjectDetail({ project }: { project: Project }) {
                     <dd
                       className={`m-0 ${isLastOdd ? "sm:flex sm:items-center sm:justify-between sm:gap-8" : ""}`}
                     >
-                      <div className="font-serif font-black text-2xl md:text-3xl text-purple-accent">
+                      <div className="font-serif font-black text-2xl md:text-3xl 2xl:text-4xl text-purple-accent">
                         <AnimatedMetric value={metric.value} />
                       </div>
                       <div
-                        className={`mt-2 text-xs sm:text-sm text-muted-foreground leading-snug ${isLastOdd ? "sm:mt-0 sm:max-w-xl sm:text-right" : ""}`}
+                        className={`mt-2 text-xs sm:text-sm 2xl:text-base text-muted-foreground leading-snug ${isLastOdd ? "sm:mt-0 sm:max-w-xl sm:text-right" : ""}`}
                       >
                         {metric.label}
                       </div>
@@ -341,7 +341,7 @@ export function ProjectDetail({ project }: { project: Project }) {
                     href={link.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-6 py-4 rounded-xl bg-foreground text-background text-sm lg:text-base font-semibold hover:bg-purple-accent hover:text-white transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                    className="inline-flex items-center gap-2 px-6 py-4 rounded-xl bg-foreground text-background text-sm lg:text-base 2xl:text-lg font-semibold hover:bg-purple-accent hover:text-white transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
                   >
                     <Icon size={16} aria-hidden="true" />
                     {link.label}
@@ -358,14 +358,14 @@ export function ProjectDetail({ project }: { project: Project }) {
           {/* Summary */}
           <section className="detail-section mb-16">
             <SectionTitle>Resumen</SectionTitle>
-            <p className="text-muted-foreground leading-relaxed">{renderInline(detail.summary)}</p>
+            <p className="text-muted-foreground text-base 2xl:text-lg leading-relaxed">{renderInline(detail.summary)}</p>
           </section>
 
           {/* Problem */}
           {detail.problem && (
             <section className="detail-section mb-16">
               <SectionTitle>Problema</SectionTitle>
-              <p className="text-muted-foreground leading-relaxed">
+              <p className="text-muted-foreground text-base 2xl:text-lg leading-relaxed">
                 {renderInline(detail.problem)}
               </p>
             </section>
@@ -377,7 +377,7 @@ export function ProjectDetail({ project }: { project: Project }) {
               <SectionTitle>Mi rol</SectionTitle>
               <ul className="space-y-3">
                 {detail.role.map((item, index) => (
-                  <li key={index} className="flex gap-3 text-muted-foreground leading-relaxed">
+                  <li key={index} className="flex gap-3 text-muted-foreground text-base 2xl:text-lg leading-relaxed">
                     <span className="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-purple-accent" aria-hidden="true" />
                     <span>{renderInline(item)}</span>
                   </li>
@@ -391,7 +391,7 @@ export function ProjectDetail({ project }: { project: Project }) {
             <SectionTitle>Solución</SectionTitle>
             <ul className="space-y-3">
               {detail.solution.map((item, index) => (
-                <li key={index} className="flex gap-3 text-muted-foreground leading-relaxed">
+                <li key={index} className="flex gap-3 text-muted-foreground text-base 2xl:text-lg leading-relaxed">
                   <span className="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-purple-accent" aria-hidden="true" />
                   <span>{renderInline(item)}</span>
                 </li>
@@ -418,7 +418,7 @@ export function ProjectDetail({ project }: { project: Project }) {
                           isWide ? "sm:col-span-2 lg:col-span-3" : ""
                         }`}
                       >
-                        <span className="font-mono text-xs uppercase tracking-widest text-muted-foreground/70 text-center px-4">
+                        <span className="font-mono text-xs 2xl:text-sm uppercase tracking-widest text-muted-foreground/70 text-center px-4">
                           Captura próximamente
                         </span>
                       </figure>
@@ -462,12 +462,12 @@ export function ProjectDetail({ project }: { project: Project }) {
           {/* CTA */}
           <section className="detail-section">
             <div className="rounded-3xl border border-purple-accent/30 bg-purple-accent/5 px-6 py-12 md:p-14 text-center">
-              <h2 className="font-serif font-bold text-xl md:text-2xl text-foreground text-balance mb-6">
+              <h2 className="font-serif font-bold text-xl md:text-2xl 2xl:text-3xl text-foreground text-balance mb-6">
                 {detail.cta}
               </h2>
               <Link
                 href="/#proyectos"
-                className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-xl bg-foreground text-background text-sm font-semibold hover:opacity-80 transition-opacity duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-xl bg-foreground text-background text-sm 2xl:text-base font-semibold hover:opacity-80 transition-opacity duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
               >
                 <ArrowLeft size={16} aria-hidden="true" />
                 Volver a proyectos                
