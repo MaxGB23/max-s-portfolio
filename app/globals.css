@@ -123,7 +123,7 @@
   --color-sidebar-ring: var(--sidebar-ring);
   --text-fluid-display: clamp(3rem, 2rem + 4vw, 6rem);
   --text-fluid-section: clamp(2.25rem, 1.5rem + 3vw, 4.5rem);
-  --text-fluid-featured: clamp(2.25rem, 1.5rem + 2.8vw, 3.75rem);
+  --text-fluid-featured: clamp(2rem, 1.35rem + 2.6vw, 4rem);
   --text-fluid-card: clamp(1.125rem, 1rem + 0.5vw, 1.5rem);
   --text-fluid-subheading: clamp(1.5rem, 1.125rem + 1.2vw, 2.25rem);
   --text-fluid-body: clamp(1rem, 0.9rem + 0.5vw, 1.25rem);

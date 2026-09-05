@@ -31,14 +31,14 @@ Todos son `clamp(min, rem + vw, max)` — base en rems, pendiente en vw (cumple 
 |-------|---------|-------------|-----|
 | `text-fluid-display` | `clamp(3rem, 2rem + 4vw, 6rem)` | 48 → 96 | Hero `h1`, Detail `h1` |
 | `text-fluid-section` | `clamp(2.25rem, 1.5rem + 3vw, 4.5rem)` | 36 → 72 | Headings de sección (About, Projects, Pricing) |
-| `text-fluid-featured` | `clamp(2.25rem, 1.5rem + 2.8vw, 3.75rem)` | 36 → 60 | Featured panel `h2` |
+| `text-fluid-featured` | `clamp(2rem, 1.35rem + 2.6vw, 4rem)` | 32 → 64 | Featured panel `h2` |
 | `text-fluid-card` | `clamp(1.125rem, 1rem + 0.5vw, 1.5rem)` | 18 → 24 | Card `h3` |
 | `text-fluid-subheading` | `clamp(1.5rem, 1.125rem + 1.2vw, 2.25rem)` | 24 → 36 | Detail SectionTitle + métricas |
 | `text-fluid-body` | `clamp(1rem, 0.9rem + 0.5vw, 1.25rem)` | 16 → 20 | Descripciones (hero, about, featured, pricing) |
 | `text-fluid-card-body` | `clamp(1rem, 0.95rem + 0.3vw, 1.125rem)` | 16 → 18 | Descripción de cards |
 | `text-fluid-eyebrow` | `clamp(1.0625rem, 0.9rem + 0.8vw, 1.5rem)` | 17 → 24 | Labels / eyebrows (role, "Conóceme") |
 
-**Calibración**: display/section/card topan exactamente en 1600px; body topa en ~1120px; eyebrow en ~1200px; featured en ~1286px. En pantallas < 400px los títulos quedan fijos en su mínimo.
+**Calibración**: display/section/card topan exactamente en 1600px; body topa en ~1120px; eyebrow en ~1200px; featured en ~1631px. En pantallas < 400px los títulos quedan fijos en su mínimo.
 
 > Decisión clave: **el primer escalón de la escalera es 16px (body)** — nada de texto de lectura baja de eso. Los labels están deliberadamente ≥1px por encima de su descripción en TODAS las resoluciones (patrón "role/label unos px más grandes que su descripción").
 
@@ -64,7 +64,7 @@ Todos son `clamp(min, rem + vw, max)` — base en rems, pendiente en vw (cumple 
 |-------|-------|-------|-----------|----------------|
 | 1 | Hero `h1` / Detail `h1` | `text-fluid-display` | 96px | serif / black |
 | 2 | Headings de sección (About `h2`, "Proyectos Destacados", "Todos los Proyectos", "Servicios a medida") | `text-fluid-section` | 72px | serif / black |
-| 3 | Featured panel `h2` (caso de estudio apilado) | `text-fluid-featured` | 60px — **un escalón bajo su sección a propósito** | serif / black |
+| 3 | Featured panel `h2` (caso de estudio apilado) | `text-fluid-featured` | 64px — **un escalón bajo su sección a propósito (4–9px menor en todo el rango, ratio ≈ 0.88)** | serif / black |
 | 4 | Card `h3` (título de proyecto) | `text-fluid-card` | 24px | serif / bold |
 | 5 | Detail SectionTitle `h2` + métricas | `text-fluid-subheading` | 36px | serif / bold |
 | 6 | Descripciones / body | `text-fluid-body` | 20px | sans (heredada) |
