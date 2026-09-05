@@ -105,7 +105,7 @@ function PricingCard({ tier }: { tier: PricingTier }) {
         "pricing-card relative flex flex-col rounded-2xl p-8 border cursor-pointer will-change-transform",
         tier.highlighted
           ? "border-purple-accent shadow-2xl"
-          : "border-border bg-card"
+          : "border-border bg-card "
       )}
       style={tier.highlighted ? { backgroundColor: "var(--accent-purple)" } : {}}
       aria-label={`${tier.name} plan`}
@@ -191,10 +191,10 @@ function PricingCard({ tier }: { tier: PricingTier }) {
       <button
         onClick={() => scrollToAnchor("#contacto")}
         className={cn(
-          "w-full py-3.5 rounded-xl text-sm font-semibold transition-colors duration-200",
+"w-full py-3.5 rounded-xl text-sm font-semibold transition-colors duration-200",
           tier.highlighted
-            ? "bg-white text-purple-accent hover:bg-white/90 shadow-md"
-            : "border border-border text-foreground hover:bg-secondary"
+            ? "bg-white text-purple-accent hover:opacity-80"
+            : "border border-border text-foreground hover:bg-purple-accent/5 hover:border-purple-accent/30"
         )}
         aria-label={`${tier.cta} - ${tier.name} plan`}
       >

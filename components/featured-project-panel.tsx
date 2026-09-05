@@ -131,7 +131,7 @@ export function FeaturedProjectPanel({ project, children, overlay }: FeaturedPro
               <Link
                 href={`/proyectos/${project.id}`}
                 aria-label={`Ver caso de estudio de ${project.title}`}
-                className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-xl bg-foreground text-background text-sm font-semibold hover:opacity-80 transition-opacity duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-foreground text-background text-sm 2xl:text-base font-semibold hover:opacity-80 transition-opacity duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
               >
                 Ver caso de estudio
                 <ChevronRight size={16} aria-hidden="true" />

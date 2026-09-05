@@ -237,14 +237,14 @@ export function ProjectDetail({ project }: { project: Project }) {
           so it never drifts away from the content on ultra-wide screens.
           Inverted button (light bg) for strong contrast against the dark page. */}
       <div className="fixed inset-x-0 top-4 md:top-6 z-50 pointer-events-none">
-        <div className="mx-auto w-full max-w-[1600px] pl-5">
+        <div className="mx-auto w-full max-w-400 pl-5">
           <button
             ref={backBtnRef}
             type="button"
             onClick={handleBack}
             aria-label="Volver a proyectos (conserva la posición de scroll)"
             title="Volver a proyectos"
-            className="pointer-events-auto inline-flex items-center gap-2 h-11 px-5 rounded-full text-background bg-foreground text-sm 2xl:text-base font-semibold hover:bg-purple-accent hover:text-white transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+            className="pointer-events-auto inline-flex items-center gap-2 h-11 px-5 rounded-full text-background bg-foreground text-sm 2xl:text-base font-semibold hover:bg-foreground/80 transition-colors duration-200 focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-ring"
           >
             <ArrowLeft size={16} aria-hidden="true" />
             Volver
@@ -341,7 +341,7 @@ export function ProjectDetail({ project }: { project: Project }) {
                     href={link.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-6 py-4 rounded-xl bg-foreground text-background text-sm lg:text-base 2xl:text-lg font-semibold hover:bg-purple-accent hover:text-white transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                    className="inline-flex items-center gap-2 h-12 px-6 rounded-xl bg-foreground text-background text-sm 2xl:text-base font-semibold hover:bg-purple-accent hover:text-white transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
                   >
                     <Icon size={16} aria-hidden="true" />
                     {link.label}
@@ -467,7 +467,7 @@ export function ProjectDetail({ project }: { project: Project }) {
               </h2>
               <Link
                 href="/#proyectos"
-                className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-xl bg-foreground text-background text-sm 2xl:text-base font-semibold hover:opacity-80 transition-opacity duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-foreground text-background text-sm 2xl:text-base font-semibold hover:opacity-80 transition-opacity duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
               >
                 <ArrowLeft size={16} aria-hidden="true" />
                 Volver a proyectos                

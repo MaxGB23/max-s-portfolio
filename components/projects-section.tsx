@@ -98,7 +98,7 @@ function ContactBanner() {
             <div className="grid grid-cols-[1fr_auto] gap-2 sm:w-auto">
               <a
                 href={`mailto:${CONTACT_EMAIL}`}
-                className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-purple-accent text-white text-sm font-semibold transition-colors duration-200 hover:opacity-90"
+                className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-foreground text-background  text-sm font-semibold transition-colors duration-200 hover:opacity-80"
               >
                 <Mail size={14} aria-hidden="true" />
                 Escríbeme
@@ -107,10 +107,10 @@ function ContactBanner() {
                 type="button"
                 onClick={copyEmail}
                 aria-label={copied ? "Correo copiado" : "Copiar correo"}
-                className={`inline-flex items-center justify-center w-11 rounded-xl border text-sm font-semibold transition-colors duration-200 ${
+                className={`inline-flex shadow-sm shadow-purple-accent/60 items-center justify-center w-11 rounded-xl border text-sm font-semibold transition-colors duration-200 ${
                   copied
-                    ? "border-purple-accent/40 bg-purple-accent/15 text-indigo-400"
-                    : "border-border bg-secondary text-foreground hover:bg-foreground hover:text-background hover:border-purple-accent"
+                    ? "border-purple-accent/40 bg-purple-accent/10 text-indigo-400"
+                    : "border-border text-foreground hover:bg-purple-accent/5 hover:border-purple-accent/30"
                 }`}
               >
                 {copied ? <Check size={15} aria-hidden="true" /> : <Copy size={15} aria-hidden="true" />}
@@ -122,7 +122,7 @@ function ContactBanner() {
                 href="https://github.com/MaxGB23"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-border bg-secondary text-foreground text-sm font-semibold transition-colors duration-200 hover:border-purple-accent hover:bg-foreground hover:text-background"
+                className="inline-flex shadow-sm shadow-purple-accent/60 items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-border text-foreground text-sm font-semibold transition-colors duration-200 hover:bg-purple-accent/5 hover:border-purple-accent/30"
               >
                 <Github size={14} aria-hidden="true" />
                 GitHub
@@ -131,7 +131,7 @@ function ContactBanner() {
                 href="https://www.linkedin.com/in/maxballesteros"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-border bg-secondary text-foreground text-sm font-semibold transition-colors duration-200 hover:border-purple-accent hover:bg-foreground hover:text-background"
+                className="inline-flex items-center shadow-sm shadow-purple-accent/60 justify-center gap-2 px-4 py-2.5 rounded-xl hover:bg-purple-accent/5 hover:border-purple-accent/30 border border-border text-foreground text-sm font-semibold transition-colors duration-200"
               >
                 <Linkedin size={14} aria-hidden="true" />
                 LinkedIn

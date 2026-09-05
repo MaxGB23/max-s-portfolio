@@ -172,7 +172,7 @@ export function Navbar() {
           <Link
             href="#contacto"
             onClick={(e) => handleAnchorClick(e, "#contacto")}
-            className="inline-flex items-center px-5 py-2 rounded-full bg-foreground text-background text-[15px] font-medium hover:opacity-80 transition-opacity duration-200"
+            className="inline-flex items-center px-5 py-2 rounded-full bg-foreground text-background text-[15px] font-medium hover:opacity-80 transition-opacity duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
           >
             Contacto
           </Link>
@@ -231,7 +231,7 @@ export function Navbar() {
               <Link
                 href="#contacto"
                 onClick={(e) => handleAnchorClick(e, "#contacto")}
-                className="inline-flex items-center justify-center px-5 py-2.5 rounded-full bg-foreground text-background text-sm font-medium hover:opacity-80 transition-opacity w-full"
+                className="inline-flex items-center justify-center px-5 py-2.5 rounded-full bg-foreground text-background text-sm font-medium hover:opacity-80 transition-opacity duration-200 w-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
               >
                 Contacto
               </Link>

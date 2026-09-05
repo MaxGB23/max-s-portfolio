@@ -112,7 +112,7 @@ function ProductCard({ product }: { product: Product }) {
 
       {/* CTA */}
       <button
-        className="mt-auto inline-flex items-center justify-between w-full px-5 py-3 rounded-xl border border-border text-sm font-semibold text-foreground hover:bg-secondary hover:border-purple-accent transition-colors duration-200"
+        className="mt-auto inline-flex items-center justify-between w-full px-5 py-3 rounded-xl border border-border text-sm 2xl:text-base font-semibold text-foreground hover:bg-secondary transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
         aria-label={`Saber más sobre ${product.name}`}
       >
         Saber más
