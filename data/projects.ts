@@ -316,20 +316,20 @@ export const projects: Project[] = [
       ],
       gallery: [
         {
-          src: "/images/projects/funky-ai/funky-ai-main.jpg",
-          alt: "Pipeline SDD de funky-ai desde la terminal",
+          src: "/images/projects/funky-ai/funky-forge.png",
+          alt: "Pipeline Funky Forge",
         },
         {
           src: "/images/projects/funky-ai/funky-sdd.jpg",
           alt: "Ejecución del pipeline SDD de funky-ai",
         },
         {
-          src: "/images/projects/funky-ai/funky-ai.jpg",
-          alt: "Vista general del CLI de funky-ai",
+          src: "/images/projects/funky-ai/funky-secure.png",
+          alt: "Vista general de Funky Secure",
         },
         {
-          src: "/images/projects/funky-ai/funky-ai.webp",
-          alt: "Interfaz de terminal de funky-ai",
+          src: "/images/projects/funky-ai/funkygram.png",
+          alt: "Interfaz de terminal de Funkygram",
         },
       ],
       cta: "¿Buscas incorporar IA en tu flujo de desarrollo con proceso y sin caos? Este framework es mi laboratorio público.",
