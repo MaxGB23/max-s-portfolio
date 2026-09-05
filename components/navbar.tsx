@@ -138,10 +138,10 @@ export function Navbar() {
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full lg:size-2 size-1.5 bg-emerald-500"></span>
           </div>
-          <span className="hidden md:block font-sans font-medium text-sm md:text-base tracking-wider text-foreground">
+          <span className="hidden lg:block font-sans font-medium text-sm lg:text-base tracking-wider text-foreground">
             Disponible para trabajo remoto
           </span>
-          <span className="md:hidden font-sans font-medium text-sm lg:text-lg tracking-wider text-foreground">
+          <span className="lg:hidden font-sans font-medium text-sm md:text-base tracking-wider text-foreground">
             Disponible en remoto
           </span>
         </Link>
