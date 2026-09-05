@@ -206,3 +206,13 @@
     outline-offset: -1px;
   }
 }
+
+/* ============================================================
+   Hero h1 — fix quirúrgico 768–800px (PENDIENTE DE APROBACIÓN)
+   Rango exacto donde el título desborda en dos columnas (md).
+   ============================================================ */
+@media (min-width: 768px) and (max-width: 800px) {
+  .hero-title {
+    font-size: 3.6rem;
+  }
+}

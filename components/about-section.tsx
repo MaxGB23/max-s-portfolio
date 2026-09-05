@@ -65,7 +65,7 @@ export function AboutSection() {
       id="sobre-mi"
       ref={containerRef}
       aria-label="Sobre mí"
-      className="debug-l1 relative flex flex-col items-center justify-center px-4 py-16 md:py-24"
+      className="debug-l1 relative flex flex-col items-center justify-center px-6 md:px-8 lg:px-12 py-16 md:py-24"
     >
       {/* Main layout */}
       <div className="debug-l2 relative z-10 flex flex-col-reverse md:flex-row items-center justify-center w-full max-w-7xl mx-auto gap-10 2xl:gap-20">

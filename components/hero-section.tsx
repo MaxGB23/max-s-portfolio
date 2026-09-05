@@ -104,7 +104,7 @@ export function HeroSection() {
       id="inicio"
       ref={containerRef}
       aria-label="Introducción"
-      className="debug-l1 relative min-h-[85vh] flex flex-col items-center justify-center pt-[88px] sm:pt-24 2xl:pt-40 px-4"
+      className="debug-l1 relative min-h-[85vh] flex flex-col items-center justify-center pt-[88px] sm:pt-24 2xl:pt-40 px-6 md:px-8 lg:px-12"
     >
       {/* Background Aurora */}
       <div
