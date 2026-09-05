@@ -113,3 +113,8 @@ Gotcha: `FadeIn` declara prop `as` en su interfaz pero NO la usa (siempre `motio
 ## Próximo paso
 
 Este documento, junto con `typography-families.md` y `buttons.md`, es la base del futuro `docs/design/design.md` del proyecto.
+
+---
+
+> [!NOTE]
+> Vercel Preview Deployment activado para la rama `feat/fluid-typo`.
