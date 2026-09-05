@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowDown, Download } from "lucide-react";
 import { motion } from "framer-motion";
 import { useGsapAnimation } from "@/hooks/use-gsap-animation";
+import { useScrollToAnchor } from "@/hooks/use-lenis";
 import Aurora from "@/components/animations/Aurora";
 import { useState, useEffect } from "react";
 import { StackIcon } from "@/components/icons";
@@ -21,6 +22,7 @@ const HERO_DATA = {
 export function HeroSection() {
   const [mounted, setMounted] = useState(false);
   const [isDark, setIsDark] = useState(false);
+  const scrollToAnchor = useScrollToAnchor(64);
 
   useEffect(() => {
     // Initialize from the DOM (matches the DarkModeToggle's method)
@@ -229,8 +231,13 @@ href="/documents/Maximiliano_Gonzalez_AI_Engineer_Resume.pdf"
         {/* CTA buttons */}
         <div className="hero-cta flex flex-wrap items-center justify-center gap-4" style={{ opacity: 0, visibility: 'hidden' }}>
           <Link
-            href="#productos"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-foreground text-background text-sm 2xl:text-base font-semibold hover:opacity-80 transition-opacity duration-200 shadow-md"
+            href="#proyectos"
+            onClick={(e) => {
+              if (scrollToAnchor("#proyectos")) {
+                e.preventDefault();
+              }
+            }}
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-foreground text-background text-sm 2xl:text-base font-semibold hover:opacity-80 transition-opacity duration-200 shadow-md focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-ring"
           >
             Ver Proyectos
             <ArrowDown size={15} aria-hidden="true" />
@@ -238,10 +245,10 @@ href="/documents/Maximiliano_Gonzalez_AI_Engineer_Resume.pdf"
           <a
             href="/documents/Maximiliano_Gonzalez_AI_Engineer_Resume.pdf"
             download
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-border text-foreground text-sm 2xl:text-base font-semibold hover:bg-secondary transition-colors duration-200"
+            className="inline-flex items-center gap-2 shadow-sm shadow-purple-accent/60 px-6 py-3 rounded-full border border-border text-foreground text-sm 2xl:text-base font-semibold hover:bg-purple-accent/5 hover:border-purple-accent/30 transition-colors duration-200 "
           >
             Descargar CV
-            <Download size={15} aria-hidden="true" />
+            <Download size={16} aria-hidden="true" />
           </a>
         </div>
 

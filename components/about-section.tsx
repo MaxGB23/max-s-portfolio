@@ -40,7 +40,7 @@ export function AboutSection() {
     tl.to(".about-portrait", {
       autoAlpha: 1,
       x: 0,
-      duration: 0.8,
+      duration: 0.5,
       startAt: { x: -40 },
     })
       .to(
@@ -55,7 +55,7 @@ export function AboutSection() {
       )
       .to(
         ".about-description",
-        { autoAlpha: 1, y: 0, duration: 0.45, startAt: { y: 10 } },
+        { autoAlpha: 1, y: 0, duration: 0.2, startAt: { y: 10 } },
         "-=0.2"
       );
   });
@@ -85,7 +85,7 @@ export function AboutSection() {
 
         {/* Right Column: Info */}
         <div className="about-info flex flex-col items-center md:items-start text-center md:text-left z-10 max-w-2xl">
-          <p className="about-label brightness-125 uppercase tracking-[0.2em] font-medium text-muted-foreground mb-4 text-fluid-eyebrow" style={{ opacity: 0, visibility: 'hidden' }}>
+          <p className="about-label brightness-125 uppercase tracking-[0.2em] font-medium text-muted-foreground mb-2 text-fluid-eyebrow" style={{ opacity: 0, visibility: 'hidden' }}>
             {ABOUT_DATA.label}
           </p>
 
