@@ -8,6 +8,7 @@ import { ProjectCard, type Project } from "@/components/project-card";
 import { FadeIn, FadeInStagger, FadeInItem } from "@/components/motion-primitives";
 import { projects, getFeaturedProjects } from "@/data/projects";
 import { Check, Copy, Github, Linkedin, Mail } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 // ---------------------------------------------------------------------------
 // Data - single source of truth: data/projects.ts
@@ -96,46 +97,50 @@ function ContactBanner() {
           {/* Actions */}
           <div className="flex flex-col sm:flex-row sm:items-center gap-2 w-full lg:w-auto">
             <div className="grid grid-cols-[1fr_auto] gap-2 sm:w-auto">
-              <a
-                href={`mailto:${CONTACT_EMAIL}`}
-                className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-foreground text-background  text-sm font-semibold transition-colors duration-200 hover:opacity-80"
-              >
-                <Mail size={14} aria-hidden="true" />
-                Escríbeme
-              </a>
-              <button
+              <Button asChild variant="primary" size="compact">
+                <a href={`mailto:${CONTACT_EMAIL}`}>
+                  <Mail size={14} aria-hidden="true" />
+                  Escríbeme
+                </a>
+              </Button>
+              <Button
+                variant="outline"
+                size="compact"
+                glow
                 type="button"
                 onClick={copyEmail}
                 aria-label={copied ? "Correo copiado" : "Copiar correo"}
-                className={`inline-flex shadow-sm shadow-purple-accent/60 items-center justify-center w-11 rounded-xl border text-sm font-semibold transition-colors duration-200 ${
+                className={`w-11 px-0 ${
                   copied
                     ? "border-purple-accent/40 bg-purple-accent/10 text-indigo-400"
-                    : "border-border text-foreground hover:bg-purple-accent/5 hover:border-purple-accent/30"
+                    : ""
                 }`}
               >
                 {copied ? <Check size={15} aria-hidden="true" /> : <Copy size={15} aria-hidden="true" />}
-              </button>
+              </Button>
             </div>
 
             <div className="grid grid-cols-2 gap-2 sm:w-auto">
-              <a
-                href="https://github.com/MaxGB23"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex shadow-sm shadow-purple-accent/60 items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-border text-foreground text-sm font-semibold transition-colors duration-200 hover:bg-purple-accent/5 hover:border-purple-accent/30"
-              >
-                <Github size={14} aria-hidden="true" />
-                GitHub
-              </a>
-              <a
-                href="https://www.linkedin.com/in/maxballesteros"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center shadow-sm shadow-purple-accent/60 justify-center gap-2 px-4 py-2.5 rounded-xl hover:bg-purple-accent/5 hover:border-purple-accent/30 border border-border text-foreground text-sm font-semibold transition-colors duration-200"
-              >
-                <Linkedin size={14} aria-hidden="true" />
-                LinkedIn
-              </a>
+              <Button asChild variant="outline" size="compact" glow>
+                <a
+                  href="https://github.com/MaxGB23"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Github size={14} aria-hidden="true" />
+                  GitHub
+                </a>
+              </Button>
+              <Button asChild variant="outline" size="compact" glow>
+                <a
+                  href="https://www.linkedin.com/in/maxballesteros"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Linkedin size={14} aria-hidden="true" />
+                  LinkedIn
+                </a>
+              </Button>
             </div>
           </div>
         </div>

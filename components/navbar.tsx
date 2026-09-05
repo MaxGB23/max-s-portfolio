@@ -6,6 +6,7 @@ import { Menu, X } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useScrollToAnchor, useScrollToTop } from "@/hooks/use-lenis";
+import { Button } from "@/components/ui/button";
 // import { DarkModeToggle } from "@/components/dark-mode-toggle";
 
 const navLinks = [
@@ -169,13 +170,14 @@ export function Navbar() {
         {/* Right side: dark mode (hidden) + contact */}
         <div className="hidden md:flex items-center gap-3">
           {/* <DarkModeToggle /> */}
-          <Link
-            href="#contacto"
-            onClick={(e) => handleAnchorClick(e, "#contacto")}
-            className="inline-flex items-center px-5 py-2 rounded-full bg-foreground text-background text-[15px] font-medium hover:opacity-80 transition-opacity duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-          >
-            Contacto
-          </Link>
+          <Button asChild variant="primary" shape="pill" size="sm">
+            <Link
+              href="#contacto"
+              onClick={(e) => handleAnchorClick(e, "#contacto")}
+            >
+              Contacto
+            </Link>
+          </Button>
         </div>
 
         {/* Mobile menu button */}
@@ -228,13 +230,21 @@ export function Navbar() {
                   {link.label}
                 </Link>
               ))}
-              <Link
-                href="#contacto"
-                onClick={(e) => handleAnchorClick(e, "#contacto")}
-                className="inline-flex items-center justify-center px-5 py-2.5 rounded-full bg-foreground text-background text-sm font-medium hover:opacity-80 transition-opacity duration-200 w-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+              <Button
+                asChild
+                variant="primary"
+                shape="pill"
+                size="sm"
+                fullWidth
+                className="py-2.5"
               >
-                Contacto
-              </Link>
+                <Link
+                  href="#contacto"
+                  onClick={(e) => handleAnchorClick(e, "#contacto")}
+                >
+                  Contacto
+                </Link>
+              </Button>
             </div>
           </motion.div>
         )}

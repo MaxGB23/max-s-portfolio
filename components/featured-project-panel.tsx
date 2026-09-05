@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { FadeIn } from "@/components/motion-primitives";
 import { StackIcon } from "@/components/icons";
+import { Button } from "@/components/ui/button";
 
 export interface FeaturedProject {
   id: string;
@@ -128,14 +129,15 @@ export function FeaturedProjectPanel({ project, children, overlay }: FeaturedPro
 
             {/* CTA */}
             <div>
-              <Link
-                href={`/proyectos/${project.id}`}
-                aria-label={`Ver caso de estudio de ${project.title}`}
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-foreground text-background text-sm 2xl:text-base font-semibold hover:opacity-80 transition-opacity duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-              >
-                Ver caso de estudio
-                <ChevronRight size={16} aria-hidden="true" />
-              </Link>
+              <Button asChild variant="primary">
+                <Link
+                  href={`/proyectos/${project.id}`}
+                  aria-label={`Ver caso de estudio de ${project.title}`}
+                >
+                  Ver caso de estudio
+                  <ChevronRight size={16} aria-hidden="true" />
+                </Link>
+              </Button>
             </div>
           </div>
 

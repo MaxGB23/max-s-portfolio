@@ -17,7 +17,7 @@
 | --- | --- | --- | --- |
 | `primary` (sólido) | `bg-foreground text-background` | `hover:opacity-80` | Acción principal: navbar Contacto, hero Ver Proyectos, Volver, CTA detalle, featured |
 | `outline` (borde) | `border border-border text-foreground` | `hover:bg-purple-accent/5 hover:border-purple-accent/30` | Acción secundaria: Descargar CV, GitHub/LinkedIn, copiar correo, pricing normal |
-| `accent` (marca) | `bg-purple-accent text-foreground` | `hover:opacity-90` | Destacado de marca: Escríbeme (banner contacto) |
+| `accent` (marca) | `bg-purple-accent text-foreground` | `hover:opacity-90` | **Reservada — sin uso actual.** Para futuros CTAs de marca; no usarla mientras el morado del banner compita con el glow de los outlines vecinos |
 | `white` (inverso) | `bg-white text-purple-accent` | `hover:opacity-80` | Pricing destacado (plan Pro) |
 | `inverted` (excepción) | `bg-foreground text-background` | `hover:bg-purple-accent hover:text-white` | **SOLO** links de proyecto del detalle (Ver código / Ver demo) |
 
@@ -25,7 +25,7 @@
 
 - **`hover:opacity-80` en sólidos**: atenúa el botón completo, el contraste texto/fondo interno se mantiene. Es el patrón original del sitio y es superior a `hover:bg-white/80` o `hover:bg-foreground/80`, que cambian el fondo sin ajustar el texto y rompen legibilidad.
 - **Hover morado `/5 + /30` en outlines**: firma de marca sutil; `bg-purple-accent/5` + `border-purple-accent/30` son los únicos valores permitidos. No hay segunda intensidad.
-- **`hover:opacity-90` en accent**: suave, mantiene el morado protagonista.
+- **`hover:opacity-90` en accent**: suave, mantiene el morado protagonista (aplicable cuando la variante se use).
 - **Hover morado pleno SOLO en `inverted`**: es la excepción deliberada para que los enlaces de proyecto del detalle griten "acción de proyecto".
 
 ## Formas
@@ -73,13 +73,13 @@
 | Navbar | Contacto (mobile) | primary | pill | px-5 py-2.5 w-full | — | opacity-80 |
 | Hero | Ver Proyectos | primary | pill | px-6 py-3 | shadow-md (neutral, heredado) | opacity-80 |
 | Hero | Descargar CV | outline | pill | px-6 py-3 | sm purple/60 | /5 + /30 |
-| Detalle | Volver | primary | pill | px-6 py-3 | — | opacity-80 |
+| Detalle | Volver | primary | pill | px-6 py-3 | — | bg-foreground/80 (excepción GSAP) |
 | Detalle | Ver código / Ver demo | inverted | rounded | h-12 px-6 | — | bg-purple-accent text-white |
 | Detalle | CTA final | primary | rounded | px-6 py-3 | — | opacity-80 |
 | Featured | CTA | primary | rounded | px-6 py-3 | — | opacity-80 |
 | Pricing | CTA destacado (Pro) | white | rounded | w-full py-3.5 | — | opacity-80 |
 | Pricing | CTA normal | outline | rounded | w-full py-3.5 | — | /5 + /30 |
-| Banner | Escríbeme | accent | rounded | px-4 py-2.5 | — | opacity-90 |
+| Banner | Escríbeme | primary | rounded | px-4 py-2.5 | — | opacity-80 |
 | Banner | Copiar correo | outline | rounded | w-11 | sm purple/60 | /5 + /30 |
 | Banner | GitHub / LinkedIn | outline | rounded | px-4 py-2.5 | sm purple/60 | /5 + /30 |
 | Products | CTA | outline | rounded | w-full px-5 py-3 | — | **bg-secondary (deuda)** |
@@ -87,6 +87,7 @@
 ## Reglas de excepción (cerradas)
 
 - Hover morado pleno en `inverted`: permitido solo en links de proyecto del detalle.
+- **Volver (detalle)**: `hover:bg-foreground/80` + `transition-colors` — NUNCA `transition-opacity`. GSAP controla `opacity` de este botón (hide al hacer scroll down, reveal al scroll up) y una transición CSS de opacidad competiría con la animación. Implementado vía `className` sobre `variant="primary"`.
 - Pricing: nunca shadow, siempre lógica de hover.
 
 ## Deuda técnica → componente base (próxima sesión)

@@ -8,6 +8,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeft, ArrowUpRight, ChevronLeft, ChevronRight, Github, Globe, Maximize2, MonitorSmartphone, X } from "lucide-react";
 import { StackIcon } from "@/components/icons";
+import { Button } from "@/components/ui/button";
 import type { Project, ProjectImage, ProjectLink } from "@/data/projects";
 
 /** Picks a contextual icon for a project link. Unknown kinds fall back to a
@@ -238,17 +239,18 @@ export function ProjectDetail({ project }: { project: Project }) {
           Inverted button (light bg) for strong contrast against the dark page. */}
       <div className="fixed inset-x-0 top-4 md:top-6 z-50 pointer-events-none">
         <div className="mx-auto w-full max-w-400 pl-5">
-          <button
-            ref={backBtnRef}
-            type="button"
-            onClick={handleBack}
-            aria-label="Volver a proyectos (conserva la posición de scroll)"
-            title="Volver a proyectos"
-            className="pointer-events-auto inline-flex items-center gap-2 h-11 px-5 rounded-full text-background bg-foreground text-sm 2xl:text-base font-semibold hover:bg-foreground/80 transition-colors duration-200 focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-ring"
-          >
-            <ArrowLeft size={16} aria-hidden="true" />
-            Volver
-          </button>
+          <Button asChild variant="primary" shape="pill" size="md" className="pointer-events-auto hover:bg-foreground/80 transition-colors">
+            <button
+              ref={backBtnRef}
+              type="button"
+              onClick={handleBack}
+              aria-label="Volver a proyectos (conserva la posición de scroll)"
+              title="Volver a proyectos"
+            >
+              <ArrowLeft size={16} aria-hidden="true" />
+              Volver
+            </button>
+          </Button>
         </div>
       </div>
 
@@ -336,18 +338,16 @@ export function ProjectDetail({ project }: { project: Project }) {
               {project.links.map((link, index) => {
                 const Icon = linkIcon(link.kind);
                 return (
-                  <a
-                    key={index}
-                    href={link.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 h-12 px-6 rounded-xl bg-foreground text-background text-sm 2xl:text-base font-semibold hover:bg-purple-accent hover:text-white transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-                  >
-                    <Icon size={16} aria-hidden="true" />
-                    {link.label}
-                  </a>
-                  
-                  
+                  <Button key={index} asChild variant="inverted" size="lg">
+                    <a
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Icon size={16} aria-hidden="true" />
+                      {link.label}
+                    </a>
+                  </Button>
                 );
               })}
             </div>
@@ -465,13 +465,12 @@ export function ProjectDetail({ project }: { project: Project }) {
               <h2 className="font-serif font-bold text-xl md:text-2xl 2xl:text-3xl text-foreground text-balance mb-6">
                 {detail.cta}
               </h2>
-              <Link
-                href="/#proyectos"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-foreground text-background text-sm 2xl:text-base font-semibold hover:opacity-80 transition-opacity duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-              >
-                <ArrowLeft size={16} aria-hidden="true" />
-                Volver a proyectos                
-              </Link>
+              <Button asChild variant="primary">
+                <Link href="/#proyectos">
+                  <ArrowLeft size={16} aria-hidden="true" />
+                  Volver a proyectos
+                </Link>
+              </Button>
             </div>
           </section>
         </div>

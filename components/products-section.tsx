@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import { Check, ArrowUpRight } from "lucide-react";
 import { useGsapAnimation } from "@/hooks/use-gsap-animation";
+import { Button } from "@/components/ui/button";
 
 interface Product {
   name: string;
@@ -111,13 +112,15 @@ function ProductCard({ product }: { product: Product }) {
       </ul>
 
       {/* CTA */}
-      <button
-        className="mt-auto inline-flex items-center justify-between w-full px-5 py-3 rounded-xl border border-border text-sm 2xl:text-base font-semibold text-foreground hover:bg-secondary transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+      <Button
+        variant="outline"
+        fullWidth
+        className="px-5 py-3 justify-between mt-auto"
         aria-label={`Saber más sobre ${product.name}`}
       >
         Saber más
         <ArrowUpRight size={16} className="text-purple-accent" aria-hidden="true" />
-      </button>
+      </Button>
     </article>
   );
 }

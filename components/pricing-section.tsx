@@ -5,6 +5,7 @@ import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useGsapAnimation } from "@/hooks/use-gsap-animation";
 import { useScrollToAnchor } from "@/hooks/use-lenis";
+import { Button } from "@/components/ui/button";
 
 interface PricingTier {
   name: string;
@@ -28,7 +29,7 @@ const tiers: PricingTier[] = [
       "SEO básico y velocidad optimizada",
       "Formulario de contacto funcional",
       "Despliegue incluido",
-      "Entrega en 1–2 semanas",
+      "Entrega en 1-2 semanas",
     ],
     cta: "Solicitar cotización",
     highlighted: false,
@@ -188,18 +189,15 @@ function PricingCard({ tier }: { tier: PricingTier }) {
       </ul>
 
       {/* CTA */}
-      <button
+      <Button
+        variant={tier.highlighted ? "white" : "outline"}
+        fullWidth
+        className="py-3.5"
         onClick={() => scrollToAnchor("#contacto")}
-        className={cn(
-"w-full py-3.5 rounded-xl text-sm font-semibold transition-colors duration-200",
-          tier.highlighted
-            ? "bg-white text-purple-accent hover:opacity-80"
-            : "border border-border text-foreground hover:bg-purple-accent/5 hover:border-purple-accent/30"
-        )}
         aria-label={`${tier.cta} - ${tier.name} plan`}
       >
         {tier.cta}
-      </button>
+      </Button>
 
       {/* Proof line */}
       {tier.proof && (

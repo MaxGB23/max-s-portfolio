@@ -9,6 +9,7 @@ import { useScrollToAnchor } from "@/hooks/use-lenis";
 import Aurora from "@/components/animations/Aurora";
 import { useState, useEffect } from "react";
 import { StackIcon } from "@/components/icons";
+import { Button } from "@/components/ui/button";
 
 const HERO_DATA = {
   role: "Full Stack Developer",
@@ -230,26 +231,28 @@ href="/documents/Maximiliano_Gonzalez_AI_Engineer_Resume.pdf"
 
         {/* CTA buttons */}
         <div className="hero-cta flex flex-wrap items-center justify-center gap-4" style={{ opacity: 0, visibility: 'hidden' }}>
-          <Link
-            href="#proyectos"
-            onClick={(e) => {
-              if (scrollToAnchor("#proyectos")) {
-                e.preventDefault();
-              }
-            }}
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-foreground text-background text-sm 2xl:text-base font-semibold hover:opacity-80 transition-opacity duration-200 shadow-md focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-ring"
-          >
-            Ver Proyectos
-            <ArrowDown size={15} aria-hidden="true" />
-          </Link>
-          <a
-            href="/documents/Maximiliano_Gonzalez_AI_Engineer_Resume.pdf"
-            download
-            className="inline-flex items-center gap-2 shadow-sm shadow-purple-accent/60 px-6 py-3 rounded-full border border-border text-foreground text-sm 2xl:text-base font-semibold hover:bg-purple-accent/5 hover:border-purple-accent/30 transition-colors duration-200 "
-          >
-            Descargar CV
-            <Download size={16} aria-hidden="true" />
-          </a>
+          <Button asChild variant="primary" shape="pill" size="md" className="shadow-md">
+            <Link
+              href="#proyectos"
+              onClick={(e) => {
+                if (scrollToAnchor("#proyectos")) {
+                  e.preventDefault();
+                }
+              }}
+            >
+              Ver Proyectos
+              <ArrowDown size={15} aria-hidden="true" />
+            </Link>
+          </Button>
+          <Button asChild variant="outline" shape="pill" size="md" glow>
+            <a
+              href="/documents/Maximiliano_Gonzalez_AI_Engineer_Resume.pdf"
+              download
+            >
+              Descargar CV
+              <Download size={16} aria-hidden="true" />
+            </a>
+          </Button>
         </div>
 
 
