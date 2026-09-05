@@ -42,7 +42,7 @@ function renderInline(text: string) {
 
 function SectionTitle({ children }: { children: ReactNode }) {
   return (
-    <h2 className="font-serif font-bold text-2xl md:text-3xl 2xl:text-4xl text-foreground mb-5">
+    <h2 className="font-serif font-bold text-fluid-subheading text-foreground mb-5">
       {children}
     </h2>
   );
@@ -260,11 +260,11 @@ export function ProjectDetail({ project }: { project: Project }) {
               {project.category}
             </span>
           </div>
-          <h1 className="font-serif font-black text-4xl md:text-6xl xl:text-7xl 2xl:text-8xl text-foreground leading-[1.02] tracking-tight text-balance">
+          <h1 className="font-serif font-black text-fluid-display text-foreground leading-[1.02] tracking-tight text-balance">
             {mainTitle && <span>{mainTitle} </span>}
             <span className="text-purple-accent brightness-110">{lastWord}</span>
           </h1>
-          <p className="mt-6 text-base md:text-xl 2xl:text-2xl text-muted-foreground max-w-2xl leading-relaxed">
+          <p className="mt-6 text-base 2xl:text-2xl text-muted-foreground max-w-2xl leading-relaxed">
             {detail.headline}
           </p>
           {tags.length > 0 && (
@@ -297,7 +297,7 @@ export function ProjectDetail({ project }: { project: Project }) {
                     <dd
                       className={`m-0 ${isLastOdd ? "sm:flex sm:items-center sm:justify-between sm:gap-8" : ""}`}
                     >
-                      <div className="font-serif font-black text-2xl md:text-3xl 2xl:text-4xl text-purple-accent">
+                      <div className="font-serif font-black text-fluid-subheading text-purple-accent">
                         <AnimatedMetric value={metric.value} />
                       </div>
                       <div

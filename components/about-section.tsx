@@ -85,16 +85,16 @@ export function AboutSection() {
 
         {/* Right Column: Info */}
         <div className="about-info flex flex-col items-center md:items-start text-center md:text-left z-10 max-w-2xl">
-          <p className="about-label brightness-125 uppercase tracking-[0.2em] font-medium text-muted-foreground mb-4 text-[15px] sm:text-base lg:text-xl 2xl:text-2xl" style={{ opacity: 0, visibility: 'hidden' }}>
+          <p className="about-label brightness-125 uppercase tracking-[0.2em] font-medium text-muted-foreground mb-4 text-fluid-eyebrow" style={{ opacity: 0, visibility: 'hidden' }}>
             {ABOUT_DATA.label}
           </p>
 
-          <h2 className="about-title md:flex md:gap-4 font-serif font-black uppercase text-5xl sm:text-6xl lg:text-7xl 2xl:text-8xl leading-[0.9] tracking-tighter text-foreground mb-6" style={{ opacity: 0, visibility: 'hidden' }}>
+          <h2 className="about-title md:flex md:gap-4 font-serif font-black uppercase text-fluid-section leading-[0.9] tracking-tighter text-foreground mb-6" style={{ opacity: 0, visibility: 'hidden' }}>
             <span>{ABOUT_DATA.title.first}</span>
             <span className="text-purple-accent"> {ABOUT_DATA.title.second}</span>
           </h2>
 
-          <div className="debug-l4 px-4 sm:px-16 md:px-0 about-description text-sm sm:text-base lg:text-lg 2xl:text-xl leading-relaxed text-muted-foreground max-w-lg space-y-4" style={{ opacity: 0, visibility: 'hidden' }}>
+          <div className="debug-l4 px-4 sm:px-16 md:px-0 about-description text-fluid-body leading-relaxed text-muted-foreground max-w-lg space-y-4" style={{ opacity: 0, visibility: 'hidden' }}>
             {ABOUT_DATA.paragraphs.map((text, index) => (
               <p key={index}>{text}</p>
             ))}

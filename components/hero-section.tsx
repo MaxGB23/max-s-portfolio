@@ -15,8 +15,7 @@ const HERO_DATA = {
     first: "Max González",
     last: "Ballesteros",
   },
-  description: "Creo aplicaciones web rápidas, modernas y enfocadas en la experiencia del usuario. Especializado en Next.js y React.",
-  description2: "Desarrollo aplicaciones web rápidas y escalables con Next.js y React, cuidando el rendimiento, la experiencia de usuario y calidad del código."
+  description: "Desarrollo aplicaciones web rápidas y escalables con Next.js y React, cuidando el rendimiento, la experiencia de usuario y calidad del código."
 };
 
 export function HeroSection() {
@@ -131,16 +130,16 @@ export function HeroSection() {
           {/* Left Column: Info */}
           <div className="hero-info flex flex-col items-center md:items-start text-center md:text-left z-10 max-w-2xl">
 
-            <p className="hero-label text-muted-foreground brightness-125 uppercase tracking-[0.2em] 2xl:tracking-widest font-medium mb-4 text-[15px] sm:text-base lg:text-xl 2xl:text-2xl" style={{ opacity: 0, visibility: 'hidden' }}>
+            <p className="hero-label text-muted-foreground brightness-125 uppercase tracking-[0.2em] 2xl:tracking-widest font-medium mb-4 text-fluid-eyebrow" style={{ opacity: 0, visibility: 'hidden' }}>
               {HERO_DATA.role}
             </p>
-            <h1 className="hero-title font-serif grid grid-cols-1 gap-3 font-black uppercase text-5xl sm:text-6xl lg:text-7xl 2xl:text-8xl leading-[0.9] tracking-tighter text-foreground mb-6" style={{ opacity: 0, visibility: 'hidden' }}>
+            <h1 className="hero-title font-serif grid grid-cols-1 gap-3 font-black uppercase text-fluid-display leading-[0.9] tracking-tighter text-foreground mb-6" style={{ opacity: 0, visibility: 'hidden' }}>
               <span>{HERO_DATA.title.first}</span>
               <span className="text-purple-accent  sm:tracking-[0.01em]">{HERO_DATA.title.last}</span>
             </h1>
 
-            <p className="hero-description debug-l4 px-4 sm:px-16 md:px-0 max-w-lg text-sm sm:text-base lg:text-lg 2xl:text-xl leading-relaxed brightness-125 text-muted-foreground md:max-w-[400px] 2xl:max-w-[625px] lg:max-w-[480px]" style={{ opacity: 0, visibility: 'hidden' }}>
-              {HERO_DATA.description2}
+            <p className="hero-description debug-l4 px-4 sm:px-16 md:px-0 max-w-lg text-fluid-body leading-relaxed brightness-125 text-muted-foreground md:max-w-[440px] 2xl:max-w-[625px] lg:max-w-[480px]" style={{ opacity: 0, visibility: 'hidden' }}>
+              {HERO_DATA.description}
             </p>
 
 

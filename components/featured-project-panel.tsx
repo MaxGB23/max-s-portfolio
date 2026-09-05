@@ -91,14 +91,14 @@ export function FeaturedProjectPanel({ project, children, overlay }: FeaturedPro
             {/* Title */}
             <h2
               id={`featured-title-${project.id}`}
-              className="font-serif font-black text-4xl md:text-5xl xl:text-6xl text-foreground leading-[1.05] tracking-tight text-balance mb-6"
+              className="font-serif font-black text-fluid-featured text-foreground leading-[1.05] tracking-tight text-balance mb-6"
             >
               {mainTitle && <span>{mainTitle} </span>}
               <span className="text-purple-accent brightness-125">{lastWord}</span>
             </h2>
 
             {/* Description */}
-            <p className="text-sm sm:text-base lg:text-lg 2xl:text-xl leading-relaxed text-muted-foreground mb-6 mr-6 sm:mr-0 lg:max-w-xl 2xl:max-w-[600px]">
+            <p className="text-fluid-body leading-relaxed text-muted-foreground mb-6 mr-6 sm:mr-0 lg:max-w-xl 2xl:max-w-[600px]">
               {project.description}
             </p>
 

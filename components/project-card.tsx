@@ -65,11 +65,11 @@ export function ProjectCard({ project }: ProjectCardProps) {
       <div className="flex flex-col flex-1 p-5">
         <h3
           id={`project-title-${project.id}`}
-          className="font-serif font-bold text-lg 2xl:text-2xl text-foreground mb-2 text-balance group-hover:text-foreground transition-colors"
+          className="font-serif font-bold text-fluid-card text-foreground mb-2 text-balance group-hover:text-foreground transition-colors"
         > 
           {project.title}
         </h3>
-        <p className="text-sm 2xl:text-lg leading-relaxed text-muted-foreground flex-1 mb-4 line-clamp-3">
+        <p className="text-fluid-card-body leading-relaxed text-muted-foreground flex-1 mb-4 line-clamp-3">
           {project.description}
         </p>
 

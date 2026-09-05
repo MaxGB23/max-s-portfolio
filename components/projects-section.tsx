@@ -32,7 +32,7 @@ const featuredProjects: FeaturedProject[] = getFeaturedProjects()
 // ---------------------------------------------------------------------------
 function SectionHeading() {
   return (
-    <h2 className="flex flex-col gap-2 md:gap-3 justify-center items-center font-serif font-black uppercase text-4xl sm:text-5xl lg:text-5xl xl:text-6xl 2xl:text-7xl leading-[0.9] tracking-tighter text-foreground md:mb-10">
+    <h2 className="flex flex-col gap-2 md:gap-3 justify-center items-center font-serif font-black uppercase text-fluid-section leading-[0.9] tracking-tighter text-foreground md:mb-10">
       <span>Proyectos</span>      
       <span className="text-purple-accent brightness-110">Destacados</span>
     </h2>
@@ -88,7 +88,7 @@ function ContactBanner() {
             <h3 className="font-serif font-bold text-xl text-foreground text-balance">
               ¿Trabajamos juntos?
             </h3> 
-            <p className="mt-2 text-sm leading-relaxed text-muted-foreground max-w-xl">
+            <p className="mt-2 text-base leading-relaxed text-muted-foreground max-w-xl">
               ¿Tienes un proyecto en mente? Escríbeme y hablemos de tu idea.
             </p>
           </div>
@@ -180,7 +180,7 @@ function ProjectsTransition() {
 
       <div className="max-w-7xl mx-auto flex flex-col items-center text-center">
         <FadeIn>
-          <h2 id="all-projects-heading" className="flex flex-col gap-2 md:gap-3 justify-center items-center font-serif font-black uppercase text-5xl sm:text-5xl lg:text-6xl 2xl:text-7xl leading-[0.9] tracking-tighter text-foreground mb-5">
+          <h2 id="all-projects-heading" className="flex flex-col gap-2 md:gap-3 justify-center items-center font-serif font-black uppercase text-fluid-section leading-[0.9] tracking-tighter text-foreground mb-5">
             <span>Todos los</span>
             <span className="text-purple-accent brightness-110">Proyectos</span>
           </h2>
