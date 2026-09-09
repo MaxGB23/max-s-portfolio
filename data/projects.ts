@@ -370,7 +370,7 @@ export const projects: Project[] = [
         },
         {
           value: "Contrato",
-          label: "entregado a cliente real (sep – dic 2024)",
+          label: "entregado a cliente real (sep - dic 2024)",
         },
       ],
       problem:
@@ -691,12 +691,6 @@ export const projects: Project[] = [
     imageAlt:
       "Gameplay de Cumyxel: plataformero 2D pixel-art con enemigos y salto variable",
     links: [
-      {
-        label: "Ver código",
-        kind: "code",
-        url: "https://github.com/MaxGB23/Cumyxel",
-        external: true,
-      },
       {
         label: "Cumyxel (MIT)",
         kind: "code",
