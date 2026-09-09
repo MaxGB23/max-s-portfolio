@@ -121,14 +121,13 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
-  --text-fluid-display: clamp(3rem, 2rem + 4vw, 6rem);
   --text-fluid-section: clamp(2.25rem, 1.5rem + 3vw, 4.5rem);
   --text-fluid-featured: clamp(2rem, 1.35rem + 2.6vw, 4rem);
   --text-fluid-card: clamp(1.125rem, 1rem + 0.5vw, 1.5rem);
   --text-fluid-subheading: clamp(1.5rem, 1.125rem + 1.2vw, 2.25rem);
   --text-fluid-body: clamp(1rem, 0.9rem + 0.5vw, 1.25rem);
   --text-fluid-card-body: clamp(1rem, 0.95rem + 0.3vw, 1.125rem);
-  --text-fluid-eyebrow: clamp(1.0625rem, 0.9rem + 0.8vw, 1.5rem);
+  --text-fluid-eyebrow: clamp(0.8125rem, 0.75rem + 0.35vw, 0.9375rem);
   /* Custom portfolio tokens - mapped to CSS variables for dark mode support */
   --color-nav: var(--nav-bg);
   --color-purple-accent: var(--accent-purple);
@@ -204,15 +203,5 @@
   [data-debug] .debug-l4 {
     outline: 1px solid #60a5fa;
     outline-offset: -1px;
-  }
-}
-
-/* ============================================================
-   Hero h1 — fix quirúrgico 768–800px (PENDIENTE DE APROBACIÓN)
-   Rango exacto donde el título desborda en dos columnas (md).
-   ============================================================ */
-@media (min-width: 768px) and (max-width: 800px) {
-  .hero-title {
-    font-size: 3.6rem;
   }
 }

@@ -262,7 +262,7 @@ export function ProjectDetail({ project }: { project: Project }) {
               {project.category}
             </span>
           </div>
-          <h1 className="font-serif font-black text-fluid-display text-foreground leading-[1.02] tracking-tight text-balance">
+          <h1 className="font-serif font-black text-fluid-section text-foreground leading-[1.02] tracking-tight text-balance">
             {mainTitle && <span>{mainTitle} </span>}
             <span className="text-purple-accent brightness-110">{lastWord}</span>
           </h1>

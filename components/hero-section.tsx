@@ -10,6 +10,7 @@ import Aurora from "@/components/animations/Aurora";
 import { useState, useEffect } from "react";
 import { StackIcon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
+import { useTitleWidth } from "@/hooks/use-title-width";
 
 const HERO_DATA = {
   role: "Full Stack Developer",
@@ -24,6 +25,7 @@ export function HeroSection() {
   const [mounted, setMounted] = useState(false);
   const [isDark, setIsDark] = useState(false);
   const scrollToAnchor = useScrollToAnchor(64);
+  const { ref: titleRef, width: titleWidth } = useTitleWidth<HTMLHeadingElement>("span");
 
   useEffect(() => {
     // Initialize from the DOM (matches the DarkModeToggle's method)
@@ -136,12 +138,12 @@ export function HeroSection() {
             <p className="hero-label text-muted-foreground brightness-125 uppercase tracking-[0.2em] 2xl:tracking-widest font-medium mb-4 text-fluid-eyebrow" style={{ opacity: 0, visibility: 'hidden' }}>
               {HERO_DATA.role}
             </p>
-            <h1 className="hero-title font-serif grid grid-cols-1 gap-3 font-black uppercase text-fluid-display leading-[0.9] tracking-tighter text-foreground mb-6" style={{ opacity: 0, visibility: 'hidden' }}>
+            <h1 ref={titleRef} className="hero-title font-serif grid grid-cols-1 gap-3 font-black uppercase text-fluid-section leading-[0.9] tracking-tighter text-foreground mb-6" style={{ opacity: 0, visibility: 'hidden' }}>
               <span>{HERO_DATA.title.first}</span>
               <span className="text-purple-accent  sm:tracking-[0.01em]">{HERO_DATA.title.last}</span>
             </h1>
 
-            <p className="hero-description debug-l4 px-4 sm:px-16 md:px-0 max-w-lg text-fluid-body leading-relaxed brightness-125 text-muted-foreground md:max-w-[440px] 2xl:max-w-[625px] lg:max-w-[480px]" style={{ opacity: 0, visibility: 'hidden' }}>
+            <p className="hero-description debug-l4 px-4 sm:px-16 md:px-0 text-fluid-body leading-relaxed brightness-125 text-muted-foreground max-w-full" style={{ opacity: 0, visibility: 'hidden', maxWidth: titleWidth ?? undefined }}>
               {HERO_DATA.description}
             </p>
 
@@ -180,7 +182,7 @@ href="/documents/Maximiliano_Gonzalez_AI_Engineer_Resume.pdf"
 
           {/* Right Column: Portrait */}
           <div
-            className="hero-portrait relative rounded-4xl shrink-0 shadow-xl w-[240px] sm:w-[300px] md:w-[260px] lg:w-[300px] 2xl:w-[400px] aspect-8/9 z-0 mt-4 md:mt-0"
+            className="hero-portrait relative rounded-4xl shrink-0 shadow-xl w-[240px] sm:w-[300px] md:w-[260px] lg:w-[260px] 2xl:w-[300px] aspect-8/9 z-0 mt-4 md:mt-0"
             style={{ opacity: 0, visibility: 'hidden' }}
           >
             <div className="w-full h-full rounded-4xl overflow-hidden relative">

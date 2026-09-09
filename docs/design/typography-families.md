@@ -29,18 +29,25 @@ Todos son `clamp(min, rem + vw, max)` — base en rems, pendiente en vw (cumple 
 
 | Token | Fórmula | Tamaño (px) | Uso |
 |-------|---------|-------------|-----|
-| `text-fluid-display` | `clamp(3rem, 2rem + 4vw, 6rem)` | 48 → 96 | Hero `h1`, Detail `h1` |
-| `text-fluid-section` | `clamp(2.25rem, 1.5rem + 3vw, 4.5rem)` | 36 → 72 | Headings de sección (About, Projects, Pricing) |
+| `text-fluid-section` | `clamp(2.25rem, 1.5rem + 3vw, 4.5rem)` | 36 → 72 | Headings de sección + Hero `h1` + Detail `h1` |
 | `text-fluid-featured` | `clamp(2rem, 1.35rem + 2.6vw, 4rem)` | 32 → 64 | Featured panel `h2` |
 | `text-fluid-card` | `clamp(1.125rem, 1rem + 0.5vw, 1.5rem)` | 18 → 24 | Card `h3` |
 | `text-fluid-subheading` | `clamp(1.5rem, 1.125rem + 1.2vw, 2.25rem)` | 24 → 36 | Detail SectionTitle + métricas |
 | `text-fluid-body` | `clamp(1rem, 0.9rem + 0.5vw, 1.25rem)` | 16 → 20 | Descripciones (hero, about, featured, pricing) |
 | `text-fluid-card-body` | `clamp(1rem, 0.95rem + 0.3vw, 1.125rem)` | 16 → 18 | Descripción de cards |
-| `text-fluid-eyebrow` | `clamp(1.0625rem, 0.9rem + 0.8vw, 1.5rem)` | 17 → 24 | Labels / eyebrows (role, "Conóceme") |
+| `text-fluid-eyebrow` | `clamp(0.8125rem, 0.75rem + 0.35vw, 0.9375rem)` | 13 → 15 | Labels / eyebrows (role, "Conóceme") |
 
-**Calibración**: display/section/card topan exactamente en 1600px; body topa en ~1120px; eyebrow en ~1200px; featured en ~1631px. En pantallas < 400px los títulos quedan fijos en su mínimo.
+**Calibración**: section/card topan exactamente en 1600px; body topa en ~1120px; eyebrow topa en ~857px (13.3px a 375px, 15px desde 857px); featured en ~1631px. En pantallas < 400px los títulos quedan fijos en su mínimo.
 
-> Decisión clave: **el primer escalón de la escalera es 16px (body)** — nada de texto de lectura baja de eso. Los labels están deliberadamente ≥1px por encima de su descripción en TODAS las resoluciones (patrón "role/label unos px más grandes que su descripción").
+> Decisión clave (actualizada 2026-09): **el primer escalón de la escalera es 16px (body)** — nada de texto de lectura baja de eso. Los labels/eyebrows van **deliberadamente POR DEBAJO del body en TODAS las resoluciones** (13 → 15px vs 16 → 20px de body), siguiendo la práctica 2026 de eyebrows en 12–16px: el uppercase + tracking ya da presencia sin tamaño. Antes usaban 17 → 24px (mayores que el body en mobile — jerarquía invertida, corregido).
+
+**Medidas reales en mobile 375px** (2026-09, aprobadas por el usuario):
+
+| Elemento | Token | Tamaño real (375px) | Rango de práctica 2026 |
+|----------|-------|---------------------|------------------------|
+| role / label (hero y about) | `text-fluid-eyebrow` | **13.3px** | 12–16px ✅ |
+| descripción | `text-fluid-body` | **16.3px** | 16–18px ✅ |
+| h1 hero / h2 about | `text-fluid-section` | **36px** | 28–40px ✅ |
 
 ---
 
@@ -48,13 +55,13 @@ Todos son `clamp(min, rem + vw, max)` — base en rems, pendiente en vw (cumple 
 
 | Sección | Padding base | md (768–1023) | lg (1024+) |
 |---------|-------------|---------------|------------|
-| Hero | `px-6` (24px) | `md:px-4` (16px) | `lg:px-12` (48px) |
-| About | `px-6` (24px) | `md:px-4` (16px) | `lg:px-12` (48px) |
+| Hero | `px-6` (24px) | `md:px-8` (32px) | `lg:px-12` (48px) |
+| About | `px-6` (24px) | `md:px-8` (32px) | `lg:px-12` (48px) |
 | Featured | `px-6` (24px) | `md:px-12` (48px) | `lg:px-20` (80px) |
 | Navbar / Footer / Projects / Pricing | `px-6` (24px) | — | — |
 | Detail | `px-6` (24px) | `md:px-12` (48px) | `lg:px-20` (80px) |
 
-> Hero/About usan `md:px-4` (el mínimo que no desborda el título) — ver **Deuda conocida** abajo.
+> Hero/About usan `md:px-8` (32px). El `md:px-4` de la versión anterior y su mq quirúrgica 768–800px desaparecieron con la uniformización del `h1` (2026-09): ya no hay desborde en dos columnas.
 
 ---
 
@@ -62,16 +69,15 @@ Todos son `clamp(min, rem + vw, max)` — base en rems, pendiente en vw (cumple 
 
 | Nivel | Pieza | Token | Máx (2xl) | Familia / Peso |
 |-------|-------|-------|-----------|----------------|
-| 1 | Hero `h1` / Detail `h1` | `text-fluid-display` | 96px | serif / black |
-| 2 | Headings de sección (About `h2`, "Proyectos Destacados", "Todos los Proyectos", "Servicios a medida") | `text-fluid-section` | 72px | serif / black |
-| 3 | Featured panel `h2` (caso de estudio apilado) | `text-fluid-featured` | 64px — **un escalón bajo su sección a propósito (4–9px menor en todo el rango, ratio ≈ 0.88)** | serif / black |
-| 4 | Card `h3` (título de proyecto) | `text-fluid-card` | 24px | serif / bold |
-| 5 | Detail SectionTitle `h2` + métricas | `text-fluid-subheading` | 36px | serif / bold |
-| 6 | Descripciones / body | `text-fluid-body` | 20px | sans (heredada) |
-| 7 | Descripción de cards | `text-fluid-card-body` | 18px | sans (heredada) |
-| 8 | Labels / eyebrows | `text-fluid-eyebrow` | 24px | sans (heredada) |
+| 1 | Headings de sección — Hero `h1`, Detail `h1`, About `h2`, "Proyectos Destacados", "Todos los Proyectos", "Servicios a medida" | `text-fluid-section` | 72px | serif / black |
+| 2 | Featured panel `h2` (caso de estudio apilado) | `text-fluid-featured` | 64px — **escalón bajo las secciones (4–9px menor en todo el rango, ratio ≈ 0.88)** | serif / black |
+| 3 | Card `h3` (título de proyecto) | `text-fluid-card` | 24px | serif / bold |
+| 4 | Detail SectionTitle `h2` + métricas | `text-fluid-subheading` | 36px | serif / bold |
+| 5 | Descripciones / body | `text-fluid-body` | 20px | sans (heredada) |
+| 6 | Descripción de cards | `text-fluid-card-body` | 18px | sans (heredada) |
+| 7 | Labels / eyebrows | `text-fluid-eyebrow` | 15px | sans (heredada) |
 
-> Nota histórica: "Sobre Mí" (About `h2`) **solía** llegar a `2xl:text-8xl` como el hero; con el sistema fluido bajó a `text-fluid-section` (36→72px). El hero `h1` es el único display de 96px.
+> Nota histórica: el hero `h1` **solía** tener un titular propio de 96px (`text-fluid-display`, ratio fijo 4:3 sobre la sección — se percibía desproporcionado en todos los dispositivos). Uniformización (2026-09): hero y detail usan `text-fluid-section` (36→72px); se eliminaron el token `text-fluid-display`, la mq quirúrgica 768–800px y el `md:px-4`. La jerarquía del hero se apoya en composición (uppercase, tracking, layout, aurora), no en tamaño.
 
 ---
 
@@ -95,14 +101,14 @@ Todos son `clamp(min, rem + vw, max)` — base en rems, pendiente en vw (cumple 
 | Elemento | Familia | Clases (orden real) |
 |----------|---------|---------------------|
 | Label "Full Stack Developer" | sans (heredada) | `uppercase tracking-[0.2em] 2xl:tracking-widest font-medium text-fluid-eyebrow` |
-| `h1` "Max González Ballesteros" | serif | `font-serif font-black uppercase text-fluid-display leading-[0.9] tracking-tighter` |
-| Descripción | sans (heredada) | `px-4 sm:px-16 md:px-0 max-w-lg text-fluid-body leading-relaxed brightness-125 text-muted-foreground md:max-w-[440px] 2xl:max-w-[625px] lg:max-w-[480px]` |
+| `h1` "Max González Ballesteros" | serif | `font-serif font-black uppercase text-fluid-section leading-[0.9] tracking-tighter` |
+| Descripción | sans (heredada) | `px-4 sm:px-16 md:px-0 text-fluid-body leading-relaxed brightness-125 text-muted-foreground max-w-full` + `style: maxWidth` medido del título (hook `useTitleWidth`) |
 | Botones CTA (Ver Proyectos / Descargar CV) | sans (heredada) | `text-sm 2xl:text-base font-semibold` |
 | Label "Stack Principal" | sans (heredada) | `text-xs 2xl:text-base uppercase tracking-widest font-semibold` |
 | Indicador "Deslizar" | sans (heredada) | `text-xs 2xl:text-base tracking-widest uppercase` |
 | Icónos de stack | — | `size-6 2xl:size-7` |
 
-> La descripción usa `md:max-w-[440px]` (subido desde 400px para que a 18–19px respire en md) y topa en `2xl:max-w-[625px]`.
+> La descripción toma el ancho de la línea más ancha del `h1` (hook `useTitleWidth`, mide los `<span>` del título). Sin "valores mágicos": max-width solo en multi-columna (md+, 768px); en mobile fluye al ancho natural del contenedor.
 
 ---
 
@@ -112,7 +118,7 @@ Todos son `clamp(min, rem + vw, max)` — base en rems, pendiente en vw (cumple 
 |----------|---------|---------------------|
 | Label "Conóceme" | sans (heredada) | `uppercase tracking-[0.2em] font-medium text-fluid-eyebrow` |
 | `h2` "Sobre Mí" | serif | `font-serif font-black uppercase text-fluid-section leading-[0.9] tracking-tighter` |
-| Descripción (2 párrafos) | sans (heredada) | `px-4 sm:px-16 md:px-0 text-fluid-body leading-relaxed max-w-lg` |
+| Descripción (2 párrafos) | sans (heredada) | `px-4 sm:px-16 md:px-0 text-fluid-body leading-relaxed text-muted-foreground max-w-[62ch] space-y-4` |
 
 ---
 
@@ -123,7 +129,7 @@ Todos son `clamp(min, rem + vw, max)` — base en rems, pendiente en vw (cumple 
 | Índice numérico "01" | mono | `text-sm 2xl:text-lg font-mono tabular-nums font-bold` |
 | Badge de categoría | sans (heredada) | `text-xs font-semibold` (pill purple) |
 | `h2` Título del proyecto | serif | `font-serif font-black text-fluid-featured leading-[1.05] tracking-tight text-balance` |
-| Descripción | sans (heredada) | `text-fluid-body leading-relaxed max-w-xl 2xl:max-w-[600px]` |
+| Descripción | sans (heredada) | `text-fluid-body leading-relaxed text-muted-foreground mb-6 mr-6 sm:mr-0 max-w-[62ch]` |
 | Métrica clave | sans (heredada) | `text-xs sm:text-sm font-semibold` (pill outline purple) |
 | Botón CTA "Ver caso de estudio" | sans (heredada) | `text-sm font-semibold` |
 | Badge flotante de índice | serif | `text-2xl font-black font-serif` (número) |
@@ -170,7 +176,7 @@ Todos son `clamp(min, rem + vw, max)` — base en rems, pendiente en vw (cumple 
 |----------|---------|---------------------|
 | Botón flotante "Volver" | sans (heredada) | `text-sm 2xl:text-base font-semibold` |
 | Badge de categoría (hero) | sans (heredada) | `text-xs 2xl:text-sm font-semibold` (pill purple) |
-| `h1` Título del proyecto | serif | `font-serif font-black text-fluid-display leading-[1.02] tracking-tight text-balance` |
+| `h1` Título del proyecto | serif | `font-serif font-black text-fluid-section leading-[1.02] tracking-tight text-balance` |
 | `p` headline (hero) | sans (heredada) | `text-base 2xl:text-2xl leading-relaxed max-w-2xl` |
 | Chips de stack (StackChips) | sans (heredada) | texto `text-sm 2xl:text-base`; iconos `w-6 h-6 2xl:w-7 2xl:h-7`; fallback `text-[9px] 2xl:text-[10px]` |
 | `h2` Sección (SectionTitle) | serif | `font-serif font-bold text-fluid-subheading` |
@@ -222,10 +228,9 @@ Todos son `clamp(min, rem + vw, max)` — base en rems, pendiente en vw (cumple 
 
 ## Deuda conocida
 
-1. **[md — PENDIENTE DE DECIDIR]** El `h1` del hero desborda en 768–1023px con dos columnas: `md:flex-row` deja ancho disponible ≈ viewport − imagen 260px − `gap-12` (48px). Con `text-fluid-display` a ~63px en md, "BALLESTEROS" mide ~450px y solo cabe con `md:px-4` (16px). El `px-4` es el mínimo que no desborda, NO un diseño cómodo. Causa raíz: **h1 fluido demasiado grande para dos columnas en md**, no las imágenes (scroll-horizontal: las imágenes escalan por breakpoint y eso es correcto). Fixes candidatos: (a) limitar display en md, (b) apilar el hero hasta `lg:flex-row` en vez de `md:flex-row`. **Decisión pendiente — ver memoria.**
-2. Pricing subtítulo header: clase malformada `2xl mx-auto` (un "2xl" suelto sin selector `text-`) tal cual está en el código.
-3. Pricing precio: `font-serif font-black text-5xl leading-none` sin `tabular-nums` (los dígitos pueden no alinear).
-4. Geist Mono no se carga con `next/font`; cae a fallback local.
+1. Pricing subtítulo header: clase malformada `2xl mx-auto` (un "2xl" suelto sin selector `text-`) tal cual está en el código.
+2. Pricing precio: `font-serif font-black text-5xl leading-none` sin `tabular-nums` (los dígitos pueden no alinear).
+3. Geist Mono no se carga con `next/font`; cae a fallback local.
 
 ---
 

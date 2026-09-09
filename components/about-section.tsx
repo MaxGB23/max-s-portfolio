@@ -94,7 +94,7 @@ export function AboutSection() {
             <span className="text-purple-accent"> {ABOUT_DATA.title.second}</span>
           </h2>
 
-          <div className="debug-l4 px-4 sm:px-16 md:px-0 about-description text-fluid-body leading-relaxed text-muted-foreground max-w-lg space-y-4" style={{ opacity: 0, visibility: 'hidden' }}>
+          <div className="debug-l4 px-4 sm:px-16 md:px-0 about-description text-fluid-body leading-relaxed text-muted-foreground max-w-[62ch] space-y-4" style={{ opacity: 0, visibility: 'hidden' }}>
             {ABOUT_DATA.paragraphs.map((text, index) => (
               <p key={index}>{text}</p>
             ))}

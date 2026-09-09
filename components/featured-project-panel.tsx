@@ -99,7 +99,7 @@ export function FeaturedProjectPanel({ project, children, overlay }: FeaturedPro
             </h2>
 
             {/* Description */}
-            <p className="text-fluid-body leading-relaxed text-muted-foreground mb-6 mr-6 sm:mr-0 lg:max-w-xl 2xl:max-w-[600px]">
+            <p className="text-fluid-body leading-relaxed text-muted-foreground mb-6 mr-6 sm:mr-0 max-w-[62ch]">
               {project.description}
             </p>
 
