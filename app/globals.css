@@ -121,13 +121,13 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
-  --text-fluid-section: clamp(2.25rem, 1.5rem + 3vw, 4.5rem);
-  --text-fluid-featured: clamp(2rem, 1.35rem + 2.6vw, 4rem);
-  --text-fluid-card: clamp(1.125rem, 1rem + 0.5vw, 1.5rem);
-  --text-fluid-subheading: clamp(1.5rem, 1.125rem + 1.2vw, 2.25rem);
-  --text-fluid-body: clamp(1rem, 0.9rem + 0.5vw, 1.25rem);
-  --text-fluid-card-body: clamp(1rem, 0.95rem + 0.3vw, 1.125rem);
-  --text-fluid-eyebrow: clamp(0.8125rem, 0.75rem + 0.35vw, 0.9375rem);
+  --text-fluid-section: clamp(2.25rem, 1.56rem + 2.94vw, 4.5rem);
+  --text-fluid-featured: clamp(2rem, 1.39rem + 2.61vw, 4rem);
+  --text-fluid-card: clamp(1.125rem, 1.01rem + 0.49vw, 1.5rem);
+  --text-fluid-subheading: clamp(1.5rem, 1.27rem + 0.98vw, 2.25rem);
+  --text-fluid-body: clamp(1rem, 0.96rem + 0.16vw, 1.125rem);
+  --text-fluid-card-body: clamp(1rem, 0.96rem + 0.16vw, 1.125rem);
+  --text-fluid-eyebrow: clamp(0.9375rem, 0.86rem + 0.33vw, 1.1875rem);
   /* Custom portfolio tokens - mapped to CSS variables for dark mode support */
   --color-nav: var(--nav-bg);
   --color-purple-accent: var(--accent-purple);

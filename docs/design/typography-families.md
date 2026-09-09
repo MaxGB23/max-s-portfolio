@@ -29,24 +29,24 @@ Todos son `clamp(min, rem + vw, max)` — base en rems, pendiente en vw (cumple 
 
 | Token | Fórmula | Tamaño (px) | Uso |
 |-------|---------|-------------|-----|
-| `text-fluid-section` | `clamp(2.25rem, 1.5rem + 3vw, 4.5rem)` | 36 → 72 | Headings de sección + Hero `h1` + Detail `h1` |
-| `text-fluid-featured` | `clamp(2rem, 1.35rem + 2.6vw, 4rem)` | 32 → 64 | Featured panel `h2` |
-| `text-fluid-card` | `clamp(1.125rem, 1rem + 0.5vw, 1.5rem)` | 18 → 24 | Card `h3` |
-| `text-fluid-subheading` | `clamp(1.5rem, 1.125rem + 1.2vw, 2.25rem)` | 24 → 36 | Detail SectionTitle + métricas |
-| `text-fluid-body` | `clamp(1rem, 0.9rem + 0.5vw, 1.25rem)` | 16 → 20 | Descripciones (hero, about, featured, pricing) |
-| `text-fluid-card-body` | `clamp(1rem, 0.95rem + 0.3vw, 1.125rem)` | 16 → 18 | Descripción de cards |
-| `text-fluid-eyebrow` | `clamp(0.8125rem, 0.75rem + 0.35vw, 0.9375rem)` | 13 → 15 | Labels / eyebrows (role, "Conóceme") |
+| `text-fluid-section` | `clamp(2.25rem, 1.56rem + 2.94vw, 4.5rem)` | 36 → 72 | Headings de sección + Hero `h1` + Detail `h1` |
+| `text-fluid-featured` | `clamp(2rem, 1.39rem + 2.61vw, 4rem)` | 32 → 64 | Featured panel `h2` |
+| `text-fluid-card` | `clamp(1.125rem, 1.01rem + 0.49vw, 1.5rem)` | 18 → 24 | Card `h3` |
+| `text-fluid-subheading` | `clamp(1.5rem, 1.27rem + 0.98vw, 2.25rem)` | 24 → 36 | Detail SectionTitle + métricas |
+| `text-fluid-body` | `clamp(1rem, 0.96rem + 0.16vw, 1.125rem)` | 16 → 18 | Descripciones (hero, about, featured, pricing) |
+| `text-fluid-card-body` | `clamp(1rem, 0.96rem + 0.16vw, 1.125rem)` | 16 → 18 | Descripción de cards |
+| `text-fluid-eyebrow` | `clamp(0.9375rem, 0.86rem + 0.33vw, 1.1875rem)` | 15 → 19 | Labels / eyebrows (role, "Conóceme") |
 
-**Calibración**: section/card topan exactamente en 1600px; body topa en ~1120px; eyebrow topa en ~857px (13.3px a 375px, 15px desde 857px); featured en ~1631px. En pantallas < 400px los títulos quedan fijos en su mínimo.
+**Calibración (2026-09, recalibración unificada)**: TODOS los tokens interpolan en la **misma ventana 375 → 1600px** y topan exactamente en 1600px. Antes cada token topaba en un ancho distinto (eyebrow 857px, card-body 933px, body 1120px, section 1600px, featured 1631px) y la jerarquía relativa se distorsionaba al crecer la resolución. Body reducido de 20px → 18px máximo (práctica 2026: 16–18px). En pantallas < 375px los títulos quedan fijos en su mínimo.
 
-> Decisión clave (actualizada 2026-09): **el primer escalón de la escalera es 16px (body)** — nada de texto de lectura baja de eso. Los labels/eyebrows van **deliberadamente POR DEBAJO del body en TODAS las resoluciones** (13 → 15px vs 16 → 20px de body), siguiendo la práctica 2026 de eyebrows en 12–16px: el uppercase + tracking ya da presencia sin tamaño. Antes usaban 17 → 24px (mayores que el body en mobile — jerarquía invertida, corregido).
+> Decisión clave (actualizada 2026-09): **el primer escalón de la escalera es 16px (body)** — nada de texto de lectura baja de eso. Los labels/eyebrows (role, "Conóceme") se tratan como **kicker del título**, NO como eyebrow decorativo de UI: van −1px bajo el body en mobile (15 vs 16), ≈igual en sm–md, y +1px SOBRE el body en grandes (19 vs 18 a 1600px). El cruce con la curva del body ocurre en ~941px. La presencia del role se apoya en tamaño (no solo uppercase + tracking como antes), porque es la declaración de identidad del hero: el "Full Stack Developer" dejó de ser el texto más pequeño de la sección. Los eyebrows puramente decorativos de UI (badges, "desde" en pricing) siguen la norma 12–16px en contextos pequeños.
 
 **Medidas reales en mobile 375px** (2026-09, aprobadas por el usuario):
 
 | Elemento | Token | Tamaño real (375px) | Rango de práctica 2026 |
 |----------|-------|---------------------|------------------------|
-| role / label (hero y about) | `text-fluid-eyebrow` | **13.3px** | 12–16px ✅ |
-| descripción | `text-fluid-body` | **16.3px** | 16–18px ✅ |
+| role / label (hero y about) | `text-fluid-eyebrow` | **15px** | 12–16px ✅ |
+| descripción | `text-fluid-body` | **16px** | 16–18px ✅ |
 | h1 hero / h2 about | `text-fluid-section` | **36px** | 28–40px ✅ |
 
 ---
@@ -73,9 +73,9 @@ Todos son `clamp(min, rem + vw, max)` — base en rems, pendiente en vw (cumple 
 | 2 | Featured panel `h2` (caso de estudio apilado) | `text-fluid-featured` | 64px — **escalón bajo las secciones (4–9px menor en todo el rango, ratio ≈ 0.88)** | serif / black |
 | 3 | Card `h3` (título de proyecto) | `text-fluid-card` | 24px | serif / bold |
 | 4 | Detail SectionTitle `h2` + métricas | `text-fluid-subheading` | 36px | serif / bold |
-| 5 | Descripciones / body | `text-fluid-body` | 20px | sans (heredada) |
+| 5 | Descripciones / body | `text-fluid-body` | 18px | sans (heredada) |
 | 6 | Descripción de cards | `text-fluid-card-body` | 18px | sans (heredada) |
-| 7 | Labels / eyebrows | `text-fluid-eyebrow` | 15px | sans (heredada) |
+| 7 | Labels / eyebrows (kicker) | `text-fluid-eyebrow` | 19px | sans (heredada) |
 
 > Nota histórica: el hero `h1` **solía** tener un titular propio de 96px (`text-fluid-display`, ratio fijo 4:3 sobre la sección — se percibía desproporcionado en todos los dispositivos). Uniformización (2026-09): hero y detail usan `text-fluid-section` (36→72px); se eliminaron el token `text-fluid-display`, la mq quirúrgica 768–800px y el `md:px-4`. La jerarquía del hero se apoya en composición (uppercase, tracking, layout, aurora), no en tamaño.
 
