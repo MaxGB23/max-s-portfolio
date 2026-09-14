@@ -198,7 +198,7 @@ Todos son `clamp(min, rem + vw, max)` — base en rems, pendiente en vw (cumple 
 | `p` headline (hero) | sans (heredada) | `text-base 2xl:text-2xl leading-relaxed max-w-2xl` |
 | Chips de stack (StackChips) | sans (heredada) | texto `text-sm 2xl:text-base`; iconos `w-6 h-6 2xl:w-7 2xl:h-7`; fallback `text-[9px] 2xl:text-[10px]` |
 | `h2` Sección (SectionTitle) | serif | `font-serif font-bold text-fluid-subheading` |
-| Valor de métrica | serif | `font-serif font-black text-fluid-subheading` |
+| Valor de métrica | serif | `font-serif font-black text-fluid-card text-purple-accent` — **rebajado de subheading (2026-09-14)**: competía con su SectionTitle (mismo token + black); ahora queda 1.5× bajo el título y 1.5× sobre su label |
 | Etiqueta de métrica | sans (heredada) | `text-xs sm:text-sm 2xl:text-base leading-snug` |
 | Cuerpo editorial (Resumen/Problema/Rol/Solución/Galería) | sans (heredada) | `text-base 2xl:text-lg leading-relaxed` |
 | Placeholder de galería "Captura próximamente" | mono | `font-mono text-xs 2xl:text-sm uppercase tracking-widest` |

@@ -308,7 +308,7 @@ export function ProjectDetail({ project }: { project: Project }) {
                     <dd
                       className={`m-0 ${isLastOdd ? "sm:flex sm:items-center sm:justify-between sm:gap-8" : ""}`}
                     >
-                      <div className="font-serif font-black text-fluid-subheading text-purple-accent">
+                      <div className="font-serif font-black text-fluid-card text-purple-accent">
                         <AnimatedMetric value={metric.value} />
                       </div>
                       <div
