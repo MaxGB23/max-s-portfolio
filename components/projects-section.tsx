@@ -202,8 +202,12 @@ export function ProjectsSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
+    if (!sectionRef.current) return;
     gsap.registerPlugin(ScrollTrigger);
 
+    // Scope = DOM element (not the ref object): GSAP warns "Invalid scope"
+    // when the ref's .current is null at selector-resolution time (HMR /
+    // matchMedia re-runs in dev). An element is always resolvable.
     const ctx = gsap.context(() => {
       const mm = gsap.matchMedia();
 
@@ -212,7 +216,7 @@ export function ProjectsSection() {
       // two-column card fit the pinned viewport. Outside that range the panels
       // render in normal flow — each card (CTA included) fully visible with
       // native scroll, no jank, no overlap.
-      mm.add("(min-width: 1024px) and (min-height: 700px)", () => {
+      mm.add("(min-width: 1024px) and (min-height: 768px)", () => {
         const panels = gsap.utils.toArray<HTMLElement>(".featured-panel");
         if (panels.length === 0) return;
 
@@ -270,7 +274,7 @@ export function ProjectsSection() {
       });
 
       });
-    }, sectionRef);
+    }, sectionRef.current);
 
     return () => ctx.revert();
   }, []);
