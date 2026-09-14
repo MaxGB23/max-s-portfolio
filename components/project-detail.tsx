@@ -180,23 +180,39 @@ export function ProjectDetail({ project }: { project: Project }) {
         });
       });
 
-      // Floating back buttons - hide on scroll down, reveal on scroll up.
-      // Applies to every .back-btn (desktop gutter pill + mobile FAB).
-      // Only animates on a state transition (never per scroll event) with
-      // overwrite, so Lenis-driven scroll can't pile up competing tweens.
+      // Floating back buttons - visible on load, hide on scroll down, reveal
+      // on scroll up (mirrors the navbar behaviour). Uses raw scrollY
+      // direction instead of getVelocity(), which is unreliable without
+      // Lenis on real Android. The 8 px threshold matches the navbar and
+      // filters finger tremor / micro-scrolls that would otherwise flicker.
+      const BACK_THRESHOLD = 8;
       const backButtons = gsap.utils.toArray<HTMLElement>(".back-btn");
       if (backButtons.length > 0) {
+        let prevY = window.scrollY;
         let hidden = false;
         ScrollTrigger.create({
           start: 0,
           end: "max",
-          onUpdate: (self) => {
-            const shouldHide = self.getVelocity() > 40;
-            if (shouldHide === hidden) return;
-            hidden = shouldHide;
+          onUpdate: () => {
+            const y = window.scrollY;
+            const delta = y - prevY;
+            // At top of page: always visible
+            if (y <= 0) {
+              if (hidden) {
+                hidden = false;
+                gsap.to(backButtons, { opacity: 1, y: 0, duration: 0.25, ease: "power2.out", overwrite: "auto" });
+              }
+              prevY = y;
+              return;
+            }
+            if (Math.abs(delta) <= BACK_THRESHOLD) return;
+            prevY = y;
+            const scrollingDown = delta > 0;
+            if (scrollingDown === hidden) return;
+            hidden = scrollingDown;
             gsap.to(backButtons, {
-              opacity: shouldHide ? 0 : 1,
-              y: shouldHide ? 24 : 0,
+              opacity: scrollingDown ? 0 : 1,
+              y: scrollingDown ? 24 : 0,
               duration: 0.25,
               ease: "power2.out",
               overwrite: "auto",
