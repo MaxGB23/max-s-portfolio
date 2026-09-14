@@ -22,15 +22,30 @@ El único componente UI base del sistema. API renovada (no shadcn original): `va
 - `"use client"`; única prop: `children: ReactNode`.
 - Envuelve `{children}` en `app/layout.tsx` (línea 43). Inicializa **Lenis `1.3.18-dev.1`** solo en desktop (`window.innerWidth >= 768`); en mobile queda `null` y todo cae al scroll nativo.
 - Config: `duration: 1`, `easing` expo-out (`Math.min(1, 1.001 - Math.pow(2, -10 * t))`), `smoothWheel: true`, `wheelMultiplier: 1`. Conecta `lenisInstance.on("scroll", ScrollTrigger.update)` + `gsap.ticker.lagSmoothing(0)` y monta un `LenisProvider` custom con la instancia.
+- Monta `<ScrollRestorer />` dentro del `LenisProvider` (ver Hooks) — autoridad de scroll ante cambios de ruta.
 
 ### Hooks (`hooks/use-lenis.tsx`) — **la vía correcta para navegar por anclas**
 - `useScrollToAnchor(navbarHeight)` → devuelve un handler que hace `lenis.scrollTo(y, { duration: 2 })` compensando el navbar (64px) y con fallback a `scrollIntoView` si Lenis es null (mobile). Usado por hero (CTA "Ver Proyectos") y pricing (CTA del plan), siempre con `useScrollToAnchor(64)`. El navbar usa también `useScrollToTop()`.
+- `saveHomeScroll(y)` / `takeHomeScroll()` → handoff home⇄detail: las cards y el CTA del panel destacado capturan la posición del grid al salir; el "Volver" la consume y `ScrollRestorer` la reaplica. Next restaura scroll nativamente, pero Lenis mantiene su propio valor interno y lo escribe cada frame — por eso el handoff es explícito.
+- `ScrollRestorer` (montado por `SmoothScroll`) → en `/` restaura la posición capturada (y al entrar a un detalle fuerza top), esperando layout estable (pin-spacer del stacking) y con watchdog post-aplicación de ~1.2 s si el documento vuelve a crecer; fuerza `lenis.scrollTo(target, { immediate: true })`.
 - **Cuándo usar**: cualquier scroll programático a una sección. **Cuándo NO**: `window.scrollTo`/`scrollIntoView` a pelo — se pierde la integración Lenis + offset de navbar.
 
 ### `ScrollProgress` (`components/scroll-progress.tsx`)
 - Sin props. Barra fija de 2px (`z-[60]`, `bg-purple-accent`) con `scaleX` animado por GSAP ScrollTrigger (`scrub: 0.3`), GSAP cargado con `import()` dinámico.
 - Se monta **por página** (no en layout): `app/page.tsx` línea 12 y `app/proyectos/[id]/page.tsx` línea 41.
 - **Cuándo usar**: en cualquier ruta nueva con scroll largo, incluirla como primer hijo del `<main>`.
+
+---
+
+## Media queries de GSAP (gates de stacking y layout)
+
+| Gate | Dónde | Efecto |
+|------|-------|--------|
+| `(min-width: 1024px) and (min-height: 768px)` | `projects-section.tsx` (`gsap.matchMedia`) | Activa el **stacking/pin** de los paneles destacados. Fuera de ese rango (mobile y pantallas bajas) los paneles fluyen en normal-flow sin pin. Subió de `700px` a `768px` de alto para que la card de 2 columnas quepa en el viewport pineado. |
+| `[@media(min-width:1280px)_and_(min-height:900px)]:gap-30` | `featured-project-panel.tsx` (`ContentWrapper`) | En pantallas grandes Y altas el gap heading↔card crece a `120px`; si no, `gap-12`. |
+| `lg:[@media(max-height:800px)]:text-6xl` | `hero-section.tsx` | Fallback de alto del display del hero (recorta a 60px en viewports bajos); documentado en `typography-families.md`. |
+
+`ScrollRestorer` reusa el primer gate para saber si el pin-spacer es esperado y esperar a que exista antes de restaurar la posición.
 
 ---
 
