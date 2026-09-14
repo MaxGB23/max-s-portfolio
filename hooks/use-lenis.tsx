@@ -35,11 +35,15 @@ export function useScrollToAnchor(navbarHeight = 64) {
       const target = document.getElementById(id);
       if (!target) return false;
 
+      const y = Math.max(target.getBoundingClientRect().top + window.scrollY - navbarHeight, 0);
       if (lenis) {
-        const y = target.getBoundingClientRect().top + window.scrollY - navbarHeight;
         lenis.scrollTo(y, { duration: 2 });
       } else {
-        target.scrollIntoView({ behavior: "smooth", block: "start" });
+        // Mobile real (sin Lenis): el mismo cálculo de offset que desktop.
+        // scrollIntoView({smooth}) es flaky en Chrome Android cuando hay
+        // cambios de layout concurrentes (cierre del menú móvil) — el scroll
+        // se cancela y el link parece muerto.
+        window.scrollTo({ top: y, behavior: "smooth" });
       }
       return true;
     },

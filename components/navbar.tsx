@@ -80,10 +80,16 @@ export function Navbar() {
   // Intercepta clicks en anchors para scrollear con Lenis (desktop).
   // Devuelve false si el link no es un anchor manejable (navegación normal de Next).
   const handleAnchorClick = (e: React.MouseEvent, href: string) => {
-    if (scrollToAnchor(href)) {
-      e.preventDefault();
-      setMobileOpen(false);
-    }
+    if (!href.startsWith("#") || !document.getElementById(href.slice(1))) return;
+    e.preventDefault();
+    // Cerrar el menú ANTES de scrollear: en Android real, iniciar el smooth
+    // scroll en el mismo frame que el exit (height:0) del menú móvil lo
+    // cancela y el link parece muerto. Tras el cierre commiteado (doble rAF)
+    // el scroll arranca contra layout estable.
+    setMobileOpen(false);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => scrollToAnchor(href));
+    });
   };
 
   // Híbrido para "Inicio" (/): si ya estamos en la home, hace scroll al top
@@ -120,7 +126,7 @@ export function Navbar() {
         "debug-l1 fixed top-0 left-0 right-0 z-50 transition-colors duration-300",
         // Mobile y desktop: fondo condicional — transparente al top, activo al scrollear
         isBgActive
-          ? "bg-nav backdrop-blur-md border-b border-border shadow-sm"
+          ? "bg-nav backdrop-blur-none md:backdrop-blur-md border-b border-border shadow-sm"
           : "bg-transparent backdrop-blur-none border-transparent shadow-none"
       )}
     >
@@ -210,7 +216,7 @@ export function Navbar() {
         {mobileOpen && (
           <motion.div
             id="mobile-menu"
-            className="md:hidden overflow-hidden border-t border-border/50"
+            className="md:hidden overflow-hidden border-t border-border/50 bg-nav"
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
