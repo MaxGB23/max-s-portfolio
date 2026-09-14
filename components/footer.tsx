@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Github, Linkedin, ArrowUpRight } from "lucide-react";
+import { Github, Linkedin } from "lucide-react";
 import { motion } from "framer-motion";
 import { FadeIn } from "@/components/motion-primitives";
 
@@ -11,32 +10,7 @@ const socialLinks = [
   { label: "LinkedIn", href: "https://www.linkedin.com/in/maxballesteros", icon: Linkedin },
 ];
 
-const navLinks = [
-  { label: "Inicio", href: "#top" },
-  { label: "Proyectos", href: "#proyectos" },
-  { label: "Servicios", href: "#servicios" },
-  { label: "Sobre mí", href: "#sobre-mi" },
-];
-
 export function Footer() {
-  const [time, setTime] = useState<string>("");
-
-  useEffect(() => {
-    const updateTime = () => {
-      const now = new Date();
-      setTime(
-        now.toLocaleTimeString("es-MX", {
-          hour: "2-digit",
-          minute: "2-digit",
-          timeZone: "America/Mexico_City",
-        })
-      );
-    };
-    updateTime();
-    const interval = setInterval(updateTime, 1000);
-    return () => clearInterval(interval);
-  }, []);
-
   return (
     <footer
       id="footer"
@@ -49,7 +23,7 @@ export function Footer() {
         
         {/* Footer Navigation Columns */}
         <FadeIn>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-10 pb-12 border-b border-border/60">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 pb-12 border-b border-border/60">
             
             {/* Col 1: Branding & Bio */}
             <div className="md:col-span-2 space-y-4">
@@ -64,25 +38,7 @@ export function Footer() {
               </p>
             </div>
 
-            {/* Col 2: Navigation Links */}
-            <div className="space-y-3">
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-foreground">Navegación</h3>
-              <ul className="space-y-2">
-                {navLinks.map(({ label, href }) => (
-                  <li key={label}>
-                    <Link
-                      href={href}
-                      className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-150 inline-flex items-center gap-1 group"
-                    >
-                      {label}
-                      <ArrowUpRight size={14} className="opacity-0 group-hover:opacity-100 transition-opacity" />
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Col 3: Social Icons */}
+            {/* Col 2: Social Icons */}
             <div className="space-y-3">
               <h3 className="text-xs font-semibold uppercase tracking-wider text-foreground">Redes</h3>
               <nav aria-label="Social media links" className="flex items-center gap-3 pt-1">
@@ -115,15 +71,6 @@ export function Footer() {
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-muted-foreground">
             <div>
               &copy; {new Date().getFullYear()} MaxGB23. Todos los derechos reservados.
-            </div>
-
-            <div className="flex items-center gap-6">
-              {time && (
-                <div className="flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                  <span>CDMX {time}</span>
-                </div>
-              )}
             </div>
           </div>
         </FadeIn>

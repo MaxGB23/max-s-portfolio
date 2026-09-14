@@ -229,12 +229,18 @@ Todos son `clamp(min, rem + vw, max)` — base en rems, pendiente en vw (cumple 
 
 ## Footer (`components/footer.tsx`)
 
+**Estado (2026-09-14, recorte minimal)**: sin navegación (el one-pager ya la tiene en el navbar) y sin reloj en vivo (re-render cada 1s; criterio "solo info necesaria"). Quedan marca + bio + redes + copyright.
+
 | Elemento | Familia | Clases (orden real) |
 |----------|---------|---------------------|
-| Marca "Funko" | serif | `font-serif font-bold text-lg` |
-| "Frontend Developer & UI Engineer" | sans (heredada) | `text-xs` |
-| Enlace de correo | sans (heredada) | `text-sm` |
-| Copyright | sans (heredada) | `text-xs text-center` |
+| Marca "MaxGB23" | serif | `font-serif font-bold text-xl` |
+| Pill "Dev" | sans (heredada) | `text-xs text-muted-foreground px-2 py-0.5 rounded border border-border` |
+| Bio | sans (heredada) | `text-sm text-muted-foreground leading-relaxed max-w-sm` |
+| Iconos sociales (GitHub / LinkedIn) | sans (heredada) | círculos `w-10 h-10 rounded-full border border-border bg-card/60`, icono `size-18`; hover escala 1.1 + borde accent-purple (framer `motion.div`) |
+| Copyright | sans (heredada) | `text-xs text-muted-foreground` |
+| Glow de fondo | — | `bg-accent-purple/10 blur-[120px]` bajo el contenido (coherente con aurora del hero) |
+
+> Nota: tamaños fijos (no fluid) — convención del sistema: el footer queda estático; los headers de columna seguirían la norma de eyebrows de UI 12–16px si vuelven a existir columnas.
 
 ---
 
@@ -249,7 +255,7 @@ Todos son `clamp(min, rem + vw, max)` — base en rems, pendiente en vw (cumple 
 1. Pricing subtítulo header: clase malformada `2xl mx-auto` (un "2xl" suelto sin selector `text-`) tal cual está en el código.
 2. Pricing precio: `font-serif font-black text-fluid-price leading-none` sin `tabular-nums` (los dígitos pueden no alinear).
 3. Geist Mono no se carga con `next/font`; cae a fallback local.
-4. Footer: rediseño en curso (debate pendiente 2026-09-14) — esta doc no refleja su nuevo contenido hasta que se cierre.
+4. **Resuelto** (2026-09-14): el footer se recortó a marca + bio + redes + copyright (sin navegación ni reloj en vivo).
 5. Gotcha de desarrollo: cambiоs de tokens `--text-fluid-*` en `@theme` NO hot-reloadan con Turbopack (el navegador sigue sirviendo el CSS viejo). Tras tocar `globals.css` así, reiniciar el dev server con `.next` purgado; verificar con `scripts/type-scale.mjs` (2º incidente confirmado).
 
 ---
