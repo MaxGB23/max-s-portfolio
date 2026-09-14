@@ -67,18 +67,18 @@ export function ProjectCard({ project }: ProjectCardProps) {
       <div className="flex flex-col flex-1 p-5">
         <h3
           id={`project-title-${project.id}`}
-          className="font-serif font-bold text-fluid-card text-foreground mb-2 text-balance group-hover:text-foreground transition-colors"
+          className="font-serif font-bold text-fluid-card-title text-foreground mb-2 text-balance group-hover:text-foreground transition-colors"
         > 
           {project.title}
         </h3>
-        <p className="text-fluid-card-body leading-relaxed text-muted-foreground flex-1 mb-4 line-clamp-3 max-h-[4.875em]">
+        <p className="text-fluid-card-desc leading-relaxed text-muted-foreground flex-1 mb-4 line-clamp-3 max-h-[4.875em]">
           {project.description}
         </p>
 
         {/* Key metric */}
         {project.metric && (
           <div className="mb-4">
-            <span className="inline-flex items-center rounded-full border border-purple-accent/25 bg-purple-accent/10 px-3 py-2 text-[11px] 2xl:text-sm font-semibold text-purple-accent">
+            <span className="inline-flex items-center rounded-full border border-purple-accent/25 bg-purple-accent/10 px-3 py-2 text-xs 2xl:text-sm font-semibold text-purple-accent">
               {project.metric}
             </span>
           </div>
@@ -105,7 +105,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
         <div className="mt-auto pt-4 border-t border-border flex items-center justify-between gap-3">
           <span className="inline-flex items-center gap-1.5 text-xs 2xl:text-sm font-semibold text-muted-foreground/90 group-hover:text-foreground transition-colors duration-200">
             Caso de estudio
-            <ChevronRight size={13} aria-hidden="true" />
+            <ChevronRight className="size-3.5 2xl:size-4" aria-hidden="true" />
           </span>
           {externalLink ? (
             <a
@@ -115,7 +115,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
               aria-label={`${project.title} — ${externalLink.label}`}
               className="relative z-20 inline-flex items-center justify-center w-7 h-7 2xl:w-8 2xl:h-8 rounded-lg bg-secondary text-foreground transition-colors duration-200 hover:bg-foreground hover:text-background"
             >
-              <ArrowUpRight size={13} />
+              <ArrowUpRight className="size-3.5 2xl:size-4" />
             </a>
           ) : null}
         </div>
