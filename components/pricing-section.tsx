@@ -217,46 +217,65 @@ function PricingCard({ tier }: { tier: PricingTier }) {
 export function PricingSection() {
   // ScrollTrigger: stagger cards. Pro card gets a slight extra delay for emphasis.
   const sectionRef = useGsapAnimation<HTMLElement>((gsap, ScrollTrigger) => {
-    gsap.from(".pricing-header", {
-      opacity: 0,
-      y: 24,
-      duration: 0.55,
-      ease: "power2.out",
-      scrollTrigger: {
-        trigger: ".pricing-header",
-        start: "top 85%",
-        once: true,
-      },
-    });
+    gsap.fromTo(
+      ".pricing-header",
+      { opacity: 0, y: 24 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 0.55,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: ".pricing-header",
+          start: "top 85%",
+          toggleActions: "play none none none",
+          once: true,
+        },
+      }
+    );
 
     // Animate non-highlighted cards first, then Pro card with a slight extra delay.
-    gsap.from(".pricing-card:not(.pricing-highlighted)", {
-      opacity: 0,
-      y: 32,
-      scale: 0.97,
-      duration: 0.6,
-      ease: "power2.out",
-      stagger: 0.14,
-      scrollTrigger: {
-        trigger: ".pricing-grid",
-        start: "top 80%",
-        once: true,
-      },
-    });
+    // fromTo + immediateRender:false — the "from" state exists ONLY when the
+    // trigger fires. With gsap.from (immediateRender:true) the cards spawn hidden
+    // and an instant scroll restore (Volver) can pause/re-render the tween
+    // mid-flight with the once:true already consumed -> stuck invisible.
+    gsap.fromTo(
+      ".pricing-card:not(.pricing-highlighted)",
+      { opacity: 0, y: 32, scale: 0.97 },
+      {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        duration: 0.6,
+        ease: "power2.out",
+        stagger: 0.14,
+        scrollTrigger: {
+          trigger: ".pricing-grid",
+          start: "top 80%",
+          toggleActions: "play none none none",
+          once: true,
+        },
+      }
+    );
 
-    gsap.from(".pricing-highlighted", {
-      opacity: 0,
-      y: 32,
-      scale: 0.95,
-      duration: 0.65,
-      ease: "power2.out",
-      delay: 0.22,
-      scrollTrigger: {
-        trigger: ".pricing-grid",
-        start: "top 80%",
-        once: true,
-      },
-    });
+    gsap.fromTo(
+      ".pricing-highlighted",
+      { opacity: 0, y: 32, scale: 0.95 },
+      {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        duration: 0.65,
+        ease: "power2.out",
+        delay: 0.22,
+        scrollTrigger: {
+          trigger: ".pricing-grid",
+          start: "top 80%",
+          toggleActions: "play none none none",
+          once: true,
+        },
+      }
+    );
   });
 
   return (
@@ -280,7 +299,7 @@ export function PricingSection() {
         </header>
 
         {/* Cards grid */}
-<div className="debug-l3 grid grid-cols-1 lg:grid-cols-3 gap-6 items-start max-w-md lg:max-w-none mx-auto">
+<div className="debug-l3 pricing-grid grid grid-cols-1 lg:grid-cols-3 gap-6 items-start max-w-md lg:max-w-none mx-auto">
           {tiers.map((tier) => (
             <div key={tier.name} className={tier.highlighted ? "pricing-highlighted" : ""}>
               <PricingCard tier={tier} />
