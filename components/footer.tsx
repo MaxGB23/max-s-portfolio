@@ -28,7 +28,9 @@ export function Footer() {
             {/* Col 1: Branding & Bio */}
             <div className="md:col-span-2 space-y-4">
               <div className="flex items-center gap-2">
-                <span className="font-serif font-bold text-xl text-foreground">MaxGB23</span>
+                <span className="font-serif font-bold text-xl text-foreground">
+                  MaxGB<span className="text-purple-accent">23</span>
+                </span>                
                 <span className="text-xs text-muted-foreground px-2 py-0.5 rounded border border-border">
                   Dev
                 </span>
@@ -40,12 +42,12 @@ export function Footer() {
 
             {/* Col 2: Social Icons */}
             <div className="space-y-3">
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-foreground">Redes</h3>
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-foreground">Redes sociales</h3>
               <nav aria-label="Social media links" className="flex items-center gap-3 pt-1">
                 {socialLinks.map(({ label, href, icon: Icon }) => (
                   <motion.div
                     key={label}
-                    whileHover={{ scale: 1.1, borderColor: "var(--accent-purple)" }}
+                    whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.95 }}
                     transition={{ duration: 0.18 }}
                   >
@@ -54,7 +56,7 @@ export function Footer() {
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={label}
-                      className="w-10 h-10 flex items-center justify-center rounded-full border border-border bg-card/60 text-muted-foreground hover:text-foreground transition-colors duration-200"
+                      className="w-10 h-10 flex items-center justify-center rounded-full border border-border bg-card/60 text-muted-foreground hover:text-foreground hover:border-purple-accent transition-colors duration-200"
                     >
                       <Icon size={18} aria-hidden="true" />
                     </Link>
