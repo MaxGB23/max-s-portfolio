@@ -122,13 +122,13 @@ export function FeaturedProjectPanel({ project, children, overlay }: FeaturedPro
               {project.tags.map((tag, index) => (
                 <div
                   key={index}
-                  className="flex items-center justify-center w-10 h-10 rounded-full shadow-sm bg-card hover:scale-110 transition-transform duration-200 cursor-default group"
+                  className="flex items-center justify-center w-10 h-10 2xl:w-12 2xl:h-12 rounded-full shadow-sm bg-card hover:scale-110 transition-transform duration-200 cursor-default group"
                   title={tag}
                 >
                   <StackIcon
                     name={tag}
-                    className="w-5 h-5 text-foreground opacity-90 group-hover:opacity-100 mix-blend-plus-lighter"
-                    labelClassName="text-[10px] font-bold text-foreground/70 uppercase tracking-tighter"
+                    className="w-5 h-5 2xl:w-6 2xl:h-6 text-foreground opacity-90 group-hover:opacity-100 mix-blend-plus-lighter"
+                    labelClassName="text-[10px] 2xl:text-xs font-bold text-foreground/70 uppercase tracking-tighter"
                   />
                 </div>
               ))}
