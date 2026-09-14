@@ -29,25 +29,38 @@ Todos son `clamp(min, rem + vw, max)` — base en rems, pendiente en vw (cumple 
 
 | Token | Fórmula | Tamaño (px) | Uso |
 |-------|---------|-------------|-----|
-| `text-fluid-section` | `clamp(2.25rem, 1.56rem + 2.94vw, 4.5rem)` | 36 → 72 | Headings de sección + Hero `h1` + Detail `h1` |
-| `text-fluid-featured` | `clamp(2rem, 1.39rem + 2.61vw, 4rem)` | 32 → 64 | Featured panel `h2` |
-| `text-fluid-card` | `clamp(1.125rem, 1.01rem + 0.49vw, 1.5rem)` | 18 → 24 | Card `h3` |
+| `text-fluid-display` | `clamp(2.5rem, 1.88rem + 3.13vw, 5rem)` | 40 → 80 | Hero `h1` (único) |
+| `text-fluid-detail` | `clamp(2.5rem, 2.12rem + 1.9vw, 4rem)` | 40 → 64 | Detail `h1` (título de proyecto) |
+| `text-fluid-section` | `clamp(2rem, 1.72rem + 1.4vw, 3.25rem)` | 32 → 52 | Headings de sección: About `h2`, "Proyectos Destacados", "Todos los Proyectos", "Servicios a medida" |
+| `text-fluid-featured` | `clamp(1.75rem, 1.52rem + 1.15vw, 2.75rem)` | 28 → 44 | Featured panel `h2` (caso de estudio apilado) |
+| `text-fluid-price` | `clamp(2rem, 1.8rem + 1vw, 2.625rem)` | 32 → 42 | Precio en cards de pricing |
+| `text-fluid-card` | `clamp(1.125rem, 1.01rem + 0.49vw, 1.5rem)` | 18 → 24 | Card `h3` + nombre del plan |
 | `text-fluid-subheading` | `clamp(1.5rem, 1.27rem + 0.98vw, 2.25rem)` | 24 → 36 | Detail SectionTitle + métricas |
 | `text-fluid-body` | `clamp(1rem, 0.96rem + 0.16vw, 1.125rem)` | 16 → 18 | Descripciones (hero, about, featured, pricing) |
 | `text-fluid-card-body` | `clamp(1rem, 0.96rem + 0.16vw, 1.125rem)` | 16 → 18 | Descripción de cards |
 | `text-fluid-eyebrow` | `clamp(0.9375rem, 0.86rem + 0.33vw, 1.1875rem)` | 15 → 19 | Labels / eyebrows (role, "Conóceme") |
 
-**Calibración (2026-09, recalibración unificada)**: TODOS los tokens interpolan en la **misma ventana 375 → 1600px** y topan exactamente en 1600px. Antes cada token topaba en un ancho distinto (eyebrow 857px, card-body 933px, body 1120px, section 1600px, featured 1631px) y la jerarquía relativa se distorsionaba al crecer la resolución. Body reducido de 20px → 18px máximo (práctica 2026: 16–18px). En pantallas < 375px los títulos quedan fijos en su mínimo.
+> ⚠️ **Dependencia crítica para `cn()`**: estas utilidades custom `text-fluid-*` son desconocidas para tailwind-merge. Sin el `extendTailwindMerge` de `lib/utils.ts` (que las registra como font-size), `cn("... text-fluid-card ...", "... text-foreground ...")` **borra** la clase fluid (colisión de grupo `text-*`) y el elemento cae a 16px. Este fix + la tabla de arriba van juntos; no eliminar el extend al refactorizar `cn()`.
+
+**Calibración (2026-09)**: TODOS los tokens interpolan en la **misma ventana 375 → 1600px** y topan en ~1600px. Antes cada token topaba en un ancho distinto (eyebrow 857px, card-body 933px, body 1120px, section 1600px, featured 1631px) y la jerarquía relativa se distorsionaba al crecer la resolución. Body reducido de 20px → 18px máximo (práctica 2026: 16–18px). En pantallas < 375px los títulos quedan fijos en su mínimo.
+
+**Recalibración de la escalera superior (2026-09-14, aprobada)**: se reintroducen el escalón display y se separa el detail del section, y section/featured bajan un escalón:
+- Hero `h1` recupera token propio `text-fluid-display` (40→80, era la misma pieza que la sección a 36→72 tras la uniformización previa; el fallback `lg:[@media(max-height:800px)]:text-6xl` lo recorta a 60px en viewports bajos) y Detail `h1` usa `text-fluid-detail` (40→64).
+- `text-fluid-section` baja de 36→72 a **32→52**; `text-fluid-featured` de 32→64 a **28→44**. Los títulos de sección matienen 2 renglones por diseño (`flex flex-col`).
+- Nace `text-fluid-price` (32→42) calibrado por medición real: **siempre por debajo del section** (1280: 41.6 vs 45.4, ratio 0.92; mobile: 32.7 vs 33) y a la vez dominante sobre el plan name (1.86× a 1280). Se midió con `scripts/type-scale.mjs` en 390/1280/1920 antes de fijar la fórmula (el primer intento a `clamp(2.25rem, 1.95rem + 1.3vw, 3rem)` aún superaba a la sección).
 
 > Decisión clave (actualizada 2026-09): **el primer escalón de la escalera es 16px (body)** — nada de texto de lectura baja de eso. Los labels/eyebrows (role, "Conóceme") se tratan como **kicker del título**, NO como eyebrow decorativo de UI: van −1px bajo el body en mobile (15 vs 16), ≈igual en sm–md, y +1px SOBRE el body en grandes (19 vs 18 a 1600px). El cruce con la curva del body ocurre en ~941px. La presencia del role se apoya en tamaño (no solo uppercase + tracking como antes), porque es la declaración de identidad del hero: el "Full Stack Developer" dejó de ser el texto más pequeño de la sección. Los eyebrows puramente decorativos de UI (badges, "desde" en pricing) siguen la norma 12–16px en contextos pequeños.
 
-**Medidas reales en mobile 375px** (2026-09, aprobadas por el usuario):
+**Medidas reales en mobile @390px** (2026-09-14, `scripts/type-scale.mjs`):
 
-| Elemento | Token | Tamaño real (375px) | Rango de práctica 2026 |
+| Elemento | Token | Tamaño real (390px) | Rango de práctica 2026 |
 |----------|-------|---------------------|------------------------|
 | role / label (hero y about) | `text-fluid-eyebrow` | **15px** | 12–16px ✅ |
 | descripción | `text-fluid-body` | **16px** | 16–18px ✅ |
-| h1 hero / h2 about | `text-fluid-section` | **36px** | 28–40px ✅ |
+| h1 hero | `text-fluid-display` | **42.3px** | — |
+| título de sección (about) | `text-fluid-section` | **33px** | 28–40px ✅ |
+| precio pricing | `text-fluid-price` | **32.7px** | — |
+| featured h2 | `text-fluid-featured` | **28.8px** | — |
 
 ---
 
@@ -69,15 +82,18 @@ Todos son `clamp(min, rem + vw, max)` — base en rems, pendiente en vw (cumple 
 
 | Nivel | Pieza | Token | Máx (2xl) | Familia / Peso |
 |-------|-------|-------|-----------|----------------|
-| 1 | Headings de sección — Hero `h1`, Detail `h1`, About `h2`, "Proyectos Destacados", "Todos los Proyectos", "Servicios a medida" | `text-fluid-section` | 72px | serif / black |
-| 2 | Featured panel `h2` (caso de estudio apilado) | `text-fluid-featured` | 64px — **escalón bajo las secciones (4–9px menor en todo el rango, ratio ≈ 0.88)** | serif / black |
-| 3 | Card `h3` (título de proyecto) | `text-fluid-card` | 24px | serif / bold |
-| 4 | Detail SectionTitle `h2` + métricas | `text-fluid-subheading` | 36px | serif / bold |
-| 5 | Descripciones / body | `text-fluid-body` | 18px | sans (heredada) |
-| 6 | Descripción de cards | `text-fluid-card-body` | 18px | sans (heredada) |
-| 7 | Labels / eyebrows (kicker) | `text-fluid-eyebrow` | 19px | sans (heredada) |
+| 1 | Hero `h1` | `text-fluid-display` | 80px | serif / black |
+| 2 | Detail `h1` (título de proyecto) | `text-fluid-detail` | 64px | serif / black |
+| 3 | Headings de sección — About `h2`, "Proyectos Destacados", "Todos los Proyectos", "Servicios a medida" | `text-fluid-section` | 52px | serif / black |
+| 4 | Featured panel `h2` (caso de estudio apilado) | `text-fluid-featured` | 44px — **escalón bajo las secciones (ratio ≈ 0.85)** | serif / black |
+| 5 | Precio pricing | `text-fluid-price` | 42px — **siempre por debajo del section** (0.81–0.99×, nunca por encima) | serif / black |
+| 6 | Detail SectionTitle `h2` + métricas | `text-fluid-subheading` | 36px | serif / bold |
+| 7 | Card `h3` + nombre del plan | `text-fluid-card` | 24px | serif / bold |
+| 8 | Descripciones / body | `text-fluid-body` | 18px | sans (heredada) |
+| 9 | Descripción de cards | `text-fluid-card-body` | 18px | sans (heredada) |
+| 10 | Labels / eyebrows (kicker) | `text-fluid-eyebrow` | 19px | sans (heredada) |
 
-> Nota histórica: el hero `h1` **solía** tener un titular propio de 96px (`text-fluid-display`, ratio fijo 4:3 sobre la sección — se percibía desproporcionado en todos los dispositivos). Uniformización (2026-09): hero y detail usan `text-fluid-section` (36→72px); se eliminaron el token `text-fluid-display`, la mq quirúrgica 768–800px y el `md:px-4`. La jerarquía del hero se apoya en composición (uppercase, tracking, layout, aurora), no en tamaño.
+> Nota histórica: en la uniformización previa (2026-09) el hero `h1` perdió su título propio y usaba `text-fluid-section` (36→72px); se percibió la jerarquía plana entre hero/sección/detalle y (2026-09-14) se reintrodujeron escalones propios: display (40→80) para el hero y detail (40→64) para el detalle, bajando section y featured para que el ancla de cada sección quede ~0.65× sobre el display y el precio nunca supere a su sección. El hero se apoya además en composición (uppercase, tracking, layout, aurora) y en el fallback de alto `lg:[@media(max-height:800px)]:text-6xl`.
 
 ---
 
@@ -101,7 +117,7 @@ Todos son `clamp(min, rem + vw, max)` — base en rems, pendiente en vw (cumple 
 | Elemento | Familia | Clases (orden real) |
 |----------|---------|---------------------|
 | Label "Full Stack Developer" | sans (heredada) | `uppercase tracking-[0.2em] 2xl:tracking-widest font-medium text-fluid-eyebrow` |
-| `h1` "Max González Ballesteros" | serif | `font-serif font-black uppercase text-fluid-section leading-[0.9] tracking-tighter` |
+| `h1` "Max González Ballesteros" | serif | `font-serif font-black uppercase text-fluid-display leading-[0.9] tracking-tighter lg:[@media(max-height:800px)]:text-6xl` |
 | Descripción | sans (heredada) | `px-4 sm:px-16 md:px-0 text-fluid-body leading-relaxed brightness-125 text-muted-foreground max-w-full` + `style: maxWidth` medido del título (hook `useTitleWidth`) |
 | Botones CTA (Ver Proyectos / Descargar CV) | sans (heredada) | `text-sm 2xl:text-base font-semibold` |
 | Label "Stack Principal" | sans (heredada) | `text-xs 2xl:text-base uppercase tracking-widest font-semibold` |
@@ -163,10 +179,12 @@ Todos son `clamp(min, rem + vw, max)` — base en rems, pendiente en vw (cumple 
 |----------|---------|---------------------|
 | Placeholder de imagen (categoría) | mono | `font-mono text-xs 2xl:text-sm uppercase tracking-widest` |
 | `h3` Título del proyecto | serif | `font-serif font-bold text-fluid-card` |
-| Descripción | sans (heredada) | `text-fluid-card-body leading-relaxed line-clamp-3` |
+| Descripción | sans (heredada) | `text-fluid-card-body leading-relaxed flex-1 mb-4 line-clamp-3 max-h-[4.875em]` — ver nota de clamp abajo |
 | Métrica | sans (heredada) | `text-[11px] 2xl:text-sm font-semibold` (pill purple) |
-| Tags de stack (iconos) | — | `labelClassName` `text-[9px] 2xl:text-[10px]`, contenedor `w-8 h-8 2xl:w-12 2xl:h-12` |
-| Footer "Caso de estudio" | sans (heredada) | `text-xs 2xl:text-base font-semibold` |
+| Tags de stack (iconos) | — | `labelClassName` `text-[11px] 2xl:text-xs`, contenedor `w-8 h-8 2xl:w-12 2xl:h-12` |
+| Footer "Caso de estudio" | sans (heredada) | `text-xs 2xl:text-sm font-semibold`, envoltorio `mt-auto pt-4` |
+
+> **Clamp del line-clamp (2026-09-14)**: `line-clamp-3` + `flex-1` era un bug real: en cards con poco contenido el flex estiraba la caja a 3.42 líneas y se veía un 4º renglón fantasma (AutoShop: 96.8px vs 84.8px normales). El `max-h-[4.875em]` (3 × 1.625 de `leading-relaxed`) congela la caja en 3 líneas y el `mt-auto` del footer empuja el contenido sobrante al final de la card. El `scrollHeight > clientHeight` que marcan las herramientas es contenido interno recortado (behavior normal de clamp), no un renglón visible.
 
 ---
 
@@ -176,7 +194,7 @@ Todos son `clamp(min, rem + vw, max)` — base en rems, pendiente en vw (cumple 
 |----------|---------|---------------------|
 | Botón flotante "Volver" | sans (heredada) | `text-sm 2xl:text-base font-semibold` |
 | Badge de categoría (hero) | sans (heredada) | `text-xs 2xl:text-sm font-semibold` (pill purple) |
-| `h1` Título del proyecto | serif | `font-serif font-black text-fluid-section leading-[1.02] tracking-tight text-balance` |
+| `h1` Título del proyecto | serif | `font-serif font-black text-fluid-detail leading-[1.02] tracking-tight text-balance` |
 | `p` headline (hero) | sans (heredada) | `text-base 2xl:text-2xl leading-relaxed max-w-2xl` |
 | Chips de stack (StackChips) | sans (heredada) | texto `text-sm 2xl:text-base`; iconos `w-6 h-6 2xl:w-7 2xl:h-7`; fallback `text-[9px] 2xl:text-[10px]` |
 | `h2` Sección (SectionTitle) | serif | `font-serif font-bold text-fluid-subheading` |
@@ -197,12 +215,12 @@ Todos son `clamp(min, rem + vw, max)` — base en rems, pendiente en vw (cumple 
 | `h2` "Servicios a medida" | serif | `font-serif font-black uppercase text-fluid-section leading-[0.9] tracking-tighter` |
 | `p` subtítulo header | sans (heredada) | `text-fluid-body max-w-lg lg:max-w-xl leading-relaxed` (contiene la clase malformada `2xl mx-auto`) |
 | Badge "Más popular" | sans (heredada) | `text-xs font-semibold` |
-| `h3` Nombre del plan | serif | `font-serif font-bold text-xl` |
-| Descripción del plan | sans (heredada) | `text-base leading-relaxed` |
+| `h3` Nombre del plan | serif | `font-serif font-bold text-xl` → **`text-fluid-card`** |
+| Descripción del plan | sans (heredada) | `text-base leading-relaxed` → **`text-fluid-card-body`** |
 | Eyebrow "desde" | sans (heredada) | `text-xs font-medium uppercase tracking-widest` |
-| Precio (`$6,000`) | serif | `font-serif font-black text-5xl leading-none` (**sin tabular-nums**) |
+| Precio (`$6,000`) | serif | `font-serif font-black text-5xl leading-none` → **`text-fluid-price`** (**sin tabular-nums**) |
 | Periodo ("MXN · por proyecto") | sans (heredada) | `text-sm` |
-| Lista de características | sans (heredada) | `text-base leading-relaxed` (+ iconos Check `size={15}`) |
+| Lista de características | sans (heredada) | `text-base leading-relaxed` → **`text-fluid-card-body`** (+ iconos Check `size={15}`) |
 | Botón CTA del plan | sans (heredada) | `text-sm font-semibold` |
 | Proof line ("Respaldado por: …") | sans (heredada) | `text-xs leading-relaxed` |
 | Nota final | sans (heredada) | `text-xs text-muted-foreground` |
@@ -229,8 +247,10 @@ Todos son `clamp(min, rem + vw, max)` — base en rems, pendiente en vw (cumple 
 ## Deuda conocida
 
 1. Pricing subtítulo header: clase malformada `2xl mx-auto` (un "2xl" suelto sin selector `text-`) tal cual está en el código.
-2. Pricing precio: `font-serif font-black text-5xl leading-none` sin `tabular-nums` (los dígitos pueden no alinear).
+2. Pricing precio: `font-serif font-black text-fluid-price leading-none` sin `tabular-nums` (los dígitos pueden no alinear).
 3. Geist Mono no se carga con `next/font`; cae a fallback local.
+4. Footer: rediseño en curso (debate pendiente 2026-09-14) — esta doc no refleja su nuevo contenido hasta que se cierre.
+5. Gotcha de desarrollo: cambiоs de tokens `--text-fluid-*` en `@theme` NO hot-reloadan con Turbopack (el navegador sigue sirviendo el CSS viejo). Tras tocar `globals.css` así, reiniciar el dev server con `.next` purgado; verificar con `scripts/type-scale.mjs` (2º incidente confirmado).
 
 ---
 

@@ -25,7 +25,7 @@ funky sdd install   # injects agent rules, SDD templates, ORCHESTRATOR-STATE.md,
 funky feature <name>   # scaffolds a change under openspec/changes/<name>/ for a chosen tier
 ```
 
-`funky sdd install` copies 23 agent rules into `.agents/rules/`, 8 SDD templates plus a shared docs index into `.agents/templates/sdd/`, an RFC template into `openspec/rfcs/`, and creates the 7 engram shard directories under `docs/engram/`. `runScaffold()` builds a pure array of *intentions* (`copy`, `create`, `mkdir`) that `executeIntentions()` applies, so the logic is unit-testable without touching the filesystem.
+`funky sdd install` copies 27 agent rules into `.agents/rules/`, 8 SDD templates plus a shared docs index into `.agents/templates/sdd/`, an RFC template into `openspec/rfcs/`, and creates the 7 engram shard directories under `docs/engram/`. `runScaffold()` builds a pure array of *intentions* (`copy`, `create`, `mkdir`) that `executeIntentions()` applies, so the logic is unit-testable without touching the filesystem.
 
 ### Pre-flight
 
@@ -89,6 +89,8 @@ The **orchestrator** does not write code unless explicitly assigned as Worker: i
 ## Impact
 
 - Up to ~40% lower token consumption versus always-loaded full context (author estimate) — the primary goal of JIT loading.
+- **Measured agent harness**: the full 27-rule set totals ~11.5k tokens (`rules-sdd-inventario.md`) — an inventory of the framework's own rules, not an estimate.
+- **Verifiable test suite**: strict TDD with Vitest from the start — 400+ green tests (411 across 36 files at v4.8.0).
 - Small fixes skip document generation entirely (Tier 1), keeping the cheap path cheap.
 - Human gates at design and Git operations reduce out-of-scope and unreviewed changes.
 
@@ -99,4 +101,4 @@ The **orchestrator** does not write code unless explicitly assigned as Worker: i
 - **Broader handoff coverage** — as more IDEs grow native sub-agent support, the legacy handoff mode can fade while its copy-paste chain becomes a debug fallback.
 - **Living-specs workflow** — the project has migrated to delta specs merged via a checksum-validated workflow (`docs/engram/index.md`); formalizing that as part of the SDD archive phase removes the final manual step.
 
-> Percentages are author estimates based on internal usage, not externally benchmarked metrics.
+> Percentages are author estimates based on internal usage; the harness figure is measured from the project's own `comparativas-tokens/` data.

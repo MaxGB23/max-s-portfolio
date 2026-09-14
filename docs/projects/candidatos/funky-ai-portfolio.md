@@ -1,7 +1,7 @@
 # funky-ai — Framework CLI para desarrollo asistido por IA (Consolidado)
 
 > Fuente única de contenido para el portfolio. Editar aquí; luego se refleja en `data/projects.ts`.
-> Última actualización: 2026-08-28
+> Última actualización: 2026-09-10
 
 ---
 
@@ -13,7 +13,7 @@
 | `title` | funky-ai |
 | `category` | Dev Tools / AI Engineering |
 | `hook` | Framework CLI para desarrollo de software asistido por IA: pipeline SDD con contexto just-in-time, memoria persistente y planificación de proyectos en un solo comando. |
-| `metric` | -40% consumo de tokens (contexto just-in-time, estimación interna) |
+| `metric` | Harness agéntico medido: 27 reglas ≈ 11.5k tokens |
 | `tags` | Node.js · TypeScript · CLI · pnpm · Vitest · GitHub Actions |
 | `image` | TBD — ⚠️ capturas reales de terminal/CLI en acción |
 | `imageAlt` | Terminal del CLI de funky-ai mostrando el pipeline SDD |
@@ -29,7 +29,7 @@
 
 ### Summary
 
-funky-ai unifica reglas agénticas, plantillas spec-driven y herramientas de planificación en un único CLI de Node.js (pnpm), sin superficie GUI. Orquesta el desarrollo como un pipeline determinista — proposal → specs → design → tasks → apply → verify → archive — cargando contexto just-in-time para proteger la ventana de tokens, con memoria persistente basada en archivos Markdown y endurecimiento de dependencias para proyectos pnpm. Todas las cifras de impacto son estimaciones internas del autor, no métricas externas.
+funky-ai unifica reglas agénticas, plantillas spec-driven y herramientas de planificación en un único CLI de Node.js (pnpm), sin superficie GUI. Orquesta el desarrollo como un pipeline determinista — proposal → specs → design → tasks → apply → verify → archive — cargando contexto just-in-time para proteger la ventana de tokens, con memoria persistente basada en archivos Markdown y endurecimiento de dependencias para proyectos pnpm. Las cifras combinan estimaciones propias y mediciones reales del repositorio (inventario de reglas del propio framework).
 
 ### Metrics
 
@@ -39,9 +39,9 @@ funky-ai unifica reglas agénticas, plantillas spec-driven y herramientas de pla
 | 30–50% | menor costo de recall de memoria (funkygram vs. recargar contexto monolítico) |
 | ~50% | más rápido de idea difusa a arquitectura costeada (funky-forge) |
 | ~30% | menos riesgo de supply chain (funky secure) |
-| -40% | rework fuera de alcance (TDD + issue-first workflow) |
+| ≈11.5k | tokens del harness completo: 27 reglas agénticas (inventario medido) |
 
-> Todas las métricas son **estimaciones internas del autor** basadas en uso propio, no benchmarks externos.
+> Las 4 primeras métricas son **estimaciones del autor** basadas en uso propio; la última es una **medición real** del repositorio (inventario de las 27 reglas en `comparativas-tokens/`), no un benchmark externo.
 
 ### Problem
 
@@ -60,6 +60,7 @@ Las tareas grandes de IA asistida que arrancan de un único prompt masivo fallan
 - **funkygram** — memoria persistente en archivos Markdown dentro del repo: 7 categorías con shards O(1), esquema fijo (What/Why/Where/Learned), índice central auto-actualizado y recall deliberadamente low-tech y barato.
 - **funky-forge** — de idea difusa a arquitectura costeada: `init` (canvases de proyecto e infra), `assess` (revisión de arquitectura con registro de decisiones), `estimate` (guía de costos con buffers y TCO), `pipeline` (estado compartido entre fases). La CLI prepara material, no juzga.
 - **funky secure** — endurecimiento de dependencias pnpm: `doctor` (diagnóstico read-only), `init` (política idempotente), `check` (gate CI fail-closed). Incluye cuarentena de versiones frescas (72h) contra campañas tipo ChainDrop/Shai-Hulud y detección de secretos commitheados.
+- **Capa de contratos agénticos** — 27 reglas que tipan la delegación (7 contratos T2 por fase, 9 workflows T3, contratos de exploración y memoria) con carga just-in-time; introspección documentada del host (model tiers, permisos, hooks) en vez de reinventar el runtime.
 - **Prácticas** — issue-first (no hay código sin issue), CI en GitHub Actions con SHAs pineados, releases estructurados (bump, notas, tag) y docs vivas sincronizadas con el binario real.
 
 ### Stack
@@ -71,6 +72,7 @@ Las tareas grandes de IA asistida que arrancan de un único prompt masivo fallan
 - **CI/CD:** GitHub Actions (toolchain pineado a SHAs)
 - **Memoria:** archivos Markdown (shards + índice central)
 - **Pipeline:** plantillas SDD en Markdown, contexto just-in-time
+- **Capa agéntica:** 27 reglas/contratos (delegación, memoria, exploración, workflow) + introspección de plataforma
 
 ### Escalabilidad
 
