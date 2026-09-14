@@ -6,6 +6,7 @@ import { ChevronRight } from "lucide-react";
 import { FadeIn } from "@/components/motion-primitives";
 import { StackIcon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
+import { saveHomeScroll } from "@/hooks/use-lenis";
 
 export interface FeaturedProject {
   id: string;
@@ -138,6 +139,7 @@ export function FeaturedProjectPanel({ project, children, overlay }: FeaturedPro
               <Button asChild variant="primary">
                 <Link
                   href={`/proyectos/${project.id}`}
+                  onClick={() => saveHomeScroll(window.scrollY)}
                   aria-label={`Ver caso de estudio de ${project.title}`}
                 >
                   Ver caso de estudio

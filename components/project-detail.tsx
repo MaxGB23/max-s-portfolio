@@ -9,6 +9,7 @@ import Image from "next/image";
 import { ArrowLeft, ArrowUpRight, ChevronLeft, ChevronRight, Github, Globe, Maximize2, MonitorSmartphone, X } from "lucide-react";
 import { StackIcon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
+import { takeHomeScroll } from "@/hooks/use-lenis";
 import type { Project, ProjectImage, ProjectLink } from "@/data/projects";
 
 /** Picks a contextual icon for a project link. Unknown kinds fall back to a
@@ -224,7 +225,17 @@ export function ProjectDetail({ project }: { project: Project }) {
   const showWideFirst = gallery.length >= 3;
 
   const handleBack = () => {
-    window.history.length > 1 ? router.back() : router.push("/#proyectos");
+    // Came from the portfolio grid (position captured on card click): pop the
+    // history and let the layout ScrollRestorer put us back exactly where we
+    // left — Lenis can't clobber it because we force it to adopt the target.
+    if (takeHomeScroll() != null) {
+      router.back();
+      return;
+    }
+    // Direct arrival (shared link / refresh): history.length is unreliable
+    // (often > 1 even on an empty tab), so navigate deterministically instead
+    // of risking leaving the site.
+    router.replace("/");
   };
 
   // Lightbox state + navigation. Navega solo sobre las imágenes reales (los

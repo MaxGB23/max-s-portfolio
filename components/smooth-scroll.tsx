@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Lenis from "lenis";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { LenisProvider } from "@/hooks/use-lenis";
+import { LenisProvider, ScrollRestorer } from "@/hooks/use-lenis";
 
 export function SmoothScroll({ children }: { children: React.ReactNode }) {
   const [lenis, setLenis] = useState<Lenis | null>(null);
@@ -51,5 +51,10 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
 
   // Lenis provider wraps children; on mobile (lenis is null) the hook returns null
   // and the navbar falls back to native scrollIntoView.
-  return <LenisProvider lenis={lenis as any}>{children}</LenisProvider>;
+  return (
+    <LenisProvider lenis={lenis as any}>
+      <ScrollRestorer />
+      {children}
+    </LenisProvider>
+  );
 }

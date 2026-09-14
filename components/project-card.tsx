@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowUpRight, ChevronRight } from "lucide-react";
 import type { ProjectLink } from "@/data/projects";
 import { StackIcon } from "@/components/icons";
+import { saveHomeScroll } from "@/hooks/use-lenis";
 
 export interface Project {
   id: string;
@@ -38,6 +39,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
           the footer sits above this overlay (z-20) to stay independently clickable. */}
       <Link
         href={`/proyectos/${project.id}`}
+        onClick={() => saveHomeScroll(window.scrollY)}
         aria-label={`Ver caso de estudio de ${project.title}`}
         className="absolute inset-0 z-10 rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-accent/60"
       />
