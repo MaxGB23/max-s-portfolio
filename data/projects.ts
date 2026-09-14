@@ -250,8 +250,7 @@ export const projects: Project[] = [
     title: "Funky AI",
     category: "Dev Tools / AI Engineering",
     hook: "Framework CLI para desarrollo de software asistido por IA: pipeline SDD con contexto just-in-time, memoria persistente y planificación de proyectos en un solo comando.",
-    metric:
-      "-40% consumo de tokens (contexto just-in-time, estimación interna)",
+    metric: "Harness agéntico medido: 27 reglas ≈ 11.5k tokens",
     tags: ["Node.js", "TypeScript", "CLI", "pnpm", "Vitest", "GitHub Actions"],
     image: "/images/projects/funky-ai/funky-ai-main.jpg",
     imageAlt: "Terminal del CLI de funky-ai mostrando el pipeline SDD",
@@ -267,7 +266,7 @@ export const projects: Project[] = [
     detail: {
       headline: "Un framework CLI para desarrollo de software asistido por IA",
       summary:
-        "funky-ai unifica reglas agénticas, plantillas spec-driven y herramientas de planificación en un único CLI de Node.js (pnpm), sin superficie GUI. Orquesta el desarrollo como un pipeline determinista — proposal → specs → design → tasks → apply → verify → archive — cargando contexto just-in-time para proteger la ventana de tokens, con memoria persistente basada en archivos Markdown y endurecimiento de dependencias para proyectos pnpm. Todas las cifras de impacto son estimaciones internas del autor, no métricas externas.",
+        "funky-ai unifica reglas agénticas, plantillas spec-driven y herramientas de planificación en un único CLI de Node.js (pnpm), sin superficie GUI. Orquesta el desarrollo como un pipeline determinista — proposal → specs → design → tasks → apply → verify → archive — cargando contexto just-in-time para proteger la ventana de tokens, con memoria persistente basada en archivos Markdown y endurecimiento de dependencias para proyectos pnpm. Las cifras combinan estimaciones propias y mediciones reales del repositorio (inventario de reglas del propio framework).",
       metrics: [
         {
           value: "-40%",
@@ -285,10 +284,7 @@ export const projects: Project[] = [
             "más rápido de idea difusa a arquitectura costeada (funky-forge)",
         },
         { value: "~30%", label: "menos riesgo de supply chain (funky secure)" },
-        {
-          value: "-40%",
-          label: "rework fuera de alcance (TDD + issue-first workflow)",
-        },
+        { value: "≈11.5k", label: "tokens del harness completo: 27 reglas agénticas (inventario medido)" },
       ],
       problem:
         "Las tareas grandes de IA asistida que arrancan de un único prompt masivo fallan de forma predecible: la ventana de contexto se desborda, el modelo alucina sobre partes que ya no recuerda y no hay punto natural de intervención humana. Los agentes no tienen memoria confiable entre sesiones, cada sesión re-aprende desde cero recargando contexto caro, y la planificación de proyectos ocurre ad-hoc, después de elegir el stack.",
@@ -303,6 +299,7 @@ export const projects: Project[] = [
         "**funkygram** — memoria persistente en archivos Markdown dentro del repo: 7 categorías con shards O(1), esquema fijo (What/Why/Where/Learned), índice central auto-actualizado y recall deliberadamente low-tech y barato.",
         "**funky-forge** — de idea difusa a arquitectura costeada: `init` (canvases de proyecto e infra), `assess` (revisión de arquitectura con registro de decisiones), `estimate` (guía de costos con buffers y TCO), `pipeline` (estado compartido entre fases). La CLI prepara material, no juzga.",
         "**funky secure** — endurecimiento de dependencias pnpm: `doctor` (diagnóstico read-only), `init` (política idempotente), `check` (gate CI fail-closed). Incluye cuarentena de versiones frescas (72h) contra campañas tipo ChainDrop/Shai-Hulud y detección de secretos commitheados.",
+        "**Capa de contratos agénticos** — 27 reglas que tipan la delegación (7 contratos T2 por fase, 9 workflows T3, contratos de exploración y memoria) con carga just-in-time; introspección documentada del host (model tiers, permisos, hooks) en vez de reinventar el runtime.",
         "**Prácticas** — issue-first (no hay código sin issue), CI en GitHub Actions con SHAs pineados, releases estructurados (bump, notas, tag) y docs vivas sincronizadas con el binario real.",
       ],
       stack: [
@@ -313,6 +310,7 @@ export const projects: Project[] = [
         "CI/CD: GitHub Actions (toolchain pineado a SHAs)",
         "Memoria: archivos Markdown (shards + índice central)",
         "Pipeline: plantillas SDD en Markdown, contexto just-in-time",
+        "Capa agéntica: 27 reglas/contratos (delegación, memoria, exploración, workflow) + introspección de plataforma",
       ],
       gallery: [
         {
@@ -422,7 +420,7 @@ export const projects: Project[] = [
     hook: "Sitio full-stack para una empresa de servicios automotrices: landing pública + panel admin con CMS propio hecho desde cero en PHP puro.",
     metric: "De días a minutos en actualización de contenido",
     tags: ["PHP", "MySQL", "JavaScript", "Bootstrap", "HTML5", "CSS3"],
-    image: "/images/projects/autoshop/HomeCensured.png",
+    image: "/images/projects/autoshop/main.jpg",
     imageAlt: "Landing pública y panel de administración de AutoShop",
     links: [],
     detail: {

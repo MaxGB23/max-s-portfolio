@@ -13,3 +13,9 @@ node_modules/
 
 # Scratch css in components/
 components/a.css
+
+# QA screenshots (scripts/shots.mjs)
+shots/
+
+# Dev server log (worktree)
+dev3001.log

@@ -159,12 +159,12 @@ export function ProductsSection() {
       id="productos"
       ref={sectionRef}
       aria-labelledby="products-heading"
-      className="py-24 md:py-32 px-6"
+      className="debug-l1 py-24 md:py-32 px-6"
     >
-      <div className="max-w-6xl mx-auto">
+      <div className="debug-l2 max-w-6xl mx-auto">
 
         {/* Section header */}
-        <header className="products-header text-center mb-16">
+        <header className="debug-l3 products-header text-center mb-16">
           <span
             className="inline-block text-xs uppercase tracking-[0.2em] font-medium mb-4 text-purple-accent"
           >
@@ -183,7 +183,7 @@ export function ProductsSection() {
         </header>
 
         {/* Cards grid */}
-        <div className="products-grid grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="debug-l3 products-grid grid grid-cols-1 md:grid-cols-3 gap-6">
           {products.map((product) => (
             <ProductCard key={product.name} product={product} />
           ))}

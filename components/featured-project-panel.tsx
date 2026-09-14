@@ -24,11 +24,12 @@ interface FeaturedProjectPanelProps {
   project: FeaturedProject;
   children?: React.ReactNode;
   /**
-   * Optional heading rendered as an absolute overlay pinned to the top of the
-   * panel. Because it does NOT participate in the document flow, the panel's
-   * own content stays perfectly centered — the heading floats above it (ideal
-   * for the section title on the first stacking panel) and scrolls/scales away
-   * together with the panel as the stack advances.
+   * Optional heading rendered as an in-flow block at the top of the panel
+   * (desktop lg+ with min-height 768px only; hidden below). Because it
+   * participates in the document flow, it can never overlap the centered card
+   * content — the heading sits at the top and the card content centers in the
+   * remaining space (flex-1). It scrolls/scales away together with the panel
+   * as the stack advances.
    */
   overlay?: React.ReactNode;
 }
@@ -49,33 +50,38 @@ export function FeaturedProjectPanel({ project, children, overlay }: FeaturedPro
    */
   return (
     <article
-      className="featured-panel relative flex items-center min-h-screen w-full px-6 md:px-12 lg:px-20"
+      className="featured-panel debug-l4 relative flex items-center lg:min-h-screen w-full px-6 md:px-8 lg:px-12"
       data-panel-id={project.id}
       style={{ backgroundColor: project.bgColor }}
       aria-labelledby={`featured-title-${project.id}`}
     >
-      {/* Section heading overlay (desktop lg+ only): absolute over the top of the
-          first card, does not shift the centered content. Being part of this panel,
-          it stacks/scales away together with card 1 as GSAP advances — it does not
-          linger over the following cards. On mobile (<lg) it is hidden so it never
-          overlaps the image; the standalone heading above the stack handles it. */}
-      {overlay && (
-        <div className="hidden lg:flex absolute top-0 left-0 right-0 z-20 pointer-events-none justify-center">
-          {overlay}
-        </div>
-      )}
+      <ContentWrapper className="debug-l1 panel-content w-full max-w-7xl mx-auto lg:h-full flex flex-col justify-center gap-12 [@media(min-width:1280px)_and_(min-height:900px)]:gap-30 pt-12 md:pt-14 lg:py-8">
 
-      <ContentWrapper className="panel-content w-full max-w-7xl mx-auto flex flex-col justify-center py-24 md:py-28">
-
-        {children && (
-          <div className="w-full mb-12 md:mb-16">
-            {children}
+        {/* Section heading (desktop lg+ with min-height 768px): in-flow block at
+            the top of this panel. It can never overlap the centered card content:
+            it sits above the flex-1 area that centers the card. Being part of
+            panel 1 it stacks/scales away with the card as GSAP advances. On
+            mobile (<lg) it is hidden; the standalone heading handles it there.
+            NOTE: no overflow-y-auto here on purpose — it turns the panel into a
+            scroll container and forces overflow-x: auto, which produced a
+            phantom horizontal scrollbar during the pin. Content taller than the
+            viewport is clipped by the section's overflow:hidden instead. */}
+        {overlay && (
+          <div className="hidden lg:flex flex-col debug-l2 items-center text-center shrink-0 mb-8">
+            {overlay}
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-0 justify-center items-center">
+        <div className="flex flex-col justify-center">
+          {children && (
+            <div className="w-full mb-12 md:mb-16">
+              {children}
+            </div>
+          )}
+
+          <div className="debug-l2 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-0 justify-center items-center">
           {/* Left - Text */}
-          <div className="flex flex-col order-2 lg:order-1">
+          <div className="debug-l3 flex flex-col order-2 lg:order-1">
 
             {/* Index + Category */}
             <div className="flex items-center gap-4 mb-6">
@@ -92,14 +98,14 @@ export function FeaturedProjectPanel({ project, children, overlay }: FeaturedPro
             {/* Title */}
             <h2
               id={`featured-title-${project.id}`}
-              className="font-serif font-black text-fluid-featured text-foreground leading-[1.05] tracking-tight text-balance mb-6"
+              className="font-serif font-black text-fluid-featured text-foreground leading-[1.05] tracking-tight text-balance mb-6 lg:[@media(max-height:800px)]:text-4xl"
             >
               {mainTitle && <span>{mainTitle} </span>}
               <span className="text-purple-accent brightness-125">{lastWord}</span>
             </h2>
 
             {/* Description */}
-            <p className="text-fluid-body leading-relaxed text-muted-foreground mb-6 mr-6 sm:mr-0 max-w-[62ch]">
+            <p className="debug-l4 text-fluid-body leading-relaxed text-muted-foreground mb-6 mr-6 sm:mr-0 max-w-[50ch]">
               {project.description}
             </p>
 
@@ -170,6 +176,7 @@ export function FeaturedProjectPanel({ project, children, overlay }: FeaturedPro
             </div>
           </div>
 
+        </div>
         </div>
       </ContentWrapper>
 

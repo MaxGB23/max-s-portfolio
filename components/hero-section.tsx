@@ -130,59 +130,29 @@ export function HeroSection() {
       </div>
       {/* Main hero layout */}
       <div className="debug-l2 relative z-10 flex flex-col items-center w-full gap-10 2xl:gap-14">
-        <div className="debug-l3 relative flex flex-col md:flex-row items-center justify-center w-full max-w-7xl mx-auto gap-8 md:gap-12 lg:gap-20">
+        <div className="debug-l3 relative flex flex-col md:flex-row items-center justify-center w-full max-w-5xl mx-auto gap-8 md:gap-12 lg:gap-20">
 
           {/* Left Column: Info */}
-          <div className="hero-info flex flex-col items-center md:items-start text-center md:text-left z-10 max-w-2xl">
+          <div className="hero-info flex flex-col items-center md:items-start text-center md:text-left z-10 ">
 
-            <p className="hero-label text-muted-foreground brightness-125 uppercase tracking-[0.2em] 2xl:tracking-widest font-medium mb-4 text-fluid-eyebrow" style={{ opacity: 0, visibility: 'hidden' }}>
+            <p className="hero-label text-muted-foreground brightness-125 uppercase tracking-widest font-medium mb-4 text-fluid-eyebrow" style={{ opacity: 0, visibility: 'hidden' }}>
               {HERO_DATA.role}
             </p>
-            <h1 ref={titleRef} className="hero-title font-serif grid grid-cols-1 gap-3 font-black uppercase text-fluid-section leading-[0.9] tracking-tighter text-foreground mb-6" style={{ opacity: 0, visibility: 'hidden' }}>
+            <h1 ref={titleRef} className="hero-title font-serif grid grid-cols-1 gap-3 font-black uppercase text-fluid-display leading-[0.9] tracking-tighter text-foreground mb-6 lg:[@media(max-height:800px)]:text-6xl" style={{ opacity: 0, visibility: 'hidden' }}>
               <span>{HERO_DATA.title.first}</span>
               <span className="text-purple-accent  sm:tracking-[0.01em]">{HERO_DATA.title.last}</span>
             </h1>
 
-            <p className="hero-description debug-l4 px-4 sm:px-16 md:px-0 text-fluid-body leading-relaxed brightness-125 text-muted-foreground max-w-full" style={{ opacity: 0, visibility: 'hidden', maxWidth: titleWidth ?? undefined }}>
-              {HERO_DATA.description}
-            </p>
-
-
-            {/* CTA buttons */}
-            {/* <div className="hero-cta mt-6 flex flex-wrap items-center justify-center gap-4" style={{ opacity: 0, visibility: 'hidden' }}>
-              <Link
-                href="#productos"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-foreground text-background text-sm font-semibold hover:opacity-80 transition-opacity duration-200 shadow-md"
-              >
-                Ver Proyectos
-                <ArrowDown size={15} aria-hidden="true" />
-              </Link>
-              <a
-href="/documents/Maximiliano_Gonzalez_AI_Engineer_Resume.pdf"
-                download
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-border text-foreground text-sm font-semibold hover:bg-secondary transition-colors duration-200"
-              >
-                Descargar CV
-                <Download size={15} aria-hidden="true" />
-              </a>
-            </div> */}
-
-            {/* Tech Stack Ticker */}
-            {/* <div className="hero-chips flex items-center gap-3 w-full mt-8" style={{ opacity: 0, visibility: 'hidden' }}>
-
-              <div className="flex gap-6 justify-start">
-                <StackIcon name="Next.js" className="h-6 w-auto opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-200" />
-                <StackIcon name="React" className="h-6 w-auto opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-200" />
-                <StackIcon name="TypeScript" className="h-6 w-auto opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-200" />
-                <StackIcon name="PostgreSQL" className="h-6 w-auto opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-200" />
+            <div className="hero-description debug-l4 px-4 sm:px-16 md:px-0 text-fluid-body leading-relaxed brightness-125 text-muted-foreground max-w-full" style={{ opacity: 0, visibility: 'hidden', maxWidth: titleWidth ? `min(${titleWidth}px, 60ch)` : undefined }}>
+              <div className="debug-l1">
+                <p >{HERO_DATA.description}</p>
               </div>
-            </div> */}
-
+            </div>
           </div>
 
           {/* Right Column: Portrait */}
           <div
-            className="hero-portrait relative rounded-4xl shrink-0 shadow-xl w-[240px] sm:w-[300px] md:w-[260px] lg:w-[260px] 2xl:w-[300px] aspect-8/9 z-0 mt-4 md:mt-0"
+            className="hero-portrait relative rounded-4xl shrink-0 shadow-xl aspect-8/9 h-[280px] sm:h-[330px] md:h-[300px] 2xl:h-[340px] w-auto max-w-full z-0 mt-4 md:mt-0"
             style={{ opacity: 0, visibility: 'hidden' }}
           >
             <div className="w-full h-full rounded-4xl overflow-hidden relative">
@@ -192,7 +162,7 @@ href="/documents/Maximiliano_Gonzalez_AI_Engineer_Resume.pdf"
                 fill
                 priority
                 className="object-cover object-top"
-                sizes="(max-width: 768px) 240px, (max-width: 1200px) 30vw, 380px"
+                sizes="(max-width: 768px) 280px, (max-width: 1200px) 34vw, 380px"
               />
             </div>
 

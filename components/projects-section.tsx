@@ -33,7 +33,7 @@ const featuredProjects: FeaturedProject[] = getFeaturedProjects()
 // ---------------------------------------------------------------------------
 function SectionHeading() {
   return (
-    <h2 className="flex flex-col gap-2 md:gap-3 justify-center items-center font-serif font-black uppercase text-fluid-section leading-[0.9] tracking-tighter text-foreground md:mb-10">
+    <h2 className="flex flex-col gap-2 md:gap-3 justify-center items-center font-serif font-black uppercase text-fluid-section leading-[0.9] tracking-tighter text-foreground">
       <span>Proyectos</span>      
       <span className="text-purple-accent brightness-110">Destacados</span>
     </h2>
@@ -78,18 +78,18 @@ function ContactBanner() {
   };
 
   return (
-    <div className="pt-4 pb-20 md:pb-28">
-      <FadeIn className="max-w-7xl mx-auto">
+    <div className="debug-l3 pt-4 pb-20 md:pb-28">
+      <FadeIn className="debug-l4 max-w-7xl mx-auto">
         <div className="flex flex-col lg:flex-row items-start lg:items-center gap-5 lg:gap-8 rounded-2xl border border-dashed border-purple-accent/40 bg-card p-5 md:p-6">
           {/* Copy */}
           <div className="flex-1 min-w-0">
-            <span className="inline-flex items-center rounded-full border border-purple-accent/25 bg-purple-accent/10 px-3 py-2 text-[11px] font-semibold text-purple-accent mb-3">
+            <span className="inline-flex items-center rounded-full border border-purple-accent/25 bg-purple-accent/10 px-3 py-2 text-xs sm:text-sm font-semibold text-purple-accent mb-3">
               Disponible para proyectos
             </span>
-            <h3 className="font-serif font-bold text-xl text-foreground text-balance">
+            <h3 className="font-serif font-bold text-fluid-card text-foreground text-balance">
               ¿Trabajamos juntos?
             </h3> 
-            <p className="mt-2 text-base leading-relaxed text-muted-foreground max-w-xl">
+            <p className="mt-2 leading-relaxed text-fluid-body text-muted-foreground max-w-xl">
               ¿Tienes un proyecto en mente? Escríbeme y hablemos de tu idea.
             </p>
           </div>
@@ -157,10 +157,10 @@ function ProjectsGrid() {
     <section
       id="all-projects"
       aria-labelledby="all-projects-heading"
-      className="py-20 md:py-28 px-6"
+      className="debug-l1 pt-12 lg:pt-16 px-6"
     >
-      <div id="all-projects-content" className="max-w-7xl mx-auto">
-        <FadeInStagger className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div id="all-projects-content" className="debug-l2 max-w-7xl mx-auto">
+        <FadeInStagger className="debug-l3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
   {allProjects.map((project) => (
           <FadeInItem key={project.id}>
               <ProjectCard project={project} />
@@ -180,12 +180,12 @@ function ProjectsGrid() {
 // ---------------------------------------------------------------------------
 function ProjectsTransition() {
   return (
-    <div className="relative t-20 md:pt-24 px-6 text-center">
+    <div className="debug-l1 relative px-6 text-center">
 
 
-      <div className="max-w-7xl mx-auto flex flex-col items-center text-center">
+      <div className="debug-l2 max-w-7xl pt-24 lg:pt-0 mx-auto flex flex-col items-center text-center">
         <FadeIn>
-          <h2 id="all-projects-heading" className="flex flex-col gap-2 md:gap-3 justify-center items-center font-serif font-black uppercase text-fluid-section leading-[0.9] tracking-tighter text-foreground mb-5">
+          <h2 id="all-projects-heading" className="flex flex-col gap-2 md:gap-3 justify-center items-center font-serif font-black uppercase text-fluid-section leading-[0.9] tracking-tighter text-foreground ">
             <span>Todos los</span>
             <span className="text-purple-accent brightness-110">Proyectos</span>
           </h2>
@@ -207,9 +207,14 @@ export function ProjectsSection() {
     const ctx = gsap.context(() => {
       const mm = gsap.matchMedia();
 
-      // mm.add("(min-width: 768px)", () => {
-      const panels = gsap.utils.toArray<HTMLElement>(".featured-panel");
-      if (panels.length === 0) return;
+      // Stacking animation is desktop editorial only: it needs enough BOTH width
+      // (lg+, 1024px) and height (768px+) so the in-flow heading and the full
+      // two-column card fit the pinned viewport. Outside that range the panels
+      // render in normal flow — each card (CTA included) fully visible with
+      // native scroll, no jank, no overlap.
+      mm.add("(min-width: 1024px) and (min-height: 700px)", () => {
+        const panels = gsap.utils.toArray<HTMLElement>(".featured-panel");
+        if (panels.length === 0) return;
 
       // Container setup
       gsap.set(".featured-section", {
@@ -264,10 +269,7 @@ export function ProjectsSection() {
         );
       });
 
-      return () => {
-        // matchMedia handles typical cleanup
-      };
-      // });
+      });
     }, sectionRef);
 
     return () => ctx.revert();
@@ -277,14 +279,14 @@ export function ProjectsSection() {
     <div ref={sectionRef}>
       {/* Section heading, mobile/tablet (<lg): the card stacks image-on-top so
           the title cannot overlay it — it flows as a normal block above the stack. */}
-      <div className="px-6 md:px-12 pt-16 md:pt-20 flex justify-center lg:hidden">
+      <div className="px-6 md:px-12 pt-12 md:pt-20 flex justify-center lg:hidden">
         <div className="max-w-7xl mx-auto flex flex-col items-center text-center">
           <SectionHeading />
         </div>
       </div>
 
       {/* Featured stacking section — Opción B (desktop lg+): the section heading is
-          an absolute overlay floating over the first card (content stays centered),
+          an in-flow block at the top of panel 1 (never overlaps the centered card),
           and because it lives inside panel 1 it stacks/scales away with the card as
           GSAP advances — it never lingers over the following cards. On mobile (<lg)
           the overlay is hidden and the standalone heading above the stack handles it. */}
@@ -300,7 +302,7 @@ export function ProjectsSection() {
             overlay={
               index === 0 ? (
                 <FadeIn>
-                  <div id="featured-projects-label" className="lg:flex flex-col items-center text-center px-4 lg:px-0 pt-14 md:pt-16 lg:pt-20">
+                  <div id="featured-projects-label" className="debug-l1 flex flex-col items-center text-center">
                     <SectionHeading />
                   </div>
                 </FadeIn>

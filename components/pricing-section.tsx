@@ -122,7 +122,7 @@ function PricingCard({ tier }: { tier: PricingTier }) {
       <div className="mb-6">
         <h3
           className={cn(
-            "font-serif font-bold text-xl mb-1",
+            "font-serif font-bold text-fluid-card mb-1",
             tier.highlighted ? "text-white" : "text-foreground"
           )}
         >
@@ -130,7 +130,7 @@ function PricingCard({ tier }: { tier: PricingTier }) {
         </h3>
         <p
           className={cn(
-            "text-base leading-relaxed",
+            "text-fluid-card-body leading-relaxed",
             tier.highlighted ? "text-white/75" : "text-muted-foreground"
           )}
         >
@@ -151,7 +151,7 @@ function PricingCard({ tier }: { tier: PricingTier }) {
         <div className="flex items-end gap-1">
           <span
             className={cn(
-              "font-serif font-black text-5xl leading-none",
+              "font-serif font-black text-fluid-price leading-none",
               tier.highlighted ? "text-white" : "text-foreground"
             )}
           >
@@ -174,7 +174,7 @@ function PricingCard({ tier }: { tier: PricingTier }) {
           <li
             key={feature}
             className={cn(
-              "flex items-start gap-2.5 text-base",
+              "flex items-start gap-2.5 text-fluid-card-body",
               tier.highlighted ? "text-white" : "text-foreground"
             )}
           >
@@ -264,23 +264,23 @@ export function PricingSection() {
       id="precios"
       ref={sectionRef}
       aria-labelledby="pricing-heading"
-      className="py-24 md:py-32 px-6"
+      className="debug-l1 py-24 md:py-32 px-6"
     >
-      <div className="max-w-6xl mx-auto">
+      <div className="debug-l2 max-w-6xl mx-auto">
 
         {/* Section header */}
-        <header className="pricing-header flex flex-col items-center text-center mb-16">
+        <header className="debug-l3 pricing-header flex flex-col items-center text-center mb-16">
           <h2 id="pricing-heading" className="flex flex-col md:flex-row gap-2 md:gap-3 justify-center items-center font-serif font-black uppercase text-fluid-section leading-[0.9] tracking-tighter text-foreground mb-5">
             <span>Servicios</span>
             <span className="text-purple-accent brightness-110">a medida</span>
           </h2>
-          <p className="text-fluid-body text-muted-foreground max-w-lg lg:max-w-xl 2xl mx-auto leading-relaxed">
-            Precios base por proyecto en MXN. Cada proyecto se cotiza según alcance — sin letras chicas.
+          <p className="text-fluid-body px-4 sm:px-16 md:px-0 text-muted-foreground max-w-lg mx-auto leading-relaxed">
+            Precios base por proyecto en MXN. Cada proyecto se cotiza según alcance, sin letras chicas.
           </p>
         </header>
 
         {/* Cards grid */}
-        <div className="pricing-grid grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
+<div className="debug-l3 grid grid-cols-1 lg:grid-cols-3 gap-6 items-start max-w-md lg:max-w-none mx-auto">
           {tiers.map((tier) => (
             <div key={tier.name} className={tier.highlighted ? "pricing-highlighted" : ""}>
               <PricingCard tier={tier} />
@@ -289,7 +289,7 @@ export function PricingSection() {
         </div>
 
         {/* Footer note */}
-        <p className="mt-10 text-center text-xs text-muted-foreground">
+        <p className="mt-10 text-center text-fluid-body text-muted-foreground">
           Precios base de referencia. La cotización final depende del alcance. Escríbeme y respondo en 24–48 h.
         </p>
 

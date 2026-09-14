@@ -117,7 +117,7 @@ export function Navbar() {
         opacity: { duration: 0.45, ease: "easeOut" },
       }}
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-colors duration-300",
+        "debug-l1 fixed top-0 left-0 right-0 z-50 transition-colors duration-300",
         // Mobile y desktop: fondo condicional — transparente al top, activo al scrollear
         isBgActive
           ? "bg-nav backdrop-blur-md border-b border-border shadow-sm"
@@ -125,7 +125,7 @@ export function Navbar() {
       )}
     >
       <nav
-        className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between"
+        className="debug-l2 max-w-7xl mx-auto px-6 h-16 flex items-center justify-between"
         aria-label="Main navigation"
       >
         {/* Logo */}
@@ -216,7 +216,7 @@ export function Navbar() {
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
           >
-            <div className="max-w-6xl mx-auto px-6 py-4 flex flex-col gap-8">
+            <div className="debug-l2 max-w-6xl mx-auto px-6 py-4 flex flex-col gap-8">
               {navLinks.map((link) => (
                 <Link
                   key={link.label}

@@ -3,6 +3,20 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/*
+ * Overflow guards: the GSAP pin of the featured stacking section takes the
+ * section out of flow (position: fixed) for the duration of the scrub. On the
+ * pin/unpin frame the document layout shifts a few px and the pin spacer can
+ * momentarily exceed the viewport width, producing a brief horizontal
+ * scrollbar "jump". `clip` (not `hidden`) kills that phantom scrollbar without
+ * creating a scroll container, without affecting vertical scrolling, and
+ * without breaking inner scroll containers (tables keep their own overflow-x).
+ */
+html,
+body {
+  overflow-x: clip;
+}
+
 :root {
   /* Portfolio Light Theme */
   --background: oklch(1 0 0);
@@ -121,8 +135,11 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
-  --text-fluid-section: clamp(2.25rem, 1.56rem + 2.94vw, 4.5rem);
-  --text-fluid-featured: clamp(2rem, 1.39rem + 2.61vw, 4rem);
+  --text-fluid-display: clamp(2.5rem, 1.88rem + 3.13vw, 5rem);
+  --text-fluid-detail: clamp(2.5rem, 2.12rem + 1.9vw, 4rem);
+  --text-fluid-section: clamp(2rem, 1.72rem + 1.4vw, 3.25rem);
+  --text-fluid-featured: clamp(1.75rem, 1.52rem + 1.15vw, 2.75rem);
+  --text-fluid-price: clamp(2rem, 1.8rem + 1vw, 2.625rem);
   --text-fluid-card: clamp(1.125rem, 1.01rem + 0.49vw, 1.5rem);
   --text-fluid-subheading: clamp(1.5rem, 1.27rem + 0.98vw, 2.25rem);
   --text-fluid-body: clamp(1rem, 0.96rem + 0.16vw, 1.125rem);

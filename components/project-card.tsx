@@ -69,7 +69,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
         > 
           {project.title}
         </h3>
-        <p className="text-fluid-card-body leading-relaxed text-muted-foreground flex-1 mb-4 line-clamp-3">
+        <p className="text-fluid-card-body leading-relaxed text-muted-foreground flex-1 mb-4 line-clamp-3 max-h-[4.875em]">
           {project.description}
         </p>
 
@@ -83,7 +83,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
         )}
 
         {/* Tech stack tags - Icons with gap */}
-        <div className="flex items-center gap-2" aria-label="Technologies used">
+        <div className="flex items-center gap-2 mb-4" aria-label="Technologies used">
           {project.tags?.map((tag, index) => (
             <div
               key={index}
@@ -93,15 +93,15 @@ export function ProjectCard({ project }: ProjectCardProps) {
               <StackIcon
                 name={tag}
                 className="w-4 h-4 2xl:w-6 2xl:h-6 text-foreground opacity-80 group-hover:opacity-100 transition-opacity"
-                labelClassName="text-[9px] 2xl:text-[10px] font-bold text-foreground/60 uppercase tracking-tighter"
+                labelClassName="text-[11px] 2xl:text-xs font-bold text-foreground/60 uppercase tracking-tighter"
               />
             </div>
           ))}
         </div>
 
         {/* Footer */}
-        <div className="mt-4 pt-4 border-t border-border flex items-center justify-between gap-3">
-          <span className="inline-flex items-center gap-1.5 text-xs 2xl:text-base font-semibold text-muted-foreground/90 group-hover:text-foreground transition-colors duration-200">
+        <div className="mt-auto pt-4 border-t border-border flex items-center justify-between gap-3">
+          <span className="inline-flex items-center gap-1.5 text-xs 2xl:text-sm font-semibold text-muted-foreground/90 group-hover:text-foreground transition-colors duration-200">
             Caso de estudio
             <ChevronRight size={13} aria-hidden="true" />
           </span>

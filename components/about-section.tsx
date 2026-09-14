@@ -68,23 +68,23 @@ export function AboutSection() {
       className="debug-l1 relative flex flex-col items-center justify-center px-6 md:px-8 lg:px-12 py-16 md:py-24"
     >
       {/* Main layout */}
-      <div className="debug-l2 relative z-10 flex flex-col-reverse md:flex-row items-center justify-center w-full max-w-7xl mx-auto gap-10 2xl:gap-20">
+      <div className="debug-l2 relative z-10 flex flex-col-reverse md:flex-row items-center justify-center w-full max-w-6xl mx-auto gap-8 md:gap-12 lg:gap-20">
 
         {/* Left Column: Portrait */}
-        <div className="about-portrait debug-l4 relative rounded-4xl shrink-0 shadow-xl w-[360px] sm:w-[390px] md:w-[360px] lg:w-[450px] 2xl:w-[550px] aspect-11/9 z-0" style={{ opacity: 0, visibility: 'hidden' }}>
+        <div className="about-portrait debug-l4 relative rounded-4xl shadow-xl aspect-11/9 w-full max-w-[400px] sm:max-w-[440px] mx-auto md:max-w-full md:w-auto md:h-[320px] lg:h-[380px] 2xl:h-[400px] shrink-0 z-0" style={{ opacity: 0, visibility: 'hidden' }}>
           <div className="w-full h-full rounded-4xl overflow-hidden relative">
             <Image
               src="/images/about-max.png"
               alt="Max González Ballesteros - Sobre Mí"
               fill
               className="object-cover object-top 2xl:object-right"
-              sizes="(max-width: 768px) 240px, (max-width: 1200px) 30vw, 380px"
+              sizes="(max-width: 768px) 400px, (max-width: 1200px) 464px, 490px"
             />
           </div>
         </div>
 
         {/* Right Column: Info */}
-        <div className="about-info flex flex-col items-center md:items-start text-center md:text-left z-10 max-w-2xl">
+        <div className="about-info flex flex-col items-center md:items-start text-center md:text-left z-10">
           <p className="about-label brightness-125 uppercase tracking-[0.2em] font-medium text-muted-foreground mb-2 text-fluid-eyebrow" style={{ opacity: 0, visibility: 'hidden' }}>
             {ABOUT_DATA.label}
           </p>
@@ -94,10 +94,16 @@ export function AboutSection() {
             <span className="text-purple-accent"> {ABOUT_DATA.title.second}</span>
           </h2>
 
-          <div className="debug-l4 px-4 sm:px-16 md:px-0 about-description text-fluid-body leading-relaxed text-muted-foreground max-w-[62ch] space-y-4" style={{ opacity: 0, visibility: 'hidden' }}>
-            {ABOUT_DATA.paragraphs.map((text, index) => (
+          <div className="debug-l4 px-4 sm:px-16 md:px-0 about-description text-fluid-body leading-relaxed text-muted-foreground max-w-[58ch] space-y-4" style={{ opacity: 0, visibility: 'hidden' }}>
+                          <div className="debug-l1">
+                            {ABOUT_DATA.paragraphs.map((text, index) => (
               <p key={index}>{text}</p>
             ))}
+              </div>
+            
+            
+            
+
           </div>
         </div>
 

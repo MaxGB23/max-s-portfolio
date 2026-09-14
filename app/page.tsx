@@ -13,20 +13,20 @@ export default function Home() {
       <Navbar />
       <HeroSection />
       <AboutSection />
-
+<div className="mb-12 lg:mb-0"></div>
       <ProjectsSection />
 
       {/* Divider */}
-      <div className="max-w-6xl mx-auto px-6">
+      {/* <div className="max-w-6xl mx-auto px-6">
         <hr className="border-border" />
-      </div>
+      </div> */}
 
       {/* <ProductsSection /> */}
 
       {/* Divider */}
-      <div className="max-w-6xl mx-auto px-6">
+      {/* <div className="max-w-6xl mx-auto px-6">
         <hr className="border-border" />
-      </div>
+      </div> */}
 
       <PricingSection />
       <Footer />

@@ -24,3 +24,6 @@ Cuando respondas en español, usa siempre español neutro. Evita el voseo y los 
   5. Aplicar cambios SOLO en el worktree; comparar en vivo contra `:3000`.
   6. Al aprobar: merge a la rama principal y `git worktree remove` para limpiar.
 - Al borrar un worktree: `git worktree remove <ruta>`; si tiene cambios sin mergear, confirmar antes con el usuario.
+
+### Código fuente y sintaxis
+- Usar siempre caracteres ASCII estándar para sintaxis y operadores. Nunca sustituir caracteres ASCII por caracteres Unicode visualmente similares.

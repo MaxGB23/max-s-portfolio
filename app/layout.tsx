@@ -18,7 +18,7 @@ const spaceGrotesk = Space_Grotesk({
 // Layout debug overlay for manual QA.
 // Flip to `true` to render the colored container outlines (debug-l1..4) in
 // hero/about while adjusting the layout; flip back to `false` for production.
-const LAYOUT_DEBUG = false
+const LAYOUT_DEBUG = true
 
 export const metadata: Metadata = {
   title: "Max's Portfolio",

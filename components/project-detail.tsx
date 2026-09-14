@@ -104,7 +104,7 @@ function AnimatedMetric({ value }: { value: string }) {
 
 export function ProjectDetail({ project }: { project: Project }) {
   const rootRef = useRef<HTMLDivElement>(null);
-  const backBtnRef = useRef<HTMLButtonElement>(null);
+  
   const router = useRouter();
 
   useLayoutEffect(() => {
@@ -179,17 +179,27 @@ export function ProjectDetail({ project }: { project: Project }) {
         });
       });
 
-      // Floating back button - hide on scroll down, reveal on scroll up.
-      if (backBtnRef.current) {
+      // Floating back buttons - hide on scroll down, reveal on scroll up.
+      // Applies to every .back-btn (desktop gutter pill + mobile FAB).
+      // Only animates on a state transition (never per scroll event) with
+      // overwrite, so Lenis-driven scroll can't pile up competing tweens.
+      const backButtons = gsap.utils.toArray<HTMLElement>(".back-btn");
+      if (backButtons.length > 0) {
+        let hidden = false;
         ScrollTrigger.create({
           start: 0,
           end: "max",
           onUpdate: (self) => {
-            if (self.direction === 1) {
-              gsap.to(backBtnRef.current, { opacity: 0, y: 24, duration: 0.3 });
-            } else {
-              gsap.to(backBtnRef.current, { opacity: 1, y: 0, duration: 0.3 });
-            }
+            const shouldHide = self.getVelocity() > 40;
+            if (shouldHide === hidden) return;
+            hidden = shouldHide;
+            gsap.to(backButtons, {
+              opacity: shouldHide ? 0 : 1,
+              y: shouldHide ? 24 : 0,
+              duration: 0.25,
+              ease: "power2.out",
+              overwrite: "auto",
+            });
           },
         });
       }
@@ -233,15 +243,14 @@ export function ProjectDetail({ project }: { project: Project }) {
 
   return (
     <div ref={rootRef}>
-      {/* Floating back control - preserves exact scroll position via router.back().
-          Anchored to the content container (max-w-7xl + same responsive padding),
-          so it never drifts away from the content on ultra-wide screens.
-          Inverted button (light bg) for strong contrast against the dark page. */}
+{/* Floating back control (all breakpoints): free-floating in the top-left
+          corner. The detail page renders without a navbar (only the scroll
+          progress bar), so the corner is always free — no conflict with any
+          chrome. On scroll down it fades away (see .back-btn ScrollTrigger). */}
       <div className="fixed inset-x-0 top-4 md:top-6 z-50 pointer-events-none">
-        <div className="mx-auto w-full max-w-400 pl-5">
-          <Button asChild variant="primary" shape="pill" size="md" className="pointer-events-auto hover:bg-foreground/80 transition-colors">
+        <div className="mx-auto w-full max-w-350 pl-5">
+          <Button asChild variant="primary" shape="pill" size="md" className="back-btn pointer-events-auto hover:bg-foreground/80 transition-colors">
             <button
-              ref={backBtnRef}
               type="button"
               onClick={handleBack}
               aria-label="Volver a proyectos (conserva la posición de scroll)"
@@ -255,18 +264,18 @@ export function ProjectDetail({ project }: { project: Project }) {
       </div>
 
       {/* Hero - typographic, image-led proof lives lower in the primary visual. */}
-      <section className="detail-hero px-6 md:px-12 lg:px-20 pt-20 md:pt-24 pb-12">
-        <div className="max-w-7xl mx-auto">
+      <section className="debug-l1 detail-hero px-6 md:px-12 lg:px-20 pt-20 md:pt-24 pb-12">
+        <div className="debug-l2 max-w-5xl mx-auto">
           <div className="mb-6">
             <span className="px-3.5 py-1.5 rounded-full text-xs 2xl:text-sm font-semibold tracking-wide bg-purple-accent text-white">
               {project.category}
             </span>
           </div>
-          <h1 className="font-serif font-black text-fluid-section text-foreground leading-[1.02] tracking-tight text-balance">
+          <h1 className="font-serif font-black text-fluid-detail text-foreground leading-[1.02] tracking-tight text-balance">
             {mainTitle && <span>{mainTitle} </span>}
             <span className="text-purple-accent brightness-110">{lastWord}</span>
           </h1>
-          <p className="mt-6 text-base 2xl:text-2xl text-muted-foreground max-w-2xl leading-relaxed">
+          <p className="mt-6 text-fluid-body text-muted-foreground max-w-2xl leading-relaxed">
             {detail.headline}
           </p>
           {tags.length > 0 && (
@@ -278,12 +287,12 @@ export function ProjectDetail({ project }: { project: Project }) {
       </section>
 
       {/* Content */}
-      <div className="px-6 md:px-12 lg:px-20 pb-24">
-        <div className="max-w-7xl mx-auto">
+      <div className="debug-l1 px-6 md:px-12 lg:px-20 pb-24">
+        <div className="debug-l2 max-w-5xl mx-auto">
           {/* Metrics */}
-          <section className="detail-section mb-16" aria-label="Métricas clave">
+          <section className="debug-l3 detail-section mb-16" aria-label="Métricas clave">
             <SectionTitle>Métricas clave</SectionTitle>
-            <dl className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <dl className="debug-l4 grid grid-cols-1 sm:grid-cols-2 gap-4">
               {detail.metrics.map((metric, index) => {
                 // Última tarjeta a ancho completo cuando el total es impar (evita huérfana).
                 const isLastOdd =
@@ -316,7 +325,7 @@ export function ProjectDetail({ project }: { project: Project }) {
         </div>
 
         {/* Primary Visual - wide proof band, full width */}
-        <div className="max-w-7xl mx-auto mb-12">
+        <div className="debug-l2 max-w-5xl mx-auto mb-12">
           <div className="detail-primary-visual w-full">
             <figure className="aspect-video rounded-3xl overflow-hidden border border-border relative">
               <Image
@@ -333,7 +342,7 @@ export function ProjectDetail({ project }: { project: Project }) {
 
         {/* Project links - acciones tras la prueba visual */}
         {project.links.length > 0 && (
-          <div className="max-w-6xl mx-auto mb-16">
+          <div className="max-w-5xl mx-auto mb-16">
             <div className="flex flex-wrap gap-3 justify-center">
               {project.links.map((link, index) => {
                 const Icon = linkIcon(link.kind);
@@ -354,7 +363,7 @@ export function ProjectDetail({ project }: { project: Project }) {
           </div>
         )}
 
-        <div className="max-w-3xl mx-auto">
+        <div className="debug-l2 max-w-3xl mx-auto">
           {/* Summary */}
           <section className="detail-section mb-16">
             <SectionTitle>Resumen</SectionTitle>
