@@ -1,7 +1,7 @@
 # funky-theme — Tema semántico original para VS Code (Consolidado)
 
 > Fuente única de contenido para el portfolio. Editar aquí; luego se refleja en `data/projects.ts`.
-> Última actualización: 2026-08-28
+> Última actualización: 2026-09-16
 
 ---
 
@@ -12,8 +12,8 @@
 | `id` | `funky-theme` |
 | `title` | funky-theme |
 | `category` | Dev Tools / VS Code |
-| `hook` | Tema oscuro semántico original para VS Code: 4 variantes derivadas de una paleta jerárquica definida en un único config (SSOT). |
-| `metric` | 4 variantes desde 1 paleta SSOT |
+| `hook` | Tema oscuro semántico original para VS Code: 5 variantes derivadas de una paleta jerárquica definida en un único config (SSOT). |
+| `metric` | 5 variantes desde 1 paleta SSOT |
 | `tags` | VS Code · Theme · pnpm · Token Colors |
 | `image` | TBD — ⚠️ captura real del editor con las variantes del tema |
 | `imageAlt` | Editor de VS Code mostrando las variantes de funky-theme |
@@ -29,13 +29,13 @@
 
 ### Summary
 
-Tema oscuro semántico original para VS Code, publicado bajo MIT. Cuatro variantes derivadas de una paleta jerárquica definida en un solo archivo de configuración (SSOT): se toca un valor y todo el tema se mantiene coherente, sin colores duplicados entre cientos de archivos.
+Tema oscuro semántico original para VS Code, publicado bajo MIT. Cinco variantes derivadas de una paleta jerárquica definida en un solo archivo de configuración (SSOT): se toca un valor y todo el tema se mantiene coherente, sin colores duplicados entre cientos de archivos.
 
 ### Metrics
 
 | Value | Label |
 | --- | --- |
-| 4 | variantes del tema |
+| 5 | variantes del tema |
 | 1 | fuente de verdad: paleta jerárquica en un único config |
 | MIT | tema original, sin créditos a terceros |
 
@@ -47,12 +47,13 @@ La mayoría de los temas de editor duplican valores de color en cientos de archi
 
 - Diseñé un tema original para VS Code publicado bajo licencia MIT.
 - Definí la paleta jerárquica como única fuente de verdad (un solo archivo de configuración).
-- Derivé las 4 variantes del tema desde esa paleta.
+- Derivé las 5 variantes del tema desde esa paleta.
 
 ### Solution
 
 - **Paleta semántica SSOT:** colores definidos por rol semántico (UI, sintaxis, estados), no arbitrarios, en un solo config.
-- **4 variantes coherentes:** todas se mantienen en sincronía porque comparten la misma fuente.
+- **Variantes separadas por familias visuales:** el feedback de devs en foros y comunidades (Discord, etc.) guía qué se aplica en cada variante — italics, bold, etc. solo donde es deseado; para quien no los quiere, hay una variante a su medida.
+- **5 variantes coherentes:** todas se mantienen en sincronía porque comparten la misma fuente.
 - **Tema original:** propio, sin copia de otros temas, publicado bajo MIT.
 
 ### Stack

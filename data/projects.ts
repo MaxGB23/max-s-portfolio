@@ -541,8 +541,8 @@ export const projects: Project[] = [
     id: "funky-theme",
     title: "Funky Theme",
     category: "Dev Tools / VS Code",
-    hook: "Tema oscuro semántico original para VS Code: 4 variantes derivadas de una paleta jerárquica definida en un único config (SSOT).",
-    metric: "4 variantes desde 1 paleta SSOT",
+    hook: "Tema oscuro semántico original para VS Code: 5 variantes derivadas de una paleta jerárquica definida en un único config (SSOT).",
+    metric: "5 variantes desde 1 paleta SSOT",
     tags: ["VS Code", "pnpm", "Token Colors"],
     image: "/images/projects/funky-theme/icon.png",
     imageAlt: "Editor de VS Code mostrando las variantes de funky-theme",
@@ -558,9 +558,9 @@ export const projects: Project[] = [
       headline:
         "Un tema original, con la paleta gobernada por una única fuente de verdad",
       summary:
-        "Tema oscuro semántico original para VS Code, publicado bajo MIT. Cuatro variantes derivadas de una paleta jerárquica definida en un solo archivo de configuración (SSOT): se toca un valor y todo el tema se mantiene coherente, sin colores duplicados entre cientos de archivos.",
+        "Tema oscuro semántico original para VS Code, publicado bajo MIT. Cinco variantes derivadas de una paleta jerárquica definida en un solo archivo de configuración (SSOT): se toca un valor y todo el tema se mantiene coherente, sin colores duplicados entre cientos de archivos.",
       metrics: [
-        { value: "4", label: "variantes del tema" },
+        { value: "5", label: "variantes del tema" },
         {
           value: "1",
           label: "fuente de verdad: paleta jerárquica en un único config",
@@ -572,11 +572,12 @@ export const projects: Project[] = [
       role: [
         "Diseñé un tema original para VS Code publicado bajo licencia MIT.",
         "Definí la paleta jerárquica como única fuente de verdad (un solo archivo de configuración).",
-        "Derivé las 4 variantes del tema desde esa paleta.",
+        "Derivé las 5 variantes del tema desde esa paleta.",
       ],
       solution: [
         "**Paleta semántica SSOT:** colores definidos por rol semántico (UI, sintaxis, estados), no arbitrarios, en un solo config.",
-        "**4 variantes coherentes:** todas se mantienen en sincronía porque comparten la misma fuente.",
+        "**Variantes separadas por familias visuales:** el feedback de devs en foros y comunidades (Discord, etc.) guía qué se aplica en cada variante — italics, bold, etc. solo donde es deseado; para quien no los quiere, hay una variante a su medida.",
+        "**5 variantes coherentes:** todas se mantienen en sincronía porque comparten la misma fuente.",
         "**Tema original:** propio, sin copia de otros temas, publicado bajo MIT.",
       ],
       stack: [
