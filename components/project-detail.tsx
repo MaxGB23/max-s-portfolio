@@ -1,6 +1,14 @@
 "use client";
 
-import { useLayoutEffect, useState, useRef, useCallback, type ReactNode } from "react";
+import {
+  useLayoutEffect,
+  useEffect,
+  useState,
+  useRef,
+  useCallback,
+  type ReactNode,
+  type PointerEvent as ReactPointerEvent,
+} from "react";
 import { useRouter } from "next/navigation";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -9,7 +17,7 @@ import Image from "next/image";
 import { ArrowLeft, ArrowUpRight, ChevronLeft, ChevronRight, Github, Globe, Maximize2, MonitorSmartphone, X } from "lucide-react";
 import { StackIcon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
-import { takeHomeScroll } from "@/hooks/use-lenis";
+import { takeHomeScroll, useLenis } from "@/hooks/use-lenis";
 import type { Project, ProjectImage, ProjectLink } from "@/data/projects";
 
 /** Picks a contextual icon for a project link. Unknown kinds fall back to a
@@ -268,6 +276,56 @@ export function ProjectDetail({ project }: { project: Project }) {
     );
   }, [realImages.length]);
 
+  // Scroll lock + Escape-to-close while the lightbox is open. Without this,
+  // mobile keeps scrolling the content behind the overlay and the X tap turns
+  // into a page scroll instead of a click. Native browsers get `overflow:
+  // hidden` on html/body; Lenis (desktop) gets stopped so it can't write
+  // scroll on the next RAF and fight the lock.
+  const lenis = useLenis();
+
+  useLayoutEffect(() => {
+    if (lightboxIndex === null) return;
+
+    const prevHtmlOverflow = document.documentElement.style.overflow;
+    const prevBodyOverflow = document.body.style.overflow;
+    document.documentElement.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
+    lenis?.stop();
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") closeLightbox();
+    };
+    window.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      document.documentElement.style.overflow = prevHtmlOverflow;
+      document.body.style.overflow = prevBodyOverflow;
+      lenis?.start();
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [lightboxIndex, closeLightbox, lenis]);
+
+  // Touch swipe navigation — zero dependencies, plain pointer events. A ~50px
+  // deltaX threshold with the horizontal axis dominant (so vertical drags are
+  // ignored) keeps accidential small taps from navigating.
+  const swipeStart = useRef<{ x: number; y: number } | null>(null);
+  const onLightboxPointerDown = useCallback((event: ReactPointerEvent<HTMLDivElement>) => {
+    swipeStart.current = { x: event.clientX, y: event.clientY };
+  }, []);
+  const onLightboxPointerUp = useCallback(
+    (event: ReactPointerEvent<HTMLDivElement>) => {
+      const start = swipeStart.current;
+      swipeStart.current = null;
+      if (!start) return;
+      const deltaX = event.clientX - start.x;
+      const deltaY = event.clientY - start.y;
+      if (Math.abs(deltaX) < 50 || Math.abs(deltaX) <= Math.abs(deltaY)) return;
+      if (deltaX < 0) nextLightbox();
+      else prevLightbox();
+    },
+    [nextLightbox, prevLightbox]
+  );
+
   return (
     <div ref={rootRef}>
 {/* Floating back control (all breakpoints): free-floating in the top-left
@@ -524,12 +582,14 @@ export function ProjectDetail({ project }: { project: Project }) {
           aria-modal="true"
           aria-label="Visor de imagen"
           onClick={closeLightbox}
+          onPointerDown={onLightboxPointerDown}
+          onPointerUp={onLightboxPointerUp}
         >
           <button
             type="button"
             onClick={closeLightbox}
             aria-label="Cerrar visor"
-            className="absolute top-4 right-4 inline-flex items-center justify-center w-11 h-11 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors duration-200"
+            className="absolute top-4 right-4 inline-flex items-center justify-center w-11 h-11 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors duration-200 touch-manipulation"
           >
             <X size={20} aria-hidden="true" />
           </button>
@@ -540,7 +600,7 @@ export function ProjectDetail({ project }: { project: Project }) {
                 type="button"
                 onClick={(e) => { e.stopPropagation(); prevLightbox(); }}
                 aria-label="Imagen anterior"
-                className="absolute left-4 inline-flex items-center justify-center w-11 h-11 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors duration-200"
+                className="absolute left-4 hidden sm:inline-flex items-center justify-center w-11 h-11 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors duration-200 touch-manipulation"
               >
                 <ChevronLeft size={20} aria-hidden="true" />
               </button>
@@ -548,10 +608,20 @@ export function ProjectDetail({ project }: { project: Project }) {
                 type="button"
                 onClick={(e) => { e.stopPropagation(); nextLightbox(); }}
                 aria-label="Imagen siguiente"
-                className="absolute right-4 inline-flex items-center justify-center w-11 h-11 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors duration-200"
+                className="absolute right-4 hidden sm:inline-flex items-center justify-center w-11 h-11 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors duration-200 touch-manipulation"
               >
                 <ChevronRight size={20} aria-hidden="true" />
               </button>
+
+              {/* Position affordance for touch users (prev/next hidden below sm):
+                  swipe replaces the arrows, "3 / 9" says where you are. */}
+              <span
+                className="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-white/10 px-3 py-1 text-xs font-medium tabular-nums text-white/80 select-none"
+                aria-live="polite"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {lightboxIndex + 1} / {realImages.length}
+              </span>
             </>
           )}
 
