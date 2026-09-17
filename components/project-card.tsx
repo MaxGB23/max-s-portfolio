@@ -56,7 +56,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
           />
         ) : (
           <div className="flex items-center justify-center h-full w-full bg-gradient-to-br from-purple-accent/10 to-transparent">
-            <span className="font-mono text-xs 2xl:text-sm uppercase tracking-widest text-muted-foreground/70 px-4 text-center">
+            <span className="font-mono text-xs 2xl:text-sm uppercase tracking-widest text-muted-foreground px-4 text-center">
               {project.category}
             </span>
           </div>
@@ -71,7 +71,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
         > 
           {project.title}
         </h3>
-        <p className="text-fluid-card-desc leading-relaxed text-muted-foreground flex-1 mb-4 line-clamp-3 max-h-[4.875em]">
+        <p className="text-fluid-card-desc leading-relaxed text-content flex-1 mb-4 line-clamp-3 max-h-[4.875em]">
           {project.description}
         </p>
 

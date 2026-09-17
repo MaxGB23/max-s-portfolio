@@ -21,6 +21,7 @@ body {
   /* Portfolio Light Theme */
   --background: oklch(1 0 0);
   --foreground: oklch(0.13 0 0);
+  --content: oklch(0.38 0 0);
   --card: oklch(0.98 0 0);
   --card-foreground: oklch(0.13 0 0);
   --popover: oklch(1 0 0);
@@ -58,6 +59,7 @@ body {
   /* Portfolio Dark Theme */
   --background: oklch(0.11 0.005 270);
   --foreground: oklch(0.96 0 0);
+  --content: oklch(0.75 0 0);
   --card: oklch(0.15 0.005 270);
   --card-foreground: oklch(0.96 0 0);
   --popover: oklch(0.15 0.005 270);
@@ -101,6 +103,7 @@ body {
   --font-mono: 'Geist Mono', 'Geist Mono Fallback';
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-content: var(--content);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
   --color-popover: var(--popover);
@@ -136,11 +139,16 @@ body {
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
   --text-fluid-display: clamp(2.5rem, 1.88rem + 3.13vw, 5rem);
-  --text-fluid-detail: clamp(2.5rem, 2.12rem + 1.9vw, 4rem);
+  --text-fluid-detail: clamp(2.25rem, 1.9rem + 1.47vw, 3.375rem);
   --text-fluid-section: clamp(2rem, 1.72rem + 1.4vw, 3.25rem);
   --text-fluid-featured: clamp(1.75rem, 1.52rem + 1.15vw, 2.75rem);
   --text-fluid-price: clamp(2rem, 1.8rem + 1vw, 2.625rem);
   --text-fluid-card: clamp(1.125rem, 1.01rem + 0.49vw, 1.5rem);
+  /* Detail metric display: same scale as --text-fluid-card (18 → 24px) but a
+     dedicated token — the metric numeral is a display role (font-black, accent)
+     and must not borrow the generic card-heading token. Same cap rule as
+     --text-fluid-price: dominant over its label, below its section title. */
+  --text-fluid-metric: clamp(1.125rem, 1.01rem + 0.49vw, 1.5rem);
   --text-fluid-subheading: clamp(1.5rem, 1.27rem + 0.98vw, 2.25rem);
   --text-fluid-body: clamp(1rem, 0.96rem + 0.16vw, 1.125rem);
   --text-fluid-card-body: clamp(1rem, 0.96rem + 0.16vw, 1.125rem);

@@ -89,7 +89,7 @@ function ContactBanner() {
             <h3 className="font-serif font-bold text-fluid-card text-foreground text-balance">
               ¿Trabajamos juntos?
             </h3> 
-            <p className="mt-2 leading-relaxed text-fluid-body text-muted-foreground max-w-xl">
+            <p className="mt-2 leading-relaxed text-fluid-body text-content max-w-xl">
               ¿Tienes un proyecto en mente? Escríbeme y hablemos de tu idea.
             </p>
           </div>

@@ -93,7 +93,7 @@ function ProductCard({ product }: { product: Product }) {
       </h3>
 
       {/* Description */}
-      <p className="text-sm leading-relaxed text-muted-foreground mb-6 flex-1">
+      <p className="text-sm leading-relaxed text-content mb-6 flex-1">
         {product.description}
       </p>
 
@@ -176,7 +176,7 @@ export function ProductsSection() {
           >
             Productos y Herramientas
           </h2>
-          <p className="mt-4 text-muted-foreground text-base leading-relaxed max-w-lg mx-auto">
+          <p className="mt-4 text-content text-base leading-relaxed max-w-lg mx-auto">
             Productos digitales cuidadosamente elaborados para ayudar a desarrolladores y diseñadores a construir más rápido
             y lanzar con confianza.
           </p>

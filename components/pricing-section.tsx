@@ -293,7 +293,7 @@ export function PricingSection() {
             <span>Servicios</span>
             <span className="text-purple-accent brightness-110">a medida</span>
           </h2>
-          <p className="text-fluid-body px-4 sm:px-16 md:px-0 text-muted-foreground max-w-lg mx-auto leading-relaxed">
+          <p className="text-fluid-body px-4 sm:px-16 md:px-0 text-content max-w-lg mx-auto leading-relaxed">
             Precios base por proyecto en MXN. Cada proyecto se cotiza según alcance, sin letras chicas.
           </p>
         </header>
@@ -308,7 +308,7 @@ export function PricingSection() {
         </div>
 
         {/* Footer note */}
-        <p className="mt-10 text-center text-fluid-body text-muted-foreground">
+        <p className="mt-10 text-center text-fluid-body text-content">
           Precios base de referencia. La cotización final depende del alcance. Escríbeme y respondo en 24–48 h.
         </p>
 

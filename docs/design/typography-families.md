@@ -30,12 +30,15 @@ Todos son `clamp(min, rem + vw, max)` — base en rems, pendiente en vw (cumple 
 | Token | Fórmula | Tamaño (px) | Uso |
 |-------|---------|-------------|-----|
 | `text-fluid-display` | `clamp(2.5rem, 1.88rem + 3.13vw, 5rem)` | 40 → 80 | Hero `h1` (único) |
-| `text-fluid-detail` | `clamp(2.5rem, 2.12rem + 1.9vw, 4rem)` | 40 → 64 | Detail `h1` (título de proyecto) |
+| `text-fluid-detail` | `clamp(2.25rem, 1.9rem + 1.47vw, 3.375rem)` | 36 → 54 | Detail `h1` (título de proyecto) |
 | `text-fluid-section` | `clamp(2rem, 1.72rem + 1.4vw, 3.25rem)` | 32 → 52 | Headings de sección: About `h2`, "Proyectos Destacados", "Todos los Proyectos", "Servicios a medida" |
 | `text-fluid-featured` | `clamp(1.75rem, 1.52rem + 1.15vw, 2.75rem)` | 28 → 44 | Featured panel `h2` (caso de estudio apilado) |
 | `text-fluid-price` | `clamp(2rem, 1.8rem + 1vw, 2.625rem)` | 32 → 42 | Precio en cards de pricing |
-| `text-fluid-card` | `clamp(1.125rem, 1.01rem + 0.49vw, 1.5rem)` | 18 → 24 | Card `h3` + nombre del plan |
-| `text-fluid-subheading` | `clamp(1.5rem, 1.27rem + 0.98vw, 2.25rem)` | 24 → 36 | Detail SectionTitle + métricas |
+| `text-fluid-card` | `clamp(1.125rem, 1.01rem + 0.49vw, 1.5rem)` | 18 → 24 | CTA card `h3` ("¿Trabajamos juntos?") + nombre del plan |
+| `text-fluid-metric` | `clamp(1.125rem, 1.01rem + 0.49vw, 1.5rem)` | 18 → 24 | Valor de métrica (detail) — numeral display, token propio desde 2026-09-16 |
+| `text-fluid-card-title` | `clamp(1.125rem, 1.05rem + 0.32vw, 1.375rem)` | 18 → 22 | Título de card del grid "Todos los Proyectos" (`project-card.tsx`) |
+| `text-fluid-card-desc` | `clamp(0.9375rem, 0.9rem + 0.12vw, 1rem)` | 15 → 16 | Descripción de card del grid |
+| `text-fluid-subheading` | `clamp(1.5rem, 1.27rem + 0.98vw, 2.25rem)` | 24 → 36 | Detail SectionTitle |
 | `text-fluid-body` | `clamp(1rem, 0.96rem + 0.16vw, 1.125rem)` | 16 → 18 | Descripciones (hero, about, featured, pricing) |
 | `text-fluid-card-body` | `clamp(1rem, 0.96rem + 0.16vw, 1.125rem)` | 16 → 18 | Descripción de cards |
 | `text-fluid-eyebrow` | `clamp(0.9375rem, 0.86rem + 0.33vw, 1.1875rem)` | 15 → 19 | Labels / eyebrows (role, "Conóceme") |
@@ -48,6 +51,8 @@ Todos son `clamp(min, rem + vw, max)` — base en rems, pendiente en vw (cumple 
 - Hero `h1` recupera token propio `text-fluid-display` (40→80, era la misma pieza que la sección a 36→72 tras la uniformización previa; el fallback `lg:[@media(max-height:800px)]:text-6xl` lo recorta a 60px en viewports bajos) y Detail `h1` usa `text-fluid-detail` (40→64).
 - `text-fluid-section` baja de 36→72 a **32→52**; `text-fluid-featured` de 32→64 a **28→44**. Los títulos de sección matienen 2 renglones por diseño (`flex flex-col`).
 - Nace `text-fluid-price` (32→42) calibrado por medición real: **siempre por debajo del section** (1280: 41.6 vs 45.4, ratio 0.92; mobile: 32.7 vs 33) y a la vez dominante sobre el plan name (1.86× a 1280). Se midió con `scripts/type-scale.mjs` en 390/1280/1920 antes de fijar la fórmula (el primer intento a `clamp(2.25rem, 1.95rem + 1.3vw, 3rem)` aún superaba a la sección).
+
+**Recalibración del detail (2026-09-17, aprobada)**: `text-fluid-detail` baja de **40→64** a **36→54** (`clamp(2.25rem, 1.9rem + 1.47vw, 3.375rem)`). Motivo: el mínimo (40px) igualaba al hero en mobile (98% de su tamaño) y el ratio título/body superaba 3× desde 1024px (2.58→3.56×), fuera del rango 2–3× recomendado para páginas de contenido. Con 36→54 el ratio queda en **2.25–3.0×** y la escalera interna del detail es *perfect fifth* exacta en desktop: h1 54 → SectionTitle 36 → valor de métrica 24 → label 16 (1.5× por escalón). La presencia del detail se apoya en composición (font-black, text-balance, espacio), no en tamaño — jerarquía por espacio, no por masa (práctica 2026).
 
 > Decisión clave (actualizada 2026-09): **el primer escalón de la escalera es 16px (body)** — nada de texto de lectura baja de eso. Los labels/eyebrows (role, "Conóceme") se tratan como **kicker del título**, NO como eyebrow decorativo de UI: van −1px bajo el body en mobile (15 vs 16), ≈igual en sm–md, y +1px SOBRE el body en grandes (19 vs 18 a 1600px). El cruce con la curva del body ocurre en ~941px. La presencia del role se apoya en tamaño (no solo uppercase + tracking como antes), porque es la declaración de identidad del hero: el "Full Stack Developer" dejó de ser el texto más pequeño de la sección. Los eyebrows puramente decorativos de UI (badges, "desde" en pricing) siguen la norma 12–16px en contextos pequeños.
 
@@ -83,17 +88,30 @@ Todos son `clamp(min, rem + vw, max)` — base en rems, pendiente en vw (cumple 
 | Nivel | Pieza | Token | Máx (2xl) | Familia / Peso |
 |-------|-------|-------|-----------|----------------|
 | 1 | Hero `h1` | `text-fluid-display` | 80px | serif / black |
-| 2 | Detail `h1` (título de proyecto) | `text-fluid-detail` | 64px | serif / black |
+| 2 | Detail `h1` (título de proyecto) | `text-fluid-detail` | 54px | serif / black |
 | 3 | Headings de sección — About `h2`, "Proyectos Destacados", "Todos los Proyectos", "Servicios a medida" | `text-fluid-section` | 52px | serif / black |
 | 4 | Featured panel `h2` (caso de estudio apilado) | `text-fluid-featured` | 44px — **escalón bajo las secciones (ratio ≈ 0.85)** | serif / black |
 | 5 | Precio pricing | `text-fluid-price` | 42px — **siempre por debajo del section** (0.81–0.99×, nunca por encima) | serif / black |
-| 6 | Detail SectionTitle `h2` + métricas | `text-fluid-subheading` | 36px | serif / bold |
-| 7 | Card `h3` + nombre del plan | `text-fluid-card` | 24px | serif / bold |
-| 8 | Descripciones / body | `text-fluid-body` | 18px | sans (heredada) |
-| 9 | Descripción de cards | `text-fluid-card-body` | 18px | sans (heredada) |
-| 10 | Labels / eyebrows (kicker) | `text-fluid-eyebrow` | 19px | sans (heredada) |
+| 6 | Detail SectionTitle `h2` | `text-fluid-subheading` | 36px | serif / bold |
+| 7 | Valor de métrica (detail) | `text-fluid-metric` | 24px — numeral display (font-black + accent), ~1.5× bajo su SectionTitle y 1.2×–1.5× sobre su label | serif / black |
+| 8 | Card `h3` + nombre del plan | `text-fluid-card` | 24px | serif / bold |
+| 9 | Descripciones / body | `text-fluid-body` | 18px | sans (heredada) |
+| 10 | Descripción de cards | `text-fluid-card-body` | 18px | sans (heredada) |
+| 11 | Labels / eyebrows (kicker) | `text-fluid-eyebrow` | 19px | sans (heredada) |
 
-> Nota histórica: en la uniformización previa (2026-09) el hero `h1` perdió su título propio y usaba `text-fluid-section` (36→72px); se percibió la jerarquía plana entre hero/sección/detalle y (2026-09-14) se reintrodujeron escalones propios: display (40→80) para el hero y detail (40→64) para el detalle, bajando section y featured para que el ancla de cada sección quede ~0.65× sobre el display y el precio nunca supere a su sección. El hero se apoya además en composición (uppercase, tracking, layout, aurora) y en el fallback de alto `lg:[@media(max-height:800px)]:text-6xl`.
+## Roles de color de texto
+
+| Rol | Valor | Contraste sobre fondo | Uso |
+|-----|-------|----------------------|-----|
+| `foreground` | `oklch(0.13 0 0)` (light) / `oklch(0.96 0 0)` (dark) | ~18:1 (dark) | Títulos y headings |
+| `content` | `oklch(0.38 0 0)` (light) / `oklch(0.75 0 0)` (dark) | ~9.2:1 (dark), ~10.0:1 (light) | Párrafos de lectura (body fluid, cards, detail, descripciones de sección) |
+| `muted-foreground` | `oklch(0.52 0 0)` (light) / `oklch(0.62 0 0)` (dark) | ~5.6:1 (dark) | Metadata: labels, eyebrows, chips, breadcrumbs, footer |
+
+> Decisión: `content` separa el contenido de lectura de la metadata. Ocupa el escalón intermedio entre `foreground` (títulos) y `muted-foreground` (metadata) para mantener una jerarquía visible de tres niveles: títulos → párrafos → metadata. Se aplica solo donde hay lectura continua — body fluido (hero, about, featured), descripciones de cards (grid, products), cuerpo editorial del detail (headline, resumen, problema, rol, solución) y cierres de sección — mientras todo lo que es metadata (labels, eyebrows, chips, breadcrumbs, footer) conserva `muted-foreground`.
+>
+> Nota de contraste (2026-09-16, ajustado 2026-09-17): el token se calibra por modo al mismo ratio objetivo — `oklch(0.75 0 0)` ≈ 9.2:1 sobre el fondo dark real (`oklch(0.11 0.005 270)`, L≈0.0013) y `oklch(0.38 0 0)` ≈ 10.0:1 sobre el fondo light (`oklch(1 0 0)`). El valor dark supera AAA (7:1) con margen y queda claramente por debajo del `foreground` (~18:1) para mantener jerarquía de títulos vs. lectura. Aunque el portfolio usa `forcedTheme="dark"`, ambos valores quedan definidos para no dejar trampa si se habilita el modo claro.
+
+> Nota histórica: en la uniformización previa (2026-09) el hero `h1` perdió su título propio y usaba `text-fluid-section` (36→72px); se percibió la jerarquía plana entre hero/sección/detalle y (2026-09-14) se reintrodujeron escalones propios: display (40→80) para el hero y detail (40→64) para el detalle (luego recalibrado a 36→54 el 2026-09-17, ver arriba), bajando section y featured para que el ancla de cada sección quede ~0.65× sobre el display y el precio nunca supere a su sección. El hero se apoya además en composición (uppercase, tracking, layout, aurora) y en el fallback de alto `lg:[@media(max-height:800px)]:text-6xl`.
 
 ---
 
@@ -108,7 +126,7 @@ Todos son `clamp(min, rem + vw, max)` — base en rems, pendiente en vw (cumple 
 | Links de menú móvil | sans (heredada) | `text-base font-medium` |
 | Botón "Contacto" (mobile) | sans (heredada) | `text-sm font-medium` |
 
-> El Navbar es la única sección que usa `font-sans` de forma **explícita** (además del fondo global del `body`). No usa tokens fluidos.
+> El Navbar es la única sección que usa `font-sans` de forma **explícita** (además del fondo global del `body`). No usa tokens fluidos — UI estática, ver "Convención: UI estática vs. contenido fluido" al final.
 
 ---
 
@@ -118,7 +136,7 @@ Todos son `clamp(min, rem + vw, max)` — base en rems, pendiente en vw (cumple 
 |----------|---------|---------------------|
 | Label "Full Stack Developer" | sans (heredada) | `uppercase tracking-[0.2em] 2xl:tracking-widest font-medium text-fluid-eyebrow` |
 | `h1` "Max González Ballesteros" | serif | `font-serif font-black uppercase text-fluid-display leading-[0.9] tracking-tighter lg:[@media(max-height:800px)]:text-6xl` |
-| Descripción | sans (heredada) | `px-4 sm:px-16 md:px-0 text-fluid-body leading-relaxed brightness-125 text-muted-foreground max-w-full` + `style: maxWidth` medido del título (hook `useTitleWidth`) |
+| Descripción | sans (heredada) | `px-4 sm:px-16 md:px-0 text-fluid-body leading-relaxed text-content max-w-full` + `style: maxWidth` medido del título (hook `useTitleWidth`) |
 | Botones CTA (Ver Proyectos / Descargar CV) | sans (heredada) | `text-sm 2xl:text-base font-semibold` |
 | Label "Stack Principal" | sans (heredada) | `text-xs 2xl:text-base uppercase tracking-widest font-semibold` |
 | Indicador "Deslizar" | sans (heredada) | `text-xs 2xl:text-base tracking-widest uppercase` |
@@ -134,7 +152,7 @@ Todos son `clamp(min, rem + vw, max)` — base en rems, pendiente en vw (cumple 
 |----------|---------|---------------------|
 | Label "Conóceme" | sans (heredada) | `uppercase tracking-[0.2em] font-medium text-fluid-eyebrow` |
 | `h2` "Sobre Mí" | serif | `font-serif font-black uppercase text-fluid-section leading-[0.9] tracking-tighter` |
-| Descripción (2 párrafos) | sans (heredada) | `px-4 sm:px-16 md:px-0 text-fluid-body leading-relaxed text-muted-foreground max-w-[62ch] space-y-4` |
+| Descripción (2 párrafos) | sans (heredada) | `px-4 sm:px-16 md:px-0 text-fluid-body leading-relaxed text-content max-w-[62ch] space-y-4` |
 
 ---
 
@@ -145,7 +163,7 @@ Todos son `clamp(min, rem + vw, max)` — base en rems, pendiente en vw (cumple 
 | Índice numérico "01" | mono | `text-sm 2xl:text-lg font-mono tabular-nums font-bold` |
 | Badge de categoría | sans (heredada) | `text-xs font-semibold` (pill purple) |
 | `h2` Título del proyecto | serif | `font-serif font-black text-fluid-featured leading-[1.05] tracking-tight text-balance` |
-| Descripción | sans (heredada) | `text-fluid-body leading-relaxed text-muted-foreground mb-6 mr-6 sm:mr-0 max-w-[62ch]` |
+| Descripción | sans (heredada) | `text-fluid-body leading-relaxed text-content mb-6 mr-6 sm:mr-0 max-w-[62ch]` |
 | Métrica clave | sans (heredada) | `text-xs sm:text-sm font-semibold` (pill outline purple) |
 | Botón CTA "Ver caso de estudio" | sans (heredada) | `text-sm font-semibold` |
 | Badge flotante de índice | serif | `text-2xl font-black font-serif` (número) |
@@ -195,11 +213,11 @@ Todos son `clamp(min, rem + vw, max)` — base en rems, pendiente en vw (cumple 
 | Botón flotante "Volver" | sans (heredada) | `text-sm 2xl:text-base font-semibold` |
 | Badge de categoría (hero) | sans (heredada) | `text-xs 2xl:text-sm font-semibold` (pill purple) |
 | `h1` Título del proyecto | serif | `font-serif font-black text-fluid-detail leading-[1.02] tracking-tight text-balance` |
-| `p` headline (hero) | sans (heredada) | `text-base 2xl:text-2xl leading-relaxed max-w-2xl` |
+| `p` headline (lead, bajo el título de proyecto) | sans (heredada) | `text-fluid-body leading-relaxed max-w-2xl` — fluid 16→18 (corregido 2026-09-17; la doc previa decía `text-base 2xl:text-2xl`) |
 | Chips de stack (StackChips) | sans (heredada) | texto `text-sm 2xl:text-base`; iconos `w-6 h-6 2xl:w-7 2xl:h-7`; fallback `text-[9px] 2xl:text-[10px]` |
 | `h2` Sección (SectionTitle) | serif | `font-serif font-bold text-fluid-subheading` |
-| Valor de métrica | serif | `font-serif font-black text-fluid-card text-purple-accent` — **rebajado de subheading (2026-09-14)**: competía con su SectionTitle (mismo token + black); ahora queda 1.5× bajo el título y 1.5× sobre su label |
-| Etiqueta de métrica | sans (heredada) | `text-xs sm:text-sm 2xl:text-base leading-snug` |
+| Valor de métrica | serif | `font-serif font-black text-fluid-metric text-purple-accent` — **token propio (2026-09-16)**: extraído de `text-fluid-card` (préstamo genérico de card heading); misma escala visual 18 → 24, sin cambio de render. Historial: bajó de `subheading` (2026-09-14) porque competía con su SectionTitle (mismo token + black); ahora queda 1.5× bajo el título y 1.2×–1.5× sobre su label |
+| Etiqueta de métrica | sans (heredada) | `text-fluid-card-desc leading-snug` — **fluid (2026-09-16)**: reemplaza el estático `text-xs sm:text-sm 2xl:text-base` (escalera 12→14→16). Reusa la escala secundaria de card siguiendo el patrón pricing (numeral con token propio, secundario reusado); el captions sube a 15px en mobile (ratio valor/label 1.2×) y converge a 16px (1.5×) en desktop |
 | Cuerpo editorial (Resumen/Problema/Rol/Solución/Galería) | sans (heredada) | `text-base 2xl:text-lg leading-relaxed` |
 | Placeholder de galería "Captura próximamente" | mono | `font-mono text-xs 2xl:text-sm uppercase tracking-widest` |
 | Botones de enlace de proyecto | sans (heredada) | `text-sm lg:text-base 2xl:text-lg font-semibold` |
@@ -240,7 +258,7 @@ Todos son `clamp(min, rem + vw, max)` — base en rems, pendiente en vw (cumple 
 | Copyright | sans (heredada) | `text-xs text-muted-foreground` |
 | Glow de fondo | — | `bg-accent-purple/10 blur-[120px]` bajo el contenido (coherente con aurora del hero) |
 
-> Nota: tamaños fijos (no fluid) — convención del sistema: el footer queda estático; los headers de columna seguirían la norma de eyebrows de UI 12–16px si vuelven a existir columnas.
+> Nota: tamaños fijos (no fluid) — UI estática, ver "Convención: UI estática vs. contenido fluido" al final. Los headers de columna seguirían la norma de eyebrows de UI 12–16px si vuelven a existir columnas.
 
 ---
 
@@ -257,6 +275,7 @@ Todos son `clamp(min, rem + vw, max)` — base en rems, pendiente en vw (cumple 
 3. Geist Mono no se carga con `next/font`; cae a fallback local.
 4. **Resuelto** (2026-09-14): el footer se recortó a marca + bio + redes + copyright (sin navegación ni reloj en vivo).
 5. Gotcha de desarrollo: cambiоs de tokens `--text-fluid-*` en `@theme` NO hot-reloadan con Turbopack (el navegador sigue sirviendo el CSS viejo). Tras tocar `globals.css` así, reiniciar el dev server con `.next` purgado; verificar con `scripts/type-scale.mjs` (2º incidente confirmado).
+6. **Resuelto** (2026-09-17): contraste de eyebrows con opacidad. Se eliminaron TODAS las opacidades (`/60` y `/70`) y el filtro `brightness-125` de eyebrows/labels; el sistema quedó con el patrón del scroll indicator: `text-muted-foreground` puro (5.62:1 ✓) en todos los eyebrows. Contexto: el `brightness-125` sobre `muted` (6.78:1) era un hack inconsistente — los mismos eyebrows tenían contraste distinto según la sección (6.78:1 hero vs 4.22:1 cards). La jerarquía entre eyebrows y labels se mantiene por tamaño y tracking (eyebrow fluid 15→19px vs stack 12→16px), no por opacidad — "jerarquía por espacio, no por masa". Casos afectados: hero-section (138, 233), about-section (88), project-card (59), featured-project-panel (166), project-detail (563). Queda el `brightness-125` de `featured-project-panel.tsx:105` sobre `text-purple-accent` (palabra en acento, no eyebrow) — fuera de esta normalización.
 
 ---
 
@@ -270,3 +289,19 @@ Patrón reutilizable que se repite en todas las secciones:
 
 ### Regla rápida
 > ¿Es un título? → `serif` (Space Grotesk) + token fluido según nivel. ¿Es body/UI/botón? → `sans` (Inter), `text-fluid-body` si es descripción principal. ¿Es metadato/etiqueta técnica? → `mono` (Geist Mono).
+
+### Convención: UI estática vs. contenido fluido (2026-09-17)
+
+El sistema tipográfico se divide en **dos familias de escala con reglas distintas**:
+
+| Sistema | Qué incluye | Escala | Justificación |
+|---------|------------|--------|---------------|
+| **Contenido editorial** | Títulos (`display`, `detail`, `section`, `featured`, `card`), cuerpo de lectura (`body`, `card-body`), numerals (`price`, `metric`), eyebrows de hero/about | **Fluida** — tokens `text-fluid-*` con `clamp(min, rem + vw, max)` | El texto editorial responde al viewport: debe escalar con el lienzo para mantener proporción con el layout |
+| **Interfaz (UI)** | Footer completo, navbar (links, badge, botón Contacto), todos los botones del sistema, links de navegación, metadata técnica (eyebrows de cards, placeholders, breadcrumbs, chips) | **Estática** — `text-xs`/`text-sm`/`text-base` fijos, con micro-bumps de breakpoint (`sm:`/`2xl:`) permitidos | Los objetos UI son herramientas: su escala percibida la dicta el contenedor (altura, padding, área de toque), no el texto. Fluidizar el label sin fluidizar el contenedor rompe la proporción interna; fluidizar ambos viola la densidad UI |
+
+**Reglas operativas:**
+
+1. **Los botones nunca usan tokens fluidos.** Su tamaño lo define el sistema `size` del componente (`sm`/`md`/`lg`/`compact`), no la tipografía. El texto base es `text-sm 2xl:text-base` (14→16px) — el bump es un micro-ajuste de densidad, no una escala.
+2. **Navbar y footer quedan estáticos.** Altura del navbar fija (`h-16`), footer con tamaños fijos. Solo se permiten micro-bumps (`text-sm lg:text-base`, `text-xs 2xl:text-sm`).
+3. **El hero es contenido editorial** aunque contenga UI: los eyebrows `text-fluid-eyebrow` y el body `text-fluid-body` son fluidos; los botones CTA que los acompañan son estáticos. La convivencia es deliberada — las acciones no compiten con los displays.
+4. **El área de toque manda.** Un botón no crece con el viewport porque su hit-area (~44px) es constante; el zoom de accesibilidad (WCAG 1.4.4) ya queda cubierto por `rem`, no requiere fluid.

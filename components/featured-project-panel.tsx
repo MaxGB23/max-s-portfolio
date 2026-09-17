@@ -106,7 +106,7 @@ export function FeaturedProjectPanel({ project, children, overlay }: FeaturedPro
             </h2>
 
             {/* Description */}
-            <p className="debug-l4 text-fluid-body leading-relaxed text-muted-foreground mb-6 mr-6 sm:mr-0 max-w-[50ch]">
+            <p className="debug-l4 text-fluid-body leading-relaxed text-content mb-6 mr-6 sm:mr-0 max-w-[50ch]">
               {project.description}
             </p>
 
@@ -163,7 +163,7 @@ export function FeaturedProjectPanel({ project, children, overlay }: FeaturedPro
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-purple-accent/10 to-transparent">
-                  <span className="font-mono text-xs uppercase tracking-widest text-muted-foreground/70 px-4 text-center">
+                  <span className="font-mono text-xs uppercase tracking-widest text-muted-foreground px-4 text-center">
                     {project.category}
                   </span>
                 </div>

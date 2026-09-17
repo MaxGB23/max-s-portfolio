@@ -408,7 +408,7 @@ export function ProjectDetail({ project }: { project: Project }) {
             {mainTitle && <span>{mainTitle} </span>}
             <span className="text-purple-accent brightness-110">{lastWord}</span>
           </h1>
-          <p className="mt-6 text-fluid-body text-muted-foreground max-w-2xl leading-relaxed">
+          <p className="mt-6 text-fluid-body text-content max-w-2xl leading-relaxed">
             {detail.headline}
           </p>
           {tags.length > 0 && (
@@ -441,11 +441,11 @@ export function ProjectDetail({ project }: { project: Project }) {
                     <dd
                       className={`m-0 ${isLastOdd ? "sm:flex sm:items-center sm:justify-between sm:gap-8" : ""}`}
                     >
-                      <div className="font-serif font-black text-fluid-card text-purple-accent">
+                      <div className="font-serif font-black text-fluid-metric text-purple-accent">
                         <AnimatedMetric value={metric.value} />
                       </div>
                       <div
-                        className={`mt-2 text-xs sm:text-sm 2xl:text-base text-muted-foreground leading-snug ${isLastOdd ? "sm:mt-0 sm:max-w-xl sm:text-right" : ""}`}
+                        className={`mt-2 text-fluid-card-desc text-muted-foreground leading-snug ${isLastOdd ? "sm:mt-0 sm:max-w-xl sm:text-right" : ""}`}
                       >
                         {metric.label}
                       </div>
@@ -500,14 +500,14 @@ export function ProjectDetail({ project }: { project: Project }) {
           {/* Summary */}
           <section className="detail-section mb-16">
             <SectionTitle>Resumen</SectionTitle>
-            <p className="text-muted-foreground text-base 2xl:text-lg leading-relaxed">{renderInline(detail.summary)}</p>
+            <p className="text-content text-base 2xl:text-lg leading-relaxed">{renderInline(detail.summary)}</p>
           </section>
 
           {/* Problem */}
           {detail.problem && (
             <section className="detail-section mb-16">
               <SectionTitle>Problema</SectionTitle>
-              <p className="text-muted-foreground text-base 2xl:text-lg leading-relaxed">
+              <p className="text-content text-base 2xl:text-lg leading-relaxed">
                 {renderInline(detail.problem)}
               </p>
             </section>
@@ -519,7 +519,7 @@ export function ProjectDetail({ project }: { project: Project }) {
               <SectionTitle>Mi rol</SectionTitle>
               <ul className="space-y-3">
                 {detail.role.map((item, index) => (
-                  <li key={index} className="flex gap-3 text-muted-foreground text-base 2xl:text-lg leading-relaxed">
+                  <li key={index} className="flex gap-3 text-content text-base 2xl:text-lg leading-relaxed">
                     <span className="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-purple-accent" aria-hidden="true" />
                     <span>{renderInline(item)}</span>
                   </li>
@@ -533,7 +533,7 @@ export function ProjectDetail({ project }: { project: Project }) {
             <SectionTitle>Solución</SectionTitle>
             <ul className="space-y-3">
               {detail.solution.map((item, index) => (
-                <li key={index} className="flex gap-3 text-muted-foreground text-base 2xl:text-lg leading-relaxed">
+                <li key={index} className="flex gap-3 text-content text-base 2xl:text-lg leading-relaxed">
                   <span className="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-purple-accent" aria-hidden="true" />
                   <span>{renderInline(item)}</span>
                 </li>
@@ -560,7 +560,7 @@ export function ProjectDetail({ project }: { project: Project }) {
                           isWide ? "sm:col-span-2 lg:col-span-3" : ""
                         }`}
                       >
-                        <span className="font-mono text-xs 2xl:text-sm uppercase tracking-widest text-muted-foreground/70 text-center px-4">
+                        <span className="font-mono text-xs 2xl:text-sm uppercase tracking-widest text-muted-foreground text-center px-4">
                           Captura próximamente
                         </span>
                       </figure>

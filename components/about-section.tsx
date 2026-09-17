@@ -85,7 +85,7 @@ export function AboutSection() {
 
         {/* Right Column: Info */}
         <div className="about-info flex flex-col items-center md:items-start text-center md:text-left z-10">
-          <p className="about-label brightness-125 uppercase tracking-[0.2em] font-medium text-muted-foreground mb-2 text-fluid-eyebrow" style={{ opacity: 0, visibility: 'hidden' }}>
+          <p className="about-label uppercase tracking-[0.2em] font-medium text-muted-foreground mb-2 text-fluid-eyebrow" style={{ opacity: 0, visibility: 'hidden' }}>
             {ABOUT_DATA.label}
           </p>
 
@@ -94,7 +94,7 @@ export function AboutSection() {
             <span className="text-purple-accent"> {ABOUT_DATA.title.second}</span>
           </h2>
 
-          <div className="debug-l4 px-4 sm:px-16 md:px-0 about-description text-fluid-body leading-relaxed text-muted-foreground max-w-[48ch] space-y-4" style={{ opacity: 0, visibility: 'hidden' }}>
+          <div className="debug-l4 px-4 sm:px-16 md:px-0 about-description text-fluid-body leading-relaxed text-content max-w-[48ch] space-y-4" style={{ opacity: 0, visibility: 'hidden' }}>
             <div className="debug-l1">
               {ABOUT_DATA.paragraphs.map((text, index) => (
                 <p key={index}>{text}</p>

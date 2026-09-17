@@ -135,7 +135,7 @@ export function HeroSection() {
           {/* Left Column: Info */}
           <div className="hero-info flex flex-col items-center md:items-start text-center md:text-left z-10 ">
 
-            <p className="hero-label text-muted-foreground brightness-125 uppercase tracking-widest font-medium mb-4 text-fluid-eyebrow" style={{ opacity: 0, visibility: 'hidden' }}>
+            <p className="hero-label text-muted-foreground uppercase tracking-widest font-medium mb-4 text-fluid-eyebrow" style={{ opacity: 0, visibility: 'hidden' }}>
               {HERO_DATA.role}
             </p>
             <h1 ref={titleRef} className="hero-title font-serif grid grid-cols-1 gap-3 font-black uppercase text-fluid-display leading-[0.9] tracking-tighter text-foreground mb-6 lg:[@media(max-height:800px)]:text-6xl" style={{ opacity: 0, visibility: 'hidden' }}>
@@ -143,7 +143,7 @@ export function HeroSection() {
               <span className="text-purple-accent  sm:tracking-[0.01em]">{HERO_DATA.title.last}</span>
             </h1>
 
-            <div className="hero-description debug-l4 px-4 sm:px-16 md:px-0 text-fluid-body leading-relaxed brightness-125 text-muted-foreground max-w-full" style={{ opacity: 0, visibility: 'hidden', maxWidth: titleWidth ? `min(${titleWidth}px, 60ch)` : undefined }}>
+            <div className="hero-description debug-l4 px-4 sm:px-16 md:px-0 text-fluid-body leading-relaxed text-content max-w-full" style={{ opacity: 0, visibility: 'hidden', maxWidth: titleWidth ? `min(${titleWidth}px, 60ch)` : undefined }}>
               <div className="debug-l1">
                 <p >{HERO_DATA.description}</p>
               </div>
@@ -230,7 +230,7 @@ export function HeroSection() {
 
         {/* Tech Stack Ticker */}
         <div className="hero-chips flex flex-col justify-center items-center gap-3 w-full " style={{ opacity: 0, visibility: 'hidden' }}>
-          <p className="text-xs uppercase tracking-widest text-muted-foreground/60 font-semibold 2xl:text-base">
+          <p className="text-xs uppercase tracking-widest text-muted-foreground 2xl:text-base">
             Stack Principal
           </p>
           <div className="flex flex-wrap items-center justify-center gap-6">
@@ -245,7 +245,7 @@ export function HeroSection() {
         <div className="hero-scroll flex flex-col items-center gap-2 text-muted-foreground" style={{ opacity: 0, visibility: 'hidden' }}>
           <span className="text-xs 2xl:text-base tracking-widest uppercase">Deslizar</span>
           <motion.div
-            className="w-px h-8 bg-border"
+            className="w-px h-8 bg-border brightness-150"
             animate={{ scaleY: [1, 0.4, 1] }}
             transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
             style={{ originY: 0 }}
