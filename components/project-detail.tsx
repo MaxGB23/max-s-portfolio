@@ -8,6 +8,7 @@ import {
   useCallback,
   type ReactNode,
   type PointerEvent as ReactPointerEvent,
+  type MouseEvent as ReactMouseEvent,
 } from "react";
 import { useRouter } from "next/navigation";
 import gsap from "gsap";
@@ -307,8 +308,12 @@ export function ProjectDetail({ project }: { project: Project }) {
 
   // Touch swipe navigation — zero dependencies, plain pointer events. A ~50px
   // deltaX threshold with the horizontal axis dominant (so vertical drags are
-  // ignored) keeps accidential small taps from navigating.
+  // ignored) keeps accidential small taps from navigating. `touch-pan-y` on
+  // the overlay (below) is what makes this work on mobile: without it the
+  // browser claims horizontal gestures and fires pointercancel instead of
+  // pointerup, so the swipe never lands.
   const swipeStart = useRef<{ x: number; y: number } | null>(null);
+  const suppressClose = useRef(false);
   const onLightboxPointerDown = useCallback((event: ReactPointerEvent<HTMLDivElement>) => {
     swipeStart.current = { x: event.clientX, y: event.clientY };
   }, []);
@@ -320,11 +325,54 @@ export function ProjectDetail({ project }: { project: Project }) {
       const deltaX = event.clientX - start.x;
       const deltaY = event.clientY - start.y;
       if (Math.abs(deltaX) < 50 || Math.abs(deltaX) <= Math.abs(deltaY)) return;
+      // After a drag the browser synthesizes a click on the overlay, which
+      // would close the very lightbox we just navigated. Suppress that click;
+      // the timeout is a safety net for browsers that skip the click after a
+      // drag that ends off-element.
+      suppressClose.current = true;
+      setTimeout(() => {
+        suppressClose.current = false;
+      }, 400);
       if (deltaX < 0) nextLightbox();
       else prevLightbox();
     },
     [nextLightbox, prevLightbox]
   );
+
+  // Backdrop tap zone: ONLY the painted image (object-contain inside a
+  // letterboxed wrapper) counts as "inside"; taps on the black letterbox are
+  // background taps and must close. next/image's `fill` spans the whole
+  // wrapper, so hit-test the contain-fit rect computed from the loaded
+  // natural aspect instead of trusting element bounds.
+  const lightboxImageRef = useRef<HTMLImageElement | null>(null);
+  const onLightboxImageClick = useCallback((event: ReactMouseEvent<HTMLDivElement>) => {
+    const img = lightboxImageRef.current;
+    if (!img || !img.naturalWidth || !img.naturalHeight) return; // not painted → let it close
+    const rect = event.currentTarget.getBoundingClientRect();
+    const ratio = img.naturalWidth / img.naturalHeight;
+    let w = rect.width;
+    let h = w / ratio;
+    if (h > rect.height) {
+      h = rect.height;
+      w = h * ratio;
+    }
+    const x = rect.left + (rect.width - w) / 2;
+    const y = rect.top + (rect.height - h) / 2;
+    const inside =
+      event.clientX >= x &&
+      event.clientX <= x + w &&
+      event.clientY >= y &&
+      event.clientY <= y + h;
+    if (inside) event.stopPropagation();
+  }, []);
+
+  const onLightboxBackdropClick = useCallback(() => {
+    if (suppressClose.current) {
+      suppressClose.current = false;
+      return;
+    }
+    closeLightbox();
+  }, [closeLightbox]);
 
   return (
     <div ref={rootRef}>
@@ -531,7 +579,9 @@ export function ProjectDetail({ project }: { project: Project }) {
                         type="button"
                         onClick={() => setLightboxIndex(realIndex)}
                         aria-label={`Ampliar imagen: ${image.alt}`}
-                        className={`relative w-full text-left cursor-zoom-in focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring ${
+                        draggable={false}
+                        onDragStart={(e) => e.preventDefault()}
+                        className={`relative w-full text-left cursor-zoom-in select-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring ${
                           isWide ? "aspect-[16/9]" : "aspect-[4/3]"
                         } bg-muted block`}
                       >
@@ -539,6 +589,7 @@ export function ProjectDetail({ project }: { project: Project }) {
                           src={image.src}
                           alt={image.alt}
                           fill
+                          draggable={false}
                           className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
                           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                         />
@@ -577,11 +628,11 @@ export function ProjectDetail({ project }: { project: Project }) {
         if (!lightboxImage) return null;
         return (
         <div
-          className="fixed inset-0 z-[70] flex items-center justify-center bg-black/90 backdrop-blur-sm p-4 sm:p-8"
+          className="fixed inset-0 z-[70] flex items-center justify-center bg-black/90 backdrop-blur-sm p-4 sm:p-8 touch-pan-y select-none"
           role="dialog"
           aria-modal="true"
           aria-label="Visor de imagen"
-          onClick={closeLightbox}
+          onClick={onLightboxBackdropClick}
           onPointerDown={onLightboxPointerDown}
           onPointerUp={onLightboxPointerUp}
         >
@@ -625,12 +676,17 @@ export function ProjectDetail({ project }: { project: Project }) {
             </>
           )}
 
-          <figure className="relative max-w-5xl w-full max-h-[85vh]" onClick={(e) => e.stopPropagation()}>
-            <div className="relative w-full h-[80vh] max-h-[85vh]">
+          <figure className="relative max-w-5xl w-full max-h-[85vh]">
+            <div
+              className="relative w-full h-[80vh] max-h-[85vh]"
+              onClick={onLightboxImageClick}
+            >
               <Image
+                ref={lightboxImageRef}
                 src={lightboxImage.src}
                 alt={lightboxImage.alt}
                 fill
+                draggable={false}
                 className="object-contain"
                 sizes="(max-width: 1024px) 100vw, 1024px"
               />
