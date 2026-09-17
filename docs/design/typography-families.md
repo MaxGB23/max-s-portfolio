@@ -218,11 +218,31 @@ Todos son `clamp(min, rem + vw, max)` — base en rems, pendiente en vw (cumple 
 | `h2` Sección (SectionTitle) | serif | `font-serif font-bold text-fluid-subheading` |
 | Valor de métrica | serif | `font-serif font-black text-fluid-metric text-purple-accent` — **token propio (2026-09-16)**: extraído de `text-fluid-card` (préstamo genérico de card heading); misma escala visual 18 → 24, sin cambio de render. Historial: bajó de `subheading` (2026-09-14) porque competía con su SectionTitle (mismo token + black); ahora queda 1.5× bajo el título y 1.2×–1.5× sobre su label |
 | Etiqueta de métrica | sans (heredada) | `text-fluid-card-desc leading-snug` — **fluid (2026-09-16)**: reemplaza el estático `text-xs sm:text-sm 2xl:text-base` (escalera 12→14→16). Reusa la escala secundaria de card siguiendo el patrón pricing (numeral con token propio, secundario reusado); el captions sube a 15px en mobile (ratio valor/label 1.2×) y converge a 16px (1.5×) en desktop |
+| `p` subtítulo sección ("Resumen técnico…") | sans (heredada) | `text-fluid-body leading-relaxed max-w-xl` — **fluid (2026-09-17)**: era `text-sm` estático, sin clase fluid. Alineado al patrón de subtítulo de pricing (text-fluid-body); escala medida 16 → 17.4 → 18 |
+| Switch de vistas (Métricas/Grafo) | sans | botones `text-xs font-sans font-medium` — UI estática en norma 12px; sin mono (corregido 2026-09-17)
 | Cuerpo editorial (Resumen/Problema/Rol/Solución/Galería) | sans (heredada) | `text-base 2xl:text-lg leading-relaxed` |
 | Placeholder de galería "Captura próximamente" | mono | `font-mono text-xs 2xl:text-sm uppercase tracking-widest` |
 | Botones de enlace de proyecto | sans (heredada) | `text-sm lg:text-base 2xl:text-lg font-semibold` |
 | CTA final `h2` | serif | `font-serif font-bold text-xl md:text-2xl 2xl:text-3xl text-balance` |
 | Botón CTA "Volver a proyectos" | sans (heredada) | `text-sm 2xl:text-base font-semibold` |
+
+### Vista Grafo Arquitectura (`components/project-architecture.tsx`)
+
+Diagrama técnico = **UI estática** (no fluido): el grafo queda subordinado a las métricas (valores fluid 18→24). **Escala 12/14/16 (2026-09-17, datos medidos)**: antes TODO el grafo vivía en 12–14px sin escalar (nombres 14px, descripciones 12px) mientras los labels de métrica llegaban a 16px; el suelo de 12px se eliminó y quedó una escalera de 3 peldaños. El grafo NO escala con viewport por diseño (un diagrama denso como funky-ai —7 hijos— desbordaría al fluir).
+
+| Elemento | Familia | Clases (orden real) |
+|----------|---------|---------------------|
+| Badge ROOT ENGINE | sans | `text-xs tracking-wider uppercase` — única pieza en 12px (rol decorativo, norma badges) |
+| Nombre raíz | sans | `font-bold text-base tracking-wider uppercase` |
+| Descripción raíz | sans | `text-sm text-muted-foreground leading-relaxed mt-3` |
+| Contador "n módulos documentados" | sans | `text-sm` |
+| Número de nodo 01..N | sans | `text-sm font-bold tabular-nums` |
+| Nombre de nodo (`h4`) | sans | `font-semibold text-base` |
+| Descripción de nodo | sans | `text-sm text-muted-foreground leading-relaxed` |
+| Nietos (nombre y descripción) | sans | `text-sm leading-relaxed` |
+| Empty state | sans | título `text-sm`; cuerpo `text-sm text-muted-foreground leading-relaxed max-w-md mx-auto` |
+
+Reglas del grafo (2026-09-17): **sin mono** — la familia única del diagrama es sans/Inter, como el resto de la sección; **sin valores arbitrarios** — los `text-[10px]`/`text-[11px]` se eliminaron.
 
 ---
 

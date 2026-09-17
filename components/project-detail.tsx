@@ -15,11 +15,12 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowLeft, ArrowUpRight, ChevronLeft, ChevronRight, Github, Globe, Maximize2, MonitorSmartphone, X } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, BarChart3, ChevronLeft, ChevronRight, Github, Globe, Maximize2, MonitorSmartphone, Network, X } from "lucide-react";
 import { StackIcon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { takeHomeScroll, useLenis } from "@/hooks/use-lenis";
-import type { Project, ProjectImage, ProjectLink } from "@/data/projects";
+import type { Project, ProjectImage, ProjectLink, ProjectMetric } from "@/data/projects";
+import { ArchitectureEmptyState, ProjectArchitecture } from "@/components/project-architecture";
 
 /** Picks a contextual icon for a project link. Unknown kinds fall back to a
     generic external-arrow, so new kinds render safely without code changes. */
@@ -112,6 +113,72 @@ function AnimatedMetric({ value }: { value: string }) {
   );
 }
 
+/** Grid de métricas del tab "Métricas & KPIs" (2 columnas). Cada montaje
+    re-crea los count-ups scoped a su propio root: la vista solo existe en el
+    DOM con el tab activo, así que el efecto único del detail no puede
+    animarla — este componente posee su ciclo de vida y revierte al desmontar
+    (cada re-entrada al tab vuelve a contar, nunca queda en "0"). */
+function KpiGrid({ metrics }: { metrics: ProjectMetric[] }) {
+  const rootRef = useRef<HTMLDListElement>(null);
+
+  useLayoutEffect(() => {
+    gsap.registerPlugin(ScrollTrigger);
+
+    const ctx = gsap.context(() => {
+      const metricValues = gsap.utils.toArray<HTMLElement>(
+        ".detail-metric-value[data-numeric]"
+      );
+      metricValues.forEach((el) => {
+        const numberEl = el.querySelector<HTMLElement>(".detail-metric-number");
+        if (!numberEl) return;
+        const target = Number(el.dataset.target);
+        const decimals = Number(el.dataset.decimals ?? 0);
+        const proxy = { value: 0 };
+        gsap.to(proxy, {
+          value: target,
+          duration: 1.2,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: el.closest("section"),
+            start: "top 85%",
+            once: true,
+          },
+          onUpdate: () => {
+            const formatted = proxy.value.toLocaleString("en-US", {
+              minimumFractionDigits: decimals,
+              maximumFractionDigits: decimals,
+            });
+            numberEl.textContent = formatted;
+          },
+        });
+      });
+    }, rootRef);
+
+    return () => ctx.revert();
+  }, []);
+
+  return (
+    <dl ref={rootRef} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      {metrics.map((metric, index) => (
+        <div
+          key={index}
+          className="rounded-2xl border border-border bg-card p-6 flex flex-col justify-between"
+        >
+          <dt className="sr-only">{metric.label}</dt>
+          <dd className="m-0">
+            <div className="font-serif font-black text-fluid-metric text-purple-accent">
+              <AnimatedMetric value={metric.value} />
+            </div>
+            <div className="mt-3 text-fluid-card-desc leading-snug text-muted-foreground">
+              {metric.label}
+            </div>
+          </dd>
+        </div>
+      ))}
+    </dl>
+  );
+}
+
 export function ProjectDetail({ project }: { project: Project }) {
   const rootRef = useRef<HTMLDivElement>(null);
   
@@ -162,32 +229,9 @@ export function ProjectDetail({ project }: { project: Project }) {
         });
       }
 
-      // Count-up for metrics with a numeric core.
-      const metricValues = gsap.utils.toArray<HTMLElement>(".detail-metric-value[data-numeric]");
-      metricValues.forEach((el) => {
-        const numberEl = el.querySelector<HTMLElement>(".detail-metric-number");
-        if (!numberEl) return;
-        const target = Number(el.dataset.target);
-        const decimals = Number(el.dataset.decimals ?? 0);
-        const proxy = { value: 0 };
-        gsap.to(proxy, {
-          value: target,
-          duration: 1.2,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: el.closest("section"),
-            start: "top 85%",
-            once: true,
-          },
-          onUpdate: () => {
-            const formatted = proxy.value.toLocaleString("en-US", {
-              minimumFractionDigits: decimals,
-              maximumFractionDigits: decimals,
-            });
-            numberEl.textContent = formatted;
-          },
-        });
-      });
+      // Count-up for metrics — moved to <KpiGrid />, which owns its own
+      // lifecycle: the metrics DOM only exists while the "kpis" tab is active,
+      // so the one-time effect below would never find it (stuck at "0").
 
       // Floating back buttons - visible on load, hide on scroll down, reveal
       // on scroll up (mirrors the navbar behaviour). Uses raw scrollY
@@ -241,7 +285,10 @@ export function ProjectDetail({ project }: { project: Project }) {
 
   // Primary visual image - real screenshot or approved temporary placeholder.
   // Nunca usar un retrato/genérico como si fuera captura del producto (dato falso).
-  const visualImage = project.image;
+  // `detail.visual` es la portada propia del detail (opcional); sin ella cae a
+  // `project.image` (la misma de la card) — comportamiento actual.
+  const visualImage = detail.visual?.src ?? project.image;
+  const visualAlt = detail.visual?.alt ?? project.imageAlt;
 
   // Gallery items - real captures when wired, else declared placeholders.
   // El placeholder se resuelve en el render con un fondo temático + texto, no
@@ -263,8 +310,7 @@ export function ProjectDetail({ project }: { project: Project }) {
     router.replace("/");
   };
 
-  // Lightbox state + navigation. Navega solo sobre las imágenes reales (los
-  // placeholders null no son navegables).
+  const [viewMode, setViewMode] = useState<"topology" | "kpis">("kpis");
   const realImages = gallery.filter((g): g is ProjectImage => g !== null);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const closeLightbox = useCallback(() => setLightboxIndex(null), []);
@@ -422,39 +468,63 @@ export function ProjectDetail({ project }: { project: Project }) {
       {/* Content */}
       <div className="debug-l1 px-6 md:px-12 lg:px-20 pb-24">
         <div className="debug-l2 max-w-5xl mx-auto">
-          {/* Metrics */}
-          <section className="debug-l3 detail-section mb-16" aria-label="Métricas clave">
-            <SectionTitle>Métricas clave</SectionTitle>
-            <dl className="debug-l4 grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {detail.metrics.map((metric, index) => {
-                // Última tarjeta a ancho completo cuando el total es impar (evita huérfana).
-                const isLastOdd =
-                  index === detail.metrics.length - 1 &&
-                  detail.metrics.length % 2 === 1 &&
-                  detail.metrics.length > 1;
-                return (
-                  <div
-                    key={index}
-                    className={`rounded-2xl border border-border bg-card p-5 ${isLastOdd ? "sm:col-span-2" : ""}`}
+          {/* Metrics & Architecture Topology */}
+          {detail.metrics.length > 0 && (
+            <section className="debug-l3 detail-section mb-16" aria-label="Métricas y Arquitectura">
+              {/* Header con Tag, Titular, Subtítulo y Switch de Vistas */}
+              <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+                <div>
+
+                  <h2 className="font-serif font-bold text-fluid-subheading text-foreground">
+                    Métricas clave
+                  </h2>
+                  <p className="mt-1 text-fluid-body leading-relaxed text-muted-foreground max-w-xl">
+                    Resumen técnico y validación operativa de la arquitectura de la solución desplegada.
+                  </p>
+                </div>
+
+                {/* Switcher de Vistas — Métricas primero (primaria, default),
+                    Grafo a la derecha (secundario pero igual de visible) */}
+                <div className="flex items-center gap-1.5 p-1 rounded-xl bg-card border border-border shrink-0 self-start md:self-auto">
+                  <button
+                    type="button"
+                    onClick={() => setViewMode("kpis")}
+                    className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-sm 2xl:text-base font-sans font-medium transition-all duration-200 ${
+                      viewMode === "kpis"
+                        ? "bg-foreground text-background shadow-sm"
+                        : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                    }`}
                   >
-                    <dt className="sr-only">{metric.label}</dt>
-                    <dd
-                      className={`m-0 ${isLastOdd ? "sm:flex sm:items-center sm:justify-between sm:gap-8" : ""}`}
-                    >
-                      <div className="font-serif font-black text-fluid-metric text-purple-accent">
-                        <AnimatedMetric value={metric.value} />
-                      </div>
-                      <div
-                        className={`mt-2 text-fluid-card-desc text-muted-foreground leading-snug ${isLastOdd ? "sm:mt-0 sm:max-w-xl sm:text-right" : ""}`}
-                      >
-                        {metric.label}
-                      </div>
-                    </dd>
-                  </div>
-                );
-              })}
-            </dl>
-          </section>
+                    <BarChart3 size={14} className={viewMode === "kpis" ? "text-background" : "text-muted-foreground"} />
+                    Métricas & KPIs
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setViewMode("topology")}
+                    className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-sm 2xl:text-base font-sans font-medium transition-all duration-200 ${
+                      viewMode === "topology"
+                        ? "bg-foreground text-background shadow-sm"
+                        : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                    }`}
+                  >
+                    <Network size={14} className={viewMode === "topology" ? "text-background" : "text-muted-foreground"} />
+                    Grafo Arquitectura
+                  </button>
+                </div>
+              </div>
+
+              {/* Vista 1: Grafo de Arquitectura Real (árbol extraído de docs/projects) */}
+              {viewMode === "topology" &&
+                (project.architecture ? (
+                  <ProjectArchitecture tree={project.architecture} />
+                ) : (
+                  <ArchitectureEmptyState />
+                ))}
+
+              {/* Vista 2: Vista de Métricas & KPIs Numéricos (Cards Clásicas con Animación) */}
+              {viewMode === "kpis" && <KpiGrid metrics={detail.metrics} />}
+            </section>
+          )}
         </div>
 
         {/* Primary Visual - wide proof band, full width */}
@@ -463,7 +533,7 @@ export function ProjectDetail({ project }: { project: Project }) {
             <figure className="aspect-video rounded-3xl overflow-hidden border border-border relative">
               <Image
                 src={visualImage}
-                alt={project.imageAlt}
+                alt={visualAlt}
                 fill
                 className="object-cover"
                 sizes="(max-width: 1280px) 100vw, 1280px"
@@ -701,3 +771,4 @@ export function ProjectDetail({ project }: { project: Project }) {
     </div>
   );
 }
+
