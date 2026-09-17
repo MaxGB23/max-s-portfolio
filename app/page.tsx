@@ -4,6 +4,7 @@ import { AboutSection } from "@/components/about-section";
 import { ProjectsSection } from "@/components/projects-section";
 import { ProductsSection } from "@/components/products-section";
 import { PricingSection } from "@/components/pricing-section";
+import { ContactSection } from "@/components/contact-section";
 import { Footer } from "@/components/footer";
 import { ScrollProgress } from "@/components/scroll-progress";
 export default function Home() {
@@ -29,6 +30,7 @@ export default function Home() {
       </div> */}
 
       <PricingSection />
+      <ContactSection />
       <Footer />
     </main>
   );

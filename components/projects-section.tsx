@@ -1,14 +1,12 @@
 "use client";
 
-import { useLayoutEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { FeaturedProjectPanel, type FeaturedProject } from "@/components/featured-project-panel";
 import { ProjectCard, type Project } from "@/components/project-card";
 import { FadeIn, FadeInStagger, FadeInItem } from "@/components/motion-primitives";
 import { projects, getFeaturedProjects } from "@/data/projects";
-import { Check, Copy, Github, Linkedin, Mail } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 // ---------------------------------------------------------------------------
 // Data - single source of truth: data/projects.ts
@@ -56,100 +54,6 @@ const allProjects: Project[] = projects
   }));
 
 // ---------------------------------------------------------------------------
-// ContactBanner - contact CTA as a full-width band below the grid.
-// Kept OUTSIDE the projects grid so the grid only ever holds projects and its
-// layout never depends on "how many projects there are".
-// ---------------------------------------------------------------------------
-const CONTACT_EMAIL = "maxgonzalezballesteros@gmail.com";
-
-function ContactBanner() {
-  const [copied, setCopied] = useState(false);
-
-  const copyEmail = async () => {
-    try {
-      await navigator.clipboard.writeText(CONTACT_EMAIL);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      // Clipboard API no disponible (contexto no seguro / navegador viejo):
-      // fallback al mailto, que sigue siendo la vía directa.
-      window.location.href = `mailto:${CONTACT_EMAIL}`;
-    }
-  };
-
-  return (
-    <div className="debug-l3 pt-4 pb-20 md:pb-28">
-      <FadeIn className="debug-l4 max-w-7xl mx-auto">
-        <div className="flex flex-col lg:flex-row items-start lg:items-center gap-5 lg:gap-8 rounded-2xl border border-dashed border-purple-accent/40 bg-card p-5 md:p-6">
-          {/* Copy */}
-          <div className="flex-1 min-w-0">
-            <span className="inline-flex items-center rounded-full border border-purple-accent/25 bg-purple-accent/10 px-3 py-2 text-xs sm:text-sm font-semibold text-purple-accent mb-3">
-              Disponible para proyectos
-            </span>
-            <h3 className="font-serif font-bold text-fluid-card text-foreground text-balance">
-              ¿Trabajamos juntos?
-            </h3> 
-            <p className="mt-2 leading-relaxed text-fluid-body text-content max-w-xl">
-              ¿Tienes un proyecto en mente? Escríbeme y hablemos de tu idea.
-            </p>
-          </div>
-
-          {/* Actions */}
-          <div className="flex flex-col sm:flex-row sm:items-center gap-2 w-full lg:w-auto">
-            <div className="grid grid-cols-[1fr_auto] gap-2 sm:w-auto">
-              <Button asChild variant="primary" size="compact">
-                <a href={`mailto:${CONTACT_EMAIL}`}>
-                  <Mail size={14} aria-hidden="true" />
-                  Escríbeme
-                </a>
-              </Button>
-              <Button
-                variant="outline"
-                size="compact"
-                glow
-                type="button"
-                onClick={copyEmail}
-                aria-label={copied ? "Correo copiado" : "Copiar correo"}
-                className={`w-11 px-0 ${
-                  copied
-                    ? "border-purple-accent/40 bg-purple-accent/10 text-indigo-400"
-                    : ""
-                }`}
-              >
-                {copied ? <Check size={15} aria-hidden="true" /> : <Copy size={15} aria-hidden="true" />}
-              </Button>
-            </div>
-
-            <div className="grid grid-cols-2 gap-2 sm:w-auto">
-              <Button asChild variant="outline" size="compact" glow>
-                <a
-                  href="https://github.com/MaxGB23"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Github size={14} aria-hidden="true" />
-                  GitHub
-                </a>
-              </Button>
-              <Button asChild variant="outline" size="compact" glow>
-                <a
-                  href="https://www.linkedin.com/in/maxballesteros"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Linkedin size={14} aria-hidden="true" />
-                  LinkedIn
-                </a>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </FadeIn>
-    </div>
-  );
-}
-
-// ---------------------------------------------------------------------------
 // ProjectsGrid - all projects responsive grid
 // ---------------------------------------------------------------------------
 function ProjectsGrid() {
@@ -159,7 +63,7 @@ function ProjectsGrid() {
       aria-labelledby="all-projects-heading"
       className="debug-l1 pt-12 lg:pt-16 px-6"
     >
-      <div id="all-projects-content" className="debug-l2 max-w-7xl mx-auto">
+      <div id="all-projects-content" className="debug-l2 max-w-7xl mx-auto pb-12 lg:pb-16">
         <FadeInStagger className="debug-l3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
   {allProjects.map((project) => (
           <FadeInItem key={project.id}>
@@ -167,9 +71,6 @@ function ProjectsGrid() {
             </FadeInItem>
           ))}
         </FadeInStagger>
-
-        {/* Contact CTA as a full-width band below the projects grid */}
-        <ContactBanner />
       </div>
     </section>
   );
