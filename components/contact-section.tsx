@@ -59,7 +59,7 @@ export function ContactSection() {
           </Button>
 
           <div className="flex items-center gap-3">
-            <Button asChild variant="outline" size="lg">
+            <Button asChild variant="outline" glow size="lg">
               <a href={`mailto:${CONTACT_EMAIL}`}>
                 <Mail size={16} aria-hidden="true" />
                 Escríbeme
@@ -67,21 +67,19 @@ export function ContactSection() {
             </Button>
             <Button
               variant="outline"
+              glow
               size="lg"
               type="button"
               onClick={copyEmail}
               aria-label={copied ? "Correo copiado" : "Copiar correo"}
-              className={`px-0 w-12 ${
-                copied
-                  ? "border-purple-accent/40 bg-purple-accent/10 text-indigo-400"
-                  : ""
-              }`}
+              className={copied ? "border-purple-accent/40  text-purple-accent brightness-110" : ""}
             >
               {copied ? <Check size={16} aria-hidden="true" /> : <Copy size={16} aria-hidden="true" />}
+              {copied ? "Copiado" : "Copiar correo"}
             </Button>
           </div>
 
-          <Button asChild variant="outline" size="lg">
+          <Button asChild variant="outline" glow size="lg">
             <a
               href="https://github.com/MaxGB23"
               target="_blank"
