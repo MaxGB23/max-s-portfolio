@@ -216,6 +216,40 @@ body {
    Activate: add data-debug to <html> in app/layout.tsx.
    Deactivate: remove it. No component edits needed.
    ============================================================ */
+/* ============================================================
+   Architecture tree connectors
+   ------------------------------------------------------------
+   Drop-line vertical por card hija: conecta cada card de la
+   PRIMERA fila del grid con la línea bus horizontal. Las filas
+   inferiores no llevan línea para que nunca crucen contenido.
+   Mobile (1 columna) no muestra conectores: pila limpia.
+   ============================================================ */
+.architecture-connector-child::before {
+  content: "";
+  position: absolute;
+  top: -2rem;
+  left: 50%;
+  width: 1px;
+  height: 2rem;
+  transform: translateX(-50%);
+  background: var(--border);
+  opacity: 0.7;
+  pointer-events: none;
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .architecture-connector-child:nth-child(-n + 2)::before {
+    display: block;
+  }
+}
+
+@media (min-width: 1024px) {
+  .architecture-connector-child:nth-child(-n + 3)::before {
+    display: block;
+  }
+}
+
 @layer utilities {
   [data-debug] .debug-l1 {
     outline: 1px solid #f87171;

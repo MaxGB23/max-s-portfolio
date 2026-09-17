@@ -20,9 +20,30 @@ export interface ProjectImage {
   alt: string;
 }
 
+export interface ArchitectureNode {
+  /** Nombre del nodo/capa, extraído de la documentación real. */
+  name: string;
+  /** Descripción breve solo si las fuentes la respaldan. */
+  description?: string;
+  children?: ArchitectureNode[];
+}
+
 export interface ProjectDetail {
   headline: string;
   summary: string;
+  /**
+   * Imagen introductoria del detail (portada grande, independente de la card).
+   * Si falta, el detail cae a `project.image` — los proyectos sin `visual`
+   * siguen mostrando la misma imagen de la card.
+   */
+  visual?: ProjectImage;
+  /**
+   * Métricas clave del detail.
+   * CONVENCIÓN DE ORDEN: `metrics[0]` es la métrica RAÍZ / principal — se
+   * renderiza como nodo raíz (columna izquierda) en la topología del detail;
+   * el resto son nodos hijos (columna derecha). Mantener la más importante
+   * primero, siempre.
+   */
   metrics: ProjectMetric[];
   problem?: string;
   role?: string[];
@@ -44,6 +65,14 @@ export interface Project {
   links: ProjectLink[];
   featured?: boolean;
   detail: ProjectDetail;
+  /**
+   * Árbol de arquitectura real por proyecto (extraído de docs/projects).
+   * Vive en `Project` (no en `ProjectDetail`) porque la vista "Grafo Arquitectura"
+   * lee `project.architecture` naturalmente y la topología describe el proyecto
+   * completo, no su vista detallada. Sin él, la vista muestra un estado vacío
+   * honesto — nunca se inventa topología.
+   */
+  architecture?: ArchitectureNode;
 }
 
 export const projects: Project[] = [
@@ -117,7 +146,7 @@ export const projects: Project[] = [
       problem:
         "Las clínicas pequeñas y medianas dependen de herramientas genéricas, procesos manuales en papel o múltiples aplicaciones desconectadas para agendar, llevar historiales médicos y cobrar. Esto genera pérdidas de tiempo, dobles reservas y descontrol financiero. No existía una solución a medida accesible para centros que trabajan por sesiones o paquetes.",
       role: [
-        "Arquitecté un sistema modular por features usando Next.js, TypeScript y Prisma para mejorar mantenibilidad y acelerar la entrega de funcionalidades.",
+        "Diseñé un sistema modular por features usando Next.js, TypeScript y Prisma para mejorar mantenibilidad y acelerar la entrega de funcionalidades.",
         "Implementé control de acceso por roles (RBAC) para flujos multi-usuario entre personal administrativo y fisioterapeutas.",
         "Reduje un 40% la latencia de recuperación de registros introduciendo índices en PostgreSQL y estrategias de caching server-side.",
         "Desplegué y mantuve la plataforma en Vercel con NeonDB (PostgreSQL), logrando 100% de uptime en producción, incluyendo major releases con migraciones críticas de base de datos sin incidentes.",
@@ -160,6 +189,60 @@ export const projects: Project[] = [
         },
       ],
       cta: "¿Buscas modernizar tu clínica o necesitas un sistema a medida? Hablemos.",
+    },
+    architecture: {
+      name: "Sistema de Gestión Clínica",
+      description:
+        "Arquitectura modular por features diseñada para escalar a múltiples especialidades (fisioterapia, psicología, nutrición, odontología) y funcionar como base tipo SaaS.",
+      children: [
+        {
+          name: "Agenda inteligente",
+          description:
+            "Calendario interactivo con prevención automática de conflictos y control de sesiones (pendiente, asistida, cancelada).",
+          children: [
+            { name: "Prevención automática de conflictos" },
+            { name: "Control de sesiones" },
+          ],
+        },
+        {
+          name: "Expediente electrónico",
+          description:
+            "Alta y búsqueda rápida de pacientes, historial de sesiones y pagos, seguimiento individual.",
+        },
+        {
+          name: "Módulo financiero",
+          description:
+            "Venta de paquetes de sesiones, balance por paciente y registro de ingresos.",
+          children: [
+            { name: "Paquetes de sesiones" },
+            { name: "Balance por paciente" },
+            { name: "Registro de ingresos" },
+          ],
+        },
+        {
+          name: "Panel de control (dashboard)",
+          description:
+            "Analíticas de ingresos mensuales, pacientes activos, ganancias y métricas operativas, con filtros por periodo y tarjetas + gráficos.",
+          children: [
+            { name: "Analíticas mensuales" },
+            { name: "Filtros por periodo (30 días, 3 meses, 1 año)" },
+          ],
+        },
+        {
+          name: "Landing page pública",
+          description:
+            "Optimizada para SEO, enfocada a captación de nuevos pacientes e integrada con el sistema interno.",
+        },
+        {
+          name: "Seguridad y roles",
+          description: "Accesos por tipo de usuario y manejo seguro de sesiones.",
+        },
+        {
+          name: "Cuenta de usuario",
+          description:
+            "Perfil autocontrolado: el usuario edita nombre y contraseña; el correo queda bloqueado y su cambio se solicita a un administrador.",
+        },
+      ],
     },
   },
   {
@@ -244,13 +327,58 @@ export const projects: Project[] = [
       ],
       cta: "¿Buscas digitalizar procesos administrativos complejos o requieres software seguro a medida? Hablemos.",
     },
+    architecture: {
+      name: "Gestión de Apoyos Sociales",
+      description:
+        "Arquitectura orientada a la persistencia y la configuración dinámica: las plantillas y opciones administrativas se adaptan durante cambios de periodo de gobierno, nuevos departamentos o tipos de apoyo, sin refactorizar el código base.",
+      children: [
+        {
+          name: "Dashboard estadístico",
+          description:
+            "Visualización interactiva con Recharts para monitorear tendencias, volumen de solicitudes y KPIs institucionales.",
+        },
+        {
+          name: "Gestión avanzada de solicitudes",
+          description:
+            "Seguimiento de extremo a extremo con filtros complejos (estado, prioridad, área) y asignación controlada a departamentos.",
+          children: [
+            { name: "Filtros por estado, prioridad y departamento" },
+            { name: "Asignación controlada a departamentos" },
+          ],
+        },
+        {
+          name: "Módulo de documentos legales",
+          description:
+            "Generación automatizada de PDFs con validez legal, firma electrónica y datos dinámicos pre-cargados del expediente del ciudadano.",
+          children: [
+            { name: "Firma electrónica" },
+            { name: "Datos autocompletados del expediente" },
+          ],
+        },
+        {
+          name: "Seguridad y control de acceso (RBAC)",
+          description:
+            "Segmentación de opciones y vistas según roles (administradores, coordinadores departamentales).",
+        },
+        {
+          name: "Administración de usuarios",
+          description:
+            "CRUD de usuarios con asignación de roles y departamentos; acceso restringido a administradores.",
+        },
+        {
+          name: "Gestión dinámica institucional",
+          description:
+            "Ajuste flexible de autoridades, logotipos y plantillas sin intervenir el código base, pensado para los cambios de administración.",
+        },
+      ],
+    },
   },
   {
     id: "funky-ai",
     title: "Funky AI",
     category: "Dev Tools / AI Engineering",
-    hook: "Framework CLI para desarrollo de software asistido por IA: pipeline SDD con contexto just-in-time, memoria persistente y planificación de proyectos en un solo comando.",
-    metric: "Harness agéntico medido: 27 reglas ≈ 11.5k tokens",
+    hook: "Toolkit CLI para ingeniería de software: scaffolding, planificación con IA, memoria persistente, seguridad de dependencias y desarrollo SDD agéntico.",
+    metric: "Prompt-based agentic harness: 27 reglas ≈ 11.5k tokens",
     tags: ["Node.js", "TypeScript", "CLI", "pnpm", "Vitest", "GitHub Actions"],
     image: "/images/projects/funky-ai/funky-ai-main.jpg",
     imageAlt: "Terminal del CLI de funky-ai mostrando el pipeline SDD",
@@ -264,9 +392,9 @@ export const projects: Project[] = [
     ],
     featured: true,
     detail: {
-      headline: "Un framework CLI para desarrollo de software asistido por IA",
+      headline: "Toolkit CLI para ingeniería de software: scaffolding, planificación con IA, memoria persistente, seguridad de dependencias y desarrollo SDD agéntico.",
       summary:
-        "funky-ai unifica reglas agénticas, plantillas spec-driven y herramientas de planificación en un único CLI de Node.js (pnpm), sin superficie GUI. Orquesta el desarrollo como un pipeline determinista — proposal → specs → design → tasks → apply → verify → archive — cargando contexto just-in-time para proteger la ventana de tokens, con memoria persistente basada en archivos Markdown y endurecimiento de dependencias para proyectos pnpm. Las cifras combinan estimaciones propias y mediciones reales del repositorio (inventario de reglas del propio framework).",
+        "funky-ai es un CLI de ingeniería de software que reúne scaffolding, planificación asistida por IA, memoria persistente y seguridad de dependencias en comandos independientes, con ejecución interactiva o granular mediante flags. Su módulo SDD añade un prompt-based agentic harness sobre las herramientas nativas de Antigravity CLI, utilizando contratos, sub-agentes y contexto just-in-time para estructurar el desarrollo spec-driven.",
       metrics: [
         {
           value: "-40%",
@@ -286,6 +414,10 @@ export const projects: Project[] = [
         { value: "~30%", label: "menos riesgo de supply chain (funky secure)" },
         { value: "≈11.5k", label: "tokens del harness completo: 27 reglas agénticas (inventario medido)" },
       ],
+      visual: {
+          src: "/images/projects/funky-ai/funky-ai-logo.jpg",
+          alt: "Funky-AI logo",
+        },
       problem:
         "Las tareas grandes de IA asistida que arrancan de un único prompt masivo fallan de forma predecible: la ventana de contexto se desborda, el modelo alucina sobre partes que ya no recuerda y no hay punto natural de intervención humana. Los agentes no tienen memoria confiable entre sesiones, cada sesión re-aprende desde cero recargando contexto caro, y la planificación de proyectos ocurre ad-hoc, después de elegir el stack.",
       role: [
@@ -295,11 +427,12 @@ export const projects: Project[] = [
         "Mantuve CI/CD con GitHub Actions (toolchain pineado a SHAs) y documentación viva verificada contra el CLI real.",
       ],
       solution: [
+        "CLI composable — cada capacidad dispone de comandos dedicados y puede ejecutarse de forma interactiva o mediante flags, permitiendo cargar únicamente las funcionalidades y contexto necesarios para cada workflow.",
         "**SDD framework** — pipeline determinista de fases con artefactos Markdown, 3 tiers que escalan el esfuerzo al impacto (T1 Flash: fixes de 1–2 archivos sin docs; T2 Standard: sub-agentes por fase; T3 Insano: rediseños arquitectónicos con sub-agentes aislados), 3 modos de ejecución (Interactive, Auto, Handoff) y puertas humanas antes de operaciones destructivas y Git.",
         "**funkygram** — memoria persistente en archivos Markdown dentro del repo: 7 categorías con shards O(1), esquema fijo (What/Why/Where/Learned), índice central auto-actualizado y recall deliberadamente low-tech y barato.",
         "**funky-forge** — de idea difusa a arquitectura costeada: `init` (canvases de proyecto e infra), `assess` (revisión de arquitectura con registro de decisiones), `estimate` (guía de costos con buffers y TCO), `pipeline` (estado compartido entre fases). La CLI prepara material, no juzga.",
         "**funky secure** — endurecimiento de dependencias pnpm: `doctor` (diagnóstico read-only), `init` (política idempotente), `check` (gate CI fail-closed). Incluye cuarentena de versiones frescas (72h) contra campañas tipo ChainDrop/Shai-Hulud y detección de secretos commitheados.",
-        "**Capa de contratos agénticos** — 27 reglas que tipan la delegación (7 contratos T2 por fase, 9 workflows T3, contratos de exploración y memoria) con carga just-in-time; introspección documentada del host (model tiers, permisos, hooks) en vez de reinventar el runtime.",
+        "**Capa de contratos agénticos** — Prompt-based SDD harness para Antigravity - 27 reglas que tipan la delegación (7 contratos T2 por fase, 9 workflows T3, contratos de exploración y memoria) con carga just-in-time; introspección documentada del host (model tiers, permisos, hooks) en vez de reinventar el runtime.",
         "**Prácticas** — issue-first (no hay código sin issue), CI en GitHub Actions con SHAs pineados, releases estructurados (bump, notas, tag) y docs vivas sincronizadas con el binario real.",
       ],
       stack: [
@@ -331,6 +464,79 @@ export const projects: Project[] = [
         },
       ],
       cta: "¿Buscas incorporar IA en tu flujo de desarrollo con proceso y sin caos? Este framework es mi laboratorio público.",
+    },
+    architecture: {
+      name: "funky-ai",
+      description:
+        "Ecosistema CLI de Node.js (pnpm) sin superficie GUI: unifica reglas agénticas, plantillas spec-driven y herramientas de planificación en un único punto de entrada — el CLI es el root del proyecto.",
+      children: [
+        {
+          name: "SDD framework",
+          description:
+            "Pipeline determinista de fases con artefactos Markdown y contexto just-in-time, escalado por tiers y con puertas humanas antes de operaciones destructivas y Git.",
+          children: [
+            {
+              name: "Pipeline de fases (proposal → specs → design → tasks → apply → verify → archive)",
+            },
+            { name: "3 tiers: T1 Flash, T2 Standard, T3 Insano" },
+            { name: "3 modos de ejecución: Interactive, Auto, Handoff" },
+            { name: "Puertas humanas antes de Git y operaciones destructivas" },
+          ],
+        },
+        {
+          name: "funkygram",
+          description:
+            "Memoria persistente en archivos Markdown dentro del repo: 7 categorías con shards O(1), esquema fijo (What/Why/Where/Learned) e índice central auto-actualizado.",
+          children: [
+            { name: "Shards O(1) por categoría" },
+            { name: "Esquema What/Why/Where/Learned" },
+            { name: "Índice central auto-actualizado" },
+          ],
+        },
+        {
+          name: "funky-forge",
+          description:
+            "De idea difusa a arquitectura costeada; la CLI prepara material, no juzga.",
+          children: [
+            { name: "init (canvases de proyecto e infra)" },
+            { name: "assess (revisión de arquitectura con registro de decisiones)" },
+            { name: "estimate (guía de costos con buffers y TCO)" },
+            { name: "pipeline (estado compartido entre fases)" },
+          ],
+        },
+        {
+          name: "funky secure",
+          description:
+            "Endurecimiento de dependencias pnpm: diagnóstico read-only, aplicación idempotente de política y gate CI fail-closed.",
+          children: [
+            { name: "doctor (diagnóstico read-only)" },
+            { name: "init (política idempotente)" },
+            { name: "check (gate CI fail-closed)" },
+          ],
+        },
+        {
+          name: "Capa de contratos agénticos",
+          description:
+            "27 reglas que tipan la delegación con carga just-in-time; introspección documentada del host (model tiers, permisos, hooks) en vez de reinventar el runtime.",
+          children: [
+            { name: "7 contratos T2 por fase" },
+            { name: "9 workflows T3" },
+            { name: "Contratos de exploración y memoria" },
+            { name: "Carga just-in-time" },
+          ],
+        },
+        {
+          name: "Prácticas",
+          description:
+            "Disciplina transversal que mantiene el framework honesto: issue-first, CI, releases estructurados y TDD.",
+          children: [
+            { name: "Issue-first (no hay código sin issue)" },
+            { name: "CI con GitHub Actions (toolchain pineado a SHAs)" },
+            { name: "Releases estructurados y docs vivas" },
+            { name: "TDD con Vitest" },
+          ],
+        },
+      ],
     },
   },
   {
@@ -412,6 +618,36 @@ export const projects: Project[] = [
       ],
       cta: "¿Necesitas una PWA instalable que combine presencia digital y gestión interna? Hablemos.",
     },
+    architecture: {
+      name: "One Click Ti — PWA",
+      description:
+        "PWA full-stack por contrato: una sola aplicación instalable que integra landing pública y sistema de gestión interno.",
+      children: [
+        {
+          name: "Landing pública",
+          description:
+            "Cara profesional de la empresa, conectada con el sistema interno.",
+        },
+        {
+          name: "Sistema de gestión interno",
+          description: "Administración de contenido y operación del negocio.",
+        },
+        {
+          name: "Autenticación y roles",
+          description: "Laravel Breeze con RBAC para separar accesos.",
+        },
+        {
+          name: "PWA instalable",
+          description:
+            "Manifest + service worker; instalable y utilizable como app nativa.",
+        },
+        {
+          name: "Arquitectura unificada",
+          description:
+            "Laravel (backend) + Vue 3 e Inertia.js (frontend) en un solo proyecto.",
+        },
+      ],
+    },
   },
   {
     id: "autoshop",
@@ -478,6 +714,27 @@ export const projects: Project[] = [
       ],
       cta: "¿Te interesa ver cómo se construye un CMS a medida partiendo de cero, sin framework? Hablemos.",
     },
+    architecture: {
+      name: "AutoShop Taller",
+      description:
+        "Sitio full-stack para una empresa de servicios automotrices: landing pública + panel admin con CMS propio en PHP puro, sin framework.",
+      children: [
+        {
+          name: "Landing pública",
+          description: "Cara profesional del taller, orientada a captar clientes.",
+        },
+        {
+          name: "Panel de administración + CMS a medida",
+          description:
+            "El staff gestiona servicios, promociones por calendario y consultas sin tocar código.",
+        },
+        {
+          name: "Control de acceso por roles",
+          description:
+            "Niveles admin/staff para el equipo del taller, sin cuentas para clientes.",
+        },
+      ],
+    },
   },
   {
     id: "color-highlight-v2",
@@ -536,6 +793,33 @@ export const projects: Project[] = [
       gallery: [],
       cta: "¿Quieres ver cómo modernizo un proyecto open source existente sin romper su licencia? Hablemos.",
     },
+    architecture: {
+      name: "color-highlight-v2",
+      description:
+        "Fork modernizado de vscode-ext-color-highlight (GPL-3.0) reconstruido con TypeScript, esbuild y pnpm, con mejoras de rendimiento y accesibilidad.",
+      children: [
+        {
+          name: "Stack moderno",
+          description:
+            "TypeScript (tipado), esbuild (build rápido), pnpm (dependencias modernas y reproducibles).",
+        },
+        {
+          name: "Render sin lag",
+          description:
+            "Debounce de 150ms para no bloquear el editor al teclear.",
+        },
+        {
+          name: "Auto-contraste WCAG",
+          description:
+            "El color del texto se ajusta para mantener legibilidad sobre cualquier color resaltado.",
+        },
+        {
+          name: "Distribución store-agnostic",
+          description:
+            "Archivo .vsix instalable sin depender de una tienda concreta.",
+        },
+      ],
+    },
   },
   {
     id: "funky-theme",
@@ -587,6 +871,27 @@ export const projects: Project[] = [
       ],
       gallery: [],
       cta: "¿Te interesa el diseño de temas con paleta semántica gobernada por SSOT? Hablemos.",
+    },
+    architecture: {
+      name: "funky-theme",
+      description:
+        "Tema oscuro semántico original para VS Code (MIT): 5 variantes derivadas de una paleta jerárquica en un único config (SSOT) — se toca un valor y todo el tema se mantiene coherente.",
+      children: [
+        {
+          name: "Paleta semántica SSOT",
+          description:
+            "Colores definidos por rol semántico (UI, sintaxis, estados), no arbitrarios, en un solo config.",
+        },
+        {
+          name: "5 variantes por familias visuales",
+          description:
+            "Derivadas de la misma fuente; italics y bold solo donde es deseado, con una variante a medida para quien no los quiere.",
+        },
+        {
+          name: "Tema original",
+          description: "Propio, sin copia de otros temas, publicado bajo MIT.",
+        },
+      ],
     },
   },
   {
@@ -678,6 +983,70 @@ export const projects: Project[] = [
       ],
       cta: "¿Quieres ver cómo se entrena una IA para jugar con Reinforcement Learning dentro de un juego Unity? Hablemos.",
     },
+    architecture: {
+      name: "Grinchmas Kart",
+      description:
+        "Kart racing 3D end-to-end sobre el template Karting Microgame 5.0.1: físicas arcade creíbles y un rival que aprende a conducir con Reinforcement Learning (ML-Agents).",
+      children: [
+        {
+          name: "Arquitectura en capas",
+          description:
+            "Presentación → Sistemas de juego → Física/Gameplay → Controladores → Input, con asmdefs bien definidos (KartGame, KartGame.Editor, KartGame.AI, KartGame.AI.Editor).",
+          children: [
+            {
+              name: "Presentación: UI + audio + cámaras (Cinemachine)",
+            },
+            {
+              name: "Sistemas de juego: GameFlowManager, ObjectiveManager, TimeManager",
+            },
+            {
+              name: "Física/Gameplay: ArcadeKart, KartBounce, KartAnimation",
+            },
+            {
+              name: "Controladores intercambiables: KeyboardInput y KartAgent producen el mismo InputData",
+            },
+          ],
+        },
+        {
+          name: "IA con Reinforcement Learning (ML-Agents)",
+          description:
+            "El rival comparte la misma interfaz IInput que el jugador: el ArcadeKart recibe un InputData sin distinguir quién lo conduce.",
+          children: [
+            {
+              name: "Observaciones por raycasts + velocidad local + dirección al checkpoint",
+            },
+            {
+              name: "Recompensas por progreso y velocidad, penalizaciones por choque",
+            },
+            { name: "Modos Training/Inferencing" },
+          ],
+        },
+        {
+          name: "Física arcade",
+          description:
+            "Rigidbody + 4 WheelColliders, suspensión parametrizada (tunable sin código), derrape con VFX y power-ups extensibles.",
+          children: [
+            { name: "Suspensión parametrizada" },
+            { name: "Derrape con VFX" },
+            { name: "Power-ups extensibles (struct Stats)" },
+          ],
+        },
+        {
+          name: "Flujo de partida",
+          description:
+            "5 niveles encadenados dentro de una misma partida, victoria/derrota y pantalla de créditos con video (GameFlowManager modificado).",
+          children: [
+            { name: "5 niveles encadenados hasta los créditos" },
+            { name: "Victoria / derrota (LoseScene)" },
+          ],
+        },
+        {
+          name: "Modelos 3D y dirección",
+          description:
+            "Assets originales en Blender (grinchcar, Trineo2, motonieve, Patineta, Mono, Pista, SantaFinal, Montaña Grinch), HUD navideño, trailer y créditos en video y audio propios.",
+        },
+      ],
+    },
   },
   {
     id: "cumyxel",
@@ -763,6 +1132,42 @@ export const projects: Project[] = [
         },
       ],
       cta: "¿Quieres ver cómo se construye un plataformero 2D con game-feel real, FSM y pixel-art a mano? Hablemos.",
+    },
+    architecture: {
+      name: "Cumyxel 2D",
+      description:
+        "Plataformero 2D pixel-art con game-feel real: salto variable, enemigos con FSM y cámara con efecto ripple de agua; el autor escribió el 100% de la programación de gameplay.",
+      children: [
+        {
+          name: "Salto variable",
+          description:
+            "Corrección de gravedad en dos fases (subida sin tecla / caída) — física 2D cuidada.",
+        },
+        {
+          name: "Enemigos con FSM",
+          description:
+            "Por anillos de distancia: idle → chase → ataque (esqueleto arquero y murciélago), proyectiles por corrutinas.",
+        },
+        {
+          name: "Plataformas one-way",
+          description:
+            "Implementadas con Physics2D.IgnoreCollision y par trigger/collider.",
+        },
+        {
+          name: "Cámara ortográfica con ripple de agua",
+          description: "Efecto post-proceso con shader + Graphics.Blit.",
+        },
+        {
+          name: "Ground-check",
+          description:
+            "Detección de suelo con OverlapCircle + gizmos de depuración.",
+        },
+        {
+          name: "Cumyxel-code",
+          description:
+            "Repo público MIT con solo el código de gameplay: separa código del contenido y muestra mentalidad open-source.",
+        },
+      ],
     },
   },
 ];
