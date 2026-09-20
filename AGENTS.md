@@ -1,6 +1,11 @@
 ### Idioma (conversación)
 Cuando respondas en español, usa siempre español neutro. Evita el voseo y los regionalismos.
 
+### Evitar vueltas y tokens innecesarios (IMPORTANTE)
+- Una vez verificado que el estado del árbol coincide con la decisión del usuario (los cambios pedidos por el usuario) y que la comprobación (build/tsc/tests) pasa, CIERRA. No re-audites, no re-verifiques lo ya verificado, no preguntes de nuevo preguntas ya respondidas y no sigas consumiendo tokens en confirmaciones redundantes.
+- Si no hay nada que editar, dilo en una línea y para. No juegues al "no puedo creer que no haya cambios" repitiendo git diff / diff --stat cada turno.
+- No "verifiques" pidiendo permiso una y otra vez para lo ya aplicado: cuando the user ya eligió una opción, ejecútala una vez y confirma en una línea.
+
 ### Commits
 - Conventional commits siempre en inglés.
 - Un commit = una work unit (behavior, fix o docs). Nunca separar por tipo de archivo. Consultar la skill `work-unit-commits` para planificar los commits.
