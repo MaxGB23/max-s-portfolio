@@ -3,6 +3,7 @@
 import { createContext, useContext, useRef, useCallback, useEffect, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import type Lenis from "lenis";
+import { FEATURED_STACK_GATE } from "@/lib/breakpoints";
 
 const LenisContext = createContext<Lenis | null>(null);
 
@@ -135,7 +136,9 @@ export function ScrollRestorer() {
       // So: wait until the layout is stable (and the pin exists, when a pin is
       // expected), then apply with Lenis — and if the document grows again
       // right after, re-apply the same absolute target.
-      const PIN_MEDIA = "(min-width: 1024px) and (min-height: 768px)";
+      // Shared gate: same media query that activates the GSAP pin, imported —
+      // not re-typed. If GSAP pins, this must expect a pin-spacer too.
+      const PIN_MEDIA = FEATURED_STACK_GATE;
       const pinExpected = window.matchMedia(PIN_MEDIA).matches;
       const hasPinSpacer = () =>
         !!document

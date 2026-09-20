@@ -41,11 +41,11 @@ El único componente UI base del sistema. API renovada (no shadcn original): `va
 
 | Gate | Dónde | Efecto |
 |------|-------|--------|
-| `(min-width: 1024px) and (min-height: 768px) and (orientation: landscape)` | `featured-projects.tsx` (`gsap.matchMedia`) | Activa el **stacking/pin** de los paneles destacados **solo en escritorio landscape**. El requisito de orientación se añadió porque en tablets grandes en portrait (iPad Pro 13, 1024×1366) el pin cubría todo el viewport y, al salir del stack, el espaciado hacia about/all-projects quedaba gigantesco (~2300px de spacer). Fuera del rango (mobile, pantallas bajas Y portrait) los paneles fluyen en normal-flow sin pin. Subió de `700px` a `768px` de alto para que la card de 2 columnas quepa en el viewport pineado. |
+| `(min-width: 1024px) and (min-height: 768px) and (orientation: landscape)` | `lib/breakpoints.ts` (`FEATURED_STACK_GATE`) — consumido por `featured-projects.tsx` (`gsap.matchMedia`) y `use-lenis.tsx` (`ScrollRestorer.PIN_MEDIA`) | **Única fuente de verdad** del stacking/pin: si el pin está activo, TODOS los consumidores lo saben (GSAP lo pinea, ScrollRestorer espera el pin-spacer). El requisito de orientación se añadió porque en tablets grandes en portrait (iPad Pro 13, 1024×1366) el pin cubría todo el viewport y, al salir del stack, el espaciado hacia about/all-projects quedaba gigantesco (~2300px de spacer). Fuera del rango (mobile, pantallas bajas Y portrait) los paneles fluyen en normal-flow sin pin. Subió de `700px` a `768px` de alto para que la card de 2 columnas quepa en el viewport pineado. |
 | `[@media(min-width:1280px)_and_(min-height:900px)]:gap-30` | `featured-project-panel.tsx` (`ContentWrapper`) | En pantallas grandes Y altas el gap heading↔card crece a `120px`; si no, `gap-12`. |
 | `lg:[@media(max-height:800px)]:text-6xl` | `hero-section.tsx` | Fallback de alto del display del hero (recorta a 60px en viewports bajos); documentado en `typography-families.md`. |
 
-`ScrollRestorer` reusa un gate propio para saber si el pin-spacer es esperado y esperar a que exista antes de restaurar la posición (ver gotcha en la tabla de abajo: `PIN_MEDIA` no incluye `orientation: landscape`).
+`ScrollRestorer` importa el mismo `FEATURED_STACK_GATE` (nunca lo re-escribe) para saber si el pin-spacer es esperado y esperar a que exista antes de restaurar la posición.
 
 ---
 
@@ -140,7 +140,6 @@ Gotcha: `FadeIn` declara prop `as` en su interfaz pero NO la usa (siempre `motio
 
 | Pieza | Estado |
 |-------|--------|
-| `ScrollRestorer.PIN_MEDIA` | `hooks/use-lenis.tsx` usa `(min-width: 1024px) and (min-height: 768px)` **sin** `orientation: landscape`, mientras el gate de stacking SÍ lo incluye. En portrait lg esperará un pin-spacer que no existe; degradado pero funcional (el watchdog de 1.2s termina aplicando la restauración). Pendiente de alinear con el gate landscape. |
 | `FadeIn.as` | Declarado en la interfaz, **no implementado** (siempre `motion.div`) |
 | `SlideIn` / `ScaleIn` | Exportados sin consumidores — código muerto |
 | `DarkModeToggle` | Custom, desmontado; conflictivo con `forcedTheme="dark"` |

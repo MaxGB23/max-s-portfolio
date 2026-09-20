@@ -5,6 +5,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { FeaturedProjectPanel, type FeaturedProject } from "@/components/featured-project-panel";
 import { FadeIn } from "@/components/motion-primitives";
+import { FEATURED_STACK_GATE } from "@/lib/breakpoints";
 import { getFeaturedProjects } from "@/data/projects";
 
 // ---------------------------------------------------------------------------
@@ -60,7 +61,7 @@ export function FeaturedProjects() {
       // pin and buy a ~2300px scroll spacer between featured and the grid).
       // Outside that range the panels render in normal flow — each card (CTA
       // included) fully visible with native scroll, no jank, no overlap.
-      mm.add("(min-width: 1024px) and (min-height: 768px) and (orientation: landscape)", () => {
+      mm.add(FEATURED_STACK_GATE, () => {
         const panels = gsap.utils.toArray<HTMLElement>(".featured-panel");
         if (panels.length === 0) return;
 
