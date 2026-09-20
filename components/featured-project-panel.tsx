@@ -7,6 +7,7 @@ import { FadeIn } from "@/components/motion-primitives";
 import { StackIcon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { saveHomeScroll } from "@/hooks/use-lenis";
+import { FEATURED_GAP, FEATURED_GAP_LG } from "@/lib/rhythm";
 
 export interface FeaturedProject {
   id: string;
@@ -56,7 +57,9 @@ export function FeaturedProjectPanel({ project, children, overlay }: FeaturedPro
       style={{ backgroundColor: project.bgColor }}
       aria-labelledby={`featured-title-${project.id}`}
     >
-      <ContentWrapper className="debug-l1 panel-content w-full max-w-7xl mx-auto landscape:lg:h-full flex flex-col justify-center gap-12 [@media(min-width:1280px)_and_(min-height:900px)]:gap-30 pt-12 md:pt-14 landscape:lg:py-8">
+      <ContentWrapper
+        className={`debug-l1 panel-content w-full max-w-7xl mx-auto landscape:lg:h-full flex flex-col justify-center ${FEATURED_GAP} ${FEATURED_GAP_LG} pt-12 md:pt-14 landscape:lg:py-8`}
+      >
 
         {/* Section heading (desktop lg+ with min-height 768px): in-flow block at
             the top of this panel. It can never overlap the centered card content:
