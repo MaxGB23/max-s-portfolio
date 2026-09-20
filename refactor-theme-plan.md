@@ -16,7 +16,7 @@ Durante la inspección de la carpeta `components/`, se detectó que los siguient
 7. `components/pricing-section.tsx`
 8. `components/products-section.tsx`
 9. `components/project-card.tsx`
-10. `components/projects-section.tsx`
+10. `components/featured-projects.tsx` y `components/all-projects.tsx` (antes `components/projects-section.tsx`)
 11. `components/scroll-progress.tsx`
 
 Las variables específicas en uso de esta manera son:

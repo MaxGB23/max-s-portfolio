@@ -171,14 +171,14 @@ Todos son `clamp(min, rem + vw, max)` — base en rems, pendiente en vw (cumple 
 
 ---
 
-## Grid de proyectos (`components/projects-section.tsx`)
+## Grid de proyectos (`components/all-projects.tsx`)
 
 ### Títulos de sección
 
 | Elemento | Familia | Clases (orden real) |
 |----------|---------|---------------------|
 | `h2` "Proyectos Destacados" (SectionHeading) | serif | `font-serif font-black uppercase text-fluid-section leading-[0.9] tracking-tighter` |
-| `h2` "Todos los Proyectos" (ProjectsTransition) | serif | `font-serif font-black uppercase text-fluid-section leading-[0.9] tracking-tighter` |
+| `h2` "Todos los Proyectos" (AllProjects) | serif | `font-serif font-black uppercase text-fluid-section leading-[0.9] tracking-tighter` |
 
 ### ContactBanner (banda de contacto bajo el grid)
 

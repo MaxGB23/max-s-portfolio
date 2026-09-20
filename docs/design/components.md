@@ -41,7 +41,7 @@ El único componente UI base del sistema. API renovada (no shadcn original): `va
 
 | Gate | Dónde | Efecto |
 |------|-------|--------|
-| `(min-width: 1024px) and (min-height: 768px) and (orientation: landscape)` | `projects-section.tsx` (`gsap.matchMedia`) | Activa el **stacking/pin** de los paneles destacados **solo en escritorio landscape**. El requisito de orientación se añadió porque en tablets grandes en portrait (iPad Pro 13, 1024×1366) el pin cubría todo el viewport y, al salir del stack, el espaciado hacia about/all-projects quedaba gigantesco (~2300px de spacer). Fuera del rango (mobile, pantallas bajas Y portrait) los paneles fluyen en normal-flow sin pin. Subió de `700px` a `768px` de alto para que la card de 2 columnas quepa en el viewport pineado. |
+| `(min-width: 1024px) and (min-height: 768px) and (orientation: landscape)` | `featured-projects.tsx` (`gsap.matchMedia`) | Activa el **stacking/pin** de los paneles destacados **solo en escritorio landscape**. El requisito de orientación se añadió porque en tablets grandes en portrait (iPad Pro 13, 1024×1366) el pin cubría todo el viewport y, al salir del stack, el espaciado hacia about/all-projects quedaba gigantesco (~2300px de spacer). Fuera del rango (mobile, pantallas bajas Y portrait) los paneles fluyen en normal-flow sin pin. Subió de `700px` a `768px` de alto para que la card de 2 columnas quepa en el viewport pineado. |
 | `[@media(min-width:1280px)_and_(min-height:900px)]:gap-30` | `featured-project-panel.tsx` (`ContentWrapper`) | En pantallas grandes Y altas el gap heading↔card crece a `120px`; si no, `gap-12`. |
 | `lg:[@media(max-height:800px)]:text-6xl` | `hero-section.tsx` | Fallback de alto del display del hero (recorta a 60px en viewports bajos); documentado en `typography-families.md`. |
 
@@ -56,7 +56,7 @@ Inter-section spacing en una sola fuente: **96px mobile (`h-24`) · 128px ≥768
 | Elemento | Valor | Dónde |
 |----------|-------|-------|
 | `SectionSpacing` | `h-24` (96px) / `md:h-32` (128px) | `app/page.tsx`: entre Hero, About, Projects, Pricing y Contact (también antes del Footer) |
-| **Excepción — Featured** | El stack de proyectos NO usa `SectionSpacing`: en landscape el pin de GSAP es dueño de su altura; el ritmo interno vive en `featured-project-panel.tsx` / `projects-section.tsx` |
+| **Excepción — Featured** | El stack de proyectos NO usa `SectionSpacing`: en landscape el pin de GSAP es dueño de su altura; el ritmo interno vive en `featured-project-panel.tsx` / `featured-projects.tsx`; el grid vive en `all-projects.tsx` |
 | **Excepción — Hero** | Única sección que conserva espaciado grande intencional: mantiene su hueco con el indicador "deslizar" para que About aparezca al hacer scroll — decisión de diseño, no un bug (`docs/features/hero-design.md`) |
 
 ### Featured en lg portrait (2 cols sin pin) — ritmo interno
@@ -83,7 +83,7 @@ Motor: **framer-motion** (`^12.0.0`). Viewport compartido `{ once: true, amount:
 | `SlideIn` | `children`, `from?: "left" \| "right"`, `delay?` | **SIN consumidores** (muerto) |
 | `ScaleIn` | `children`, `delay?` | **SIN consumidores** (muerto) |
 
-**Cuándo usar**: `FadeIn` para entradas sueltas; `FadeInStagger` + `FadeInItem` para grids/listas escalonadas. **Cuándo NO**: no introducir `SlideIn`/`ScaleIn` nuevos hasta decidir su destino (hoy son código muerto); los paneles de stacking de ProjectsSection usan GSAP, no estas primitivas.
+**Cuándo usar**: `FadeIn` para entradas sueltas; `FadeInStagger` + `FadeInItem` para grids/listas escalonadas. **Cuándo NO**: no introducir `SlideIn`/`ScaleIn` nuevos hasta decidir su destino (hoy son código muerto); los paneles de stacking de FeaturedProjects usan GSAP, no estas primitivas.
 
 Gotcha: `FadeIn` declara prop `as` en su interfaz pero NO la usa (siempre `motion.div`).
 
@@ -113,7 +113,8 @@ Gotcha: `FadeIn` declara prop `as` en su interfaz pero NO la usa (siempre `motio
 | `AboutSection` | `components/about-section.tsx` | (sin props) | Sección "Sobre Mí" (`#sobre-mi`), timeline GSAP |
 | `FeaturedProjectPanel` | `components/featured-project-panel.tsx` | `project: FeaturedProject`, `children?`, `overlay?` | Panel apilado del caso de estudio; `overlay` = heading flotante del índice 0 |
 | `ProjectCard` | `components/project-card.tsx` | `project: Project` (interfaz local: id, title, description, metric, image, imageAlt, category, tags?, links?, featured?) | Card del grid, hija de `FadeInItem` |
-| `ProjectsSection` | `components/projects-section.tsx` | (sin props) | Grid + stacking GSAP + ContactBanner; sub-componentes privados `SectionHeading`, `ProjectsGrid`, `ProjectsTransition`, `ContactBanner` |
+| `FeaturedProjects` | `components/featured-projects.tsx` | (sin props) | Stack destacado (`#proyectos`) con pin GSAP (gate landscape); sub-componente privado `SectionHeading` |
+| `AllProjects` | `components/all-projects.tsx` | (sin props) | Heading "Todos los Proyectos" + grid responsive (`#all-projects`); dato `allProjects` local |
 | `ProjectDetail` | `components/project-detail.tsx` | `project: Project` (tipo de `@/data/projects`) | Página de detalle (`app/proyectos/[id]`); sub-componentes privados `SectionTitle`, `StackChips`, `AnimatedMetric` |
 | `PricingSection` | `components/pricing-section.tsx` | (sin props) | Pricing "Servicios a medida" |
 | `Footer` | `components/footer.tsx` | (sin props) | Footer `#contacto`, usa `FadeIn` |
