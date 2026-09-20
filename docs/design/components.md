@@ -1,6 +1,6 @@
 # Componentes Custom — Referencia de Uso
 
-Este documento es la **fuente de verdad** de los componentes custom del portfolio: qué existe, qué props recibe, cuándo usarlo y qué NO usar. Cubre solo lo hecho a mano para la app (rama `feat/fluid-typo`, worktree `M:\worktrees\maxgb23-portfolio\fluid-typo`) — NO documenta el catálogo genérico shadcn que vive en `components/ui/` (scaffolds sin consumidores de la app: calendar, chart, resizable, etc.); si no está aquí y no es `Button`, no es parte del sistema.
+Este documento es la **fuente de verdad** de los componentes custom del portfolio: qué existe, qué props recibe, cuándo usarlo y qué NO usar. Cubre solo lo hecho a mano para la app (rama `refactor/component-structure`, worktree `M:\worktrees\maxgb23-portfolio\component-structure`) — NO documenta el catálogo genérico shadcn que vive en `components/ui/` (scaffolds sin consumidores de la app: calendar, chart, resizable, etc.); si no está aquí y no es `Button`, no es parte del sistema.
 
 Complementa a `typography-families.md` (qué token usa cada elemento) y a `buttons.md` (sistema de botones en detalle). Los tres alimentan el futuro `design.md`.
 
@@ -41,11 +41,33 @@ El único componente UI base del sistema. API renovada (no shadcn original): `va
 
 | Gate | Dónde | Efecto |
 |------|-------|--------|
-| `(min-width: 1024px) and (min-height: 768px)` | `projects-section.tsx` (`gsap.matchMedia`) | Activa el **stacking/pin** de los paneles destacados. Fuera de ese rango (mobile y pantallas bajas) los paneles fluyen en normal-flow sin pin. Subió de `700px` a `768px` de alto para que la card de 2 columnas quepa en el viewport pineado. |
+| `(min-width: 1024px) and (min-height: 768px) and (orientation: landscape)` | `projects-section.tsx` (`gsap.matchMedia`) | Activa el **stacking/pin** de los paneles destacados **solo en escritorio landscape**. El requisito de orientación se añadió porque en tablets grandes en portrait (iPad Pro 13, 1024×1366) el pin cubría todo el viewport y, al salir del stack, el espaciado hacia about/all-projects quedaba gigantesco (~2300px de spacer). Fuera del rango (mobile, pantallas bajas Y portrait) los paneles fluyen en normal-flow sin pin. Subió de `700px` a `768px` de alto para que la card de 2 columnas quepa en el viewport pineado. |
 | `[@media(min-width:1280px)_and_(min-height:900px)]:gap-30` | `featured-project-panel.tsx` (`ContentWrapper`) | En pantallas grandes Y altas el gap heading↔card crece a `120px`; si no, `gap-12`. |
 | `lg:[@media(max-height:800px)]:text-6xl` | `hero-section.tsx` | Fallback de alto del display del hero (recorta a 60px en viewports bajos); documentado en `typography-families.md`. |
 
-`ScrollRestorer` reusa el primer gate para saber si el pin-spacer es esperado y esperar a que exista antes de restaurar la posición.
+`ScrollRestorer` reusa un gate propio para saber si el pin-spacer es esperado y esperar a que exista antes de restaurar la posición (ver gotcha en la tabla de abajo: `PIN_MEDIA` no incluye `orientation: landscape`).
+
+---
+
+## Ritmo vertical entre secciones (`components/section-spacing.tsx`)
+
+Inter-section spacing en una sola fuente: **96px mobile (`h-24`) · 128px ≥768px (`md:h-32`)**, componente `aria-hidden` entre secciones top-level.
+
+| Elemento | Valor | Dónde |
+|----------|-------|-------|
+| `SectionSpacing` | `h-24` (96px) / `md:h-32` (128px) | `app/page.tsx`: entre Hero, About, Projects, Pricing y Contact (también antes del Footer) |
+| **Excepción — Featured** | El stack de proyectos NO usa `SectionSpacing`: en landscape el pin de GSAP es dueño de su altura; el ritmo interno vive en `featured-project-panel.tsx` / `projects-section.tsx` |
+| **Excepción — Hero** | Única sección que conserva espaciado grande intencional: mantiene su hueco con el indicador "deslizar" para que About aparezca al hacer scroll — decisión de diseño, no un bug (`docs/features/hero-design.md`) |
+
+### Featured en lg portrait (2 cols sin pin) — ritmo interno
+
+Fuera del gate landscape (portrait lg, ej. iPad Pro), los paneles fluyen en 2 columnas sin pin; estos valores definen su ritmo:
+
+| Relación | Clase | Valor |
+|----------|-------|-------|
+| Título "Proyectos Destacados" → card 1 | overlay `mb-8 portrait:lg:mb-16` + `gap-12` del `panel-content` | **112px** portrait lg · 80px landscape (solo `mb-8` + `gap-12`) |
+| Card → card | `portrait:lg:mb-24` en el `article` | **96px** portrait lg · 0 landscape (el pin lo controla todo) |
+| Última card → "Todos los Proyectos" | `pt-24 lg:landscape:pt-0` en `ProjectsTransition` | **96px** portrait lg · 0 landscape (tras el pin) |
 
 ---
 
@@ -117,6 +139,7 @@ Gotcha: `FadeIn` declara prop `as` en su interfaz pero NO la usa (siempre `motio
 
 | Pieza | Estado |
 |-------|--------|
+| `ScrollRestorer.PIN_MEDIA` | `hooks/use-lenis.tsx` usa `(min-width: 1024px) and (min-height: 768px)` **sin** `orientation: landscape`, mientras el gate de stacking SÍ lo incluye. En portrait lg esperará un pin-spacer que no existe; degradado pero funcional (el watchdog de 1.2s termina aplicando la restauración). Pendiente de alinear con el gate landscape. |
 | `FadeIn.as` | Declarado en la interfaz, **no implementado** (siempre `motion.div`) |
 | `SlideIn` / `ScaleIn` | Exportados sin consumidores — código muerto |
 | `DarkModeToggle` | Custom, desmontado; conflictivo con `forcedTheme="dark"` |

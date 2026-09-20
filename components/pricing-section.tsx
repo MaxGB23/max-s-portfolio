@@ -283,12 +283,12 @@ export function PricingSection() {
       id="precios"
       ref={sectionRef}
       aria-labelledby="pricing-heading"
-      className="debug-l1 py-24 md:py-32 px-6"
+      className="debug-l1 px-6"
     >
       <div className="debug-l2 max-w-6xl mx-auto">
 
         {/* Section header */}
-        <header className="debug-l3 pricing-header flex flex-col items-center text-center mb-16">
+        <header className="debug-l3 pricing-header flex flex-col items-center text-center mb-5 lg:mb-16">
           <h2 id="pricing-heading" className="flex flex-col md:flex-row gap-2 md:gap-3 justify-center items-center font-serif font-black uppercase text-fluid-section leading-[0.9] tracking-tighter text-foreground mb-5">
             <span>Servicios</span>
             <span className="text-purple-accent brightness-110">a medida</span>
@@ -299,7 +299,7 @@ export function PricingSection() {
         </header>
 
         {/* Cards grid */}
-<div className="debug-l3 pricing-grid grid grid-cols-1 lg:grid-cols-3 gap-6 items-start max-w-md lg:max-w-none mx-auto">
+        <div className="debug-l3 pricing-grid grid grid-cols-1 lg:grid-cols-3 gap-6 items-start max-w-md lg:max-w-none mx-auto">
           {tiers.map((tier) => (
             <div key={tier.name} className={tier.highlighted ? "pricing-highlighted" : ""}>
               <PricingCard tier={tier} />
@@ -308,7 +308,7 @@ export function PricingSection() {
         </div>
 
         {/* Footer note */}
-        <p className="mt-10 text-center text-fluid-body text-content">
+        <p className="mt-10 text-center text-fluid-body max-w-lg mx-auto lg:max-w-none text-content">
           Precios base de referencia. La cotización final depende del alcance. Escríbeme y respondo en 24–48 h.
         </p>
 

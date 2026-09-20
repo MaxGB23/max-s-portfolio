@@ -14,7 +14,7 @@ export function Footer() {
   return (
     <footer
       id="footer"
-      className="debug-l1 border-t border-border bg-background/50 backdrop-blur-md pt-16 pb-8 px-6 mt-20 relative overflow-hidden"
+      className="debug-l1 border-t border-border bg-background/50 backdrop-blur-md py-16 px-6 relative overflow-hidden"
     >
       {/* Background Subtle Glow */}
       <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[250px] bg-accent-purple/10 blur-[120px] pointer-events-none rounded-full" />

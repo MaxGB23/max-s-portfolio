@@ -20,6 +20,13 @@ import { type ReactNode } from "react";
 // ---------------------------------------------------------------------------
 const VIEWPORT = { once: true, amount: 0.15 } as const;
 
+// Stagger containers can be very tall on mobile (a single-column grid is
+// several thousand px). A %-of-element threshold would force the user to
+// scroll deep into the list before the animation fires. "some" triggers as
+// soon as the container starts entering the viewport, so items animate as
+// they scroll into view instead of appearing long after they were seen.
+const STAGGER_VIEWPORT = { once: true, amount: "some" } as const;
+
 // ---------------------------------------------------------------------------
 // FadeIn
 // ---------------------------------------------------------------------------
@@ -87,7 +94,7 @@ export function FadeInStagger({ children, className, stagger = 0.1, delay = 0.05
       variants={variants}
       initial="hidden"
       whileInView="visible"
-      viewport={VIEWPORT}
+      viewport={STAGGER_VIEWPORT}
       className={className}
     >
       {children}

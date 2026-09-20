@@ -65,13 +65,13 @@ export function AboutSection() {
       id="sobre-mi"
       ref={containerRef}
       aria-label="Sobre mí"
-      className="debug-l1 relative flex flex-col items-center justify-center px-6 md:px-8 lg:px-12 py-16 md:py-24"
+      className="debug-l1 relative flex flex-col items-center justify-center px-6 md:px-8 lg:px-12"
     >
       {/* Main layout */}
-      <div className="debug-l2 relative z-10 flex flex-col-reverse md:flex-row items-center justify-center w-full max-w-6xl mx-auto gap-8 md:gap-12 lg:gap-0">
+      <div className="debug-l2 relative z-10 flex flex-col-reverse md:flex-row items-center justify-center w-full max-w-5xl mx-auto gap-8 md:gap-12 lg:gap-14 xl:gap-16">
 
         {/* Left Column: Portrait */}
-        <div className="about-portrait debug-l4 relative rounded-4xl shadow-xl aspect-11/9 w-full max-w-[400px] sm:max-w-[440px] mx-auto md:max-w-full md:w-auto md:h-[320px] lg:h-[380px] 2xl:h-[400px] shrink-0 z-0" style={{ opacity: 0, visibility: 'hidden' }}>
+        <div className="about-portrait debug-l4 relative rounded-4xl shadow-xl aspect-11/9 w-full max-w-[400px] sm:max-w-[440px] mx-auto md:max-w-full md:w-auto md:h-[280px] lg:h-[320px] xl:h-[360px] 2xl:h-[380px] shrink-0 z-0" style={{ opacity: 0, visibility: 'hidden' }}>
           <div className="w-full h-full rounded-4xl overflow-hidden relative">
             <Image
               src="/images/about-max.png"

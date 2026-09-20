@@ -63,7 +63,7 @@ function ProjectsGrid() {
       aria-labelledby="all-projects-heading"
       className="debug-l1 pt-12 lg:pt-16 px-6"
     >
-      <div id="all-projects-content" className="debug-l2 max-w-7xl mx-auto pb-12 lg:pb-16">
+      <div id="all-projects-content" className="debug-l2 max-w-7xl mx-auto">
         <FadeInStagger className="debug-l3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
   {allProjects.map((project) => (
           <FadeInItem key={project.id}>
@@ -81,10 +81,10 @@ function ProjectsGrid() {
 // ---------------------------------------------------------------------------
 function ProjectsTransition() {
   return (
-    <div className="debug-l1 relative px-6 text-center">
+    <div className="debug-l2 relative px-6 text-center">
 
 
-      <div className="debug-l2 max-w-7xl pt-24 lg:pt-0 mx-auto flex flex-col items-center text-center">
+      <div className="debug-l1 max-w-7xl pt-24 lg:landscape:pt-0 mx-auto flex flex-col items-center text-center">
         <FadeIn>
           <h2 id="all-projects-heading" className="flex flex-col gap-2 md:gap-3 justify-center items-center font-serif font-black uppercase text-fluid-section leading-[0.9] tracking-tighter text-foreground ">
             <span>Todos los</span>
@@ -112,12 +112,14 @@ export function ProjectsSection() {
     const ctx = gsap.context(() => {
       const mm = gsap.matchMedia();
 
-      // Stacking animation is desktop editorial only: it needs enough BOTH width
-      // (lg+, 1024px) and height (768px+) so the in-flow heading and the full
-      // two-column card fit the pinned viewport. Outside that range the panels
-      // render in normal flow — each card (CTA included) fully visible with
-      // native scroll, no jank, no overlap.
-      mm.add("(min-width: 1024px) and (min-height: 768px)", () => {
+      // Stacking animation is landscape desktop editorial only: it needs enough
+      // BOTH width (lg+, 1024px) and height (768px+) so the in-flow heading and
+      // the full two-column card fit the pinned viewport, and landscape
+      // orientation (a 1024x1366 iPad Pro portrait would otherwise activate the
+      // pin and buy a ~2300px scroll spacer between featured and the grid).
+      // Outside that range the panels render in normal flow — each card (CTA
+      // included) fully visible with native scroll, no jank, no overlap.
+      mm.add("(min-width: 1024px) and (min-height: 768px) and (orientation: landscape)", () => {
         const panels = gsap.utils.toArray<HTMLElement>(".featured-panel");
         if (panels.length === 0) return;
 
@@ -183,10 +185,14 @@ export function ProjectsSection() {
   return (
     <div ref={sectionRef}>
       {/* Section heading, mobile/tablet (<lg): the card stacks image-on-top so
-          the title cannot overlay it — it flows as a normal block above the stack. */}
-      <div className="px-6 md:px-12 pt-12 md:pt-20 flex justify-center lg:hidden">
+          the title cannot overlay it — it flows as a normal block above the stack.
+          In lg+ the overlay heading inside the panel takes over and this
+          standalone block hides (portrait tablets included). */}
+      <div className="px-6 md:px-12 flex justify-center lg:hidden">
         <div className="max-w-7xl mx-auto flex flex-col items-center text-center">
-          <SectionHeading />
+          <FadeIn>
+            <SectionHeading />
+          </FadeIn>
         </div>
       </div>
 

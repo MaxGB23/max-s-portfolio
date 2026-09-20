@@ -51,12 +51,12 @@ export function FeaturedProjectPanel({ project, children, overlay }: FeaturedPro
    */
   return (
     <article
-      className="featured-panel debug-l4 relative flex items-center lg:min-h-screen w-full px-6 md:px-8 lg:px-12"
+      className="debug-l4 featured-panel relative flex items-center landscape:lg:min-h-screen portrait:lg:mb-24 w-full px-6 md:px-8 lg:px-12"
       data-panel-id={project.id}
       style={{ backgroundColor: project.bgColor }}
       aria-labelledby={`featured-title-${project.id}`}
     >
-      <ContentWrapper className="debug-l1 panel-content w-full max-w-7xl mx-auto lg:h-full flex flex-col justify-center gap-12 [@media(min-width:1280px)_and_(min-height:900px)]:gap-30 pt-12 md:pt-14 lg:py-8">
+      <ContentWrapper className="debug-l1 panel-content w-full max-w-7xl mx-auto landscape:lg:h-full flex flex-col justify-center gap-12 [@media(min-width:1280px)_and_(min-height:900px)]:gap-30 pt-12 md:pt-14 landscape:lg:py-8">
 
         {/* Section heading (desktop lg+ with min-height 768px): in-flow block at
             the top of this panel. It can never overlap the centered card content:
@@ -68,7 +68,7 @@ export function FeaturedProjectPanel({ project, children, overlay }: FeaturedPro
             phantom horizontal scrollbar during the pin. Content taller than the
             viewport is clipped by the section's overflow:hidden instead. */}
         {overlay && (
-          <div className="hidden lg:flex flex-col debug-l2 items-center text-center shrink-0 mb-8">
+          <div className="hidden lg:flex flex-col debug-l2 items-center text-center shrink-0 mb-8 portrait:lg:mb-16">
             {overlay}
           </div>
         )}
@@ -181,9 +181,6 @@ export function FeaturedProjectPanel({ project, children, overlay }: FeaturedPro
         </div>
         </div>
       </ContentWrapper>
-
-      {/* Bottom separator line */}
-      <div className="absolute bottom-0 left-6 right-6 md:left-12 md:right-12 h-px bg-border" aria-hidden="true" />
     </article>
   );
 }

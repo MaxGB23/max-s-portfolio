@@ -26,7 +26,7 @@ export function ContactSection() {
     <section
       id="contacto"
       aria-labelledby="contact-heading"
-      className="debug-l1 py-24 md:py-32 px-6"
+      className="debug-l1 px-6"
     >
       <FadeIn className="debug-l2 max-w-6xl mx-auto">
         {/* Section header */}

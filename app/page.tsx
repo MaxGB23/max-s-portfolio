@@ -7,30 +7,29 @@ import { PricingSection } from "@/components/pricing-section";
 import { ContactSection } from "@/components/contact-section";
 import { Footer } from "@/components/footer";
 import { ScrollProgress } from "@/components/scroll-progress";
+import { SectionSpacing } from "@/components/section-spacing";
 export default function Home() {
   return (
     <main className="min-h-screen bg-background text-foreground overflow-x-hidden">
       <ScrollProgress />
       <Navbar />
+
       <HeroSection />
+      <SectionSpacing />
+
       <AboutSection />
-<div className="mb-12 lg:mb-0"></div>
+      <SectionSpacing />
+
       <ProjectsSection />
-
-      {/* Divider */}
-      {/* <div className="max-w-6xl mx-auto px-6">
-        <hr className="border-border" />
-      </div> */}
-
-      {/* <ProductsSection /> */}
-
-      {/* Divider */}
-      {/* <div className="max-w-6xl mx-auto px-6">
-        <hr className="border-border" />
-      </div> */}
+      <SectionSpacing />
 
       <PricingSection />
+      <SectionSpacing />
+
       <ContactSection />
+      <SectionSpacing />
+
+      <div className="mb-10"/> 
       <Footer />
     </main>
   );
