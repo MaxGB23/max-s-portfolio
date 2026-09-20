@@ -133,7 +133,7 @@ export function FeaturedProjects() {
       <Section
         as="div"
         debug="none"
-        className="flex justify-center lg:hidden"
+        className="debug-l2 flex justify-center lg:hidden"
         innerClassName="flex flex-col items-center text-center"
       >
         <FadeIn>

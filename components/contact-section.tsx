@@ -77,7 +77,10 @@ export function ContactSection() {
               className={copied ? "border-purple-accent/40  text-purple-accent brightness-110" : ""}
             >
               {copied ? <Check size={16} aria-hidden="true" /> : <Copy size={16} aria-hidden="true" />}
-              {copied ? "Copiado" : "Copiar correo"}
+              {copied ? "Copiado" : <>
+                <span className="hidden sm:block">Copiar email</span>
+                <span className="sm:hidden">Correo</span>
+              </>}
             </Button>
           </div>
 

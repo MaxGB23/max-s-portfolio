@@ -16,13 +16,19 @@ export default function Home() {
       <Navbar />
 
       <HeroSection />
-      <SectionSpacing />
+      <div className="portrait:md:hidden ">
+        <SectionSpacing />
+      </div>
 
       <AboutSection />
-      <SectionSpacing />
+      <div className="landscape:lg:hidden landscape:[@media(max-height:768px)]:block">
+        <SectionSpacing />
+      </div>
 
       <FeaturedProjects />
-      <SectionSpacing />
+      <div className="portrait:lg:hidden landscape:lg:hidden landscape:lg:[@media(max-height:767px)]:block">
+        <SectionSpacing />
+      </div>
 
       <AllProjects />
       <SectionSpacing />

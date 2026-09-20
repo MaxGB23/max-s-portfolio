@@ -52,13 +52,13 @@ export function FeaturedProjectPanel({ project, children, overlay }: FeaturedPro
    */
   return (
     <article
-      className="debug-l4 featured-panel relative flex items-center landscape:lg:min-h-screen portrait:lg:mb-24 w-full px-6 md:px-8 lg:px-12"
+      className="debug-l4 featured-panel relative flex items-center portrait:lg:mb-24 w-full px-6 md:px-8 lg:px-12"
       data-panel-id={project.id}
       style={{ backgroundColor: project.bgColor }}
       aria-labelledby={`featured-title-${project.id}`}
     >
       <ContentWrapper
-        className={`debug-l1 panel-content w-full max-w-7xl mx-auto landscape:lg:h-full flex flex-col justify-center ${FEATURED_GAP} ${FEATURED_GAP_LG} pt-12 md:pt-14 landscape:lg:py-8`}
+        className={`debug-l1 panel-content w-full max-w-7xl mx-auto landscape:lg:h-full flex flex-col justify-center ${FEATURED_GAP} ${FEATURED_GAP_LG} pt-12 md:pt-14 lg:pt-0 `}
       >
 
         {/* Section heading (desktop lg+ with min-height 768px): in-flow block at
@@ -71,12 +71,16 @@ export function FeaturedProjectPanel({ project, children, overlay }: FeaturedPro
             phantom horizontal scrollbar during the pin. Content taller than the
             viewport is clipped by the section's overflow:hidden instead. */}
         {overlay && (
-          <div className="hidden lg:flex flex-col debug-l2 items-center text-center shrink-0 mb-8 portrait:lg:mb-16">
+          <div className="hidden lg:flex flex-col debug-l2 items-center text-center shrink-0 mb-8 portrait:lg:mb-8">
             {overlay}
           </div>
         )}
 
         <div className="flex flex-col justify-center">
+          {/* Es útil si en el futuro se desea que ciertos paneles tengan contenido dinámico o único arriba de la tarjeta sin modificar el componente interno. Por ejemplo:
+              Banners publicitarios o promocionales (ej. "¡Nuevo lanzamiento!").
+              Filtros o pestañas secundarias en un proyecto específico.
+              Alertas / Avisos especiales. */}
           {children && (
             <div className="w-full mb-12 md:mb-16">
               {children}
