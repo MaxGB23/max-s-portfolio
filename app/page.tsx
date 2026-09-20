@@ -33,7 +33,6 @@ export default function Home() {
       <ContactSection />
       <SectionSpacing />
 
-      <div className="mb-10"/> 
       <Footer />
     </main>
   );

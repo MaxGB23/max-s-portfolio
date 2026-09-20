@@ -55,6 +55,8 @@ Los valores de ritmo viven **tokenizados** en `lib/rhythm.ts` (constantes tipada
 
 Inter-section spacing en una sola fuente: **96px mobile (`h-24`) · 128px ≥768px (`md:h-32`)**, componente `aria-hidden` entre secciones top-level.
 
+**Audit de regresión**: `node scripts/section-spacing.mjs` (dev server en `:3001`) — falla con `exit 1` si cualquier gap gobernado por `SectionSpacing` se sale del contrato (±10px). Los pares con heading intermedio (`Projects → All projects`) usan sanity de mínimo (altura de heading variable); el gap post-pin landscape no se aserta (el pin es dueño de su altura).
+
 | Elemento | Valor | Dónde |
 |----------|-------|-------|
 | `SectionSpacing` | `SECTION_GAP` (`h-24` 96px / `md:h-32` 128px) — token de `lib/rhythm.ts` consumido por `components/section-spacing.tsx` | `app/page.tsx`: entre Hero, About, Projects, Pricing y Contact (también antes del Footer) |

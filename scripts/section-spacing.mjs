@@ -31,6 +31,68 @@ function attr(el, prop) {
   return Number.isFinite(v) ? v : 0;
 }
 
+// ---------------------------------------------------------------------------
+// RHYTHM CONTRACT (regression thresholds)
+// Fuente: docs/design/components.md + lib/rhythm.ts
+//   SectionSpacing : h-24 (96px) <768w | md:h-32 (128px) ≥768w, nivel página
+//   Featured panel : portrait:lg:mb-24 (96px) — separación entre paneles del
+//                    stack en flow (portrait lg, sin pin)
+//   Excepción Hero : gap grande intencional (indicador "deslizar") — solo sanity
+//   Excepción pin  : landscape lg (gate FEATURED_STACK_GATE activo) — el pin
+//                    GSAP es dueño de su altura; Projects→All projects NO se
+//                    aserta (el remanente post-pin varía por viewport)
+// ---------------------------------------------------------------------------
+const RHYTHM = { gapLt768: 96, gapGe768: 128, panelMbPortraitLg: 96, tol: 10 };
+
+function rhythmExpectations(vp) {
+  const W = vp.width;
+  const landscape = W > vp.height;
+  const gate = W >= 1024 && vp.height >= 768 && landscape; // FEATURED_STACK_GATE
+  const spacing = W >= 768 ? RHYTHM.gapGe768 : RHYTHM.gapLt768;
+  const e = [];
+  const add = (from, to, kind, min, max) => e.push({ from, to, kind, min, max });
+
+  // Hero→About: excepción intencional — sanity: nunca menor que un gap normal
+  add("Hero", "About", "exception", spacing, null);
+
+  // About→Projects: en lg+ el heading mobile (lg:hidden) desaparece → gap
+  // exacto de SectionSpacing; en <lg el heading suma altura → sanity mínimo
+  if (W >= 1024) add("About", "Projects", "spacing", spacing - RHYTHM.tol, spacing + RHYTHM.tol);
+  else add("About", "Projects", "exception", spacing, null);
+
+  // Projects→All projects: el heading "Todos los Proyectos" (bloque del
+  // componente AllProjects) media entre el spacer y el grid #all-projects con
+  // altura variable (tipografía fluida) → sanity de MÍNIMO, nunca exacto.
+  // En portrait lg la última panel del stack suma además su mb-24 (96px).
+  if (gate) {
+    // pin activo: sin umbral (remanente post-pin variable)
+  } else {
+    const min = spacing + (W >= 1024 && !landscape ? RHYTHM.panelMbPortraitLg : 0);
+    add("Projects", "All projects", "spacing", min, null);
+  }
+
+  add("All projects", "Pricing", "spacing", spacing - RHYTHM.tol, spacing + RHYTHM.tol);
+  add("Pricing", "Contact", "spacing", spacing - RHYTHM.tol, spacing + RHYTHM.tol);
+  add("Contact", "Footer", "spacing", spacing - RHYTHM.tol, spacing + RHYTHM.tol);
+  return e;
+}
+
+function assertRhythm(vp, present) {
+  const byLabel = Object.fromEntries(present.map((d) => [d.label, d]));
+  const out = [];
+  for (const ex of rhythmExpectations(vp)) {
+    const a = byLabel[ex.from];
+    const b = byLabel[ex.to];
+    if (!a || !b) continue;
+    const measured = Math.round(b.top - a.bottom);
+    const belowMin = measured < ex.min;
+    const aboveMax = ex.max != null && measured > ex.max;
+    if (belowMin || aboveMax) out.push({ ...ex, measured, viewport: vp.name });
+  }
+  return out;
+}
+
+const violations = [];
 const browser = await chromium.launch({
   channel: process.env.PW_CHANNEL || "chrome",
   headless: true,
@@ -98,8 +160,22 @@ for (const vp of viewports) {
       `  ${a.label.padEnd(13)} → ${b.label.padEnd(13)} cajas=${String(Math.round(gap)).padStart(5)}px externo | interno=${String(Math.round(internal)).padStart(5)}px (pbA${Math.round(a.paddingBottom)}+ptB${Math.round(b.paddingTop)}) | blanco total=${String(Math.round(whitespace)).padStart(5)}px`
     );
   }
+
+  // Regression layer: every spacing-governed gap must match the rhythm
+  // contract. Violations accumulate and flip the exit code at the end.
+  violations.push(...assertRhythm(vp, present));
   await page.close();
 }
 
 await browser.close();
-console.log("\nDone.");
+
+if (violations.length) {
+  console.error(`\nRHYTHM FAIL [${violations.length}] — gaps fuera del contrato (docs/design/components.md + lib/rhythm.ts):`);
+  for (const v of violations) {
+    const range = v.max == null ? `>= ${v.min}` : `${v.min}..${v.max}`;
+    console.error(`  ${v.viewport}: ${v.from} → ${v.to} [${v.kind}] medición=${v.measured}px esperado=${range}px`);
+  }
+  process.exitCode = 1;
+} else {
+  console.log("\nRHYTHM OK — todos los gaps dentro del contrato.");
+}
