@@ -49,13 +49,17 @@ El único componente UI base del sistema. API renovada (no shadcn original): `va
 
 ---
 
-## Ritmo vertical entre secciones (`components/section-spacing.tsx`)
+## Ritmo vertical entre secciones (`lib/rhythm.ts` + `components/section-spacing.tsx`)
+
+Los valores de ritmo viven **tokenizados** en `lib/rhythm.ts` (constantes tipadas con cadenas de clases Tailwind v4): `SECTION_GAP`, `FEATURED_GAP` y `FEATURED_GAP_LG`.
 
 Inter-section spacing en una sola fuente: **96px mobile (`h-24`) · 128px ≥768px (`md:h-32`)**, componente `aria-hidden` entre secciones top-level.
 
 | Elemento | Valor | Dónde |
 |----------|-------|-------|
-| `SectionSpacing` | `h-24` (96px) / `md:h-32` (128px) | `app/page.tsx`: entre Hero, About, Projects, Pricing y Contact (también antes del Footer) |
+| `SectionSpacing` | `SECTION_GAP` (`h-24` 96px / `md:h-32` 128px) — token de `lib/rhythm.ts` consumido por `components/section-spacing.tsx` | `app/page.tsx`: entre Hero, About, Projects, Pricing y Contact (también antes del Footer) |
+| `FEATURED_GAP` | `gap-12` (48px) — token del gap heading↔card del stack featured | **Exportado pero aún inlineado** en `featured-project-panel.tsx` (`panel-content`); cablearlo al token es el siguiente paso (archivo fuera de alcance del refactor del shell) |
+| `FEATURED_GAP_LG` | `[@media(min-width:1280px)_and_(min-height:900px)]:gap-30` (120px) — variante del mismo gap en viewports altos | Ídem: exportado en `lib/rhythm.ts`, inlineado en `featured-project-panel.tsx` |
 | **Excepción — Featured** | El stack de proyectos NO usa `SectionSpacing`: en landscape el pin de GSAP es dueño de su altura; el ritmo interno vive en `featured-project-panel.tsx` / `featured-projects.tsx`; el grid vive en `all-projects.tsx` |
 | **Excepción — Hero** | Única sección que conserva espaciado grande intencional: mantiene su hueco con el indicador "deslizar" para que About aparezca al hacer scroll — decisión de diseño, no un bug (`docs/features/hero-design.md`) |
 
@@ -104,10 +108,34 @@ Gotcha: `FadeIn` declara prop `as` en su interfaz pero NO la usa (siempre `motio
 
 ---
 
+## Shell estructural: `Section` (`components/section.tsx`)
+
+Categoría: **estructurales**. Única fuente del patrón de contenedor de las secciones top-level: inset horizontal + contenedor interno de ancho máximo + markers de QA (`debug-l*`). Server-safe (sin directivas ni hooks); `ref` como prop (React 19). Las secciones de abajo lo consumen — NO escribir `px-6 md:px-12` + `max-w-7xl` a mano fuera del shell.
+
+**Defaults**: outer `debug-l1 px-6 md:px-12` · inner `debug-l2 mx-auto max-w-7xl`.
+
+| Prop | Tipo / default | Semántica |
+|------|----------------|-----------|
+| `as` | `"section" \| "div"` (default `"section"`) | Elemento renderizado; `"div"` para bloques wrapper (headings) |
+| `ref` | `Ref<HTMLElement>` | Ref al elemento más externo (React 19 ref-as-prop) |
+| `id` / `aria-label` / `aria-labelledby` | `string` | Identidad y relaciones ARIA, preservadas del markup original |
+| `className` | `string` | Clases extra **appendeadas** al elemento externo (layout propio de la sección) |
+| `insetClassName` | `string` | **REEMPLAZA** el inset default (`px-6 md:px-12`): p. ej. `px-6`, `px-6 md:px-8 lg:px-12`. Reemplazo intencional: un override no puede "quitar" `md:px-12` por append |
+| `debug` | `"default" \| "inverted" \| "none"` (default `"default"`) | Ubicación de los markers QA: `default` = l1@outer/l2@inner; `inverted` = l2@outer/l1@inner (bloque "Todos los Proyectos"); `none` = sin markers (heading mobile del featured pin) |
+| `container` | `boolean` (default `true`) | `false` omite el contenedor interno `mx-auto max-w-7xl` (contenido full-bleed) |
+| `innerId` | `string` | `id` del contenedor interno (p. ej. `#all-projects-content`, **contrato del snapshot QA** en `scripts/snapshot-check.mjs`) |
+| `innerClassName` | `string` | Clases extra appendeadas al contenedor interno; los conflictos se resuelven con tailwind-merge (p. ej. `max-w-6xl` reemplaza el `max-w-7xl` default) |
+| `children` | `ReactNode` | Contenido de la sección |
+
+**Cuándo usar**: cualquier sección top-level con inset + ancho máximo. **Cuándo NO**: el pin `#proyectos` de FeaturedProjects (full-bleed intencional del GSAP pin), el hero (excepción documentada), ni contenedores internos de sub-componentes.
+
+---
+
 ## Secciones custom (quién es quién)
 
 | Componente | Archivo | Props | Cuándo usarlo |
 |------------|---------|-------|---------------|
+| `Section` | `components/section.tsx` | `as`, `ref`, `id`, `aria-label`, `aria-labelledby`, `className`, `insetClassName`, `debug`, `container`, `innerId`, `innerClassName` | **Estructural** (categoría: estructurales) — shell de contenedor de las secciones top-level; lo usan About, Featured (heading mobile), AllProjects, Pricing y Contact |
 | `Navbar` | `components/navbar.tsx` | (sin props) | Navegación global; la única pieza con `Button` pill |
 | `HeroSection` | `components/hero-section.tsx` | (sin props) | Hero de la home (Aurora + indicador de scroll inline) |
 | `AboutSection` | `components/about-section.tsx` | (sin props) | Sección "Sobre Mí" (`#sobre-mi`), timeline GSAP |

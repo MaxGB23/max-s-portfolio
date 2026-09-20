@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Check, Copy, Github, Linkedin, Mail } from "lucide-react";
 import { FadeIn } from "@/components/motion-primitives";
 import { Button } from "@/components/ui/button";
+import { Section } from "@/components/section";
 
 const CONTACT_EMAIL = "maxgonzalezballesteros@gmail.com";
 
@@ -23,12 +24,13 @@ export function ContactSection() {
   };
 
   return (
-    <section
+    <Section
       id="contacto"
       aria-labelledby="contact-heading"
-      className="debug-l1 px-6"
+      insetClassName="px-6"
+      innerClassName="max-w-6xl"
     >
-      <FadeIn className="debug-l2 max-w-6xl mx-auto">
+      <FadeIn>
         {/* Section header */}
         <header className="debug-l3 flex flex-col items-center text-center mb-5 md:mb-8">
           <span className="inline-flex items-center rounded-full border border-purple-accent/25 bg-purple-accent/10 px-3 py-2 text-xs sm:text-sm font-semibold text-purple-accent mb-5">
@@ -91,6 +93,6 @@ export function ContactSection() {
           </Button>
         </div>
       </FadeIn>
-    </section>
+    </Section>
   );
 }

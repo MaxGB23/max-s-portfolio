@@ -7,6 +7,7 @@ import { FeaturedProjectPanel, type FeaturedProject } from "@/components/feature
 import { FadeIn } from "@/components/motion-primitives";
 import { FEATURED_STACK_GATE } from "@/lib/breakpoints";
 import { getFeaturedProjects } from "@/data/projects";
+import { Section } from "@/components/section";
 
 // ---------------------------------------------------------------------------
 // Data - single source of truth: data/projects.ts
@@ -129,13 +130,16 @@ export function FeaturedProjects() {
           the title cannot overlay it — it flows as a normal block above the stack.
           In lg+ the overlay heading inside the panel takes over and this
           standalone block hides (portrait tablets included). */}
-      <div className="px-6 md:px-12 flex justify-center lg:hidden">
-        <div className="max-w-7xl mx-auto flex flex-col items-center text-center">
-          <FadeIn>
-            <SectionHeading />
-          </FadeIn>
-        </div>
-      </div>
+      <Section
+        as="div"
+        debug="none"
+        className="flex justify-center lg:hidden"
+        innerClassName="flex flex-col items-center text-center"
+      >
+        <FadeIn>
+          <SectionHeading />
+        </FadeIn>
+      </Section>
 
       {/* Featured stacking section — Opción B (desktop lg+): the section heading is
           an in-flow block at the top of panel 1 (never overlaps the centered card),

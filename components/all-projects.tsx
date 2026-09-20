@@ -2,6 +2,7 @@
 
 import { ProjectCard, type Project } from "@/components/project-card";
 import { FadeIn, FadeInStagger, FadeInItem } from "@/components/motion-primitives";
+import { Section } from "@/components/section";
 import { projects } from "@/data/projects";
 
 // ---------------------------------------------------------------------------
@@ -32,32 +33,36 @@ export function AllProjects() {
       {/* Section heading — previously the transition bridge after the featured
           stack; now it is the natural heading of this section. The gap before it
           is owned by SectionSpacing at the page level. */}
-      <div className="debug-l2 relative px-6 text-center">
-        <div className="debug-l1 max-w-7xl mx-auto flex flex-col items-center text-center">
-          <FadeIn>
-            <h2 id="all-projects-heading" className="flex flex-col gap-2 md:gap-3 justify-center items-center font-serif font-black uppercase text-fluid-section leading-[0.9] tracking-tighter text-foreground ">
-              <span>Todos los</span>
-              <span className="text-purple-accent brightness-110">Proyectos</span>
-            </h2>
-          </FadeIn>
-        </div>
-      </div>
+      <Section
+        as="div"
+        debug="inverted"
+        insetClassName="px-6"
+        className="relative text-center"
+        innerClassName="flex flex-col items-center text-center"
+      >
+        <FadeIn>
+          <h2 id="all-projects-heading" className="flex flex-col gap-2 md:gap-3 justify-center items-center font-serif font-black uppercase text-fluid-section leading-[0.9] tracking-tighter text-foreground ">
+            <span>Todos los</span>
+            <span className="text-purple-accent brightness-110">Proyectos</span>
+          </h2>
+        </FadeIn>
+      </Section>
 
-      <section
+      <Section
         id="all-projects"
         aria-labelledby="all-projects-heading"
-        className="debug-l1 pt-12 lg:pt-16 px-6"
+        insetClassName="px-6"
+        className="pt-12 lg:pt-16"
+        innerId="all-projects-content"
       >
-        <div id="all-projects-content" className="debug-l2 max-w-7xl mx-auto">
-          <FadeInStagger className="debug-l3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {allProjects.map((project) => (
-              <FadeInItem key={project.id}>
-                <ProjectCard project={project} />
-              </FadeInItem>
-            ))}
-          </FadeInStagger>
-        </div>
-      </section>
+        <FadeInStagger className="debug-l3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {allProjects.map((project) => (
+            <FadeInItem key={project.id}>
+              <ProjectCard project={project} />
+            </FadeInItem>
+          ))}
+        </FadeInStagger>
+      </Section>
     </>
   );
 }
