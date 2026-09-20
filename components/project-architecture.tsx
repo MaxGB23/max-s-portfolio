@@ -22,19 +22,19 @@ function ArchitectureChildren({ nodes }: { nodes: ArchitectureNode[] }) {
               </h4>
             </div>
             {child.description && (
-              <p className="text-sm text-muted-foreground leading-relaxed mb-3">
+              <p className="text-sm text-content leading-relaxed mb-3">
                 {child.description}
               </p>
             )}
             {child.children && child.children.length > 0 && (
-              <ul className="mt-3 space-y-1.5 border-l border-border/70 pl-4">
+              <ul className="mt-3 space-y-1.5 pl-2">
                 {child.children.map((grandchild, grandIndex) => (
                   <li key={grandIndex} className="text-sm leading-relaxed">
                     <span className="text-foreground">
-                      {grandchild.name}
+                      ● {grandchild.name}
                     </span>
                     {grandchild.description && (
-                      <span className="block text-sm text-muted-foreground">
+                      <span className="block text-sm text-content">
                         {grandchild.description}
                       </span>
                     )}
@@ -60,7 +60,7 @@ export function ProjectArchitecture({ tree }: { tree: ArchitectureNode }) {
   return (
     <div className="rounded-3xl bg-black/40 dark:bg-card/30 backdrop-blur-md p-6 lg:p-10">
       {/* Nodo raíz — hero card centrada, ancla visual superior */}
-      <div className="relative group max-w-md mx-auto">
+      <div className="relative group max-w-md mx-auto pb-4">
         {/* Sub-header badge flotante arriba */}
         <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 max-w-[calc(100%-2rem)] truncate px-2.5 py-0.5 rounded bg-background border border-border/90 text-xs tracking-wider text-muted-foreground uppercase z-10">
           ROOT ENGINE
@@ -72,7 +72,7 @@ export function ProjectArchitecture({ tree }: { tree: ArchitectureNode }) {
           </h3>
 
           {tree.description && (
-            <p className="text-sm text-muted-foreground leading-relaxed mt-3">
+            <p className="text-sm text-content leading-relaxed mt-3">
               {tree.description}
             </p>
           )}
@@ -118,7 +118,7 @@ export function ArchitectureEmptyState() {
         <p className="text-sm text-muted-foreground">
           Arquitectura no documentada todavía
         </p>
-        <p className="mt-2 text-sm text-muted-foreground max-w-md mx-auto leading-relaxed">
+        <p className="mt-2 text-sm text-content max-w-md mx-auto leading-relaxed">
           Este proyecto aún no tiene topología documentada en docs/projects. La
           vista mostrará el árbol real en cuanto exista — no se inventa data.
         </p>

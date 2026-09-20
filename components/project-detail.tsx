@@ -478,8 +478,8 @@ export function ProjectDetail({ project }: { project: Project }) {
                   <h2 className="font-serif font-bold text-fluid-subheading text-foreground">
                     Métricas clave
                   </h2>
-                  <p className="mt-1 text-fluid-body leading-relaxed text-muted-foreground max-w-xl">
-                    Resumen técnico y validación operativa de la arquitectura de la solución desplegada.
+                  <p className="mt-1 text-fluid-body leading-relaxed text-content max-w-xl">
+                    <span className="hidden lg:block">Métricas de rendimiento y topología del sistema</span> <span className="block lg:hidden">Métricas y topología del sistema</span>
                   </p>
                 </div>
 
@@ -496,7 +496,7 @@ export function ProjectDetail({ project }: { project: Project }) {
                     }`}
                   >
                     <BarChart3 size={14} className={viewMode === "kpis" ? "text-background" : "text-muted-foreground"} />
-                    Métricas & KPIs
+                    <span className="hidden lg:block">Métricas & KPIs</span> <span className="block lg:hidden">Métricas</span>
                   </button>
                   <button
                     type="button"
@@ -508,7 +508,7 @@ export function ProjectDetail({ project }: { project: Project }) {
                     }`}
                   >
                     <Network size={14} className={viewMode === "topology" ? "text-background" : "text-muted-foreground"} />
-                    Grafo Arquitectura
+                    <span className="hidden lg:block">Grafo Arquitectura</span> <span className="block lg:hidden">Arquitectura</span>
                   </button>
                 </div>
               </div>

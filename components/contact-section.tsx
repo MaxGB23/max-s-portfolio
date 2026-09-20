@@ -30,7 +30,7 @@ export function ContactSection() {
     >
       <FadeIn className="debug-l2 max-w-6xl mx-auto">
         {/* Section header */}
-        <header className="debug-l3 flex flex-col items-center text-center mb-16">
+        <header className="debug-l3 flex flex-col items-center text-center mb-5 md:mb-8">
           <span className="inline-flex items-center rounded-full border border-purple-accent/25 bg-purple-accent/10 px-3 py-2 text-xs sm:text-sm font-semibold text-purple-accent mb-5">
             Disponible para proyectos
           </span>
@@ -46,7 +46,7 @@ export function ContactSection() {
         </header>
 
         {/* CTA row */}
-        <div className="debug-l3 flex flex-col sm:flex-row justify-center items-center gap-3">
+        <div className="debug-l3 flex flex-col md:flex-row justify-center items-center gap-3">
           <Button asChild variant="primary" size="lg">
             <a
               href="https://www.linkedin.com/in/maxballesteros"

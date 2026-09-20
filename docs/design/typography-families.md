@@ -218,7 +218,7 @@ Todos son `clamp(min, rem + vw, max)` — base en rems, pendiente en vw (cumple 
 | `h2` Sección (SectionTitle) | serif | `font-serif font-bold text-fluid-subheading` |
 | Valor de métrica | serif | `font-serif font-black text-fluid-metric text-purple-accent` — **token propio (2026-09-16)**: extraído de `text-fluid-card` (préstamo genérico de card heading); misma escala visual 18 → 24, sin cambio de render. Historial: bajó de `subheading` (2026-09-14) porque competía con su SectionTitle (mismo token + black); ahora queda 1.5× bajo el título y 1.2×–1.5× sobre su label |
 | Etiqueta de métrica | sans (heredada) | `text-fluid-card-desc leading-snug` — **fluid (2026-09-16)**: reemplaza el estático `text-xs sm:text-sm 2xl:text-base` (escalera 12→14→16). Reusa la escala secundaria de card siguiendo el patrón pricing (numeral con token propio, secundario reusado); el captions sube a 15px en mobile (ratio valor/label 1.2×) y converge a 16px (1.5×) en desktop |
-| `p` subtítulo sección ("Resumen técnico…") | sans (heredada) | `text-fluid-body leading-relaxed max-w-xl` — **fluid (2026-09-17)**: era `text-sm` estático, sin clase fluid. Alineado al patrón de subtítulo de pricing (text-fluid-body); escala medida 16 → 17.4 → 18 |
+| `p` subtítulo sección ("Métricas de rendimiento y topología del sistema") | sans (heredada) | `text-fluid-body leading-relaxed text-content max-w-xl` — **fluid (2026-09-17)**: era `text-sm` estático, sin clase fluid. Alineado al patrón de subtítulo de pricing (text-fluid-body + text-content); escala medida 16 → 17.4 → 18 |
 | Switch de vistas (Métricas/Grafo) | sans | botones `text-xs font-sans font-medium` — UI estática en norma 12px; sin mono (corregido 2026-09-17)
 | Cuerpo editorial (Resumen/Problema/Rol/Solución/Galería) | sans (heredada) | `text-base 2xl:text-lg leading-relaxed` |
 | Placeholder de galería "Captura próximamente" | mono | `font-mono text-xs 2xl:text-sm uppercase tracking-widest` |
@@ -234,15 +234,15 @@ Diagrama técnico = **UI estática** (no fluido): el grafo queda subordinado a l
 |----------|---------|---------------------|
 | Badge ROOT ENGINE | sans | `text-xs tracking-wider uppercase` — única pieza en 12px (rol decorativo, norma badges) |
 | Nombre raíz | sans | `font-bold text-base tracking-wider uppercase` |
-| Descripción raíz | sans | `text-sm text-muted-foreground leading-relaxed mt-3` |
+| Descripción raíz | sans | `text-sm text-content leading-relaxed mt-3` |
 | Contador "n módulos documentados" | sans | `text-sm` |
 | Número de nodo 01..N | sans | `text-sm font-bold tabular-nums` |
 | Nombre de nodo (`h4`) | sans | `font-semibold text-base` |
-| Descripción de nodo | sans | `text-sm text-muted-foreground leading-relaxed` |
-| Nietos (nombre y descripción) | sans | `text-sm leading-relaxed` |
-| Empty state | sans | título `text-sm`; cuerpo `text-sm text-muted-foreground leading-relaxed max-w-md mx-auto` |
+| Descripción de nodo | sans | `text-sm text-content leading-relaxed` |
+| Nietos (nombre y descripción) | sans | nombre `text-foreground`; descripción `text-sm text-content` |
+| Empty state | sans | título `text-sm`; cuerpo `text-sm text-content leading-relaxed max-w-md mx-auto` |
 
-Reglas del grafo (2026-09-17): **sin mono** — la familia única del diagrama es sans/Inter, como el resto de la sección; **sin valores arbitrarios** — los `text-[10px]`/`text-[11px]` se eliminaron.
+Reglas del grafo (2026-09-17): **sin mono** — la familia única del diagrama es sans/Inter, como el resto de la sección; **sin valores arbitrarios** — los `text-[10px]`/`text-[11px]` se eliminaron; **roles de color del sistema** — nombres → `foreground` (títulos de nodo), descripciones y prosa → `content` (lectura continua), badge/números/contador → `muted-foreground` (metadata).
 
 ---
 
