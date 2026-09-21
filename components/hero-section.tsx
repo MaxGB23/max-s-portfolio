@@ -138,7 +138,7 @@ export function HeroSection() {
             <p className="brightness-110 hero-label text-muted-foreground uppercase tracking-widest font-medium mb-4 text-fluid-eyebrow" style={{ opacity: 0, visibility: 'hidden' }}>
               {HERO_DATA.role}
             </p>
-            <h1 ref={titleRef} className="hero-title font-serif grid grid-cols-1 gap-3 font-black uppercase text-fluid-display leading-[0.9] tracking-tighter text-foreground mb-6 lg:[@media(max-height:800px)]:text-6xl" style={{ opacity: 0, visibility: 'hidden' }}>
+            <h1 ref={titleRef} className="hero-title font-serif grid grid-cols-1 gap-3 font-black uppercase text-fluid-display leading-[0.9] tracking-tighter text-foreground mb-6" style={{ opacity: 0, visibility: 'hidden' }}>
               <span>{HERO_DATA.title.first}</span>
               <span className="text-purple-accent  sm:tracking-[0.01em]">{HERO_DATA.title.last}</span>
             </h1>

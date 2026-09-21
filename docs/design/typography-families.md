@@ -48,7 +48,7 @@ Todos son `clamp(min, rem + vw, max)` — base en rems, pendiente en vw (cumple 
 **Calibración (2026-09)**: TODOS los tokens interpolan en la **misma ventana 375 → 1600px** y topan en ~1600px. Antes cada token topaba en un ancho distinto (eyebrow 857px, card-body 933px, body 1120px, section 1600px, featured 1631px) y la jerarquía relativa se distorsionaba al crecer la resolución. Body reducido de 20px → 18px máximo (práctica 2026: 16–18px). En pantallas < 375px los títulos quedan fijos en su mínimo.
 
 **Recalibración de la escalera superior (2026-09-14, aprobada)**: se reintroducen el escalón display y se separa el detail del section, y section/featured bajan un escalón:
-- Hero `h1` recupera token propio `text-fluid-display` (40→80, era la misma pieza que la sección a 36→72 tras la uniformización previa; el fallback `lg:[@media(max-height:800px)]:text-6xl` lo recorta a 60px en viewports bajos) y Detail `h1` usa `text-fluid-detail` (40→64).
+- Hero `h1` recupera token propio `text-fluid-display` (40→80, era la misma pieza que la sección a 36→72 tras la uniformización previa; el fallback `lg:[@media(max-height:800px)]:text-6xl` lo recortaba a 60px en viewports bajos, **eliminado 2026-09-20** al validar que los clamps custom ya evitan el desborde) y Detail `h1` usa `text-fluid-detail` (40→64).
 - `text-fluid-section` baja de 36→72 a **32→52**; `text-fluid-featured` de 32→64 a **28→44**. Los títulos de sección matienen 2 renglones por diseño (`flex flex-col`).
 - Nace `text-fluid-price` (32→42) calibrado por medición real: **siempre por debajo del section** (1280: 41.6 vs 45.4, ratio 0.92; mobile: 32.7 vs 33) y a la vez dominante sobre el plan name (1.86× a 1280). Se midió con `scripts/type-scale.mjs` en 390/1280/1920 antes de fijar la fórmula (el primer intento a `clamp(2.25rem, 1.95rem + 1.3vw, 3rem)` aún superaba a la sección).
 
@@ -111,7 +111,7 @@ Todos son `clamp(min, rem + vw, max)` — base en rems, pendiente en vw (cumple 
 >
 > Nota de contraste (2026-09-16, ajustado 2026-09-17): el token se calibra por modo al mismo ratio objetivo — `oklch(0.75 0 0)` ≈ 9.2:1 sobre el fondo dark real (`oklch(0.11 0.005 270)`, L≈0.0013) y `oklch(0.38 0 0)` ≈ 10.0:1 sobre el fondo light (`oklch(1 0 0)`). El valor dark supera AAA (7:1) con margen y queda claramente por debajo del `foreground` (~18:1) para mantener jerarquía de títulos vs. lectura. Aunque el portfolio usa `forcedTheme="dark"`, ambos valores quedan definidos para no dejar trampa si se habilita el modo claro.
 
-> Nota histórica: en la uniformización previa (2026-09) el hero `h1` perdió su título propio y usaba `text-fluid-section` (36→72px); se percibió la jerarquía plana entre hero/sección/detalle y (2026-09-14) se reintrodujeron escalones propios: display (40→80) para el hero y detail (40→64) para el detalle (luego recalibrado a 36→54 el 2026-09-17, ver arriba), bajando section y featured para que el ancla de cada sección quede ~0.65× sobre el display y el precio nunca supere a su sección. El hero se apoya además en composición (uppercase, tracking, layout, aurora) y en el fallback de alto `lg:[@media(max-height:800px)]:text-6xl`.
+> Nota histórica: en la uniformización previa (2026-09) el hero `h1` perdió su título propio y usaba `text-fluid-section` (36→72px); se percibió la jerarquía plana entre hero/sección/detalle y (2026-09-14) se reintrodujeron escalones propios: display (40→80) para el hero y detail (40→64) para el detalle (luego recalibrado a 36→54 el 2026-09-17, ver arriba), bajando section y featured para que el ancla de cada sección quede ~0.65× sobre el display y el precio nunca supere a su sección. El hero se apoya además en composición (uppercase, tracking, layout, aurora).
 
 ---
 
@@ -135,7 +135,7 @@ Todos son `clamp(min, rem + vw, max)` — base en rems, pendiente en vw (cumple 
 | Elemento | Familia | Clases (orden real) |
 |----------|---------|---------------------|
 | Label "Full Stack Developer" | sans (heredada) | `uppercase tracking-[0.2em] 2xl:tracking-widest font-medium text-fluid-eyebrow` |
-| `h1` "Max González Ballesteros" | serif | `font-serif font-black uppercase text-fluid-display leading-[0.9] tracking-tighter lg:[@media(max-height:800px)]:text-6xl` |
+| `h1` "Max González Ballesteros" | serif | `font-serif font-black uppercase text-fluid-display leading-[0.9] tracking-tighter` |
 | Descripción | sans (heredada) | `px-4 sm:px-16 md:px-0 text-fluid-body leading-relaxed text-content max-w-full` + `style: maxWidth` medido del título (hook `useTitleWidth`) |
 | Botones CTA (Ver Proyectos / Descargar CV) | sans (heredada) | `text-sm 2xl:text-base font-semibold` |
 | Label "Stack Principal" | sans (heredada) | `text-xs 2xl:text-base uppercase tracking-widest font-semibold` |
@@ -146,15 +146,14 @@ Todos son `clamp(min, rem + vw, max)` — base en rems, pendiente en vw (cumple 
 
 #### Régimen de altura del hero (2026-09)
 
-El hero tiene dos medias de altura que conviven con el escalón `text-fluid-display` (40→80px por ancho, independiente de altura):
+La única media de altura que queda en el hero es el padding superior (el título es puramente vw-driven):
 
 | Variable | Clase | Valor |
 |----------|-------|-------|
 | Padding superior | `pt-22 sm:pt-24 lg:[@media(min-height:700px)]:pt-34 2xl:pt-40` | 88px → 96px → **136px** (lg + altura ≥700) → 160px (2xl ≥1536) |
-| Título en viewport bajo | `lg:[@media(max-height:800px)]:text-6xl` | 60px fijo (solo lg, altura ≤800) |
-| Título en viewport alto | `text-fluid-display` | `clamp(2.5rem, 1.88rem + 3.13vw, 5rem)` — 40→80px por ancho |
+| Título | `text-fluid-display` | `clamp(2.5rem, 1.88rem + 3.13vw, 5rem)` — 40→80px por ancho, independiente de la altura |
 
-> La frontera de 800px produce una discontinuidad: en 801px el display fluido se reanuda y crece con el ancho (≈62px @1024w → 70px @1280w → 80px ≥1600w). Ese fallback nació por un desborde del título en viewports bajos (768px de altura); con los clamps custom ese desborde ya no ocurre, así que su necesidad está **en evaluación** — si la validación en vivo (1280×700, 1366×768, 1920×800) confirma que el hero cabe sin el cap, se elimina y el título queda puramente vw-driven.
+> **Fallback de alto eliminado (2026-09-20).** El `lg:[@media(max-height:800px)]:text-6xl` (60px fijo en lg + altura ≤800) se eliminó tras validar en vivo 1280×700, 1366×768 y 1920×800: el hero cabe completo (CTA + "Deslizar" visibles) sin el cap, y desaparece la discontinuidad que producía en la frontera 800/801 (60px → fluido de 62@1024w a 80@≥1600w, +33% a 1600w). Era deuda acumulada: nació por un desborde del título a 768px de altura que los clamps custom ya habían resuelto.
 
 ---
 
