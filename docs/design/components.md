@@ -75,6 +75,15 @@ Inter-section spacing en una sola fuente: **96px mobile (`h-24`) · 128px ≥768
 | Se renderiza | Landscape y mobile <md | Landscape lg de altura ≤768px · <lg siempre | Landscape lg de altura ≤767px · <lg siempre | Siempre | Siempre | Siempre |
 | Se oculta | Tablet portrait ≥md (el hero full-viewport ya da el aire) | Landscape lg de altura >768px (el siguiente spacer resuelve) | lg en cualquier orientación con altura >767px; tras el pin landscape manda el flujo del pin | — | — | — |
 
+**Contrato del ritmo interno del stack featured (`featured-card-card`)** — espejo del par de página `projects-all-projects`: dentro del gate el pin GSAP es dueño de su altura; fuera de él los paneles fluyen con separación explícita de 96px (mismo régimen que el spacer `landscape:lg:[@media(max-height:767px)]`). Espejo QA: `scripts/rhythm-contract.mjs`.
+
+| Par | Régimen | Esperado |
+|-----|---------|----------|
+| featured-card-card | gate GSAP (landscape ≥1024×768) | `null` (el pin es dueño de su altura) |
+| featured-card-card | portrait lg | `96±10` (`portrait:lg:mb-24` en el `article`) |
+| featured-card-card | landscape lg AND height ≤767 | `96±10` (nuevo: `landscape:lg:[@media(max-height:767px)]:mb-24`) |
+| featured-card-card | resto (mobile, tablets portrait, landscape <lg) | `null` (sin mb por diseño; validado en vivo) |
+
 ### Featured en lg portrait (2 cols sin pin) — ritmo interno
 
 Fuera del gate landscape (portrait lg, ej. iPad Pro), los paneles fluyen en 2 columnas sin pin; estos valores definen su ritmo:
@@ -82,7 +91,7 @@ Fuera del gate landscape (portrait lg, ej. iPad Pro), los paneles fluyen en 2 co
 | Relación | Clase | Valor |
 |----------|-------|-------|
 | Título "Proyectos Destacados" → card 1 | overlay `mb-8` + `gap-12` del `panel-content` | **80px** portrait lg y landscape (desde `352ab13`; antes 112px portrait lg con `portrait:lg:mb-16`) |
-| Card → card | `portrait:lg:mb-24` en el `article` | **96px** portrait lg · 0 landscape (el pin lo controla todo) |
+| Card → card | `portrait:lg:mb-24 landscape:lg:[@media(max-height:767px)]:mb-24` en el `article` | **96px** portrait lg · **96px** landscape lg corto (≤767px, sin pin) · 0 dentro del gate |
 | Última card → "Todos los Proyectos" | `PageSpacing pair="projects-all-projects"` a nivel de página entre `FeaturedProjects` y `AllProjects` (wrapper oculto en lg salvo landscape de altura ≤767px) | `SECTION_GAP` 96/128px donde visible · tras el pin landscape el spacer queda oculto y manda el flujo del pin |
 
 ---

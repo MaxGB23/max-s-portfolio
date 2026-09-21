@@ -22,7 +22,7 @@ export function expectedGap(pair, vp) {
       return { min: spacing };                                            // <lg: heading visible (sanity)
     case "projects-all-projects":
       if (r.landscape && r.lg) return vp.height <= 767
-        ? { min: spacing - T, max: spacing + T }                          // [@media(max-height:767px)]:block
+        ? { min: spacing + 96 - T }                                        // spacer + mb-24 última card; el heading "Todos" (fluido, fuera de #all-projects) suma encima → sanity
         : null;                                                           // gate: pin dueño (sin asertar)
       if (r.portrait && r.lg) return { min: 96 };                         // wrapper oculto; manda mb-24 (96)
       return { min: spacing };
@@ -30,6 +30,11 @@ export function expectedGap(pair, vp) {
     case "pricing-contact":
     case "contact-footer":
       return { min: spacing - T, max: spacing + T };
+    case "featured-card-card":
+      if (r.gate) return null;                    // pin dueño de su altura
+      if (r.portrait && r.lg) return { min: 96 - T, max: 96 + T };  // portrait:lg:mb-24
+      if (r.landscape && r.lg && vp.height <= 767) return { min: 96 - T, max: 96 + T }; // landscape corto
+      return null;                                 // resto sin asertar
     default:
       return null;
   }

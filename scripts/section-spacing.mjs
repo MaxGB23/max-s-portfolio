@@ -24,6 +24,7 @@ const viewports = [
   { name: "tablet portrait 834", width: 834,  height: 1112 },  // iPad 10.2"
   { name: "iPad Pro portrait 1024", width: 1024, height: 1366 }, // cruza el umbral del pin GSAP
   { name: "desktop 1280",      width: 1280, height: 800 },
+  { name: "landscape corto 1280x700", width: 1280, height: 700 }, // gate OFF (H<768): spacer + mb-24 cards
   { name: "wide 1920",         width: 1920, height: 1080 },
 ];
 
@@ -114,11 +115,18 @@ for (const vp of viewports) {
         marginTop: attrOf(el, "marginTop"),
       });
     }
-    return out;
+    // Gaps card→card: bounds absolutos de los panels del stack featured
+    // (par "featured-card-card", ver scripts/rhythm-contract.mjs).
+    const cards = Array.from(document.querySelectorAll("#proyectos article.featured-panel")).map((el) => {
+      const rect = el.getBoundingClientRect();
+      return { top: rect.top + window.scrollY, bottom: rect.bottom + window.scrollY };
+    });
+    return { sections: out, cards };
   }, sections);
 
   console.log(`\n==== ${vp.name} ====`);
-  const present = data.filter((d) => d.found);
+  const present = data.sections.filter((d) => d.found);
+  const cards = data.cards;
   if (present.length === 0) {
     console.log("  NO SECTIONS FOUND — ¿server en :3001?");
     await page.close();
@@ -144,6 +152,23 @@ for (const vp of viewports) {
     console.log(
       `  ${a.label.padEnd(13)} → ${b.label.padEnd(13)} cajas=${String(Math.round(gap)).padStart(5)}px externo | interno=${String(Math.round(internal)).padStart(5)}px (pbA${Math.round(a.paddingBottom)}+ptB${Math.round(b.paddingTop)}) | blanco total=${String(Math.round(whitespace)).padStart(5)}px`
     );
+  }
+
+  // Gap REAL entre cards consecutivas del stack featured (par "featured-card-card"):
+  // mismo contrato que los pares de página, null → sin asertar (gate: pin dueño).
+  // Solo se aserta con ≥2 cards (1 card o ninguna no tiene gap que medir).
+  console.log("  ─ gaps card→card (stack featured) ─");
+  for (let i = 0; i < cards.length - 1; i++) {
+    const a = cards[i];
+    const b = cards[i + 1];
+    const measured = Math.round(b.top - a.bottom);
+    console.log(`  Card ${i + 1} → Card ${i + 2} cajas=${String(measured).padStart(5)}px externo`);
+    const ex = expectedGap("featured-card-card", vp);
+    if (!ex) continue; // null → sin expectativa para este régimen
+    const kind = ex.max == null ? "exception" : ex.min === 0 ? "hidden" : "spacing";
+    const belowMin = measured < ex.min;
+    const aboveMax = ex.max != null && measured > ex.max;
+    if (belowMin || aboveMax) violations.push({ ...ex, measured, viewport: vp.name, from: `Card ${i + 1}`, to: `Card ${i + 2}` });
   }
 
   // Regression layer: every spacing-governed gap must match the rhythm

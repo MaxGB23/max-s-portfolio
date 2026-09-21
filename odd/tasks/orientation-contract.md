@@ -39,9 +39,13 @@ Convertir los condicionales WIP de `app/page.tsx` (referencia `352ab13`) en un *
 | about-projects | resto (<lg: portrait tablets, mobile, landscape <lg) | `≥ spacing` (heading visible suma altura → sanity) |
 | projects-all-projects | gate GSAP (landscape ≥1024×768) | `null` (el pin es dueño de su altura) |
 | projects-all-projects | portrait lg | `≥ 96` (wrapper oculto; manda mb-24 del panel = 96) |
-| projects-all-projects | landscape lg AND height ≤767 | `spacing±10` (`...[@media(max-height:767px)]:block`) |
+| projects-all-projects | landscape lg AND height ≤767 | `≥ spacing+96−tol` (sanity: spacer 128 + mb-24 última card; el heading "Todos" vive FUERA de `#all-projects` y suma altura fluida) |
 | projects-all-projects | resto (<lg) | `≥ spacing` |
 | all-projects-pricing / pricing-contact / contact-footer | todos | `spacing±10` |
+| featured-card-card | gate GSAP (landscape ≥1024×768) | `null` (el pin es dueño de su altura) |
+| featured-card-card | portrait lg | `96±10` (`portrait:lg:mb-24` en el `article`) |
+| featured-card-card | landscape lg AND height ≤767 | `96±10` (nuevo: `landscape:lg:[@media(max-height:767px)]:mb-24`) |
+| featured-card-card | resto (mobile, tablets portrait, landscape <lg) | `null` (sin mb por diseño; validado en vivo) |
 
 ## Tasks
 - [x] T1: `lib/rhythm.ts` — `PageSpacerPair` + `PAGE_SPACER_CLASSES`; nuevo `components/page-spacing.tsx`
@@ -49,6 +53,9 @@ Convertir los condicionales WIP de `app/page.tsx` (referencia `352ab13`) en un *
 - [x] T3: nuevo `scripts/rhythm-contract.mjs` + `scripts/section-spacing.mjs` importa contrato
 - [x] T4: `docs/design/components.md` — contrato por régimen en sitio del warning WIP + fila `PageSpacing`
 - [x] T5: verificación final (tsc + audit RHYTHM OK en :3001)
+- [x] T6: **Nuevo régimen card→card** (observación del propietario): landscape lg con height ≤767 actualmente 0 separación entre panels (gate OFF, `portrait:lg:mb-24` no aplica) — añadir `landscape:lg:[@media(max-height:767px)]:mb-24` en el `article` de `featured-project-panel.tsx`
+- [x] T7: contrato + audit — par `featured-card-card` en `scripts/rhythm-contract.mjs` (tabla arriba) y medición de gaps entre `#proyectos article.featured-panel` consecutivos en `scripts/section-spacing.mjs`
+- [x] T8: docs (`components.md`) — fila Card → card y tabla del contrato con el nuevo régimen (y fila `PageSpacing` si falta)
 
 ## Acceptance criteria
 - `app/page.tsx` sin clases de wrapper inline (todo vía `PageSpacing`).
@@ -70,3 +77,7 @@ Convertir los condicionales WIP de `app/page.tsx` (referencia `352ab13`) en un *
 - [x] T3 … (hecho) — `scripts/rhythm-contract.mjs` (contrato QA puro sin playwright) + `section-spacing.mjs` importa `expectedGap`; FAIL/OK y exit-code preservados
 - [x] T4 … (hecho) — `docs/design/components.md`: contrato final por régimen (tabla por par), fila `PageSpacing`, warning WIP eliminado
 - [x] T5 … (hecho) — verificación final del padré: `npx tsc --noEmit` TSC_EXIT=0 (parent spot check) + `node scripts/section-spacing.mjs` RHYTHM OK exit 0 (audit contra server :3001 propio del worktree); commit `eff976b`
+- [x] T6 … (hecho) — `landscape:lg:[@media(max-height:767px)]:mb-24` añadido al `article` de `featured-project-panel.tsx` justo tras `portrait:lg:mb-24` (espejo del régimen `projects-all-projects` de `lib/rhythm.ts`); landscape lg corto → 96px entre cards
+- [x] T7 … (hecho) — par `featured-card-card` en `scripts/rhythm-contract.mjs` (gate null · portrait lg 96±10 · landscape lg ≤767 96±10 · resto null, añadido antes del `default` sin tocar el fall-through de `all-projects-pricing`/`pricing-contact`/`contact-footer`) + `scripts/section-spacing.mjs` mide y aserta gaps entre `#proyectos article.featured-panel` (labels Card 1→2, Card 2→3; solo con ≥2 cards; mismo formato FAIL)
+- [x] T8 … (hecho) — `docs/design/components.md`: fila Card → card actualizada (96px portrait lg · 96px landscape lg corto ≤767px · 0 dentro del gate) + tabla `Par | Régimen | Esperado` con las 4 filas `featured-card-card` junto al contrato de página y la sección featured
+- [x] **Cobertura nueva (spot check del padre)**: viewport `landscape corto 1280×700` añadido a `scripts/section-spacing.mjs` (el escenario exacto del propietario) → **destapó** que el contrato `projects-all-projects` landscape lg ≤767 era erróneo: medición 318px = card mb 96 + spacer 128 + heading "Todos" ~94 (fuera de `#all-projects`). Corregido a sanity `≥ spacing+96−tol` en `rhythm-contract.mjs` + fila de tabla arriba; cards `featured-card-card` miden 96±10 ✓ en ese viewport. Audit a re-verificar.
