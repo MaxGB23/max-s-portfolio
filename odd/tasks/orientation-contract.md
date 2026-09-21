@@ -69,4 +69,4 @@ Convertir los condicionales WIP de `app/page.tsx` (referencia `352ab13`) en un *
 - [x] T2 … (hecho) — `app/page.tsx` consume `PageSpacing` (6 pares); sin wrappers inline ni `SectionSpacing` a pelo
 - [x] T3 … (hecho) — `scripts/rhythm-contract.mjs` (contrato QA puro sin playwright) + `section-spacing.mjs` importa `expectedGap`; FAIL/OK y exit-code preservados
 - [x] T4 … (hecho) — `docs/design/components.md`: contrato final por régimen (tabla por par), fila `PageSpacing`, warning WIP eliminado
-- [ ] T5 … (verificación) — pendiente de ejecutar tsc + audit
+- [x] T5 … (hecho) — verificación final del padré: `npx tsc --noEmit` TSC_EXIT=0 (parent spot check) + `node scripts/section-spacing.mjs` RHYTHM OK exit 0 (audit contra server :3001 propio del worktree); commit `eff976b`
