@@ -200,6 +200,12 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+
+  /* Hash landing: when the page loads with a #fragment (refresh after an
+     anchor scroll), keep the target clear of the fixed navbar. */
+  section[id] {
+    scroll-margin-top: 5rem;
+  }
 }
 
 /* ============================================================
@@ -266,5 +272,45 @@ body {
   [data-debug] .debug-l4 {
     outline: 1px solid #60a5fa;
     outline-offset: -1px;
+  }
+}
+
+/* ============================================================
+   Section arrival cue — pricing CTAs land on #contacto
+   ------------------------------------------------------------
+   The pricing CTAs (and the navbar "Contacto" button) smooth-scroll
+   to #contacto and announce the arrival on scroll completion (see
+   announceArrival in hooks/use-lenis.tsx): the hook sets the hash in
+   the URL and adds the `arrive` class, which plays a one-shot wash
+   so the destination self-identifies as the click's answer even when
+   the scroll delta is small (sections sit close together on desktop).
+   A repeat click on the same anchor replays it: the hook removes the
+   class, forces a reflow, and re-adds it.
+   Class-triggered on purpose — history.replaceState with a fragment
+   does not update `:target`, so the pseudo-class route is unreliable.
+   ============================================================ */
+#contacto.arrive {
+  animation: contact-arrive 1.5s ease-out;
+}
+
+@keyframes contact-arrive {
+  0%,
+  20% {
+    background-color: color-mix(in oklab, var(--accent-purple) 5%, transparent);
+    box-shadow: inset 0 0 0 2px color-mix(in oklab, var(--accent-purple) 25%, transparent);
+  }
+  100% {
+    background-color: transparent;
+    box-shadow: inset 0 0 0 2px transparent;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* No motion, but still a visible arrival cue: static wash + ring while the
+     `arrive` class is present (the hook removes it after ~2.2s). */
+  #contacto.arrive {
+    animation: none;
+    background-color: color-mix(in oklab, var(--accent-purple) 10%, transparent);
+    box-shadow: inset 0 0 0 2px color-mix(in oklab, var(--accent-purple) 35%, transparent);
   }
 }

@@ -22,8 +22,36 @@ export function useLenis(): Lenis | null {
 }
 
 /**
+ * Announces the arrival at an in-page anchor once its smooth scroll lands:
+ * 1. Reflects the target hash in the URL without adding history entries
+ *    (replaceState never navigates) — shareable anchors, no native jump.
+ * 2. Plays the CSS arrival cue on the target element via a class.
+ *
+ * The cue is class-triggered, NOT `:target`. history.replaceState with a
+ * fragment does not run fragment navigation, so the browser never updates
+ * the target element and `:target` would never match (confirmed in Chrome);
+ * a class is deterministic and replays trivially: remove -> reflow -> add.
+ * The forced reflow restarts the CSS animation on repeat clicks.
+ */
+function announceArrival(href: string) {
+  const base = window.location.pathname + window.location.search;
+  window.history.replaceState(null, "", base + href);
+
+  const target = document.getElementById(href.slice(1));
+  if (target) {
+    target.classList.remove("arrive");
+    void target.offsetWidth;
+    target.classList.add("arrive");
+    // Clear the class once the cue has played so a static reduced-motion
+    // highlight does not linger and repeat clicks always start clean.
+    window.setTimeout(() => target.classList.remove("arrive"), 2200);
+  }
+}
+
+/**
  * Scroll to a hash target using Lenis, compensating for the fixed navbar height.
  * Falls back to native scrollIntoView when Lenis is unavailable.
+ * Reflects the target hash on arrival (see reflectHashInUrl).
  */
 export function useScrollToAnchor(navbarHeight = 64) {
   const lenis = useLenis();
@@ -37,14 +65,21 @@ export function useScrollToAnchor(navbarHeight = 64) {
       if (!target) return false;
 
       const y = Math.max(target.getBoundingClientRect().top + window.scrollY - navbarHeight, 0);
+      // Announce arrival only when the scroll completes: the CSS cue must fire
+      // at arrival, not at click time (the user is still looking at the
+      // previous section).
       if (lenis) {
-        lenis.scrollTo(y, { duration: 2 });
+        lenis.scrollTo(y, { duration: 1.4, onComplete: () => announceArrival(href) });
       } else {
         // Mobile real (sin Lenis): el mismo cálculo de offset que desktop.
         // scrollIntoView({smooth}) es flaky en Chrome Android cuando hay
         // cambios de layout concurrentes (cierre del menú móvil) — el scroll
         // se cancela y el link parece muerto.
         window.scrollTo({ top: y, behavior: "smooth" });
+        // Native smooth scroll has no completion signal; schedule the arrival
+        // just past the typical landing (mobile is not the broken perception
+        // case — that is desktop — so a close approximation is fine).
+        window.setTimeout(() => announceArrival(href), 1000);
       }
       return true;
     },
