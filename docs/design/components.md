@@ -1,208 +1,351 @@
-# Componentes Custom — Referencia de Uso
+# Componentes - canon de geometria
 
-Este documento es la **fuente de verdad** de los componentes custom del portfolio: qué existe, qué props recibe, cuándo usarlo y qué NO usar. Cubre solo lo hecho a mano para la app (rama `refactor/component-structure`, worktree `M:\worktrees\maxgb23-portfolio\component-structure`) — NO documenta el catálogo genérico shadcn que vive en `components/ui/` (scaffolds sin consumidores de la app: calendar, chart, resizable, etc.); si no está aquí y no es `Button`, no es parte del sistema.
+> [!NOTE] Estado: CANONICO
+> Todo el layout del portfolio esta verificado contra el codigo real
+> (componentes bajo `components/`). Si un cambio visual contradice este
+> archivo, el CODIGO gana y este documento se actualiza.
+> Glosario de migracion: `docs/design/archive/2026-09-21-pre-designmd/INDEX.md`.
 
-Complementa a `typography-families.md` (qué token usa cada elemento) y a `buttons.md` (sistema de botones en detalle). Los tres alimentan el futuro `design.md`.
+Contenido:
 
----
+- [1. Shell Section](#1-shell-section)
+- [2. Contrato de ritmo](#2-contrato-de-ritmo)
+- [3. Gates de media](#3-gates-de-media)
+- [4. Geometria por componente](#4-geometria-por-componente)
+- [5. Motion primitives](#5-motion-primitives)
+- [6. Aurora](#6-aurora)
+- [7. Tema y dark mode](#7-tema-y-dark-mode)
+- [8. Infraestructura de scroll](#8-infraestructura-de-scroll)
+- [9. Cue de llegada a contacto](#9-cue-de-llegada-a-contacto)
+- [10. Debug overlay](#10-debug-overlay)
+- [11. Gotchas](#11-gotchas)
+- [12. CheckList](#12-checklist)
+- [13. Deuda unica de componentes](#13-deuda-unica-de-componentes)
 
-## Sistema base: `Button` (`components/ui/button.tsx`)
+## 1. Shell Section
 
-El único componente UI base del sistema. API renovada (no shadcn original): `variant` (primary | outline | accent | inverted | white, default primary), `shape` (rounded | pill), `size` (sm | md | lg | compact), `fullWidth`, `glow` (shadow morado opt-in), `asChild` (Radix Slot) y `className` passthrough vía `cn()`.
+`components/section.tsx` - el envoltorio base de toda seccion:
 
-**Regla de gobierno**: una prop solo existe si hay 2+ usos con intención de sistema; una excepción puntual se resuelve con `className` documentada. Detalle completo (hover por variante, shadow, excepciones cerradas como el "Volver" de GSAP) en `buttons.md`.
+- `outer` por defecto: `px-6 md:px-12` + `debug-l1` (marcador QA).
+- `inner` por defecto: `mx-auto max-w-7xl` + `debug-l2`.
+- Props: `as`, `ref`, `id`, `aria-*`, `className` (al wrapper), `insetClassName`
+  (REEMPLAZA el padding por defecto), `debug` (`default` | `inverted` | `none`),
+  `container` (bool; `false` = full-bleed sin contenido max-width),
+  `innerId`, `innerClassName` (SE ANEXA al inner, no lo reemplaza).
 
-> **Cuándo usar**: cualquier acción clicable del portfolio. **Cuándo NO**: si necesitas algo que no sea un botón (link plano, tooltip, etc.).
+Regla: el padding horizontal default de seccion es `px-6 md:px-12`; las
+secciones con foto propia usan `px-6 md:px-8 lg:px-12` (tres ladders
+distintas para acercar la foto al borde); el detalle de proyecto usa
+`lg:px-20`.
 
----
+## 2. Contrato de ritmo
 
-## Infraestructura de scroll (Lenis + hooks)
+Fuente unica: `lib/rhythm.ts`. QA espejo: `scripts/rhythm-contract.mjs`.
+Auditoria de separaciones: `scripts/section-spacing.mjs` (9 viewports, tolerancia
++/-10px, excepciones declaradas).
 
-### `SmoothScroll` (`components/smooth-scroll.tsx`)
-- `"use client"`; única prop: `children: ReactNode`.
-- Envuelve `{children}` en `app/layout.tsx` (línea 43). Inicializa **Lenis `1.3.18-dev.1`** solo en desktop (`window.innerWidth >= 768`); en mobile queda `null` y todo cae al scroll nativo.
-- Config: `duration: 1`, `easing` expo-out (`Math.min(1, 1.001 - Math.pow(2, -10 * t))`), `smoothWheel: true`, `wheelMultiplier: 1`. Conecta `lenisInstance.on("scroll", ScrollTrigger.update)` + `gsap.ticker.lagSmoothing(0)` y monta un `LenisProvider` custom con la instancia.
-- Monta `<ScrollRestorer />` dentro del `LenisProvider` (ver Hooks) — autoridad de scroll ante cambios de ruta.
+- `SECTION_GAP` = `h-24 md:h-32` (96/128px): separacion entre secciones
+  top-level, consumida por `components/section-spacing.tsx`.
+- `FEATURED_GAP` = `gap-12` (48px) y `FEATURED_GAP_LG` =
+  `[@media(min-width:1280px)_and_(min-height:900px)]:gap-30` (120px):
+  gap titulo<->card dentro del stack featured, consumido por
+  `featured-project-panel.tsx` desde `748c17e`.
+- `PAGE_SPACER_CLASSES` (contrato de orientacion, verbatim desde `352ab13`):
 
-### Hooks (`hooks/use-lenis.tsx`) — **la vía correcta para navegar por anclas**
-- `useScrollToAnchor(navbarHeight)` → devuelve un handler que hace `lenis.scrollTo(y, { duration: 2 })` compensando el navbar (64px) y con fallback a `window.scrollTo({ top: y, behavior: "smooth" })` con el mismo offset si Lenis es null (mobile). Usado por hero (CTA "Ver Proyectos") y pricing (CTA del plan), siempre con `useScrollToAnchor(64)`. El navbar usa también `useScrollToTop()`.
-- `saveHomeScroll(y)` / `takeHomeScroll()` → handoff home⇄detail: las cards y el CTA del panel destacado capturan la posición del grid al salir; el "Volver" la consume y `ScrollRestorer` la reaplica. Next restaura scroll nativamente, pero Lenis mantiene su propio valor interno y lo escribe cada frame — por eso el handoff es explícito.
-- `ScrollRestorer` (montado por `SmoothScroll`) → en `/` restaura la posición capturada (y al entrar a un detalle fuerza top), esperando layout estable (pin-spacer del stacking) y con watchdog post-aplicación de ~1.2 s si el documento vuelve a crecer; fuerza `lenis.scrollTo(target, { immediate: true })`.
-- **Cuándo usar**: cualquier scroll programático a una sección. **Cuándo NO**: `window.scrollTo`/`scrollIntoView` a pelo — se pierde la integración Lenis + offset de navbar.
+| Par | Clase |
+|---|---|
+| `hero-about` | `portrait:md:hidden` |
+| `about-projects` | `landscape:lg:hidden landscape:[@media(max-height:768px)]:block` |
+| `projects-all-projects` | `portrait:lg:hidden landscape:lg:hidden landscape:lg:[@media(max-height:767px)]:block` |
+| `all-projects-pricing` | (sin wrapper condicional) |
+| `pricing-contact` | (sin wrapper condicional) |
+| `contact-footer` | (sin wrapper condicional) |
 
-### `ScrollProgress` (`components/scroll-progress.tsx`)
-- Sin props. Barra fija de 2px (`z-[60]`, `bg-purple-accent`) con `scaleX` animado por GSAP ScrollTrigger (`scrub: 0.3`), GSAP cargado con `import()` dinámico.
-- Se monta **por página** (no en layout): `app/page.tsx` línea 12 y `app/proyectos/[id]/page.tsx` línea 41.
-- **Cuándo usar**: en cualquier ruta nueva con scroll largo, incluirla como primer hijo del `<main>`.
+Reglas: no hand-editear estos valores (editar `lib/rhythm.ts` y correr el
+contrato); las variantes arbitrarias ganan por orden CSS.
 
----
+## 3. Gates de media
 
-## Media queries de GSAP (gates de stacking y layout)
+| Gate | Valor | Consumido por |
+|---|---|---|
+| `FEATURED_STACK_GATE` | `(min-width: 1024px) and (min-height: 768px) and (orientation: landscape)` | `featured-projects.tsx` (pin GSAP) y `use-lenis.tsx` (`PIN_MEDIA` del ScrollRestorer) |
+| Featured gap LARGE | `>=1280px` de ancho y `>=900px` de alto | `FEATURED_GAP_LG` |
+| Hero pt alto | `lg` + `min-height:700px` | `lg:[@media(min-height:700px)]:pt-34` |
+| Cap titulo featured | `max-height:800px` en `lg` | `lg:[@media(max-height:800px)]:text-4xl` |
 
-| Gate | Dónde | Efecto |
-|------|-------|--------|
-| `(min-width: 1024px) and (min-height: 768px) and (orientation: landscape)` | `lib/breakpoints.ts` (`FEATURED_STACK_GATE`) — consumido por `featured-projects.tsx` (`gsap.matchMedia`) y `use-lenis.tsx` (`ScrollRestorer.PIN_MEDIA`) | **Única fuente de verdad** del stacking/pin: si el pin está activo, TODOS los consumidores lo saben (GSAP lo pinea, ScrollRestorer espera el pin-spacer). El requisito de orientación se añadió porque en tablets grandes en portrait (iPad Pro 13, 1024×1366) el pin cubría todo el viewport y, al salir del stack, el espaciado hacia about/all-projects quedaba gigantesco (~2300px de spacer). Fuera del rango (mobile, pantallas bajas Y portrait) los paneles fluyen en normal-flow sin pin. Subió de `700px` a `768px` de alto para que la card de 2 columnas quepa en el viewport pineado. |
-| `[@media(min-width:1280px)_and_(min-height:900px)]:gap-30` | `featured-project-panel.tsx` (`ContentWrapper`) | En pantallas grandes Y altas el gap heading↔card crece a `120px`; si no, `gap-12`. |
-| `lg:[@media(min-height:700px)]:pt-34` | `hero-section.tsx` | Padding superior del hero en lg con altura ≥700 (136px); escalera 88/96/136/160 documentada en `typography-families.md` §Régimen de altura del hero. |
+Fuente unica del gate de featured: `lib/breakpoints.ts`. No duplicar el string
+en otro archivo.
 
-`ScrollRestorer` importa el mismo `FEATURED_STACK_GATE` (nunca lo re-escribe) para saber si el pin-spacer es esperado y esperar a que exista antes de restaurar la posición.
+## 4. Geometria por componente
 
----
+### 4.1 Navbar (`navbar.tsx`)
 
-## Ritmo vertical entre secciones (`lib/rhythm.ts` + `components/page-spacing.tsx` + `components/section-spacing.tsx`)
+- `fixed h-16`; nav interior `max-w-7xl px-6`; links: Inicio `/`, Sobre mi
+  `#sobre-mi`, Proyectos `#proyectos`, Precios `#precios`.
+- Con scroll (umbral 8px): `bg-nav backdrop-blur-none md:backdrop-blur-md
+  border-b border-border shadow-sm`.
+- Mobile: menu hamburguesa auto-ocultable (`hover:bg-secondary`), CTA abajo.
+- CTA "Contacto": `variant="primary" shape="pill" size="sm"` desktop;
+  `size="sm" fullWidth className="py-2.5"` mobile (ver buttons.md).
+- `useScrollToAnchor(64)` (ancla con offset de navbar) y `useScrollToTop`.
 
-Los valores de ritmo viven **tokenizados** en `lib/rhythm.ts` (constantes tipadas con cadenas de clases Tailwind v4): `SECTION_GAP`, `FEATURED_GAP`, `FEATURED_GAP_LG` y `PAGE_SPACER_CLASSES`.
+### 4.2 Hero (`hero-section.tsx`)
 
-Inter-section spacing en una sola fuente: **96px mobile (`h-24`) · 128px ≥768px (`md:h-32`)**, componente `aria-hidden` entre secciones top-level.
+- `section#inicio` con `min-h-[85dvh]`, pad superior por regimen de altura:
+  `pt-22 sm:pt-24 lg:[@media(min-height:700px)]:pt-34 2xl:pt-40`,
+  `px-6 md:px-8 lg:px-12`.
+- inner `max-w-5xl`, gaps `gap-8 md:gap-12 lg:gap-20`; bloque principal
+  `gap-10 2xl:gap-14`; columns `md:flex-row` con TITULO Y BADGE en columna
+  **invertida** (imagen derecha, texto izquierda; `md:flex-row-reverse`).
+- h1 `text-fluid-display` con ancho medido por JS (`useTitleWidth`, fallback
+  ELIMINADO desde 2026-09-20); description `min(titleWidth + 4, 60ch)`.
+- Badge flotante: `absolute -bottom-6 -right-6 w-24 h-24 rounded-full shadow-2xl`
+  sobre la foto del retrato.
+- Retrato: `rounded-4xl shadow-xl aspect-8/9`.
+- Etiqueta hero: `text-[10px] 2xl:text-xs font-bold uppercase tracking-tighter
+  text-muted-foreground brightness-110` (excepcion documentada: brightness
+  sobre muted, ver iteration-guide).
+- CTA: "Ver Proyectos" primary pill md con `shadow-md` heredado; "Descargar CV"
+  outline pill md con `glow` (ver buttons.md).
+- Cue "Deslizar": indicador de scroll (decisional, ver
+  `docs/ideas-features/hero-design.md`; ref corregida desde el canon anterior).
 
-**Contrato por orientación (final)**: la página NO escribe condicionales a mano. `app/page.tsx` consume `PageSpacing` entre cada par de secciones top-level (6 pares) y el componente resuelve el wrapper condicional con el token de `PAGE_SPACER_CLASSES` en `lib/rhythm.ts` — **fuente única** (un par → una cadena de variantes; `""` = sin wrapper) — sobre un `SectionSpacing` `aria-hidden` idéntico. El contrato QA vive en `scripts/rhythm-contract.mjs`: `regime(vp)` replica Tailwind v4 (portrait = width < height; lg = width ≥ 1024; umbrales 768/767) y `expectedGap(pair, viewport)` declara el gap esperado por régimen; las excepciones (Hero, heading intermedio, pin GSAP) están **declaradas en el contrato**, no reportadas como desviaciones.
+### 4.3 Sobre-mi (`about-section.tsx`)
 
-**Audit de regresión**: `node scripts/section-spacing.mjs` (dev server en `:3001`) — aserta cada par contra `expectedGap` y falla con `exit 1` si algún gap se sale del contrato (±10px). Los pares con `null` en el contrato no se asertan (p. ej. `projects-all-projects` tras el pin landscape: el pin GSAP es dueño de su altura). Como el audit importa el mismo contrato que la página, vuelve a verde por construcción: las excepciones por régimen están declaradas, no pendientes.
+- `Section#sobre-mi` con `insetClassName="px-6 md:px-8 lg:px-12"`, inner
+  `max-w-5xl`, `flex-col-reverse md:flex-row`, gaps
+  `gap-8 md:gap-12 lg:gap-14 xl:gap-16`.
+- Retrato `aspect-11/9 rounded-4xl shadow-xl`, alto escalado por breakpoint:
+  `md:h-[280px] lg:h-[320px] xl:h-[360px] 2xl:h-[380px]`, `max-w-[400px]`
+  mobile.
+- Texto: eyebrow uppercase `text-fluid-eyebrow` + h2 `text-fluid-section`
+  serif black con palabra acento; parrafos `text-fluid-body text-content
+  max-w-[48ch] leading-relaxed`.
+- Animacion: timeline GSAP en scroll (autoAlpha + desplazamientos suaves),
+  sin staggers; estados iniciales ocultos en el DOM para evitar flash.
 
-| Elemento | Valor | Dónde |
-|----------|-------|-------|
-| `SectionSpacing` | `SECTION_GAP` (`h-24` 96px / `md:h-32` 128px) — token de `lib/rhythm.ts` consumido por `components/section-spacing.tsx` | A nivel de página lo consume `PageSpacing` (nuevo componente): wrapper condicional por régimen (`PAGE_SPACER_CLASSES`) + spacer `aria-hidden` (tabla de contrato abajo) |
-| `FEATURED_GAP` | `gap-12` (48px) — token del gap heading↔card del stack featured | Consumido por `featured-project-panel.tsx` desde `748c17e` (className interpolado `${FEATURED_GAP} ${FEATURED_GAP_LG}`) |
-| `FEATURED_GAP_LG` | `[@media(min-width:1280px)_and_(min-height:900px)]:gap-30` (120px) — variante del mismo gap en viewports altos | Ídem: consumido por `featured-project-panel.tsx` desde `748c17e` |
-| **Excepción — Featured** | El stack de proyectos NO usa `SectionSpacing`: en landscape el pin de GSAP es dueño de su altura; el ritmo interno vive en `featured-project-panel.tsx` / `featured-projects.tsx`; el grid vive en `all-projects.tsx`. Fuera del gate (landscape de altura <768px) los paneles fluyen a **altura de contenido** — desde `352ab13` se eliminó `landscape:lg:min-h-screen` |
-| **Excepción — Hero** | Única sección que conserva espaciado grande intencional: mantiene su hueco con el indicador "deslizar" para que About aparezca al hacer scroll — decisión de diseño, no un bug (`docs/features/hero-design.md`) |
+### 4.4 Stack featured (`featured-projects.tsx` + `featured-project-panel.tsx`)
 
-**Contrato por régimen (`PAGE_SPACER_CLASSES` en `lib/rhythm.ts`)** — un par → una cadena de variantes (`""` = sin wrapper); el wrapper solo decide `display` (`SectionSpacing` queda `aria-hidden` e idéntico). Los media arbitrarios ganan por orden de CSS ("la última variante ordenada resuelve bien"). Espejo QA: `scripts/rhythm-contract.mjs`.
+- Titulo standalone (mobile, `Section debug=none`) + seccion `#proyectos`
+  (desktop, pin GSAP dentro del `FEATURED_STACK_GATE`).
+- El panel (article `featured-panel`) es dueño de su altura dentro del pin:
+  NO usa `landscape:lg:min-h-screen` (eliminado en `352ab13`); el pin lo
+  mueve, no lo estira.
+- Gaps titulo<->card: `FEATURED_GAP` + `FEATURED_GAP_LG` interpolados
+  (`gap-12 [@media(min-width:1280px)_and_(min-height:900px)]:gap-30`).
+- Margenes inferiores FUERA del gate:
+  - `portrait:lg:mb-24`
+  - `landscape` con `max-height:768px`: `mb-24`
+  - `portrait` md con `max-height:768px`: `mb-12`
+  - `last:mb-0` en <=767px
+- Panel: `article px-6 md:px-8 lg:px-12`; `panel-content max-w-7xl flex
+  flex-col justify-center gap-12 lg:gap-0 pt-12 md:pt-14 lg:pt-0`.
+- Grid interno `lg:grid-cols-2 gap-12 lg:gap-0` (imagen izquierda, texto
+  derecha, o invertido por panel).
+- Imagen mockup: `aspect-4/3 rounded-2xl shadow-2xl ring-1 ring-black/5`;
+  badge flotante `-bottom-4 -right-4 w-14 h-14 rounded-full shadow-lg`;
+  chips de stack con `shadow-sm` y rings.
+- h2 `text-fluid-featured` serif black uppercase con cap de altura y ultima
+  palabra `text-purple-accent + brightness-125` (patron E9).
+- Stacking por pin GSAP con `matchMedia(FEATURED_STACK_GATE)`; comentario en
+  el codigo advierte: NO agregar `overflow-y-auto` al panel (rompe el pin y
+  crea scrollbars fantasma).
 
-| Par | `hero-about` (Hero → About) | `about-projects` (About → Projects) | `projects-all-projects` (Projects → All projects) | `all-projects-pricing` (All projects → Pricing) | `pricing-contact` (Pricing → Contact) | `contact-footer` (Contact → Footer) |
-|-----|-----------------------------|-------------------------------------|---------------------------------------------------|------------------------------------------------|---------------------------------------|--------------------------------------|
-| Clases del wrapper | `portrait:md:hidden` | `landscape:lg:hidden landscape:[@media(max-height:768px)]:block` | `portrait:lg:hidden landscape:lg:hidden landscape:lg:[@media(max-height:767px)]:block` | `""` | `""` | `""` |
-| Se renderiza | Landscape y mobile <md | Landscape lg de altura ≤768px · <lg siempre | Landscape lg de altura ≤767px · <lg siempre | Siempre | Siempre | Siempre |
-| Se oculta | Tablet portrait ≥md (el hero full-viewport ya da el aire) | Landscape lg de altura >768px (el siguiente spacer resuelve) | lg en cualquier orientación con altura >767px; tras el pin landscape manda el flujo del pin | — | — | — |
+### 4.5 Todos los proyectos (`all-projects.tsx`)
 
-**Contrato del ritmo interno del stack featured (`featured-card-card`)** — espejo del par de página `projects-all-projects`: dentro del gate el pin GSAP es dueño de su altura; fuera de él los paneles fluyen con separación explícita de 96px (régimen `landscape:lg:[@media(max-height:768px)]`, deliberadamente cubre el píxel exacto 768 — testeado en vivo 767/768/769; en ≥768 la gate GSAP está ON y el pin manda). Espejo QA: `scripts/rhythm-contract.mjs`.
+- Heading: `Section debug=inverted` con clase real `insetClassName="px-6"`.
+- Grid: `Section#all-projects` con `insetClassName="px-6 pt-12 lg:pt-16"`,
+  `innerId="all-projects-content"`; grid `1/2/3` con `gap-6`.
+- h2 `text-fluid-section` con palabra "Proyectos" acento + brightness-110.
+- `FadeInStagger` + `FadeInItem` en cada card (grid).
+- Fuente de datos: `data/projects.ts` (`getFeaturedProjects`, categorias).
 
-| Par | Régimen | Esperado |
-|-----|---------|----------|
-| featured-card-card | gate GSAP (landscape ≥1024×768) | `null` (el pin es dueño de su altura) |
-| featured-card-card | portrait lg | `96±10` (`portrait:lg:mb-24` en el `article`) |
-| featured-card-card | landscape lg AND height ≤768 | `96±10` (`landscape:lg:[@media(max-height:768px)]:mb-24` + `landscape:lg:[@media(max-height:767px)]:last:mb-0` — `last:mb-0` espeja al spacer de página en 767; en el píxel exacto 768 la gate GSAP es dueña y el margen de la última card es irrelevante) |
-| featured-card-card | resto (mobile, tablets portrait, landscape <lg) | `null` (sin mb por diseño; validado en vivo) |
+### 4.6 ProjectCard (`project-card.tsx`)
 
-### Featured en lg portrait (2 cols sin pin) — ritmo interno
+- `article h-full bg-card border rounded-2xl overflow-hidden cursor-pointer`
+  + hover `hover:-translate-y-1.5 hover:shadow-lg hover:shadow-black/8`
+  (`transition-all duration-300 ease-out`). Featured: `border-purple-accent/40
+  ring-1 ring-purple-accent/20` en lugar de `border-border`.
+- Imagen `aspect-16/10 bg-muted` con scale suave en hover.
+- Cuerpo `p-5`: h3 `text-fluid-card-title font-semibold capitalize`; desc
+  `text-fluid-card-desc text-muted-foreground line-clamp-3 max-h-[4.875em]`;
+  chip metrica (etiqueta degradada `text-foreground/60`, excepcion acotada);
+  footer `mt-auto pt-4 border-t` con link externo `text-muted-foreground/90
+  group-hover:text-foreground`.
+- Link overlay `z-10` con `aria-label`; `saveHomeScroll(scrollY)` en click
+  (handoff de scroll, ver seccion 8).
 
-Fuera del gate landscape (portrait lg, ej. iPad Pro), los paneles fluyen en 2 columnas sin pin; estos valores definen su ritmo:
+### 4.7 Pricing (`pricing-section.tsx`)
 
-| Relación | Clase | Valor |
-|----------|-------|-------|
-| Título "Proyectos Destacados" → card 1 | overlay `mb-8` + `gap-12` del `panel-content` | **80px** portrait lg y landscape (desde `352ab13`; antes 112px portrait lg con `portrait:lg:mb-16`) |
-| Card → card | `portrait:lg:mb-24 landscape:lg:[@media(max-height:768px)]:mb-24 landscape:lg:[@media(max-height:767px)]:last:mb-0` en el `article` | **96px** portrait lg · **96px** landscape lg corto (≤768px, sin pin; cubre el píxel exacto 768) · 0 dentro del gate · la última card NO aporta al gap con "Todos los Proyectos" (`last:mb-0` @767, espejo del spacer) |
-| Última card → "Todos los Proyectos" | `PageSpacing pair="projects-all-projects"` a nivel de página entre `FeaturedProjects` y `AllProjects` (wrapper oculto en lg salvo landscape de altura ≤767px) | `SECTION_GAP` 96/128px donde visible · tras el pin landscape el spacer queda oculto y manda el flujo del pin |
+- `Section#precios` con `innerClassName="max-w-6xl"`; header centrado
+  `mb-5 lg:mb-16`; grid `lg:grid-cols-3 gap-6 max-w-md lg:max-w-none`.
+- Destacado: card protagonista con `border-purple-accent shadow-2xl` y fondo
+  `var(--accent-purple)` inline; badge "Mas popular" `absolute -top-3.5`.
+  Texto sobre morado en blanco (regla de blancos, ver iteration-guide).
+- CTA: `fullWidth className="py-3.5"`; destacado usa `variant="white"`,
+  el resto `variant="outline"`. NUNCA shadow (regla de pricing).
+- Hover de cards por GSAP `fromTo` (opacity + lift con boxShadow rgba);
+  stagger con `ScrollTrigger` `start: "top 85%"`.
 
----
+### 4.8 Contacto (`contact-section.tsx`) - VIVO en `page.tsx`
 
-## Primitivas de motion (`components/motion-primitives.tsx`)
+- `Section#contacto` con `insetClassName="px-6"`, `innerClassName="max-w-6xl"`.
+- Badge "Disponible para proyectos": pill `border-purple-accent/25
+  bg-purple-accent/10 text-purple-accent`.
+- h2 "Trabajemos juntos": `font-serif font-black uppercase text-fluid-section
+  leading-[0.9] tracking-tighter`, palabra "juntos" en acento + brightness-110
+  (patron E9).
+- CTA row: `flex flex-col md:flex-row gap-3`; 4 botones (LinkedIn primary lg;
+  Escríbeme outline glow lg; copiar correo outline glow lg con estado copiado
+  `border-purple-accent/40 text-purple-accent brightness-110`; GitHub outline
+  glow lg). Ver buttons.md.
+- `copyEmail`: `navigator.clipboard` con fallback `mailto:`; mensaje de copiado
+  temporizado (mejorado en v3, ver buttons.md historial).
+- Cue de llegada: wash morado via clase `arrive` (ver seccion 9).
 
-Motor: **framer-motion** (`^12.0.0`). Viewport por defecto `{ once: true, amount: 0.15 }`. Variante **retrasada** (`delayEnter`) añade `margin: "0px 0px -15% 0px"` (rootMargin): el disparo espera a que el elemento esté ~15% de la altura del viewport dentro de pantalla, mismo ritmo que AboutSection (GSAP `start: "top 85%"`). Se usa en las secciones de proyectos (titulares y grid); contacto/footer conservan el disparo temprano por diseño.
+### 4.9 Footer (`footer.tsx`)
 
-| Export | Props | Uso real |
-|--------|-------|----------|
-| `FadeIn` | `children`, `delay?` (0), `delayEnter?` (false), `className?`, resto `HTMLMotionProps<"div">` | Footer, FeaturedProjectPanel (`contentWrapper`), SectionHeading, ContactBanner — titulares de featured/all-projects con `delayEnter` |
-| `FadeInStagger` | `children`, `className?`, `stagger?` (0.1), `delay?` (0.05), `delayEnter?` (false) | Grid de proyectos (con `delayEnter`) |
-| `FadeInItem` | `children`, `className?` | Cada card del grid (hijo de `FadeInStagger`) |
-| `SlideIn` | `children`, `from?: "left" \| "right"`, `delay?` | **SIN consumidores** (muerto) |
-| `ScaleIn` | `children`, `delay?` | **SIN consumidores** (muerto) |
+- `footer#footer border-t bg-background/50 backdrop-blur-md py-16 px-6`
+  (debug-l1); glow inferior: `w-[600px] h-[250px] bg-accent-purple/10
+  blur-[120px] rounded-full` centrado bajo el contenido.
+- inner `max-w-6xl space-y-12`; grid `1/2/3` con `gap-10 pb-12 border-b
+  border-white/10`; marca serif "MaxGB23" (con 23 en acento), bio `max-w-sm`,
+  redes (GitHub/LinkedIn) con hovers suaves.
+- BOTTOM: copyright una linea. Minimal por decision (sin nav, sin reloj en
+  vivo). `FadeIn` en el contenido.
 
-**Cuándo usar**: `FadeIn` para entradas sueltas; `FadeInStagger` + `FadeInItem` para grids/listas escalonadas. **Cuándo NO**: no introducir `SlideIn`/`ScaleIn` nuevos hasta decidir su destino (hoy son código muerto); los paneles de stacking de FeaturedProjects usan GSAP, no estas primitivas.
+### 4.10 Detalle de proyecto (`project-detail.tsx`)
 
-Gotcha: `FadeIn` declara prop `as` en su interfaz pero NO la usa (siempre `motion.div`).
+- Volver: `fixed` arriba-izquierda, pill primary md con `className="back-btn
+  pointer-events-auto hover:bg-foreground/80 transition-colors"` (excepcion:
+  hover de fondo, NUNCA transition-opacity - GSAP lo controla).
+- Hero detalle: `px-6 md:px-12 lg:px-20 pt-20 md:pt-24 pb-12 max-w-5xl`; h1
+  `text-fluid-detail` serif black; headline `max-w-2xl`; meta header: circulo
+  con numero (`text-foreground/70`, etiqueta degradada) + eyebrow mono.
+- Categorias: chips con badges `bg-purple-accent text-white` (regla de blanco
+  sobre acento).
+- Metrica: `text-fluid-metric` con cifra en acento (section token dedicado,
+  ver typography). Boton copiar estilo.
+- Switch (descripcion/creditos): `p-1 rounded-xl bg-card border`; tab activo
+  `shadow-sm`; foco visible.
+- Visual principal: `max-w-5xl aspect-video rounded-3xl` con glow suave.
+- Links: `variant="inverted"` tamaños `lg` (excepcion al tamano default md).
+- Editorial: `max-w-3xl` con `text-base 2xl:text-lg` (`2xl:text-lg` por
+  pantallas ultra-anchas), `leading-relaxed`, hoja de ruta en codigo.
+- Galeria: grid `1/2/3` con `gap-4`; imagenes con `data-tag`? para lightbox.
+- CTA final: banda `rounded-3xl border-purple-accent/30 bg-purple-accent/5
+  px-6 py-12 md:p-14` con `Volver a proyectos` primary md.
+- Lightbox: `z-[70] bg-black/90`, overlay `touch-pan-y pointer-events-none`
+  (ver `docs/design/pointer-gestures.md`), controles `bg-white/10 text-white`,
+  contador `text-white/80`, figcaption, `draggable={false}`.
 
----
+### 4.11 ProductsSection - NO RENDERIZADA
 
-## Aurora (`components/animations/Aurora`)
+- `ProductsSection` esta IMPORTADO en `app/page.tsx` (linea 6) pero NO se
+  renderiza (import muerto). Usa CTA `variant="outline" fullWidth
+  className="px-5 py-3 justify-between"`. No documentar como seccion viva.
 
-- Fondo animado con **ogl + shaders GLSL** (WebGL). Props: `colorStops` (default `['#5227FF', '#7cff67', '#5227FF']`), `amplitude` (1.0), `blend` (0.5), `speed` (1.0).
-- En el hero se usa con `colorStops={["#223068", "#000000", "#3b337a"]}` y **solo si `mounted && isDark`** (el hero observa la clase `.dark` del `<html>` con un MutationObserver).
-- **Cuándo usar**: solo hero (pieza pesada WebGL). No replicar en más secciones sin evaluar rendimiento.
+### 4.12 ScrollProgress (`scroll-progress.tsx`)
 
----
+- Barra fija superior: `fixed top-0 left-0 right-0 z-[60] h-[2px]
+  pointer-events-none`; hijo `bg-purple-accent` con `transform: scaleX(0)`
+  que GSAP/ScrollTrigger anima a `scaleX(1)` con `scrub: 0.3` desde
+  `"top top"` a `"bottom bottom"` del documento. Se monta por pagina
+  (home y detalle). `aria-hidden`.
 
-## Tema (`components/theme-provider.tsx` + `components/dark-mode-toggle.tsx`)
+## 5. Motion primitives
 
-- `ThemeProvider`: wrapper fino de **next-themes** (`^0.4.6`), montado en `app/layout.tsx` con `attribute="class"`, `defaultTheme="dark"`, **`forcedTheme="dark"`** y `disableTransitionOnChange` → el portfolio es dark-only por decisión.
-- `DarkModeToggle`: custom (NO next-themes — `localStorage` + `matchMedia`, togglea `.dark` en `<html>`). **NO está montado**: import e instancias comentados en `navbar.tsx`. Convive mal con `forcedTheme="dark"` — NO re-montarlo sin resolver ese conflicto.
+`components/motion-primitives.tsx` (framer-motion):
 
----
+- `FadeIn`, `FadeInStagger`, `FadeInItem`. Viewports: `VIEWPORT` = `{once:
+  true, amount: 0.15}`; `VIEWPORT_DELAYED` agrega `margin: "0px 0px -15% 0px"`;
+  `STAGGER_VIEWPORT` = `{once: true, amount: "some"}`.
+- `FadeIn`: opacity + scale 0.96, 0.55s ease cubic; `FadeInItem`: y 18, 0.5s.
+- `FadeIn.as` esta declarado en la interfaz pero NO implementado (siempre
+  motion.div; el prop cae en `...rest`) - deuda.
+- `SlideIn` y `ScaleIn` YA NO se exportan: no reintroducirlos (se eliminaron
+  en el restructure de motion).
 
-## Shell estructural: `Section` (`components/section.tsx`)
+## 6. Aurora
 
-Categoría: **estructurales**. Única fuente del patrón de contenedor de las secciones top-level: inset horizontal + contenedor interno de ancho máximo + markers de QA (`debug-l*`). Server-safe (sin directivas ni hooks); `ref` como prop (React 19). Las secciones de abajo lo consumen — NO escribir `px-6 md:px-12` + `max-w-7xl` a mano fuera del shell.
+- Solo en el hero, solo en dark (`mounted && isDark` + `MutationObserver`
+  sobre la clase del `<html>`): es un canvas de ogl/GLSL que renderiza
+  particulas/aurora. No replicarlo fuera del hero (costoso); no portarlo a
+  otros componentes.
 
-**Defaults**: outer `debug-l1 px-6 md:px-12` · inner `debug-l2 mx-auto max-w-7xl`.
+## 7. Tema y dark mode
 
-| Prop | Tipo / default | Semántica |
-|------|----------------|-----------|
-| `as` | `"section" \| "div"` (default `"section"`) | Elemento renderizado; `"div"` para bloques wrapper (headings) |
-| `ref` | `Ref<HTMLElement>` | Ref al elemento más externo (React 19 ref-as-prop) |
-| `id` / `aria-label` / `aria-labelledby` | `string` | Identidad y relaciones ARIA, preservadas del markup original |
-| `className` | `string` | Clases extra **appendeadas** al elemento externo (layout propio de la sección) |
-| `insetClassName` | `string` | **REEMPLAZA** el inset default (`px-6 md:px-12`): p. ej. `px-6`, `px-6 md:px-8 lg:px-12`. Reemplazo intencional: un override no puede "quitar" `md:px-12` por append |
-| `debug` | `"default" \| "inverted" \| "none"` (default `"default"`) | Ubicación de los markers QA: `default` = l1@outer/l2@inner; `inverted` = l2@outer/l1@inner (bloque "Todos los Proyectos"); `none` = sin markers automáticos (heading mobile del featured pin — desde `352ab13` añade `debug-l2` manual por `className` para QA) |
-| `container` | `boolean` (default `true`) | `false` omite el contenedor interno `mx-auto max-w-7xl` (contenido full-bleed) |
-| `innerId` | `string` | `id` del contenedor interno (p. ej. `#all-projects-content`, **contrato del snapshot QA** en `scripts/snapshot-check.mjs`) |
-| `innerClassName` | `string` | Clases extra appendeadas al contenedor interno; los conflictos se resuelven con tailwind-merge (p. ej. `max-w-6xl` reemplaza el `max-w-7xl` default) |
-| `children` | `ReactNode` | Contenido de la sección |
+- `ThemeProvider` con `attribute="class"`, `defaultTheme="dark"`,
+  `forcedTheme="dark"` y `disableTransitionOnChange` (layout.tsx): el sitio
+  es dark-first y el tema light NO se ofrece en la UI.
+- `DarkModeToggle` esta DESMONTADO (import comentado en navbar.tsx): reintroducirlo
+  requiere plan de tema completo; no descomentar a ciegas. Ver
+  `docs/ideas-features/dark-mode-guide.md`.
 
-**Cuándo usar**: cualquier sección top-level con inset + ancho máximo. **Cuándo NO**: el pin `#proyectos` de FeaturedProjects (full-bleed intencional del GSAP pin), el hero (excepción documentada), ni contenedores internos de sub-componentes.
+## 8. Infraestructura de scroll
 
----
+- `SmoothScroll` (`smooth-scroll.tsx`): Lenis SOLO desktop (`window.innerWidth
+  >= 768`); config `duration: 1`, easing expo-out, `smoothWheel: true`,
+  `wheelMultiplier: 1`; `gsap.registerPlugin(ScrollTrigger)`,
+  `lenisInstance.on("scroll", ScrollTrigger.update)` con rAF nativo y
+  `gsap.ticker.lagSmoothing(0)`.
+- `useScrollToAnchor(64)`: duracion 1.4s; al completar, `announceArrival`
+  (fija hash con `history.replaceState` + clase `arrive` reflow forzado;
+  mobile: `window.scrollTo` + timeout 1000ms). NO usa `:target`
+  (replaceState no lo actualiza, ver seccion 9).
+- `useScrollToTop`: duracion 2s.
+- Handoff home -> detalle: `saveHomeScroll(scrollY)` en el click de las cards;
+  `takeHomeScroll`/`ScrollRestorer` en el retorno; `PIN_MEDIA` =
+  `FEATURED_STACK_GATE` (no pinear en mobile); watchdog del restorer:
+  intervalo 60ms, max 20 runs (~1.2s de deadline).
 
-## Secciones custom (quién es quién)
+## 9. Cue de llegada a contacto
 
-| Componente | Archivo | Props | Cuándo usarlo |
-|------------|---------|-------|---------------|
-| `Section` | `components/section.tsx` | `as`, `ref`, `id`, `aria-label`, `aria-labelledby`, `className`, `insetClassName`, `debug`, `container`, `innerId`, `innerClassName` | **Estructural** (categoría: estructurales) — shell de contenedor de las secciones top-level; lo usan About, Featured (heading mobile), AllProjects, Pricing y Contact |
-| `PageSpacing` | `components/page-spacing.tsx` | `pair: PageSpacerPair` | Spacer entre secciones top-level con wrapper condicional por régimen (fuente única `lib/rhythm.ts` `PAGE_SPACER_CLASSES`) |
-| `Navbar` | `components/navbar.tsx` | (sin props) | Navegación global; la única pieza con `Button` pill |
-| `HeroSection` | `components/hero-section.tsx` | (sin props) | Hero de la home (Aurora + indicador de scroll inline) |
-| `AboutSection` | `components/about-section.tsx` | (sin props) | Sección "Sobre Mí" (`#sobre-mi`), timeline GSAP |
-| `FeaturedProjectPanel` | `components/featured-project-panel.tsx` | `project: FeaturedProject`, `children?`, `overlay?` | Panel apilado del caso de estudio; `overlay` = heading flotante del índice 0 |
-| `ProjectCard` | `components/project-card.tsx` | `project: Project` (interfaz local: id, title, description, metric, image, imageAlt, category, tags?, links?, featured?) | Card del grid, hija de `FadeInItem` |
-| `FeaturedProjects` | `components/featured-projects.tsx` | (sin props) | Stack destacado (`#proyectos`) con pin GSAP (gate landscape); sub-componente privado `SectionHeading` |
-| `AllProjects` | `components/all-projects.tsx` | (sin props) | Heading "Todos los Proyectos" + grid responsive (`#all-projects`); dato `allProjects` local |
-| `ProjectDetail` | `components/project-detail.tsx` | `project: Project` (tipo de `@/data/projects`) | Página de detalle (`app/proyectos/[id]`); sub-componentes privados `SectionTitle`, `StackChips`, `AnimatedMetric` |
-| `PricingSection` | `components/pricing-section.tsx` | (sin props) | Pricing "Servicios a medida" |
-| `Footer` | `components/footer.tsx` | (sin props) | Footer `#contacto`, usa `FadeIn` |
-| `ProductsSection` | `components/products-section.tsx` | (sin props) | **DESMONTADA** — comentada en `app/page.tsx` línea 24; no usarla hasta reactivar |
+- Los CTA de pricing y el boton "Contacto" de la navbar hacen smooth-scroll a
+  `#contacto`; al completar, `announceArrival` agrega la clase `arrive` que
+  reproduce el wash morado (`#contacto.arrive` en globals.css).
+- Un clic repetido lo repite: quitar clase, reflow, re-agregar.
+- Reduced motion: wash + ring estaticos mientras la clase esta presente
+  (el hook la quita ~2.2s).
 
-> Los sub-componentes privados (module-private) no son importables desde fuera de su archivo; si una sección los necesita, se extraen como export público con su API documentada aquí.
+## 10. Debug overlay
 
----
+- `Section.debug`: `default` (l1 outer / l2 inner), `inverted` (l2 outer /
+  l1 inner), `none` (sin markers). Sin cambios de layout en produccion
+  (los markers dependen de `data-debug` en `<html>`).
+- Manual QA con clases `debug-l1..l4` + `data-debug`: ver skill `layout-debug`.
 
-## Checklist antes de añadir un componente custom
+## 11. Gotchas
 
-- [ ] ¿Ya existe uno que cubra el caso? (busca en la tabla anterior antes de crear)
-- [ ] ¿Es un botón/acción? → usa `Button` del sistema, no clases ad-hoc (`buttons.md`)
-- [ ] ¿Necesito mover el scroll o navegar por sección? → `useScrollToAnchor`/`useScrollToTop` de `hooks/use-lenis.tsx`
-- [ ] ¿Tiene animación de entrada? → `FadeIn` / `FadeInStagger` + `FadeInItem` (framer-motion)
-- [ ] ¿Es una animación de scroll/scrub? → GSAP + ScrollTrigger (pattern de ScrollProgress / stacking)
-- [ ] ¿Tiene tipografía de título/display? → token fluido de `typography-families.md`
-- [ ] ¿China como página larga? → incluir `ScrollProgress` en esa ruta
+- `cn()` necesita el registro de tokens fluidos en `lib/utils.ts` (ver
+  typography-families.md seccion 8).
+- NO agregar `overflow-y-auto` al stack de featured (rompe el pin GSAP).
+- `announceArrival` usa `replaceState` + clase, NO `:target` (no confiable
+  con replaceState).
+- `copyEmail` con fallback mailto: si un futuro cambio de API lo rompe,
+  mantener el fallback.
+- `FadeIn.as` sin implementar: si se necesita renderizar otro elemento,
+  implementarlo en motion-primitives (no en cada caller).
+- `DarkModeToggle` desmontado: no reintroducir sin plan.
 
----
+## 12. CheckList
 
-## Gotchas conocidas
+- [ ] Nueva seccion: usar `Section` primero (shell + debug), luego tokens de
+      color/tipografia, luego ritmo (`SECTION_GAP`/pares de espaciadores).
+- [ ] Verificar contraste: titulos `text-foreground`, cuerpo `text-content`,
+      labels `text-muted-foreground` (nunca parrafos en muted).
+- [ ] Respecto de reglas de blancos y brightness (ver iteration-guide).
+- [ ] Correr audit de ritmo (`scripts/rhythm-contract.mjs`,
+      `scripts/section-spacing.mjs`) antes de commitear layout.
 
-| Pieza | Estado |
-|-------|--------|
-| `FadeIn.as` | Declarado en la interfaz, **no implementado** (siempre `motion.div`) |
-| `SlideIn` / `ScaleIn` | Exportados sin consumidores — código muerto |
-| `DarkModeToggle` | Custom, desmontado; conflictivo con `forcedTheme="dark"` |
-| `ProductsSection` | Importada pero comentada en la home |
-| `Aurora` | WebGL pesado + reacciona a `.dark` por MutationObserver (no next-themes) |
+## 13. Deuda unica de componentes
 
----
-
-## Próximo paso
-
-Este documento, junto con `typography-families.md` y `buttons.md`, es la base del futuro `docs/design/design.md` del proyecto.
-
----
-
-> [!NOTE]
-> Vercel Preview Deployment activado para la rama `feat/fluid-typo`.
+- 13.1 `ProductsSection` import muerto en `page.tsx` (importado, no
+  renderizado): decidir si se monta o se elimina el import.
+- 13.2 `FadeIn.as` declarado sin implementar.
+- 13.3 `DarkModeToggle` desmontado (tema light no ofrecido; forcedTheme).
+- 13.4 `text-hero-text` en utilidades: se usa en el retrato de featured con
+  index label; token mapeado, verificar usos al tocar hero.
+- 13.5 La nota "Vercel Preview Deployment activado para la rama
+  feat/fluid-typo" del canon anterior se ELIMINO del canon vivo (informacion
+  de rama agotada; el snapshot `2026-09-21-pre-designmd` la conserva).

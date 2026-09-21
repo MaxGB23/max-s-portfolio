@@ -1,0 +1,327 @@
+/*
+ * ============================================================
+ * ESPEJO DE app/globals.css - NUCLEO DEL TEMA (Tailwind v4)
+ * ============================================================
+ * Este archivo es una EXTRACCION de referencia del nucleo de tema
+ * de app/globals.css: @theme inline, las variables :root/.dark, el
+ * custom variant, la guarda de overflow y el CSS base de diseno.
+ *
+ * NO cargar este archivo en el build (no lleva @import 'tailwindcss').
+ * NO editar a mano: se regenera desde app/globals.css. Cualquier
+ * discrepancia gana app/globals.css (fuente de verdad).
+ *
+ * Decisiones de diseno conservadas intencionalmente:
+ *  - @source not "../docs"  : los docs contienen clases literales
+ *    (p. ej. 'bg-[var(...)]') que el scanner de Tailwind convertia en
+ *    CSS roto. Se escanea solo el codigo.
+ *  - overflow-x: clip        : el pin GSAP del stack featured saca la
+ *    seccion de flujo (position: fixed) durante el scrub; en el frame
+ *    de pin/unpin el layout se desplaza unos px y el spacer puede
+ *    exceder el ancho del viewport -> scrollbar horizontal "fantasma".
+ *    `clip` lo mata sin crear scroll container, sin afectar el scroll
+ *    vertical y sin romper contenedores internos con overflow propio.
+ *  - .dark redefine --color-purple-accent/-light, --color-nav y
+ *    --color-hero-text como VALORES DIRECTOS (no var()): garantiza que
+ *    en dark esos colores ganen sin depender del mapeo light. NO
+ *    refactorizar a var() (E10).
+ *  - chart-1..5 se mapean a var(--chart-N) que NO estan definidos en
+ *    :root/.dark: utilities text-chart-* rotas en silencio (deuda 9.1
+ *    en tokens.md).
+ */
+
+@source not "../docs";
+
+@custom-variant dark (&:is(.dark *));
+
+html,
+body {
+  overflow-x: clip;
+}
+
+:root {
+  /* Portfolio Light Theme */
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.13 0 0);
+  --content: oklch(0.38 0 0);
+  --card: oklch(0.98 0 0);
+  --card-foreground: oklch(0.13 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.13 0 0);
+  --primary: oklch(0.13 0 0);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.96 0 0);
+  --secondary-foreground: oklch(0.13 0 0);
+  --muted: oklch(0.96 0 0);
+  --muted-foreground: oklch(0.52 0 0);
+  --accent: oklch(0.58 0.22 270);
+  --accent-foreground: oklch(1 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(1 0 0);
+  --border: oklch(0.91 0 0);
+  --input: oklch(0.91 0 0);
+  --ring: oklch(0.58 0.22 270);
+  --radius: 0.75rem;
+  /* Custom portfolio tokens */
+  --hero-text: oklch(0.1 0 0);
+  --nav-bg: oklch(1 0 0 / 0.85);
+  --accent-purple: oklch(0.58 0.22 270);
+  --accent-purple-light: oklch(0.92 0.08 270);
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.13 0 0);
+  --sidebar-primary: oklch(0.13 0 0);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.96 0 0);
+  --sidebar-accent-foreground: oklch(0.13 0 0);
+  --sidebar-border: oklch(0.91 0 0);
+  --sidebar-ring: oklch(0.58 0.22 270);
+}
+
+.dark {
+  /* Portfolio Dark Theme */
+  --background: oklch(0.11 0.005 270);
+  --foreground: oklch(0.96 0 0);
+  --content: oklch(0.75 0 0);
+  --card: oklch(0.15 0.005 270);
+  --card-foreground: oklch(0.96 0 0);
+  --popover: oklch(0.15 0.005 270);
+  --popover-foreground: oklch(0.96 0 0);
+  --primary: oklch(0.96 0 0);
+  --primary-foreground: oklch(0.11 0.005 270);
+  --secondary: oklch(0.2 0.005 270);
+  --secondary-foreground: oklch(0.96 0 0);
+  --muted: oklch(0.2 0.005 270);
+  --muted-foreground: oklch(0.62 0 0);
+  --accent: oklch(0.62 0.22 270);
+  --accent-foreground: oklch(1 0 0);
+  --destructive: oklch(0.396 0.141 25.723);
+  --destructive-foreground: oklch(0.96 0 0);
+  --border: oklch(0.25 0.005 270);
+  --input: oklch(0.25 0.005 270);
+  --ring: oklch(0.62 0.22 270);
+  /* Custom portfolio tokens */
+  --hero-text: oklch(0.96 0 0);
+  --nav-bg: oklch(0.11 0.005 270 / 0.85);
+  --accent-purple: oklch(0.62 0.22 270);
+  --accent-purple-light: oklch(0.22 0.08 270);
+  --sidebar: oklch(0.15 0.005 270);
+  --sidebar-foreground: oklch(0.96 0 0);
+  --sidebar-primary: oklch(0.62 0.22 270);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.2 0.005 270);
+  --sidebar-accent-foreground: oklch(0.96 0 0);
+  --sidebar-border: oklch(0.25 0.005 270);
+  --sidebar-ring: oklch(0.62 0.22 270);
+  /* Custom portfolio tokens - dark overrides */
+  --color-purple-accent: oklch(0.62 0.22 270);
+  --color-purple-accent-light: oklch(0.22 0.08 270);
+  --color-nav: oklch(0.11 0.005 270 / 0.85);
+  --color-hero-text: oklch(0.96 0 0);
+}
+
+@theme inline {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-space-grotesk), ui-serif, Georgia, serif;
+  --font-mono: 'Geist Mono', 'Geist Mono Fallback';
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-content: var(--content);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --text-fluid-display: clamp(2.5rem, 1.88rem + 3.13vw, 5rem);
+  --text-fluid-detail: clamp(2.25rem, 1.9rem + 1.47vw, 3.375rem);
+  --text-fluid-section: clamp(2rem, 1.72rem + 1.4vw, 3.25rem);
+  --text-fluid-featured: clamp(1.75rem, 1.52rem + 1.15vw, 2.75rem);
+  --text-fluid-price: clamp(2rem, 1.8rem + 1vw, 2.625rem);
+  --text-fluid-card: clamp(1.125rem, 1.01rem + 0.49vw, 1.5rem);
+  /* Detail metric display: same scale as --text-fluid-card (18 -> 24px) but a
+     dedicated token - the metric numeral is a display role (font-black, accent)
+     and must not borrow the generic card-heading token. Same cap rule as
+     --text-fluid-price: dominant over its label, below its section title. */
+  --text-fluid-metric: clamp(1.125rem, 1.01rem + 0.49vw, 1.5rem);
+  --text-fluid-subheading: clamp(1.5rem, 1.27rem + 0.98vw, 2.25rem);
+  --text-fluid-body: clamp(1rem, 0.96rem + 0.16vw, 1.125rem);
+  --text-fluid-card-body: clamp(1rem, 0.96rem + 0.16vw, 1.125rem);
+  /* Card-grid tokens: capped to the ~395px physical column (max-w-7xl, 3 col,
+     gap-6) where the global vw would keep growing after the column stops. */
+  --text-fluid-card-title: clamp(1.125rem, 1.05rem + 0.32vw, 1.375rem);
+  --text-fluid-card-desc: clamp(0.9375rem, 0.9rem + 0.12vw, 1rem);
+  --text-fluid-eyebrow: clamp(0.9375rem, 0.86rem + 0.33vw, 1.1875rem);
+  /* Custom portfolio tokens - mapped to CSS variables for dark mode support */
+  --color-nav: var(--nav-bg);
+  --color-purple-accent: var(--accent-purple);
+  --color-purple-accent-light: var(--accent-purple-light);
+  --color-hero-text: var(--hero-text);
+}
+
+/* ============================================================
+   Base de diseno extraida (misma fuente: app/globals.css)
+   ============================================================ */
+
+/* Hash landing: cuando la pagina carga con un #fragment (refresh tras un
+   scroll por ancla), mantiene el destino libre de la navbar fija. */
+section[id] {
+  scroll-margin-top: 5rem;
+}
+
+/* ======== Custom scrollbar ======== */
+/* Estandar (Firefox y Chromium nuevo) */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--muted-foreground) transparent;
+  scroll-behavior: auto;
+}
+
+/* WebKit (Brave, Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--muted-foreground);
+  border-radius: 10px;
+  border: 1px solid var(--background);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--foreground);
+}
+
+/* ============================================================
+   Cue de llegada a #contacto
+   ------------------------------------------------------------
+   Los CTA de pricing (y el boton "Contacto" de la navbar) hacen
+   smooth-scroll a #contacto y anuncian la llegada al completar el
+   scroll (announceArrival en hooks/use-lenis.tsx): el hook fija el
+   hash en la URL y agrega la clase `arrive`, que reproduce un wash
+   unico para que el destino se auto-identifique como la respuesta
+   al clic, incluso cuando el delta de scroll es pequeño.
+   Un clic repetido sobre la misma ancla lo repite: el hook quita la
+   clase, fuerza un reflow y la vuelve a agregar.
+   Clase deliberada - history.replaceState con fragmento NO actualiza
+   `:target`, asi que la ruta pseudo-clase no es confiable.
+   ============================================================ */
+#contacto.arrive {
+  animation: contact-arrive 1.5s ease-out;
+}
+
+@keyframes contact-arrive {
+  0%,
+  20% {
+    background-color: color-mix(in oklab, var(--accent-purple) 5%, transparent);
+    box-shadow: inset 0 0 0 2px color-mix(in oklab, var(--accent-purple) 25%, transparent);
+  }
+  100% {
+    background-color: transparent;
+    box-shadow: inset 0 0 0 2px transparent;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Sin movimiento, pero cue de llegada visible: wash + ring estaticos
+     mientras la clase `arrive` este presente (el hook la quita ~2.2s). */
+  #contacto.arrive {
+    animation: none;
+    background-color: color-mix(in oklab, var(--accent-purple) 10%, transparent);
+    box-shadow: inset 0 0 0 2px color-mix(in oklab, var(--accent-purple) 35%, transparent);
+  }
+}
+
+/* ============================================================
+   Layout Debug Overlay (manual QA)
+   ------------------------------------------------------------
+   Solo se renderiza cuando el <html> raiz lleva data-debug.
+   Los niveles siguen la profundidad de anidamiento:
+     l1 = <section> raiz        (rojo)
+     l2 = wrapper layout        (verde)
+     l3 = sub-bloque / columna  (amarillo)
+     l4 = hoja                 (azul)
+   Activar: data-debug en <html> en app/layout.tsx.
+   Desactivar: quitarlo. Sin editar componentes.
+   ============================================================ */
+[data-debug] .debug-l1 {
+  outline: 1px solid #f87171;
+  outline-offset: -1px;
+}
+[data-debug] .debug-l2 {
+  outline: 1px solid #22c55e;
+  outline-offset: -1px;
+}
+[data-debug] .debug-l3 {
+  outline: 1px solid #eab308;
+  outline-offset: -1px;
+}
+[data-debug] .debug-l4 {
+  outline: 1px solid #60a5fa;
+  outline-offset: -1px;
+}
+
+/* ============================================================
+   Conectores de arbol de arquitectura
+   ------------------------------------------------------------
+   Linea de caida vertical por card hija: conecta cada card de la
+   PRIMERA fila del grid con la linea bus horizontal. Las filas
+   inferiores no llevan linea para que nunca crucen contenido.
+   Mobile (1 columna) no muestra conectores: pila limpia.
+   ============================================================ */
+.architecture-connector-child::before {
+  content: "";
+  position: absolute;
+  top: -2rem;
+  left: 50%;
+  width: 1px;
+  height: 2rem;
+  transform: translateX(-50%);
+  background: var(--border);
+  opacity: 0.7;
+  pointer-events: none;
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .architecture-connector-child:nth-child(-n + 2)::before {
+    display: block;
+  }
+}
+
+@media (min-width: 1024px) {
+  .architecture-connector-child:nth-child(-n + 3)::before {
+    display: block;
+  }
+}

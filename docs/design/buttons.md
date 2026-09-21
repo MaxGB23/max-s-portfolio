@@ -1,109 +1,142 @@
-# Sistema de Botones
+# Botones - canon v3
 
-> Fuente de verdad del sistema de botones del portfolio. Estado: **v3 — aprobado por el usuario tras comparación en vivo (:3000 vs :3001)**.
-> Relacionado: [typography-families.md](./typography-families.md) define los tamaños de texto usados en los botones.
+> [!NOTE] Estado: CANONICO
+> API y clases verificadas contra `components/ui/button.tsx` y todos los
+> call sites del sitio. Glosario de migracion:
+> `docs/design/archive/2026-09-21-pre-designmd/INDEX.md`.
 
-## Principios
+Contenido:
 
-1. **Solo dark mode activo hoy**, pero **jamás hardcodear colores** (`text-white`, `bg-white/90`…). Todo color sale de tokens: `text-foreground`, `text-background`, `text-muted-foreground`, `bg-purple-accent`, `border-border`.
-2. **Forma dual por rol**: píldora (`rounded-full`) para navegación global; `rounded-xl` para acciones contextuales.
-3. **Hover por variante, constante**: cada variante tiene UN único hover en todo el sitio.
-4. **Shadow morado es la firma de marca**, con excepciones explícitas y justificadas (nunca arbitrarias).
-5. Un botón documentable es un botón con **intención**: si necesitas un valor distinto, es un caso nuevo y se documenta, no se improvisa.
+- [1. API real](#1-api-real)
+- [2. Principios](#2-principios)
+- [3. Variantes y por que cada hover](#3-variantes-y-por-que-cada-hover)
+- [4. Formas](#4-formas)
+- [5. Tamanos y fullWidth](#5-tamanos-y-fullwidth)
+- [6. Sombra (glow)](#6-sombra-glow)
+- [7. Tipografia y foco](#7-tipografia-y-foco)
+- [8. Inventario por seccion (verificado)](#8-inventario-por-seccion-verificado)
+- [9. Historia v1 -> v2 -> v3](#9-historia-v1---v2---v3)
+- [10. Deuda unica de botones](#10-deuda-unica-de-botones)
 
-## Variantes
+## 1. API real
 
-| Variante | Clases base | Hover | Uso |
-| --- | --- | --- | --- |
-| `primary` (sólido) | `bg-foreground text-background` | `hover:opacity-80` | Acción principal: navbar Contacto, hero Ver Proyectos, Volver, CTA detalle, featured |
-| `outline` (borde) | `border border-border text-foreground` | `hover:bg-purple-accent/5 hover:border-purple-accent/30` | Acción secundaria: Descargar CV, GitHub/LinkedIn, copiar correo, pricing normal |
-| `accent` (marca) | `bg-purple-accent text-foreground` | `hover:opacity-90` | **Reservada — sin uso actual.** Para futuros CTAs de marca; no usarla mientras el morado del banner compita con el glow de los outlines vecinos |
-| `white` (inverso) | `bg-white text-purple-accent` | `hover:opacity-80` | Pricing destacado (plan Pro) |
-| `inverted` (excepción) | `bg-foreground text-background` | `hover:bg-purple-accent hover:text-white` | **SOLO** links de proyecto del detalle (Ver código / Ver demo) |
+`components/ui/button.tsx` (cva + Slot si `asChild`):
 
-### Por qué cada hover
+- Props: `className`, `variant`, `shape`, `size`, `fullWidth` (default
+  `false`), `glow` (default `false`), `asChild` (default `false`).
+- Base: `inline-flex items-center justify-center gap-2 text-sm 2xl:text-base
+  font-semibold focus-visible:outline focus-visible:outline-offset-2
+  focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-50`.
+- `data-slot="button"` en el raiz.
 
-- **`hover:opacity-80` en sólidos**: atenúa el botón completo, el contraste texto/fondo interno se mantiene. Es el patrón original del sitio y es superior a `hover:bg-white/80` o `hover:bg-foreground/80`, que cambian el fondo sin ajustar el texto y rompen legibilidad.
-- **Hover morado `/5 + /30` en outlines**: firma de marca sutil; `bg-purple-accent/5` + `border-purple-accent/30` son los únicos valores permitidos. No hay segunda intensidad.
-- **`hover:opacity-90` en accent**: suave, mantiene el morado protagonista (aplicable cuando la variante se use).
-- **Hover morado pleno SOLO en `inverted`**: es la excepción deliberada para que los enlaces de proyecto del detalle griten "acción de proyecto".
+## 2. Principios
 
-## Formas
+1. Solo dark-first: los botones existen para el tema dark (la marca ES dark).
+2. Sin colores hardcodeados (excepto la regla de blancos sobre acento/foto,
+   ver iteration-guide): todo viene de tokens/variantes.
+3. Forma dual: `rounded` (default) para accion de UI; `pill` para CTA
+   llamativos (navbar, hero, detalle).
+4. Hover por variante, no global: cada variante define su propio hover
+   (fondo vs opacidad) porque el cambio correcto depende del CONTRASTE
+   de fondo sobre el que vive.
+5. Sombra morada = firma del CTA secundario (glow opt-in), nunca en solidos.
 
-| Forma | Clases | Rol |
-| --- | --- | --- |
-| Píldora | `rounded-full` | Navegación global y CTAs principales de sección hero/volver |
-| Rounded | `rounded-xl` | Acciones contextuales: cards, banners, pricing, links de proyecto |
+## 3. Variantes y por que cada hover
 
-## Tamaños y paddings
+| Variante | Clases reales | Hover | Por que |
+|---|---|---|---|
+| `primary` | `bg-foreground text-background` | `hover:opacity-80` | Solido inverso (foreground como fondo): un cambio de color romperia el contraste; la opacidad conserva el color de marca |
+| `outline` | `border border-border text-foreground` | `hover:bg-purple-accent/5 hover:border-purple-accent/30` | El contorno se tiñe de acento de forma sutil: es la CTA secundaria que se insinua |
+| `accent` | `bg-purple-accent text-foreground` | `hover:opacity-90` | Solido morado: opacidad suave (hoy SIN consumidores, reservada) |
+| `inverted` | `bg-foreground text-background` | `hover:bg-purple-accent hover:text-white` | Cambio pleno a morado: es la CTA de detalle, el hover es la ficha de identidad |
+| `white` | `bg-white text-purple-accent` | `hover:opacity-80` | Solido blanco sobre tarjeta morada (pricing destacado): opacidad, nunca otro color |
 
-| Tamaño | Clases | Dónde |
-| --- | --- | --- |
-| Navbar | `px-5 py-2` (desktop), `px-5 py-2.5 w-full` (mobile) | Contacto |
-| Hero / estándar | `px-6 py-3` | Ver Proyectos, Descargar CV, Volver, CTA final, featured |
-| Proyecto | `h-12 px-6` | Ver código / Ver demo |
-| Compacto | `px-4 py-2.5` | Banner contacto (Escríbeme, GitHub, LinkedIn) |
-| Full-width | `w-full py-3.5` | Pricing CTA |
-| Icono cuadrado | `w-11` | Copiar correo |
+Transiciones reales: solidos usan `transition-opacity duration-200`
+(primary, accent, white); los que cambian fondo usan `transition-colors
+duration-200` (outline, inverted).
 
-## Shadow morado (firma "accent glow")
+## 4. Formas
 
-- **Regla general**: `shadow-sm shadow-purple-accent/60` en outlines contextuales (banner contacto: copiar, GitHub, LinkedIn; hero: Descargar CV).
-- **Sin shadow**:
-  - Pricing (highlighted y normal): los botones de pricing solo manejan lógica de hover, no shadow.
-  - Primary sólidos (navbar, hero Ver Proyectos, Volver, featured): sin shadow morado. El `shadow-md` neutral de Ver Proyectos es heredado; se decide en el componente base.
-  - Ver código / Ver demo.
+- `rounded` (default): `rounded-xl` (12px, = `--radius-lg`). Accion de UI.
+- `pill`: `rounded-full`. CTA llamativos; requiere sizes que den altura
+  suficiente (sm/md/lg y fullWidth en mobile).
 
-## Tipografía
+## 5. Tamanos y fullWidth
 
-- Estándar: `text-sm 2xl:text-base font-semibold`.
-- **Resuelto** (2026-09-21): Navbar Contacto ya usa el componente base `Button` (`variant="primary" shape="pill" size="sm"`) — la deuda `text-[15px] font-medium` ya no existe.
+| Size | Clases reales | Uso |
+|---|---|---|
+| `sm` | `px-5 py-2` | Navbar CTA (desktop y mobile) |
+| `md` | `px-6 py-3` | Default: hero, detalle, featured |
+| `lg` | `h-12 px-6` | Detalle (links), contacto (todos los botones) |
+| `compact` | `px-4 py-2.5` | SIN consumidores (deuda 10.3) |
 
-## Transición y foco
+- `fullWidth` -> `w-full`. Patron aceptado: ajustes de altura por `className`
+  (`py-3.5` pricing, `py-2.5` navbar mobile, `px-5 py-3 justify-between`
+  products) - es delicado pero documentado por call site (seccion 8).
+- Los botones del sitio NO usan tipografia fluida: `text-sm 2xl:text-base`
+  fijo (regla de hit area, ver typography-families.md).
 
-- `transition-colors duration-200`; los sólidos con hover de opacidad usan `transition-opacity duration-200`.
-- Foco accesible en todos los botones migrados: `focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-ring`.
-- Iconos: `gap-2` interno; tamaño contextual (14 banner / 15 hero / 16 CV).
+## 6. Sombra (glow)
 
-## Inventario por sección (estado actual en :3001)
+- `glow` -> `shadow-sm shadow-purple-accent/60` (sombra morada suave).
+- Solo en variante `outline` (CTA secundaria): 4 usos verificados
+  (seccion 8). NUNCA en pricing, NUNCA en solidos, NUNCA por defecto.
+- Excepcion heredada: "Ver Proyectos" (hero) lleva `shadow-md` neutro via
+  `className` (deuda 10.1).
 
-| Sección | Botón | Variante | Forma | Padding | Shadow | Hover |
-| --- | --- | --- | --- | --- | --- | --- |
-| Navbar | Contacto (desktop) | primary | pill | px-5 py-2 | — | opacity-80 |
-| Navbar | Contacto (mobile) | primary | pill | px-5 py-2.5 w-full | — | opacity-80 |
-| Hero | Ver Proyectos | primary | pill | px-6 py-3 | shadow-md (neutral, heredado) | opacity-80 |
-| Hero | Descargar CV | outline | pill | px-6 py-3 | sm purple/60 | /5 + /30 |
-| Detalle | Volver | primary | pill | px-6 py-3 | — | bg-foreground/80 (excepción GSAP) |
-| Detalle | Ver código / Ver demo | inverted | rounded | h-12 px-6 | — | bg-purple-accent text-white |
-| Detalle | CTA final | primary | rounded | px-6 py-3 | — | opacity-80 |
-| Featured | CTA | primary | rounded | px-6 py-3 | — | opacity-80 |
-| Pricing | CTA destacado (Pro) | white | rounded | w-full py-3.5 | — | opacity-80 |
-| Pricing | CTA normal | outline | rounded | w-full py-3.5 | — | /5 + /30 |
-| Banner | Escríbeme | primary | rounded | px-4 py-2.5 | — | opacity-80 |
-| Banner | Copiar correo | outline | rounded | w-11 | sm purple/60 | /5 + /30 |
-| Banner | GitHub / LinkedIn | outline | rounded | px-4 py-2.5 | sm purple/60 | /5 + /30 |
-| Products | CTA | outline | rounded | w-full px-5 py-3 | — | **bg-secondary (deuda)** |
+## 7. Tipografia y foco
 
-## Reglas de excepción (cerradas)
+- `text-sm 2xl:text-base font-semibold` (no fluido; keep 14px base).
+- `gap-2` para iconos; `inline-flex items-center justify-center`.
+- Foco: `focus-visible:outline focus-visible:outline-offset-2
+  focus-visible:outline-ring` (anillo morado, igual que el sistema).
+- `disabled:opacity-50` + `pointer-events-none`.
 
-- Hover morado pleno en `inverted`: permitido solo en links de proyecto del detalle.
-- **Volver (detalle)**: `hover:bg-foreground/80` + `transition-colors` — NUNCA `transition-opacity`. GSAP controla `opacity` de este botón (hide al hacer scroll down, reveal al scroll up) y una transición CSS de opacidad competiría con la animación. Implementado vía `className` sobre `variant="primary"`.
-- Pricing: nunca shadow, siempre lógica de hover.
+## 8. Inventario por seccion (verificado)
 
-## Deuda técnica → componente base (próxima sesión)
+| Seccion | Uso | Variante / shape / size | Notas |
+|---|---|---|---|
+| Navbar desktop | Contacto | `primary pill sm` | Sin shadow; hover opacidad |
+| Navbar mobile | Contacto | `primary pill sm fullWidth py-2.5` | Ocupa el ancho |
+| Hero | Ver Proyectos | `primary pill md` + `shadow-md` | shadow heredada (deuda 10.1) |
+| Hero | Descargar CV | `outline pill md glow` | Firma morada |
+| Detalle | Volver | `primary pill md` + `back-btn hover:bg-foreground/80 transition-colors` | Excepcion: hover de fondo, NUNCA opacity (GSAP lo controla) |
+| Detalle | Ver codigo / Ver demo | `inverted lg rounded` | Cambio pleno a morado |
+| Detalle | CTA final (Volver a proyectos) | `primary md` | En banda morada suave |
+| Featured | Ver caso de estudio | `primary md` | Con FadeIn |
+| Pricing | Pro (destacado) | `white rounded fullWidth py-3.5` | Sin shadow (nunca) |
+| Pricing | Los demas planes | `outline rounded fullWidth py-3.5` | Sin shadow (nunca) |
+| Contacto | Conectemos en LinkedIn | `primary lg` | Unico primary en contacto |
+| Contacto | Escríbeme... | `outline glow lg` | Firma morada |
+| Contacto | Copiar correo | `outline glow lg` | Estado copiado: `border-purple-accent/40 text-purple-accent brightness-110` |
+| Contacto | GitHub | `outline glow lg` | Firma morada |
+| Products (no renderizado) | Saber mas | `outline fullWidth px-5 py-3 justify-between` | Import muerto en page.tsx (ver components.md 4.11) |
 
-Objetivo: crear componentes base que crezcan con `className` para eliminar micro-variaciones y hacer el sistema documentable en código.
+Nota: el inventario anterior incluia un boton "Banner" `compact px-4 py-2.5
+w-11` que NO existe en el codigo actual: el contacto real usa 4 botones
+grandes (lg) y la clase `compact` no tiene consumidores. El inventario de
+este canon refleja el codigo.
 
-1. **Renovar `components/ui/button.tsx`** (shadcn ya instalado y sin uso) con variantes propias: `primary`, `outline`, `accent`, `white`, `inverted` + `shape: pill | rounded` + `size` + passthrough de `className`.
-2. Unificar deudas detectadas:
-   - ~~Navbar `text-[15px] font-medium` → estándar~~ (resuelto 2026-09-21: usa el componente base).
-   - Products CTA `hover:bg-secondary` → `/5 + /30` (o documentar como excepción dedicada).
-   - Decidir el `shadow-md` neutral de Ver Proyectos (mantener como estándar de primary hero o eliminar).
-   - `transition-opacity` → `transition-colors` consistente en sólidos.
-3. Migrar los 14 botones del inventario al componente sin cambiar decisiones visuales.
+## 9. Historia v1 -> v2 -> v3
 
-## Historial de decisiones
+- **v1** (origen): 2 variantes (primary/outline), un tamaño, hovers
+  inconsistentes y colores directos en botones de seccion.
+- **v2** (refactor de componentes): 4 variantes, 2 shapes, 3 tamanos;
+  `fullWidth` en pricing; hover unificado por variante.
+- **v3 (canon actual)**: se agregan `inverted` y `white` (detalle y pricing
+  destacado), `glow` (firma morada opt-in), `compact` (sin uso hoy),
+  transitions por tipo (opacity vs colors) y el record de hovers por
+  variante que se documenta aqui. `copyEmail` con fallback mailto y estado
+  copiado con acento (brightness-110) entraron en v3.
 
-- **v1**: sistema con formas duales y hover morado en casi todo → **descartado en vivo** (el hover morado en sólidos de navegación no gustó).
-- **v2**: hover morado solo en links de proyecto; resto estilo original (`bg-secondary`). → refinado en discusión.
-- **v3 (actual)**: hover de marca `/5 + /30` como estándar de outlines (en vez de `bg-secondary`), shadow sm única (el `shadow-lg` de hero tomó el estándar `sm purple/60` en vivo), pricing sin shadow, tokens en vez de hardcoded.
+## 10. Deuda unica de botones
+
+- 10.1 `shadow-md` neutral en "Ver Proyectos" (hero) via `className`
+  (heredada de v1/v2): decidir si se vuelve patron del sistema o se elimina.
+- 10.2 Transicion no uniforme: solidos `transition-opacity`, fondo-cambio
+  `transition-colors`. Es intencional por variante, pero si el sistema
+  quiere una sola convencion, unificarla (requiere tocar button.tsx, fuera
+  de alcance de docs).
+- 10.3 `size="compact"` sin consumidores (definido en la API, sin uso).
+- 10.4 `variant="accent"` sin consumidores (reservada; el acento real se
+  logra con outline hover y fondos `/5` y `/10`).
