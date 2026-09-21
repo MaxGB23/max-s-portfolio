@@ -1,6 +1,9 @@
 import type { Metadata } from 'next'
+import { cookies, headers } from 'next/headers'
 import { Inter, Space_Grotesk } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
+import { LanguageProvider } from '@/contexts/language-context'
+import type { Lang } from '@/data/translations'
 import { SmoothScroll } from '@/components/smooth-scroll'
 import { ThemeProvider } from '@/components/theme-provider'
 import './globals.css'
@@ -26,25 +29,42 @@ export const metadata: Metadata = {
     'Personal portfolio of Max, a MX-based Full Stack Developer specializing in building polished, performant web experiences.'
 }
 
-export default function RootLayout({
+// Initial language decided on the SERVER (zero flash):
+// 1. Cookie 'lang' → honors a previous choice
+// 2. Accept-Language → browser preference on first visit
+// 3. Fallback: 'es'
+async function getInitialLang(): Promise<Lang> {
+  const store = await cookies()
+  const cookieLang = store.get('lang')?.value
+  if (cookieLang === 'es' || cookieLang === 'en') return cookieLang
+
+  const accept = (await headers()).get('accept-language') ?? ''
+  return accept.startsWith('en') ? 'en' : 'es'
+}
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const initialLang = await getInitialLang()
+
   return (
-    <html lang="en" suppressHydrationWarning {...(LAYOUT_DEBUG ? { 'data-debug': '' } : {})}>
+    <html lang={initialLang} suppressHydrationWarning {...(LAYOUT_DEBUG ? { 'data-debug': '' } : {})}>
       <body className={`${inter.variable} ${spaceGrotesk.variable} font-sans antialiased`}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          forcedTheme="dark"
-          disableTransitionOnChange
-        >
-          <SmoothScroll>
-            {children}
-          </SmoothScroll>
-          <Analytics />
-        </ThemeProvider>
+        <LanguageProvider initialLang={initialLang}>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="dark"
+            forcedTheme="dark"
+            disableTransitionOnChange
+          >
+            <SmoothScroll>
+              {children}
+            </SmoothScroll>
+            <Analytics />
+          </ThemeProvider>
+        </LanguageProvider>
       </body>
     </html>
   )

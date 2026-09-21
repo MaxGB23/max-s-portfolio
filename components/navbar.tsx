@@ -7,18 +7,21 @@ import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useScrollToAnchor, useScrollToTop } from "@/hooks/use-lenis";
 import { Button } from "@/components/ui/button";
+import { LanguageToggle } from "@/components/language-toggle";
+import { useLanguage } from "@/contexts/language-context";
 // import { DarkModeToggle } from "@/components/dark-mode-toggle";
 
 const navLinks = [
-  { label: "Inicio", href: "/" },
-  { label: "Sobre mí", href: "#sobre-mi" },
-  { label: "Proyectos", href: "#proyectos" },
-  { label: "Precios", href: "#precios" },
-];
+  { key: "nav.home", href: "/" },
+  { key: "nav.about", href: "#sobre-mi" },
+  { key: "nav.projects", href: "#proyectos" },
+  { key: "nav.pricing", href: "#precios" },
+] as const;
 
 const SCROLL_THRESHOLD = 8; // px mínimos de delta para disparar cambio de visibilidad
 
 export function Navbar() {
+  const { t } = useLanguage();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [visible, setVisible] = useState(true);
@@ -132,32 +135,32 @@ export function Navbar() {
     >
       <nav
         className="debug-l2 max-w-7xl mx-auto px-6 h-16 flex items-center justify-between"
-        aria-label="Main navigation"
+        aria-label={t("nav.aria.main")}
       >
         {/* Logo */}
         <Link
           href="/"
           onClick={(e) => handleHomeClick(e, "/")}
           className="flex items-center gap-3 group"
-          aria-label="Inicio"
+          aria-label={t("nav.home")}
         >
           <div className="relative flex lg:size-2.5 size-2 items-center justify-center">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full lg:size-2 size-1.5 bg-emerald-500"></span>
           </div>
           <span className="hidden lg:block font-sans font-medium text-sm lg:text-base tracking-wider text-foreground">
-            Disponible para trabajo remoto
+            {t("nav.available")}
           </span>
           <span className="lg:hidden font-sans font-medium text-sm md:text-base tracking-wider text-foreground">
-            Disponible en remoto
+            {t("nav.available.short")}
           </span>
         </Link>
 
         {/* Desktop nav links */}
-        <nav className="hidden md:flex items-center gap-8" aria-label="Site sections">
+        <nav className="hidden md:flex items-center gap-8" aria-label={t("nav.aria.sections")}>
           {navLinks.map((link) => (
             <Link
-              key={link.label}
+              key={link.key}
               href={link.href}
               onClick={(e) => {
                 handleAnchorClick(e, link.href);
@@ -165,7 +168,7 @@ export function Navbar() {
               }}
               className="text-base font-medium transition-colors duration-100 relative group"
             >
-              {link.label}
+              {t(link.key)}
               <span
                 className="absolute -bottom-0.5 left-0 h-px w-0 group-hover:w-full transition-all duration-200 bg-purple-accent"
               />
@@ -173,15 +176,16 @@ export function Navbar() {
           ))}
         </nav>
 
-        {/* Right side: dark mode (hidden) + contact */}
+        {/* Right side: dark mode (hidden) + language + contact */}
         <div className="hidden md:flex items-center gap-3">
           {/* <DarkModeToggle /> */}
+          <LanguageToggle />
           <Button asChild variant="primary" shape="pill" size="sm">
             <Link
               href="#contacto"
               onClick={(e) => handleAnchorClick(e, "#contacto")}
             >
-              Contacto
+              {t("nav.contact")}
             </Link>
           </Button>
         </div>
@@ -189,11 +193,12 @@ export function Navbar() {
         {/* Mobile menu button */}
         <div className="flex md:hidden items-center gap-2">
           {/* <DarkModeToggle /> */}
+          <LanguageToggle />
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-expanded={mobileOpen}
             aria-controls="mobile-menu"
-            aria-label={mobileOpen ? "Close menu" : "Open menu"}
+            aria-label={mobileOpen ? t("nav.aria.closeMenu") : t("nav.aria.openMenu")}
             className="p-2 rounded-lg text-foreground hover:bg-secondary transition-colors"
           >
             <AnimatePresence mode="wait" initial={false}>
@@ -225,7 +230,7 @@ export function Navbar() {
             <div className="debug-l2 max-w-6xl mx-auto px-6 py-4 flex flex-col gap-8">
               {navLinks.map((link) => (
                 <Link
-                  key={link.label}
+                  key={link.key}
                   href={link.href}
                   onClick={(e) => {
                     handleAnchorClick(e, link.href);
@@ -233,7 +238,7 @@ export function Navbar() {
                   }}
                   className="text-base pl-5 text-foreground font-medium hover:text-foreground transition-colors"
                 >
-                  {link.label}
+                  {t(link.key)}
                 </Link>
               ))}
               <Button
@@ -248,7 +253,7 @@ export function Navbar() {
                   href="#contacto"
                   onClick={(e) => handleAnchorClick(e, "#contacto")}
                 >
-                  Contacto
+                  {t("nav.contact")}
                 </Link>
               </Button>
             </div>

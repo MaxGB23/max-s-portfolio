@@ -11,17 +11,16 @@ import { useState, useEffect } from "react";
 import { StackIcon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { useTitleWidth } from "@/hooks/use-title-width";
+import { useLanguage } from "@/contexts/language-context";
 
-const HERO_DATA = {
-  role: "Full Stack Developer",
-  title: {
-    first: "Max González",
-    last: "Ballesteros",
-  },
-  description: "Desarrollo aplicaciones web rápidas y escalables con Next.js y React, cuidando el rendimiento, la experiencia de usuario y calidad del código."
+// Proper names stay untranslated; translatable strings come from t().
+const HERO_NAME = {
+  first: "Max González",
+  last: "Ballesteros",
 };
 
 export function HeroSection() {
+  const { t } = useLanguage();
   const [mounted, setMounted] = useState(false);
   const [isDark, setIsDark] = useState(false);
   const scrollToAnchor = useScrollToAnchor(64);
@@ -108,7 +107,7 @@ export function HeroSection() {
     <section
       id="inicio"
       ref={containerRef}
-      aria-label="Introducción"
+      aria-label={t("hero.aria.intro")}
       className="debug-l1 relative min-h-[85dvh] flex flex-col items-center justify-center pt-22 sm:pt-24 lg:[@media(min-height:700px)]:pt-34 2xl:pt-40 px-6 md:px-8 lg:px-12"
     >
       {/* Background Aurora */}
@@ -136,16 +135,16 @@ export function HeroSection() {
           <div className="hero-info flex flex-col items-center md:items-start text-center md:text-left z-10 ">
 
             <p className="brightness-110 hero-label text-muted-foreground uppercase tracking-widest font-medium mb-4 text-fluid-eyebrow" style={{ opacity: 0, visibility: 'hidden' }}>
-              {HERO_DATA.role}
+              {t("hero.role")}
             </p>
             <h1 ref={titleRef} className="hero-title font-serif grid grid-cols-1 gap-3 font-black uppercase text-fluid-display leading-[0.9] tracking-tighter text-foreground mb-6" style={{ opacity: 0, visibility: 'hidden' }}>
-              <span>{HERO_DATA.title.first}</span>
-              <span className="text-purple-accent  sm:tracking-[0.01em]">{HERO_DATA.title.last}</span>
+              <span>{HERO_NAME.first}</span>
+              <span className="text-purple-accent  sm:tracking-[0.01em]">{HERO_NAME.last}</span>
             </h1>
 
             <div className="hero-description debug-l4 px-4 sm:px-16 md:px-0 text-fluid-body leading-relaxed text-content max-w-full" style={{ opacity: 0, visibility: 'hidden', maxWidth: titleWidth ? `min(${titleWidth}px, 60ch)` : undefined }}>
               <div className="debug-l1">
-                <p >{HERO_DATA.description}</p>
+                <p >{t("hero.description")}</p>
               </div>
             </div>
           </div>
@@ -199,7 +198,7 @@ export function HeroSection() {
                 }
               }}
             >
-              Ver Proyectos
+              {t("hero.cta.projects")}
               <ArrowDown size={15} aria-hidden="true" />
             </Link>
           </Button>
@@ -208,7 +207,7 @@ export function HeroSection() {
               href="/documents/Maximiliano_Gonzalez_AI_Engineer_Resume.pdf"
               download
             >
-              Descargar CV
+              {t("hero.cta.cv")}
               <Download size={16} aria-hidden="true" />
             </a>
           </Button>
@@ -218,7 +217,7 @@ export function HeroSection() {
         {/* Tech Stack Ticker */}
         <div className="hero-chips flex flex-col justify-center items-center gap-3 w-full " style={{ opacity: 0, visibility: 'hidden' }}>
           <p className="text-xs uppercase tracking-widest text-muted-foreground 2xl:text-base">
-            Stack Principal
+            {t("hero.stack")}
           </p>
           <div className="flex flex-wrap items-center justify-center gap-6">
             <StackIcon name="Next.js" className="size-6 2xl:size-7 w-auto opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-200" />
@@ -230,7 +229,7 @@ export function HeroSection() {
 
         {/* Scroll indicator */}
         <div className="hero-scroll flex flex-col items-center gap-2 text-muted-foreground" style={{ opacity: 0, visibility: 'hidden' }}>
-          <span className="text-xs 2xl:text-base tracking-widest uppercase">Deslizar</span>
+          <span className="text-xs 2xl:text-base tracking-widest uppercase">{t("hero.scroll")}</span>
           <motion.div
             className="w-px h-8 bg-border brightness-150"
             animate={{ scaleY: [1, 0.4, 1] }}
