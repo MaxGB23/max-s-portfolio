@@ -8,6 +8,7 @@ import { FadeIn } from "@/components/motion-primitives";
 import { FEATURED_STACK_GATE } from "@/lib/breakpoints";
 import { getFeaturedProjects } from "@/data/projects";
 import { Section } from "@/components/section";
+import { useLanguage } from "@/contexts/language-context";
 
 // ---------------------------------------------------------------------------
 // Data - single source of truth: data/projects.ts
@@ -31,10 +32,11 @@ const featuredProjects: FeaturedProject[] = getFeaturedProjects()
 // SectionHeading - "Proyectos Destacados" block, rendered in two variants
 // ---------------------------------------------------------------------------
 function SectionHeading() {
+  const { t } = useLanguage();
   return (
     <h2 className="flex flex-col gap-2 md:gap-3 justify-center items-center font-serif font-black uppercase text-fluid-section leading-[0.9] tracking-tighter text-foreground">
-      <span>Proyectos</span>
-      <span className="text-purple-accent brightness-110">Destacados</span>
+      <span>{t("section.featured.title.first")}</span>
+      <span className="text-purple-accent brightness-110">{t("section.featured.title.second")}</span>
     </h2>
   );
 }

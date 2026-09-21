@@ -5,10 +5,12 @@ import { Check, Copy, Github, Linkedin, Mail } from "lucide-react";
 import { FadeIn } from "@/components/motion-primitives";
 import { Button } from "@/components/ui/button";
 import { Section } from "@/components/section";
+import { useLanguage } from "@/contexts/language-context";
 
 const CONTACT_EMAIL = "maxgonzalezballesteros@gmail.com";
 
 export function ContactSection() {
+  const { t } = useLanguage();
   const [copied, setCopied] = useState(false);
 
   const copyEmail = async () => {
@@ -34,16 +36,16 @@ export function ContactSection() {
         {/* Section header */}
         <header className="debug-l3 flex flex-col items-center text-center mb-5 md:mb-8">
           <span className="inline-flex items-center rounded-full border border-purple-accent/25 bg-purple-accent/10 px-3 py-2 text-xs sm:text-sm font-semibold text-purple-accent mb-5">
-            Disponible para proyectos
+            {t("section.contact.badge")}
           </span>
 
           <h2 id="contact-heading" className="flex flex-col md:flex-row gap-2 md:gap-3 justify-center items-center font-serif font-black uppercase text-fluid-section leading-[0.9] tracking-tighter text-foreground mb-5">
-            <span>Trabajemos</span>
-            <span className="text-purple-accent brightness-110">juntos</span>
+            <span>{t("section.contact.title.first")}</span>
+            <span className="text-purple-accent brightness-110">{t("section.contact.title.second")}</span>
           </h2>
 
           <p className="text-fluid-body px-4 sm:px-16 md:px-0 text-content max-w-lg mx-auto leading-relaxed">
-            ¿Tienes un proyecto en mente? Conecta conmigo por LinkedIn o escríbeme — respondo en 24–48 h.
+            {t("section.contact.subtitle")} {t("common.responseTime24h")}
           </p>
         </header>
 
@@ -56,7 +58,7 @@ export function ContactSection() {
               rel="noopener noreferrer"
             >
               <Linkedin size={16} aria-hidden="true" />
-              Conectemos en LinkedIn
+              {t("section.contact.ctaLinkedin")}
             </a>
           </Button>
 
@@ -64,7 +66,7 @@ export function ContactSection() {
             <Button asChild variant="outline" glow size="lg">
               <a href={`mailto:${CONTACT_EMAIL}`}>
                 <Mail size={16} aria-hidden="true" />
-                Escríbeme
+                {t("section.contact.ctaEmail")}
               </a>
             </Button>
             <Button
@@ -73,13 +75,13 @@ export function ContactSection() {
               size="lg"
               type="button"
               onClick={copyEmail}
-              aria-label={copied ? "Correo copiado" : "Copiar correo"}
+              aria-label={copied ? t("section.contact.copy.ariaCopied") : t("section.contact.copy.ariaCopy")}
               className={copied ? "border-purple-accent/40  text-purple-accent brightness-110" : ""}
             >
               {copied ? <Check size={16} aria-hidden="true" /> : <Copy size={16} aria-hidden="true" />}
-              {copied ? "Copiado" : <>
-                <span className="hidden sm:block">Copiar correo</span>
-                <span className="sm:hidden">Correo</span>
+              {copied ? t("section.contact.copy.copied") : <>
+                <span className="hidden sm:block">{t("section.contact.copy.copyEmail")}</span>
+                <span className="sm:hidden">{t("section.contact.copy.emailShort")}</span>
               </>}
             </Button>
           </div>

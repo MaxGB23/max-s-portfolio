@@ -4,6 +4,7 @@ import { ProjectCard, type Project } from "@/components/project-card";
 import { FadeIn, FadeInStagger, FadeInItem } from "@/components/motion-primitives";
 import { Section } from "@/components/section";
 import { projects } from "@/data/projects";
+import { useLanguage } from "@/contexts/language-context";
 
 // ---------------------------------------------------------------------------
 // Data - single source of truth: data/projects.ts
@@ -28,6 +29,7 @@ const allProjects: Project[] = projects
 // AllProjects - "Todos los Proyectos" heading + responsive grid
 // ---------------------------------------------------------------------------
 export function AllProjects() {
+  const { t } = useLanguage();
   return (
     <>
       {/* Section heading — previously the transition bridge after the featured
@@ -42,8 +44,8 @@ export function AllProjects() {
       >
         <FadeIn delayEnter>
           <h2 id="all-projects-heading" className="flex flex-col gap-2 md:gap-3 justify-center items-center font-serif font-black uppercase text-fluid-section leading-[0.9] tracking-tighter text-foreground ">
-            <span>Todos los</span>
-            <span className="text-purple-accent brightness-110">Proyectos</span>
+            <span>{t("section.allProjects.title.first")}</span>
+            <span className="text-purple-accent brightness-110">{t("section.allProjects.title.second")}</span>
           </h2>
         </FadeIn>
       </Section>

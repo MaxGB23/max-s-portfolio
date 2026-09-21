@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Github, Linkedin } from "lucide-react";
 import { motion } from "framer-motion";
 import { FadeIn } from "@/components/motion-primitives";
+import { useLanguage } from "@/contexts/language-context";
 
 const socialLinks = [
   { label: "GitHub", href: "https://github.com/MaxGB23", icon: Github },
@@ -11,6 +12,7 @@ const socialLinks = [
 ];
 
 export function Footer() {
+  const { t } = useLanguage();
   return (
     <footer
       id="footer"
@@ -36,13 +38,13 @@ export function Footer() {
                 </span>
               </div>
               <p className="text-sm text-muted-foreground leading-relaxed max-w-sm">
-                FullStack Developer enfocado en construir experiencias web accesibles, rápidas y visualmente deslumbrantes.
+                {t("section.footer.bio")}
               </p>
             </div>
 
             {/* Col 2: Social Icons */}
             <div className="space-y-3">
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-foreground">Redes sociales</h3>
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-foreground">{t("section.footer.socialHeading")}</h3>
               <nav aria-label="Social media links" className="flex items-center gap-3 pt-1">
                 {socialLinks.map(({ label, href, icon: Icon }) => (
                   <motion.div
@@ -72,7 +74,7 @@ export function Footer() {
         <FadeIn delay={0.1}>
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-muted-foreground">
             <div>
-              &copy; {new Date().getFullYear()} MaxGB23. Todos los derechos reservados.
+              {t("common.copyright").replace("{year}", String(new Date().getFullYear()))}
             </div>
           </div>
         </FadeIn>

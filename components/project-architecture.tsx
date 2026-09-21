@@ -1,4 +1,5 @@
 import type { ArchitectureNode } from "@/data/projects";
+import { useLanguage } from "@/contexts/language-context";
 
 /** Nodo hijo: tarjeta numerada + sub-rail de nietos (indicador de profundidad
     por borde izquierdo, no por iconos falsos). El grid lo pone el padre; aquí
@@ -57,6 +58,7 @@ function ArchitectureChildren({ nodes }: { nodes: ArchitectureNode[] }) {
     queda como pila limpia. Sin status dots, sin versiones, sin porcentajes —
     solo datos documentados. */
 export function ProjectArchitecture({ tree }: { tree: ArchitectureNode }) {
+  const { t } = useLanguage();
   return (
     <div className="rounded-3xl bg-black/40 dark:bg-card/30 backdrop-blur-md p-6 lg:p-10">
       {/* Nodo raíz — hero card centrada, ancla visual superior */}
@@ -82,8 +84,8 @@ export function ProjectArchitecture({ tree }: { tree: ArchitectureNode }) {
               <span className="text-muted-foreground">
                 {tree.children.length}{" "}
                 {tree.children.length === 1
-                  ? "módulo documentado"
-                  : "módulos documentados"}
+                  ? t("common.moduleDocumented")
+                  : t("common.modulesDocumented")}
               </span>
             </div>
           )}
@@ -103,7 +105,7 @@ export function ProjectArchitecture({ tree }: { tree: ArchitectureNode }) {
         </div>
       ) : (
         <p className="text-xs text-muted-foreground text-center">
-          Raíz documentada sin módulos hijos todavía.
+          {t("section.projects.architectureNoChildren")}
         </p>
       )}
     </div>
@@ -112,15 +114,15 @@ export function ProjectArchitecture({ tree }: { tree: ArchitectureNode }) {
 
 /** Estado vacío honesto: sin topología documentada no se inventa nada. */
 export function ArchitectureEmptyState() {
+  const { t } = useLanguage();
   return (
     <div className="rounded-3xl border border-border/80 bg-black/40 dark:bg-card/30 backdrop-blur-md p-6 lg:p-8">
       <div className="rounded-2xl border border-dashed border-border/80 bg-card/40 p-10 text-center">
         <p className="text-sm text-muted-foreground">
-          Arquitectura no documentada todavía
+          {t("section.projects.architectureEmptyTitle")}
         </p>
         <p className="mt-2 text-sm text-content max-w-md mx-auto leading-relaxed">
-          Este proyecto aún no tiene topología documentada en docs/projects. La
-          vista mostrará el árbol real en cuanto exista — no se inventa data.
+          {t("section.projects.architectureEmptyBody")}
         </p>
       </div>
     </div>

@@ -7,6 +7,7 @@ import { useGsapAnimation } from "@/hooks/use-gsap-animation";
 import { useScrollToAnchor } from "@/hooks/use-lenis";
 import { Button } from "@/components/ui/button";
 import { Section } from "@/components/section";
+import { useLanguage } from "@/contexts/language-context";
 
 interface PricingTier {
   name: string;
@@ -72,6 +73,7 @@ const tiers: PricingTier[] = [
 function PricingCard({ tier }: { tier: PricingTier }) {
   const cardRef = useRef<HTMLElement>(null);
   const scrollToAnchor = useScrollToAnchor(64);
+  const { t } = useLanguage();
 
   // GSAP hover micro-interaction.
   const handleMouseEnter = async () => {
@@ -110,12 +112,12 @@ function PricingCard({ tier }: { tier: PricingTier }) {
           : "border-border bg-card "
       )}
       style={tier.highlighted ? { backgroundColor: "var(--accent-purple)" } : {}}
-      aria-label={`${tier.name} plan`}
+      aria-label={`${tier.name} ${t("common.plan")}`}
     >
       {/* Popular badge */}
       {tier.highlighted && (
         <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 bg-foreground text-background text-xs font-semibold rounded-full shadow whitespace-nowrap">
-          Más popular
+          {t("section.pricing.popularBadge")}
         </span>
       )}
 
@@ -147,7 +149,7 @@ function PricingCard({ tier }: { tier: PricingTier }) {
             tier.highlighted ? "text-white/70" : "text-muted-foreground"
           )}
         >
-          desde
+          {t("section.pricing.from")}
         </span>
         <div className="flex items-end gap-1">
           <span
@@ -170,7 +172,7 @@ function PricingCard({ tier }: { tier: PricingTier }) {
       </div>
 
       {/* Feature list */}
-      <ul className="space-y-3 mb-8 flex-1" aria-label={`${tier.name} plan features`}>
+      <ul className="space-y-3 mb-8 flex-1" aria-label={`${tier.name} ${t("common.plan")} ${t("common.features")}`}>
         {tier.features.map((feature) => (
           <li
             key={feature}
@@ -195,7 +197,7 @@ function PricingCard({ tier }: { tier: PricingTier }) {
         fullWidth
         className="py-3.5"
         onClick={() => scrollToAnchor("#contacto")}
-        aria-label={`${tier.cta} - ${tier.name} plan`}
+        aria-label={`${tier.cta} - ${tier.name} ${t("common.plan")}`}
       >
         {tier.cta}
       </Button>
@@ -217,6 +219,7 @@ function PricingCard({ tier }: { tier: PricingTier }) {
 
 export function PricingSection() {
   // ScrollTrigger: stagger cards. Pro card gets a slight extra delay for emphasis.
+  const { t } = useLanguage();
   const sectionRef = useGsapAnimation<HTMLElement>((gsap, ScrollTrigger) => {
     gsap.fromTo(
       ".pricing-header",
@@ -290,11 +293,11 @@ export function PricingSection() {
       {/* Section header */}
       <header className="debug-l3 pricing-header flex flex-col items-center text-center mb-5 lg:mb-16">
           <h2 id="pricing-heading" className="flex flex-col md:flex-row gap-2 md:gap-3 justify-center items-center font-serif font-black uppercase text-fluid-section leading-[0.9] tracking-tighter text-foreground mb-5">
-            <span>Servicios</span>
-            <span className="text-purple-accent brightness-110">a medida</span>
+            <span>{t("section.pricing.title.first")}</span>
+            <span className="text-purple-accent brightness-110">{t("section.pricing.title.second")}</span>
           </h2>
           <p className="text-fluid-body px-4 sm:px-16 md:px-0 text-content max-w-lg mx-auto leading-relaxed">
-            Precios base por proyecto en MXN. Cada proyecto se cotiza según alcance, sin letras chicas.
+            {t("section.pricing.subtitle")}
           </p>
         </header>
 
@@ -309,7 +312,7 @@ export function PricingSection() {
 
         {/* Footer note */}
       <p className="mt-10 text-center text-fluid-body max-w-lg mx-auto lg:max-w-none text-content">
-        Precios base de referencia. La cotización final depende del alcance. Escríbeme y respondo en 24–48 h.
+        {t("section.pricing.footer")} {t("common.responseTime24h")}
       </p>
     </Section>
   );

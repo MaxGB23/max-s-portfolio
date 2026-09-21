@@ -8,6 +8,7 @@ import { StackIcon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { saveHomeScroll } from "@/hooks/use-lenis";
 import { FEATURED_GAP, FEATURED_GAP_LG } from "@/lib/rhythm";
+import { useLanguage } from "@/contexts/language-context";
 
 export interface FeaturedProject {
   id: string;
@@ -37,6 +38,8 @@ interface FeaturedProjectPanelProps {
 }
 
 export function FeaturedProjectPanel({ project, children, overlay }: FeaturedProjectPanelProps) {
+  const { t } = useLanguage();
+
   // Extract last word for the purple accent styling
   const words = project.title.trim().split(/\s+/);
   const lastWord = words.pop();
@@ -125,7 +128,7 @@ export function FeaturedProjectPanel({ project, children, overlay }: FeaturedPro
             </div>
 
             {/* Tech stack tags */}
-            <div className="flex items-center gap-1.5 mb-10" aria-label="Technologies used">
+            <div className="flex items-center gap-1.5 mb-10" aria-label={t("common.technologiesUsed")}>
               {project.tags.map((tag, index) => (
                 <div
                   key={index}
@@ -147,9 +150,9 @@ export function FeaturedProjectPanel({ project, children, overlay }: FeaturedPro
                 <Link
                   href={`/proyectos/${project.id}`}
                   onClick={() => saveHomeScroll(window.scrollY)}
-                  aria-label={`Ver caso de estudio de ${project.title}`}
+                  aria-label={t("common.caseStudyOfTitle").replace("{title}", project.title)}
                 >
-                  Ver caso de estudio
+                  {t("common.caseStudy")}
                   <ChevronRight size={16} aria-hidden="true" />
                 </Link>
               </Button>

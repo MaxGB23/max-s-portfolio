@@ -32,6 +32,16 @@ El portfolio es 100% español hardcodeado. Un switch de idioma clásico (detecci
 - [x] T5: `components/navbar.tsx` — toggle desktop (junto a Contacto) + mobile (junto a hamburguesa), navLinks y textos con `t()`
 - [x] T6: `components/hero-section.tsx` — textos visibles con `t()` (role, description, CTA, stack, scroll)
 - [x] T7: verificación: `pnpm build` + `npx tsc --noEmit` limpios
+- [ ] T8: `translations.ts` — claves `section.*` / `common.*` para chrome de secciones (WU2)
+- [ ] T9: about-section — label, title split, párrafos, aria (WU2)
+- [ ] T10: featured-projects + featured-project-panel + all-projects — headings, "Ver caso de estudio" (clave compartida), aria (WU2)
+- [ ] T11: products-section — chrome ES (eyebrow, h2, sub, "Saber más"); data products queda EN (WU2)
+- [ ] T12: pricing-section — chrome (badge, "desde", h2, sub, footer); data tiers queda ES (WU2)
+- [ ] T13: contact-section — badge, h2, sub, CTAs, botón copiar (estado copied/no-copied), aria (WU2)
+- [ ] T14: footer — bio, heading, copyright interpolado (WU2)
+- [ ] T15: project-card + project-detail + project-architecture — labels, tabs, lightbox, placeholders, plural "módulo(s)"; data-driven content queda ES (WU2)
+- [ ] T16: `app/proyectos/[id]/page.tsx` — "Proyecto no encontrado" resuelto server-side vía cookie (WU2)
+- [ ] T17: verificación WU2: `pnpm build` + `pnpm exec tsc --noEmit` limpios
 
 ## Acceptance criteria
 - `pnpm build` y `npx tsc --noEmit` compilan sin errores.
@@ -42,15 +52,17 @@ El portfolio es 100% español hardcodeado. Un switch de idioma clásico (detecci
 
 ## Progress
 - Work unit 1 implementada (2026-09-21): infra + navbar + hero. 6 archivos (3 nuevos, 3 modificados). Delegado a writer `general`, gatekeeper OK.
+- Work unit 1 commit: `3d471e0` "feat: add ES/EN language switcher with server-side detection" (7 archivos, 261+/47-).
+- Work unit 2 implementada (2026-09-21): chrome UI de todas las secciones (about, featured/all-projects, panel, products, pricing, contact, footer, project-card, project-detail, project-architecture, [id]/page metadata). 59 claves nuevas (11 common.* + 48 section.*). Delegado a writer `general`, gatekeeper OK.
 
 ## Verification evidence
-- `pnpm build` → exit 0; "Compiled successfully"; 13/13 páginas generadas. Rutas ahora `ƒ (Dynamic)` (esperado: layout lee cookie por request).
-- `pnpm exec tsc --noEmit` → exit 0, sin errores (npx bloqueado por permisos; mismo binario).
-- `gentle-ai review assess` → medium / under_budget (`review_due: false`). Sin review nativo requerido (RDD off global).
-- Spot check del orquestador: tsc re-ejecutado, readback estructural de los 3 archivos nuevos, diff revisado sin drift.
-- Decisión del writer: claves extra (`hero.cta.projects`, `hero.cta.cv`, `hero.stack`, `hero.scroll`, `hero.aria.*`, `nav.aria.*`), aria-labels traducidos, `ReactNode` import en lugar de `React.ReactNode`. Aprobado en gatekeeper.
+- Work unit 1: `pnpm build` → exit 0 (13/13); `pnpm exec tsc --noEmit` → exit 0; assess medium/under_budget; spot check OK.
+- next-env.d.ts: ruido de build (ruta de tipos dev), revertido antes del commit.
+- Work unit 2: `pnpm build` → exit 0; `pnpm exec tsc --noEmit` → exit 0 (paridad ES/EN garantizada por `satisfies Record<TranslationKey, string>`); assess medium/under_budget (388 líneas agregadas en diff WU2); spot check + readback de diff en pricing/project-detail/[id]/page + copy EN revisado.
+- Decisión de diseño WU2: pares responsive usan 2 claves (lg vs mobile) porque los textos difieren; claves compartidas common.caseStudyOfTitle/backToProjects/technologiesUsed/responseTime24h; keys de React siguen data-driven (nunca traducción).
 
 ## Next steps (work units posteriores)
-- Traducir secciones restantes: about, featured-projects, all-projects, products, pricing, contact, footer, project-detail/card (igual patrón `t()`).
+- **[PENDIENTE — data bilingüe]** Traducir el contenido de `data/projects.ts` (~330 strings: descriptions, metrics, problem/role/solution con markdown, gallery alts, architecture). Decisión del usuario (2026-09-21): la data aún no es final; se traduce cuando se congele. Enfoque acordado: **modelo bilingüe** (`data/projects-en.ts` mirror + selector `getProjects(lang)` vía cookie server-side / `useLanguage()` cliente), NO claves planas — separa contenido de chrome, evita monolito en translations.ts y permite traducir una sola vez.
+- `data/index.ts` es código muerto (0 imports) — candidato a borrar en work unit aparte si el usuario lo aprueba.
 - Sync `docs/design/` si el cambio afecta componentes/tokens (en aprobación de work unit).
 - Actualizar `docs/ideas-features/language.md` estado a implementado al cerrar.

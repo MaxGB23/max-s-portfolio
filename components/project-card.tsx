@@ -6,6 +6,7 @@ import { ArrowUpRight, ChevronRight } from "lucide-react";
 import type { ProjectLink } from "@/data/projects";
 import { StackIcon } from "@/components/icons";
 import { saveHomeScroll } from "@/hooks/use-lenis";
+import { useLanguage } from "@/contexts/language-context";
 
 export interface Project {
   id: string;
@@ -25,6 +26,7 @@ interface ProjectCardProps {
 }
 
 export function ProjectCard({ project }: ProjectCardProps) {
+  const { t } = useLanguage();
   const externalLink = project.links?.find((link) => link.external);
   return (
     
@@ -40,7 +42,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
       <Link
         href={`/proyectos/${project.id}`}
         onClick={() => saveHomeScroll(window.scrollY)}
-        aria-label={`Ver caso de estudio de ${project.title}`}
+        aria-label={t("common.caseStudyOfTitle").replace("{title}", project.title)}
         className="absolute inset-0 z-10 rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-accent/60"
       />
 
@@ -85,7 +87,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
         )}
 
         {/* Tech stack tags - Icons with gap */}
-        <div className="flex items-center gap-2 mb-4" aria-label="Technologies used">
+        <div className="flex items-center gap-2 mb-4" aria-label={t("common.technologiesUsed")}>
           {project.tags?.map((tag, index) => (
             <div
               key={index}
@@ -104,7 +106,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
         {/* Footer */}
         <div className="mt-auto pt-4 border-t border-border flex items-center justify-between gap-3">
           <span className="inline-flex items-center gap-1.5 text-xs 2xl:text-sm font-semibold text-muted-foreground/90 group-hover:text-foreground transition-colors duration-200">
-            Caso de estudio
+            {t("section.projects.caseStudyLabel")}
             <ChevronRight className="size-3.5 2xl:size-4" aria-hidden="true" />
           </span>
           {externalLink ? (

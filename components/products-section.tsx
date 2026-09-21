@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { Check, ArrowUpRight } from "lucide-react";
 import { useGsapAnimation } from "@/hooks/use-gsap-animation";
 import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/contexts/language-context";
 
 interface Product {
   name: string;
@@ -50,6 +51,7 @@ const products: Product[] = [
 
 function ProductCard({ product }: { product: Product }) {
   const cardRef = useRef<HTMLElement>(null);
+  const { t } = useLanguage();
 
   // GSAP hover micro-interaction - lift + shadow.
   const handleMouseEnter = async () => {
@@ -116,9 +118,9 @@ function ProductCard({ product }: { product: Product }) {
         variant="outline"
         fullWidth
         className="px-5 py-3 justify-between mt-auto"
-        aria-label={`Saber más sobre ${product.name}`}
+        aria-label={t("section.products.ctaAboutTitle").replace("{name}", product.name)}
       >
-        Saber más
+        {t("section.products.cta")}
         <ArrowUpRight size={16} className="text-purple-accent" aria-hidden="true" />
       </Button>
     </article>
@@ -127,6 +129,7 @@ function ProductCard({ product }: { product: Product }) {
 
 export function ProductsSection() {
   // ScrollTrigger: stagger cards as section enters viewport (80% start).
+  const { t } = useLanguage();
   const sectionRef = useGsapAnimation<HTMLElement>((gsap, ScrollTrigger) => {
     gsap.from(".product-card", {
       opacity: 0,
@@ -168,17 +171,16 @@ export function ProductsSection() {
           <span
             className="inline-block text-xs uppercase tracking-[0.2em] font-medium mb-4 text-purple-accent"
           >
-            Lo que construyo
+            {t("section.products.eyebrow")}
           </span>
           <h2
             id="products-heading"
             className="font-serif font-black text-4xl md:text-5xl text-foreground text-balance"
           >
-            Productos y Herramientas
+            {t("section.products.title")}
           </h2>
           <p className="mt-4 text-content text-base leading-relaxed max-w-lg mx-auto">
-            Productos digitales cuidadosamente elaborados para ayudar a desarrolladores y diseñadores a construir más rápido
-            y lanzar con confianza.
+            {t("section.products.subtitle")}
           </p>
         </header>
 

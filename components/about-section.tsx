@@ -3,20 +3,11 @@
 import Image from "next/image";
 import { useGsapAnimation } from "@/hooks/use-gsap-animation";
 import { Section } from "@/components/section";
-
-const ABOUT_DATA = {
-  label: "Conóceme",
-  title: {
-    first: "Sobre",
-    second: "Mí"
-  },
-  paragraphs: [
-    "Soy un desarrollador de software con experiencia creando aplicaciones web escalables y eficientes. Mi enfoque principal es crear interfaces atractivas que brinden la mejor experiencia de usuario.",
-    "Con un perfil full-stack, me adapto a diferentes tecnologías para entregar productos modernos que puedan superar los retos técnicos actuales."
-  ]
-};
+import { useLanguage } from "@/contexts/language-context";
 
 export function AboutSection() {
+  const { t } = useLanguage();
+
   // GSAP timeline: sequences all elements when scrolled into view.
   const containerRef = useGsapAnimation<HTMLElement>((gsap) => {
     const elements = [
@@ -65,7 +56,7 @@ export function AboutSection() {
     <Section
       id="sobre-mi"
       ref={containerRef}
-      aria-label="Sobre mí"
+      aria-label={t("section.about.ariaLabel")}
       className="relative flex flex-col items-center justify-center"
       insetClassName="px-6 md:px-8 lg:px-12"
       innerClassName="relative z-10 flex flex-col-reverse md:flex-row items-center justify-center w-full max-w-5xl gap-8 md:gap-12 lg:gap-14 xl:gap-16"
@@ -75,7 +66,7 @@ export function AboutSection() {
         <div className="w-full h-full rounded-4xl overflow-hidden relative">
           <Image
             src="/images/about-max.png"
-            alt="Max González Ballesteros - Sobre Mí"
+            alt={t("section.about.imageAlt")}
             fill
             className="object-cover object-top 2xl:object-right"
             sizes="(max-width: 768px) 400px, (max-width: 1200px) 464px, 490px"
@@ -86,19 +77,18 @@ export function AboutSection() {
       {/* Right Column: Info */}
       <div className="about-info flex flex-col items-center md:items-start text-center md:text-left z-10">
         <p className="about-label uppercase tracking-[0.2em] font-medium text-muted-foreground mb-2 text-fluid-eyebrow" style={{ opacity: 0, visibility: 'hidden' }}>
-          {ABOUT_DATA.label}
+          {t("section.about.label")}
         </p>
 
         <h2 className="about-title md:flex md:gap-4 font-serif font-black uppercase text-fluid-section leading-[0.9] tracking-tighter text-foreground mb-6" style={{ opacity: 0, visibility: 'hidden' }}>
-          <span>{ABOUT_DATA.title.first}</span>
-          <span className="text-purple-accent"> {ABOUT_DATA.title.second}</span>
+          <span>{t("section.about.title.first")}</span>
+          <span className="text-purple-accent"> {t("section.about.title.second")}</span>
         </h2>
 
         <div className="debug-l4 px-4 sm:px-16 md:px-0 about-description text-fluid-body leading-relaxed text-content max-w-[48ch] space-y-4" style={{ opacity: 0, visibility: 'hidden' }}>
           <div className="debug-l1">
-            {ABOUT_DATA.paragraphs.map((text, index) => (
-              <p key={index}>{text}</p>
-            ))}
+            <p>{t("section.about.paragraph1")}</p>
+            <p>{t("section.about.paragraph2")}</p>
           </div>
 
         </div>

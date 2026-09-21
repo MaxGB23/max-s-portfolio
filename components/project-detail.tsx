@@ -21,6 +21,7 @@ import { Button } from "@/components/ui/button";
 import { takeHomeScroll, useLenis } from "@/hooks/use-lenis";
 import type { Project, ProjectImage, ProjectLink, ProjectMetric } from "@/data/projects";
 import { ArchitectureEmptyState, ProjectArchitecture } from "@/components/project-architecture";
+import { useLanguage } from "@/contexts/language-context";
 
 /** Picks a contextual icon for a project link. Unknown kinds fall back to a
     generic external-arrow, so new kinds render safely without code changes. */
@@ -181,6 +182,7 @@ function KpiGrid({ metrics }: { metrics: ProjectMetric[] }) {
 
 export function ProjectDetail({ project }: { project: Project }) {
   const rootRef = useRef<HTMLDivElement>(null);
+  const { t } = useLanguage();
   
   const router = useRouter();
 
@@ -432,11 +434,11 @@ export function ProjectDetail({ project }: { project: Project }) {
             <button
               type="button"
               onClick={handleBack}
-              aria-label="Volver a proyectos (conserva la posición de scroll)"
-              title="Volver a proyectos"
+              aria-label={t("section.projects.backAria")}
+              title={t("common.backToProjects")}
             >
               <ArrowLeft size={16} aria-hidden="true" />
-              Volver
+              {t("section.projects.back")}
             </button>
           </Button>
         </div>
@@ -470,16 +472,16 @@ export function ProjectDetail({ project }: { project: Project }) {
         <div className="debug-l2 max-w-5xl mx-auto">
           {/* Metrics & Architecture Topology */}
           {detail.metrics.length > 0 && (
-            <section className="debug-l3 detail-section mb-16" aria-label="Métricas y Arquitectura">
+            <section className="debug-l3 detail-section mb-16" aria-label={t("section.projects.metricsSectionAria")}>
               {/* Header con Tag, Titular, Subtítulo y Switch de Vistas */}
               <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
                 <div>
 
                   <h2 className="font-serif font-bold text-fluid-subheading text-foreground">
-                    Métricas clave
+                    {t("section.projects.metricsTitle")}
                   </h2>
                   <p className="mt-1 text-fluid-body leading-relaxed text-content max-w-xl">
-                    <span className="hidden lg:block">Métricas de rendimiento y topología del sistema</span> <span className="block lg:hidden">Métricas y topología del sistema</span>
+                    <span className="hidden lg:block">{t("section.projects.metricsSubtitleLg")}</span> <span className="block lg:hidden">{t("section.projects.metricsSubtitle")}</span>
                   </p>
                 </div>
 
@@ -496,7 +498,7 @@ export function ProjectDetail({ project }: { project: Project }) {
                     }`}
                   >
                     <BarChart3 size={14} className={viewMode === "kpis" ? "text-background" : "text-muted-foreground"} />
-                    <span className="hidden lg:block">Métricas & KPIs</span> <span className="block lg:hidden">Métricas</span>
+                    <span className="hidden lg:block">{t("section.projects.tabMetricsLg")}</span> <span className="block lg:hidden">{t("section.projects.tabMetrics")}</span>
                   </button>
                   <button
                     type="button"
@@ -508,7 +510,7 @@ export function ProjectDetail({ project }: { project: Project }) {
                     }`}
                   >
                     <Network size={14} className={viewMode === "topology" ? "text-background" : "text-muted-foreground"} />
-                    <span className="hidden lg:block">Grafo Arquitectura</span> <span className="block lg:hidden">Arquitectura</span>
+                    <span className="hidden lg:block">{t("section.projects.tabTopologyLg")}</span> <span className="block lg:hidden">{t("section.projects.tabTopology")}</span>
                   </button>
                 </div>
               </div>
@@ -569,14 +571,14 @@ export function ProjectDetail({ project }: { project: Project }) {
         <div className="debug-l2 max-w-3xl mx-auto">
           {/* Summary */}
           <section className="detail-section mb-16">
-            <SectionTitle>Resumen</SectionTitle>
+            <SectionTitle>{t("section.projects.sectionSummary")}</SectionTitle>
             <p className="text-content text-base 2xl:text-lg leading-relaxed">{renderInline(detail.summary)}</p>
           </section>
 
           {/* Problem */}
           {detail.problem && (
             <section className="detail-section mb-16">
-              <SectionTitle>Problema</SectionTitle>
+              <SectionTitle>{t("section.projects.sectionProblem")}</SectionTitle>
               <p className="text-content text-base 2xl:text-lg leading-relaxed">
                 {renderInline(detail.problem)}
               </p>
@@ -586,7 +588,7 @@ export function ProjectDetail({ project }: { project: Project }) {
           {/* Role */}
           {detail.role && detail.role.length > 0 && (
             <section className="detail-section mb-16">
-              <SectionTitle>Mi rol</SectionTitle>
+              <SectionTitle>{t("section.projects.sectionRole")}</SectionTitle>
               <ul className="space-y-3">
                 {detail.role.map((item, index) => (
                   <li key={index} className="flex gap-3 text-content text-base 2xl:text-lg leading-relaxed">
@@ -600,7 +602,7 @@ export function ProjectDetail({ project }: { project: Project }) {
 
           {/* Solution */}
           <section className="detail-section mb-16">
-            <SectionTitle>Solución</SectionTitle>
+            <SectionTitle>{t("section.projects.sectionSolution")}</SectionTitle>
             <ul className="space-y-3">
               {detail.solution.map((item, index) => (
                 <li key={index} className="flex gap-3 text-content text-base 2xl:text-lg leading-relaxed">
@@ -613,7 +615,7 @@ export function ProjectDetail({ project }: { project: Project }) {
 
           {/* Gallery Spotlight - hover zoom affordance, click opens lightbox */}
           <section className="detail-section detail-gallery mb-16">
-            <SectionTitle>Galería</SectionTitle>
+            <SectionTitle>{t("section.projects.sectionGallery")}</SectionTitle>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {(() => {
                 // Índice dentro de la lista de imágenes reales (para el lightbox).
@@ -631,7 +633,7 @@ export function ProjectDetail({ project }: { project: Project }) {
                         }`}
                       >
                         <span className="font-mono text-xs 2xl:text-sm uppercase tracking-widest text-muted-foreground text-center px-4">
-                          Captura próximamente
+                          {t("section.projects.screenshotSoon")}
                         </span>
                       </figure>
                     );
@@ -648,7 +650,7 @@ export function ProjectDetail({ project }: { project: Project }) {
                       <button
                         type="button"
                         onClick={() => setLightboxIndex(realIndex)}
-                        aria-label={`Ampliar imagen: ${image.alt}`}
+                        aria-label={t("section.projects.lightboxExpand").replace("{alt}", image.alt)}
                         draggable={false}
                         onDragStart={(e) => e.preventDefault()}
                         className={`relative w-full text-left cursor-zoom-in select-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring ${
@@ -683,7 +685,7 @@ export function ProjectDetail({ project }: { project: Project }) {
               <Button asChild variant="primary">
                 <Link href="/#proyectos">
                   <ArrowLeft size={16} aria-hidden="true" />
-                  Volver a proyectos
+                  {t("common.backToProjects")}
                 </Link>
               </Button>
             </div>
@@ -701,7 +703,7 @@ export function ProjectDetail({ project }: { project: Project }) {
           className="fixed inset-0 z-[70] flex items-center justify-center bg-black/90 backdrop-blur-sm p-4 sm:p-8 touch-pan-y select-none"
           role="dialog"
           aria-modal="true"
-          aria-label="Visor de imagen"
+          aria-label={t("section.projects.lightboxViewer")}
           onClick={onLightboxBackdropClick}
           onPointerDown={onLightboxPointerDown}
           onPointerUp={onLightboxPointerUp}
@@ -709,7 +711,7 @@ export function ProjectDetail({ project }: { project: Project }) {
           <button
             type="button"
             onClick={closeLightbox}
-            aria-label="Cerrar visor"
+            aria-label={t("section.projects.lightboxClose")}
             className="absolute top-4 right-4 inline-flex items-center justify-center w-11 h-11 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors duration-200 touch-manipulation"
           >
             <X size={20} aria-hidden="true" />
@@ -720,7 +722,7 @@ export function ProjectDetail({ project }: { project: Project }) {
               <button
                 type="button"
                 onClick={(e) => { e.stopPropagation(); prevLightbox(); }}
-                aria-label="Imagen anterior"
+                aria-label={t("section.projects.lightboxPrev")}
                 className="absolute left-4 hidden sm:inline-flex items-center justify-center w-11 h-11 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors duration-200 touch-manipulation"
               >
                 <ChevronLeft size={20} aria-hidden="true" />
@@ -728,7 +730,7 @@ export function ProjectDetail({ project }: { project: Project }) {
               <button
                 type="button"
                 onClick={(e) => { e.stopPropagation(); nextLightbox(); }}
-                aria-label="Imagen siguiente"
+                aria-label={t("section.projects.lightboxNext")}
                 className="absolute right-4 hidden sm:inline-flex items-center justify-center w-11 h-11 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors duration-200 touch-manipulation"
               >
                 <ChevronRight size={20} aria-hidden="true" />
