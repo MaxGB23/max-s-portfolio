@@ -1,4 +1,4 @@
-# MaxGB23 - Portfolio
+# MaxGB23 - Portfolio 👻
 
 The portfolio of Maximiliano González Ballesteros: a dark-first, type-led
 personal portfolio built by a full-stack developer who treats layout, motion
@@ -68,5 +68,5 @@ pnpm shots    # playwright screenshot QA
 
 ## Docs
 
-- `docs/design/README.md` - the design system canon: identity, tokens, typography, components
-- `AGENTS.md` - work conventions for this repo (commits, design-doc sync, worktrees)
+- [Design system canon](docs/design/README.md) - identity, tokens, typography, components
+- [Work conventions](AGENTS.md) - commits, design-doc sync, worktrees
