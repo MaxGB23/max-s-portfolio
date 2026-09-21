@@ -78,7 +78,7 @@ export function ContactSection() {
             >
               {copied ? <Check size={16} aria-hidden="true" /> : <Copy size={16} aria-hidden="true" />}
               {copied ? "Copiado" : <>
-                <span className="hidden sm:block">Copiar email</span>
+                <span className="hidden sm:block">Copiar correo</span>
                 <span className="sm:hidden">Correo</span>
               </>}
             </Button>
