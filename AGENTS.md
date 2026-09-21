@@ -32,3 +32,8 @@ Cuando respondas en español, usa siempre español neutro. Evita el voseo y los 
 
 ### Código fuente y sintaxis
 - Usar siempre caracteres ASCII estándar para sintaxis y operadores. Nunca sustituir caracteres ASCII por caracteres Unicode visualmente similares.
+
+### Docs de diseño
+- No actualices `docs/design/` por cada cambio mínimo: al APROBAR una work unit (igual que el ciclo de commits), sincroniza el archivo tema que corresponda si el cambio afecta componentes, tokens o utilidades de UI. Si no sincronizas en esa work unit, declara la deuda en el archivo tema en cuanto lo sepas — nunca dejes el canon desincronizado del código.
+- `docs/design/README.md` es el índice del canon: actualízalo solo cuando cambie la estructura (nuevo/renombrado/eliminado archivo), no por cambios de contenido.
+- `docs/design/archive/` es congelado: no editar.
