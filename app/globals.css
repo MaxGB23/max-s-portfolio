@@ -1,6 +1,16 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
+/*
+ * Exclude the docs/ tree from Tailwind's automatic content detection.
+ * Docs are prose, not templates: they contain literal class-like tokens
+ * (e.g. the archived refactor-theme-plan quotes `bg-[var(...)]`), which the
+ * scanner turned into broken generated CSS (`background-color: var(...)`).
+ * Keep scanning on source directories only; this also prevents dead utilities
+ * generated from example class names in design docs.
+ */
+@source not "../docs";
+
 @custom-variant dark (&:is(.dark *));
 
 /*
