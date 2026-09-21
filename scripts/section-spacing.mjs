@@ -1,6 +1,7 @@
 // Section-spacing audit: real inter-section gaps per viewport.
 // Usage: node scripts/section-spacing.mjs  (dev server must be on :3001)
 import { chromium } from "playwright";
+import { expectedGap } from "./rhythm-contract.mjs";
 
 const BASE = "http://localhost:3001";
 
@@ -32,48 +33,32 @@ function attr(el, prop) {
 }
 
 // ---------------------------------------------------------------------------
-// RHYTHM CONTRACT (regression thresholds)
-// Fuente: docs/design/components.md + lib/rhythm.ts
-//   SectionSpacing : h-24 (96px) <768w | md:h-32 (128px) ≥768w, nivel página
-//   Featured panel : portrait:lg:mb-24 (96px) — separación entre paneles del
-//                    stack en flow (portrait lg, sin pin)
-//   Excepción Hero : gap grande intencional (indicador "deslizar") — solo sanity
-//   Excepción pin  : landscape lg (gate FEATURED_STACK_GATE activo) — el pin
-//                    GSAP es dueño de su altura; Projects→All projects NO se
-//                    aserta (el remanente post-pin varía por viewport)
+// RHYTHM CONTRACT — importada de scripts/rhythm-contract.mjs (espejo QA de
+// lib/rhythm.ts PAGE_SPACER_CLASSES). expectedGap(pair, viewport) declara el
+// gap esperado por régimen; null = sin asertar para ese par/viewport (p. ej.
+// tras el pin GSAP el remanente no se aserta). Pairs → (from,to):
+//   hero-about → Hero→About · about-projects → About→Projects
+//   projects-all-projects → Projects→All projects
+//   all-projects-pricing → All projects→Pricing · pricing-contact → Pricing→Contact
+//   contact-footer → Contact→Footer
 // ---------------------------------------------------------------------------
-const RHYTHM = { gapLt768: 96, gapGe768: 128, panelMbPortraitLg: 96, tol: 10 };
+const PAIRS = [
+  ["hero-about", "Hero", "About"],
+  ["about-projects", "About", "Projects"],
+  ["projects-all-projects", "Projects", "All projects"],
+  ["all-projects-pricing", "All projects", "Pricing"],
+  ["pricing-contact", "Pricing", "Contact"],
+  ["contact-footer", "Contact", "Footer"],
+];
 
 function rhythmExpectations(vp) {
-  const W = vp.width;
-  const landscape = W > vp.height;
-  const gate = W >= 1024 && vp.height >= 768 && landscape; // FEATURED_STACK_GATE
-  const spacing = W >= 768 ? RHYTHM.gapGe768 : RHYTHM.gapLt768;
   const e = [];
-  const add = (from, to, kind, min, max) => e.push({ from, to, kind, min, max });
-
-  // Hero→About: excepción intencional — sanity: nunca menor que un gap normal
-  add("Hero", "About", "exception", spacing, null);
-
-  // About→Projects: en lg+ el heading mobile (lg:hidden) desaparece → gap
-  // exacto de SectionSpacing; en <lg el heading suma altura → sanity mínimo
-  if (W >= 1024) add("About", "Projects", "spacing", spacing - RHYTHM.tol, spacing + RHYTHM.tol);
-  else add("About", "Projects", "exception", spacing, null);
-
-  // Projects→All projects: el heading "Todos los Proyectos" (bloque del
-  // componente AllProjects) media entre el spacer y el grid #all-projects con
-  // altura variable (tipografía fluida) → sanity de MÍNIMO, nunca exacto.
-  // En portrait lg la última panel del stack suma además su mb-24 (96px).
-  if (gate) {
-    // pin activo: sin umbral (remanente post-pin variable)
-  } else {
-    const min = spacing + (W >= 1024 && !landscape ? RHYTHM.panelMbPortraitLg : 0);
-    add("Projects", "All projects", "spacing", min, null);
+  for (const [pair, from, to] of PAIRS) {
+    const ex = expectedGap(pair, vp);
+    if (!ex) continue; // null → sin expectativa para este par en este viewport
+    const kind = ex.max == null ? "exception" : ex.min === 0 ? "hidden" : "spacing";
+    e.push({ from, to, kind, min: ex.min, max: ex.max ?? null });
   }
-
-  add("All projects", "Pricing", "spacing", spacing - RHYTHM.tol, spacing + RHYTHM.tol);
-  add("Pricing", "Contact", "spacing", spacing - RHYTHM.tol, spacing + RHYTHM.tol);
-  add("Contact", "Footer", "spacing", spacing - RHYTHM.tol, spacing + RHYTHM.tol);
   return e;
 }
 
@@ -170,7 +155,7 @@ for (const vp of viewports) {
 await browser.close();
 
 if (violations.length) {
-  console.error(`\nRHYTHM FAIL [${violations.length}] — gaps fuera del contrato (docs/design/components.md + lib/rhythm.ts):`);
+  console.error(`\nRHYTHM FAIL [${violations.length}] — gaps fuera del contrato (scripts/rhythm-contract.mjs):`);
   for (const v of violations) {
     const range = v.max == null ? `>= ${v.min}` : `${v.min}..${v.max}`;
     console.error(`  ${v.viewport}: ${v.from} → ${v.to} [${v.kind}] medición=${v.measured}px esperado=${range}px`);

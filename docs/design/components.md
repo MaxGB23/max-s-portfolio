@@ -49,32 +49,31 @@ El único componente UI base del sistema. API renovada (no shadcn original): `va
 
 ---
 
-## Ritmo vertical entre secciones (`lib/rhythm.ts` + `components/section-spacing.tsx`)
+## Ritmo vertical entre secciones (`lib/rhythm.ts` + `components/page-spacing.tsx` + `components/section-spacing.tsx`)
 
-Los valores de ritmo viven **tokenizados** en `lib/rhythm.ts` (constantes tipadas con cadenas de clases Tailwind v4): `SECTION_GAP`, `FEATURED_GAP` y `FEATURED_GAP_LG`.
+Los valores de ritmo viven **tokenizados** en `lib/rhythm.ts` (constantes tipadas con cadenas de clases Tailwind v4): `SECTION_GAP`, `FEATURED_GAP`, `FEATURED_GAP_LG` y `PAGE_SPACER_CLASSES`.
 
 Inter-section spacing en una sola fuente: **96px mobile (`h-24`) · 128px ≥768px (`md:h-32`)**, componente `aria-hidden` entre secciones top-level.
 
-**Audit de regresión**: `node scripts/section-spacing.mjs` (dev server en `:3001`) — falla con `exit 1` si cualquier gap gobernado por `SectionSpacing` se sale del contrato (±10px). Los pares con heading intermedio (`Projects → All projects`) usan sanity de mínimo (altura de heading variable); el gap post-pin landscape no se aserta (el pin es dueño de su altura).
+**Contrato por orientación (final)**: la página NO escribe condicionales a mano. `app/page.tsx` consume `PageSpacing` entre cada par de secciones top-level (6 pares) y el componente resuelve el wrapper condicional con el token de `PAGE_SPACER_CLASSES` en `lib/rhythm.ts` — **fuente única** (un par → una cadena de variantes; `""` = sin wrapper) — sobre un `SectionSpacing` `aria-hidden` idéntico. El contrato QA vive en `scripts/rhythm-contract.mjs`: `regime(vp)` replica Tailwind v4 (portrait = width < height; lg = width ≥ 1024; umbrales 768/767) y `expectedGap(pair, viewport)` declara el gap esperado por régimen; las excepciones (Hero, heading intermedio, pin GSAP) están **declaradas en el contrato**, no reportadas como desviaciones.
 
-> [!WARNING]
-> **Estado WIP (referencia `352ab13`)**: la página condiciona los `SectionSpacing` por orientación. Con ese estado el audit reporta **8 desviaciones frente al contrato clásico** (Hero→About=0 en tablet portrait; About→Projects=0 en desktop/wide; Projects→All=183<224 en iPad Pro portrait) — desviaciones **aceptadas en vivo** por decisión del propietario (cada régimen resuelve su propio layout; la última variante ordenada gana). Pendiente: cerrar el contrato por orientación (backlog `rhythm/orientation-contract`) y sincronizar el audit con el nuevo contrato.
+**Audit de regresión**: `node scripts/section-spacing.mjs` (dev server en `:3001`) — aserta cada par contra `expectedGap` y falla con `exit 1` si algún gap se sale del contrato (±10px). Los pares con `null` en el contrato no se asertan (p. ej. `projects-all-projects` tras el pin landscape: el pin GSAP es dueño de su altura). Como el audit importa el mismo contrato que la página, vuelve a verde por construcción: las excepciones por régimen están declaradas, no pendientes.
 
 | Elemento | Valor | Dónde |
 |----------|-------|-------|
-| `SectionSpacing` | `SECTION_GAP` (`h-24` 96px / `md:h-32` 128px) — token de `lib/rhythm.ts` consumido por `components/section-spacing.tsx` | `app/page.tsx`: entre Hero, About, Projects, Pricing y Contact (también antes del Footer). Desde `352ab13` los tres primeros spacers van envueltos en **condicionales de orientación** (tabla abajo) |
+| `SectionSpacing` | `SECTION_GAP` (`h-24` 96px / `md:h-32` 128px) — token de `lib/rhythm.ts` consumido por `components/section-spacing.tsx` | A nivel de página lo consume `PageSpacing` (nuevo componente): wrapper condicional por régimen (`PAGE_SPACER_CLASSES`) + spacer `aria-hidden` (tabla de contrato abajo) |
 | `FEATURED_GAP` | `gap-12` (48px) — token del gap heading↔card del stack featured | Consumido por `featured-project-panel.tsx` desde `748c17e` (className interpolado `${FEATURED_GAP} ${FEATURED_GAP_LG}`) |
 | `FEATURED_GAP_LG` | `[@media(min-width:1280px)_and_(min-height:900px)]:gap-30` (120px) — variante del mismo gap en viewports altos | Ídem: consumido por `featured-project-panel.tsx` desde `748c17e` |
 | **Excepción — Featured** | El stack de proyectos NO usa `SectionSpacing`: en landscape el pin de GSAP es dueño de su altura; el ritmo interno vive en `featured-project-panel.tsx` / `featured-projects.tsx`; el grid vive en `all-projects.tsx`. Fuera del gate (landscape de altura <768px) los paneles fluyen a **altura de contenido** — desde `352ab13` se eliminó `landscape:lg:min-h-screen` |
 | **Excepción — Hero** | Única sección que conserva espaciado grande intencional: mantiene su hueco con el indicador "deslizar" para que About aparezca al hacer scroll — decisión de diseño, no un bug (`docs/features/hero-design.md`) |
 
-**Condicionales WIP (`352ab13`)** — envuelven los `SectionSpacing` de la página para eliminar aire redundante por régimen (el componente queda `aria-hidden`; el wrapper condicional decide si se renderiza):
+**Contrato por régimen (`PAGE_SPACER_CLASSES` en `lib/rhythm.ts`)** — un par → una cadena de variantes (`""` = sin wrapper); el wrapper solo decide `display` (`SectionSpacing` queda `aria-hidden` e idéntico). Los media arbitrarios ganan por orden de CSS ("la última variante ordenada resuelve bien"). Espejo QA: `scripts/rhythm-contract.mjs`.
 
-| Par | Clases del wrapper | Efecto |
-|-----|--------------------|--------|
-| Hero → About | `portrait:md:hidden` | En tablet portrait (≥md) el spacer se oculta: el hero full-viewport ya da el aire |
-| About → Projects | `landscape:lg:hidden landscape:[@media(max-height:768px)]:block` | Oculto en landscape lg alto (deja el siguiente spacer); visible en landscape de altura ≤768px |
-| Projects → AllProjects | `portrait:lg:hidden landscape:lg:hidden landscape:lg:[@media(max-height:767px)]:block` | Oculto en lg (cualquier orientación); visible solo en landscape corto ≤767px |
+| Par | `hero-about` (Hero → About) | `about-projects` (About → Projects) | `projects-all-projects` (Projects → All projects) | `all-projects-pricing` (All projects → Pricing) | `pricing-contact` (Pricing → Contact) | `contact-footer` (Contact → Footer) |
+|-----|-----------------------------|-------------------------------------|---------------------------------------------------|------------------------------------------------|---------------------------------------|--------------------------------------|
+| Clases del wrapper | `portrait:md:hidden` | `landscape:lg:hidden landscape:[@media(max-height:768px)]:block` | `portrait:lg:hidden landscape:lg:hidden landscape:lg:[@media(max-height:767px)]:block` | `""` | `""` | `""` |
+| Se renderiza | Landscape y mobile <md | Landscape lg de altura ≤768px · <lg siempre | Landscape lg de altura ≤767px · <lg siempre | Siempre | Siempre | Siempre |
+| Se oculta | Tablet portrait ≥md (el hero full-viewport ya da el aire) | Landscape lg de altura >768px (el siguiente spacer resuelve) | lg en cualquier orientación con altura >767px; tras el pin landscape manda el flujo del pin | — | — | — |
 
 ### Featured en lg portrait (2 cols sin pin) — ritmo interno
 
@@ -84,7 +83,7 @@ Fuera del gate landscape (portrait lg, ej. iPad Pro), los paneles fluyen en 2 co
 |----------|-------|-------|
 | Título "Proyectos Destacados" → card 1 | overlay `mb-8` + `gap-12` del `panel-content` | **80px** portrait lg y landscape (desde `352ab13`; antes 112px portrait lg con `portrait:lg:mb-16`) |
 | Card → card | `portrait:lg:mb-24` en el `article` | **96px** portrait lg · 0 landscape (el pin lo controla todo) |
-| Última card → "Todos los Proyectos" | `SectionSpacing` a nivel de página entre `FeaturedProjects` y `AllProjects` (condicional WIP: oculto en lg salvo landscape de altura ≤767px) | `SECTION_GAP` 96/128px donde visible · tras el pin landscape el spacer queda oculto y manda el flujo del pin |
+| Última card → "Todos los Proyectos" | `PageSpacing pair="projects-all-projects"` a nivel de página entre `FeaturedProjects` y `AllProjects` (wrapper oculto en lg salvo landscape de altura ≤767px) | `SECTION_GAP` 96/128px donde visible · tras el pin landscape el spacer queda oculto y manda el flujo del pin |
 
 ---
 
@@ -149,6 +148,7 @@ Categoría: **estructurales**. Única fuente del patrón de contenedor de las se
 | Componente | Archivo | Props | Cuándo usarlo |
 |------------|---------|-------|---------------|
 | `Section` | `components/section.tsx` | `as`, `ref`, `id`, `aria-label`, `aria-labelledby`, `className`, `insetClassName`, `debug`, `container`, `innerId`, `innerClassName` | **Estructural** (categoría: estructurales) — shell de contenedor de las secciones top-level; lo usan About, Featured (heading mobile), AllProjects, Pricing y Contact |
+| `PageSpacing` | `components/page-spacing.tsx` | `pair: PageSpacerPair` | Spacer entre secciones top-level con wrapper condicional por régimen (fuente única `lib/rhythm.ts` `PAGE_SPACER_CLASSES`) |
 | `Navbar` | `components/navbar.tsx` | (sin props) | Navegación global; la única pieza con `Button` pill |
 | `HeroSection` | `components/hero-section.tsx` | (sin props) | Hero de la home (Aurora + indicador de scroll inline) |
 | `AboutSection` | `components/about-section.tsx` | (sin props) | Sección "Sobre Mí" (`#sobre-mi`), timeline GSAP |

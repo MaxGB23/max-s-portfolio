@@ -8,7 +8,7 @@ import { PricingSection } from "@/components/pricing-section";
 import { ContactSection } from "@/components/contact-section";
 import { Footer } from "@/components/footer";
 import { ScrollProgress } from "@/components/scroll-progress";
-import { SectionSpacing } from "@/components/section-spacing";
+import { PageSpacing } from "@/components/page-spacing";
 export default function Home() {
   return (
     <main className="min-h-screen bg-background text-foreground overflow-x-hidden">
@@ -16,28 +16,22 @@ export default function Home() {
       <Navbar />
 
       <HeroSection />
-      <div className="portrait:md:hidden ">
-        <SectionSpacing />
-      </div>
+      <PageSpacing pair="hero-about" />
 
       <AboutSection />
-      <div className="landscape:lg:hidden landscape:[@media(max-height:768px)]:block">
-        <SectionSpacing />
-      </div>
+      <PageSpacing pair="about-projects" />
 
       <FeaturedProjects />
-      <div className="portrait:lg:hidden landscape:lg:hidden landscape:lg:[@media(max-height:767px)]:block">
-        <SectionSpacing />
-      </div>
+      <PageSpacing pair="projects-all-projects" />
 
       <AllProjects />
-      <SectionSpacing />
+      <PageSpacing pair="all-projects-pricing" />
 
       <PricingSection />
-      <SectionSpacing />
+      <PageSpacing pair="pricing-contact" />
 
       <ContactSection />
-      <SectionSpacing />
+      <PageSpacing pair="contact-footer" />
 
       <Footer />
     </main>
