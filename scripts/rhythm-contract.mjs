@@ -33,7 +33,7 @@ export function expectedGap(pair, vp) {
     case "featured-card-card":
       if (r.gate) return null;                    // pin dueño de su altura
       if (r.portrait && r.lg) return { min: 96 - T, max: 96 + T };  // portrait:lg:mb-24
-      if (r.landscape && r.lg && vp.height <= 767) return { min: 96 - T, max: 96 + T }; // landscape corto
+      if (r.landscape && r.lg && vp.height <= 768) return { min: 96 - T, max: 96 + T }; // landscape corto (≤768: cubre el píxel exacto 768, testeado en vivo; la gate ≥768 se aserta antes)
       return null;                                 // resto sin asertar
     default:
       return null;
