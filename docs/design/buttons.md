@@ -57,7 +57,7 @@
 ## Tipografía
 
 - Estándar: `text-sm 2xl:text-base font-semibold`.
-- Navbar Contacto conserva `text-[15px] font-medium` (estilo original restaurado) — **deuda**: unificar a estándar al crear el componente base.
+- **Resuelto** (2026-09-21): Navbar Contacto ya usa el componente base `Button` (`variant="primary" shape="pill" size="sm"`) — la deuda `text-[15px] font-medium` ya no existe.
 
 ## Transición y foco
 
@@ -96,7 +96,7 @@ Objetivo: crear componentes base que crezcan con `className` para eliminar micro
 
 1. **Renovar `components/ui/button.tsx`** (shadcn ya instalado y sin uso) con variantes propias: `primary`, `outline`, `accent`, `white`, `inverted` + `shape: pill | rounded` + `size` + passthrough de `className`.
 2. Unificar deudas detectadas:
-   - Navbar `text-[15px] font-medium` → `text-sm 2xl:text-base font-semibold`.
+   - ~~Navbar `text-[15px] font-medium` → estándar~~ (resuelto 2026-09-21: usa el componente base).
    - Products CTA `hover:bg-secondary` → `/5 + /30` (o documentar como excepción dedicada).
    - Decidir el `shadow-md` neutral de Ver Proyectos (mantener como estándar de primary hero o eliminar).
    - `transition-opacity` → `transition-colors` consistente en sólidos.

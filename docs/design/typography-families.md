@@ -262,12 +262,12 @@ Reglas del grafo (2026-09-17): **sin mono** — la familia única del diagrama e
 | Elemento | Familia | Clases (orden real) |
 |----------|---------|---------------------|
 | `h2` "Servicios a medida" | serif | `font-serif font-black uppercase text-fluid-section leading-[0.9] tracking-tighter` |
-| `p` subtítulo header | sans (heredada) | `text-fluid-body max-w-lg lg:max-w-xl leading-relaxed` (contiene la clase malformada `2xl mx-auto`) |
+| `p` subtítulo header | sans (heredada) | `text-fluid-body px-4 sm:px-16 md:px-0 text-content max-w-lg mx-auto leading-relaxed` |
 | Badge "Más popular" | sans (heredada) | `text-xs font-semibold` |
 | `h3` Nombre del plan | serif | `font-serif font-bold text-xl` → **`text-fluid-card`** |
 | Descripción del plan | sans (heredada) | `text-base leading-relaxed` → **`text-fluid-card-body`** |
 | Eyebrow "desde" | sans (heredada) | `text-xs font-medium uppercase tracking-widest` |
-| Precio (`$6,000`) | serif | `font-serif font-black text-5xl leading-none` → **`text-fluid-price`** (**sin tabular-nums**) |
+| Precio (`$6,000`) | serif | `font-serif font-black text-fluid-price leading-none tabular-nums` |
 | Periodo ("MXN · por proyecto") | sans (heredada) | `text-sm` |
 | Lista de características | sans (heredada) | `text-base leading-relaxed` → **`text-fluid-card-body`** (+ iconos Check `size={15}`) |
 | Botón CTA del plan | sans (heredada) | `text-sm font-semibold` |
@@ -301,9 +301,9 @@ Reglas del grafo (2026-09-17): **sin mono** — la familia única del diagrama e
 
 ## Deuda conocida
 
-1. Pricing subtítulo header: clase malformada `2xl mx-auto` (un "2xl" suelto sin selector `text-`) tal cual está en el código.
-2. Pricing precio: `font-serif font-black text-fluid-price leading-none` sin `tabular-nums` (los dígitos pueden no alinear).
-3. Geist Mono no se carga con `next/font`; cae a fallback local.
+1. **Resuelto** (2026-09-21): Pricing subtítulo header — la clase malformada `2xl mx-auto` (un "2xl" suelto sin selector `text-`) ya no existe; el subtítulo real es `text-fluid-body px-4 sm:px-16 md:px-0 text-content max-w-lg mx-auto leading-relaxed`.
+2. **Resuelto** (2026-09-21): Pricing precio — `tabular-nums` añadido a `font-serif font-black text-fluid-price leading-none` (alineación de dígitos).
+3. Geist Mono no se carga con `next/font`; cae a fallback local. Pendiente: cargar con `next/font/google` cuando deje de tocarse `app/layout.tsx` en paralelo.
 4. **Resuelto** (2026-09-14): el footer se recortó a marca + bio + redes + copyright (sin navegación ni reloj en vivo).
 5. Gotcha de desarrollo: cambiоs de tokens `--text-fluid-*` en `@theme` NO hot-reloadan con Turbopack (el navegador sigue sirviendo el CSS viejo). Tras tocar `globals.css` así, reiniciar el dev server con `.next` purgado; verificar con `scripts/type-scale.mjs` (2º incidente confirmado).
 6. **Resuelto** (2026-09-17): contraste de eyebrows con opacidad. Se eliminaron TODAS las opacidades (`/60` y `/70`) y el filtro `brightness-125` de eyebrows/labels; el sistema quedó con el patrón del scroll indicator: `text-muted-foreground` puro (5.62:1 ✓) en todos los eyebrows. Contexto: el `brightness-125` sobre `muted` (6.78:1) era un hack inconsistente — los mismos eyebrows tenían contraste distinto según la sección (6.78:1 hero vs 4.22:1 cards). La jerarquía entre eyebrows y labels se mantiene por tamaño y tracking (eyebrow fluid 15→19px vs stack 12→16px), no por opacidad — "jerarquía por espacio, no por masa". Casos afectados: hero-section (138, 233), about-section (88), project-card (59), featured-project-panel (166), project-detail (563). Queda el `brightness-125` de `featured-project-panel.tsx:105` sobre `text-purple-accent` (palabra en acento, no eyebrow) — fuera de esta normalización. **Excepción deliberada (2026-09-17)**: el label del hero (`hero-section.tsx:138`) lleva `brightness-110` sobre `muted`, añadido a propósito para que el texto resalte sobre el fondo animado de aurora — la única superficie del sitio con movimiento de fondo continuo detrás del texto. No es un hack de contraste sino una decisión de legibilidad sobre animación; el resto de eyebrows mantiene muted puro.

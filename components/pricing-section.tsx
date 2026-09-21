@@ -152,7 +152,7 @@ function PricingCard({ tier }: { tier: PricingTier }) {
         <div className="flex items-end gap-1">
           <span
             className={cn(
-              "font-serif font-black text-fluid-price leading-none",
+              "font-serif font-black text-fluid-price leading-none tabular-nums",
               tier.highlighted ? "text-white" : "text-foreground"
             )}
           >
