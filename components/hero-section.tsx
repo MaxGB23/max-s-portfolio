@@ -188,19 +188,6 @@ export function HeroSection() {
           </div>
         </div>
 
-        {/* Skill chips */}
-        {/* <div className="hero-chips mt-8 flex flex-wrap items-center justify-center gap-2" style={{ opacity: 0, visibility: 'hidden' }}>
-          <span className="px-4 py-1.5 rounded-full border border-border text-xs font-medium text-muted-foreground tracking-wide">
-            Frontend Developer
-          </span>
-          <span
-            className="px-4 py-1.5 rounded-full text-xs font-medium tracking-wide text-white bg-purple-accent"
-          >
-            Full Stack Developer
-          </span>
-        </div> */}
-
-
         {/* CTA buttons */}
         <div className="hero-cta flex flex-wrap items-center justify-center gap-4" style={{ opacity: 0, visibility: 'hidden' }}>
           <Button asChild variant="primary" shape="pill" size="md" className="shadow-md">
