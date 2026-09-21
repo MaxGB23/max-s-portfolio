@@ -22,7 +22,7 @@ export function expectedGap(pair, vp) {
       return { min: spacing };                                            // <lg: heading visible (sanity)
     case "projects-all-projects":
       if (r.landscape && r.lg) return vp.height <= 767
-        ? { min: spacing + 96 - T }                                        // spacer + mb-24 última card; el heading "Todos" (fluido, fuera de #all-projects) suma encima → sanity
+        ? { min: spacing }                                                  // spacer + heading "Todos" (fluido, fuera de #all-projects); last:mb-0 evita que la última card empuje
         : null;                                                           // gate: pin dueño (sin asertar)
       if (r.portrait && r.lg) return { min: 96 };                         // wrapper oculto; manda mb-24 (96)
       return { min: spacing };

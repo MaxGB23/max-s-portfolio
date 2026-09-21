@@ -39,7 +39,7 @@ Convertir los condicionales WIP de `app/page.tsx` (referencia `352ab13`) en un *
 | about-projects | resto (<lg: portrait tablets, mobile, landscape <lg) | `≥ spacing` (heading visible suma altura → sanity) |
 | projects-all-projects | gate GSAP (landscape ≥1024×768) | `null` (el pin es dueño de su altura) |
 | projects-all-projects | portrait lg | `≥ 96` (wrapper oculto; manda mb-24 del panel = 96) |
-| projects-all-projects | landscape lg AND height ≤767 | `≥ spacing+96−tol` (sanity: spacer 128 + mb-24 última card; el heading "Todos" vive FUERA de `#all-projects` y suma altura fluida) |
+| projects-all-projects | landscape lg AND height ≤767 | `≥ spacing` (sanity: spacer 128 + heading "Todos" fluido fuera de `#all-projects`; `last:mb-0` → la última card ya NO empuja) |
 | projects-all-projects | resto (<lg) | `≥ spacing` |
 | all-projects-pricing / pricing-contact / contact-footer | todos | `spacing±10` |
 | featured-card-card | gate GSAP (landscape ≥1024×768) | `null` (el pin es dueño de su altura) |
@@ -81,3 +81,4 @@ Convertir los condicionales WIP de `app/page.tsx` (referencia `352ab13`) en un *
 - [x] T7 … (hecho) — par `featured-card-card` en `scripts/rhythm-contract.mjs` (gate null · portrait lg 96±10 · landscape lg ≤767 96±10 · resto null, añadido antes del `default` sin tocar el fall-through de `all-projects-pricing`/`pricing-contact`/`contact-footer`) + `scripts/section-spacing.mjs` mide y aserta gaps entre `#proyectos article.featured-panel` (labels Card 1→2, Card 2→3; solo con ≥2 cards; mismo formato FAIL)
 - [x] T8 … (hecho) — `docs/design/components.md`: fila Card → card actualizada (96px portrait lg · 96px landscape lg corto ≤767px · 0 dentro del gate) + tabla `Par | Régimen | Esperado` con las 4 filas `featured-card-card` junto al contrato de página y la sección featured
 - [x] **Cobertura nueva (spot check del padre)**: viewport `landscape corto 1280×700` añadido a `scripts/section-spacing.mjs` (el escenario exacto del propietario) → **destapó** que el contrato `projects-all-projects` landscape lg ≤767 era erróneo: medición 318px = card mb 96 + spacer 128 + heading "Todos" ~94 (fuera de `#all-projects`). Corregido a sanity `≥ spacing+96−tol` en `rhythm-contract.mjs` + fila de tabla arriba; cards `featured-card-card` miden 96±10 ✓ en ese viewport. Audit a re-verificar.
+- [x] **Corrección del propietario (last:mb-0)**: el mb-24 de la ÚLTIMA card inflaba featured→all (318 = 96+128+94). Añadido `landscape:lg:[@media(max-height:768px)]:last:mb-0` en `featured-project-panel.tsx` → última card `mb:0`; featured→all ahora **221.8px** (spacer 128 + heading ~94, ritmo limpio); cards siguen a 96/96. Contrato `projects-all-projects` landscape lg ≤767 → `{ min: spacing }` (sanity, sin el fudge +96).

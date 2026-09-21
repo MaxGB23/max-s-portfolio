@@ -81,7 +81,7 @@ Inter-section spacing en una sola fuente: **96px mobile (`h-24`) · 128px ≥768
 |-----|---------|----------|
 | featured-card-card | gate GSAP (landscape ≥1024×768) | `null` (el pin es dueño de su altura) |
 | featured-card-card | portrait lg | `96±10` (`portrait:lg:mb-24` en el `article`) |
-| featured-card-card | landscape lg AND height ≤767 | `96±10` (nuevo: `landscape:lg:[@media(max-height:767px)]:mb-24`) |
+| featured-card-card | landscape lg AND height ≤767 | `96±10` (`landscape:lg:[@media(max-height:767px)]:mb-24`, con `last:mb-0` para que la última card no empuje hacia "Todos los Proyectos") |
 | featured-card-card | resto (mobile, tablets portrait, landscape <lg) | `null` (sin mb por diseño; validado en vivo) |
 
 ### Featured en lg portrait (2 cols sin pin) — ritmo interno
@@ -91,7 +91,7 @@ Fuera del gate landscape (portrait lg, ej. iPad Pro), los paneles fluyen en 2 co
 | Relación | Clase | Valor |
 |----------|-------|-------|
 | Título "Proyectos Destacados" → card 1 | overlay `mb-8` + `gap-12` del `panel-content` | **80px** portrait lg y landscape (desde `352ab13`; antes 112px portrait lg con `portrait:lg:mb-16`) |
-| Card → card | `portrait:lg:mb-24 landscape:lg:[@media(max-height:767px)]:mb-24` en el `article` | **96px** portrait lg · **96px** landscape lg corto (≤767px, sin pin) · 0 dentro del gate |
+| Card → card | `portrait:lg:mb-24 landscape:lg:[@media(max-height:767px)]:mb-24 landscape:lg:[@media(max-height:767px)]:last:mb-0` en el `article` | **96px** portrait lg · **96px** landscape lg corto (≤767px, sin pin) · 0 dentro del gate · la última card NO aporta al gap con "Todos los Proyectos" (`last:mb-0`) |
 | Última card → "Todos los Proyectos" | `PageSpacing pair="projects-all-projects"` a nivel de página entre `FeaturedProjects` y `AllProjects` (wrapper oculto en lg salvo landscape de altura ≤767px) | `SECTION_GAP` 96/128px donde visible · tras el pin landscape el spacer queda oculto y manda el flujo del pin |
 
 ---
