@@ -1,4 +1,4 @@
-# Sistema de diseno - Portfolio de Max Gonzalez Ballesteros
+# Sistema de diseño - Portfolio de Max Gonzalez Ballesteros
 
 > [!NOTE] Estado: CANONICO - canon multi-archivo estilo design.md
 > Fuente de verdad del codigo: `app/globals.css`, `lib/rhythm.ts`,

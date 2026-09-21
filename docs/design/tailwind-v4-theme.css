@@ -4,13 +4,13 @@
  * ============================================================
  * Este archivo es una EXTRACCION de referencia del nucleo de tema
  * de app/globals.css: @theme inline, las variables :root/.dark, el
- * custom variant, la guarda de overflow y el CSS base de diseno.
+ * custom variant, la guarda de overflow y el CSS base de diseño.
  *
  * NO cargar este archivo en el build (no lleva @import 'tailwindcss').
  * NO editar a mano: se regenera desde app/globals.css. Cualquier
  * discrepancia gana app/globals.css (fuente de verdad).
  *
- * Decisiones de diseno conservadas intencionalmente:
+ * Decisiones de diseño conservadas intencionalmente:
  *  - @source not "../docs"  : los docs contienen clases literales
  *    (p. ej. 'bg-[var(...)]') que el scanner de Tailwind convertia en
  *    CSS roto. Se escanea solo el codigo.
@@ -186,7 +186,7 @@ body {
 }
 
 /* ============================================================
-   Base de diseno extraida (misma fuente: app/globals.css)
+   Base de diseño extraida (misma fuente: app/globals.css)
    ============================================================ */
 
 /* Hash landing: cuando la pagina carga con un #fragment (refresh tras un
