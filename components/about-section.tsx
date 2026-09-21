@@ -71,7 +71,7 @@ export function AboutSection() {
       innerClassName="relative z-10 flex flex-col-reverse md:flex-row items-center justify-center w-full max-w-5xl gap-8 md:gap-12 lg:gap-14 xl:gap-16"
     >
       {/* Left Column: Portrait */}
-      <div className="about-portrait debug-l4 relative rounded-4xl shadow-xl aspect-11/9 w-full max-w-[400px] sm:max-w-[440px] mx-auto md:max-w-full md:w-auto md:h-[280px] lg:h-[320px] xl:h-[360px] 2xl:h-[380px] shrink-0 z-0" style={{ opacity: 0, visibility: 'hidden' }}>
+      <div className="about-portrait debug-l4 relative rounded-4xl shadow-xl aspect-11/9 w-full max-w-[400px] sm:max-w-[440px] mx-auto md:mx-0 md:max-w-full md:w-auto md:h-[280px] lg:h-[320px] xl:h-[360px] 2xl:h-[380px] shrink-0 z-0" style={{ opacity: 0, visibility: 'hidden' }}>
         <div className="w-full h-full rounded-4xl overflow-hidden relative">
           <Image
             src="/images/about-max.png"
