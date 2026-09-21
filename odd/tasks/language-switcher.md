@@ -54,6 +54,7 @@ El portfolio es 100% español hardcodeado. Un switch de idioma clásico (detecci
 - Work unit 1 implementada (2026-09-21): infra + navbar + hero. 6 archivos (3 nuevos, 3 modificados). Delegado a writer `general`, gatekeeper OK.
 - Work unit 1 commit: `3d471e0` "feat: add ES/EN language switcher with server-side detection" (7 archivos, 261+/47-).
 - Work unit 2 implementada (2026-09-21): chrome UI de todas las secciones (about, featured/all-projects, panel, products, pricing, contact, footer, project-card, project-detail, project-architecture, [id]/page metadata). 59 claves nuevas (11 common.* + 48 section.*). Delegado a writer `general`, gatekeeper OK.
+- Work unit 3 (2026-09-21, UI ajuste): `language-toggle.tsx` rediseñado a 1 botón tipo switch (patrón DarkModeToggle) con knob deslizante ES/EN, tamaño h-9 w-20 alineado al navbar (antes text-xs). Claves nuevas `nav.aria.switchToEn/switchToEs`. Pendiente verificación visual de desbordamiento del usuario en tablets.
 
 ## Verification evidence
 - Work unit 1: `pnpm build` → exit 0 (13/13); `pnpm exec tsc --noEmit` → exit 0; assess medium/under_budget; spot check OK.

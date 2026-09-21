@@ -11,6 +11,8 @@ const es = {
   'nav.aria.closeMenu': 'Cerrar menú',
   'nav.aria.main': 'Navegación principal',
   'nav.aria.sections': 'Secciones del sitio',
+  'nav.aria.switchToEn': 'Cambiar a inglés',
+  'nav.aria.switchToEs': 'Cambiar a español',
 
   // Hero
   'hero.greeting': 'Hola, soy Max',
@@ -129,6 +131,8 @@ const en = {
   'nav.aria.closeMenu': 'Close menu',
   'nav.aria.main': 'Main navigation',
   'nav.aria.sections': 'Site sections',
+  'nav.aria.switchToEn': 'Switch to English',
+  'nav.aria.switchToEs': 'Switch to Spanish',
 
   'hero.greeting': "Hi, I'm Max",
   'hero.role': 'Full Stack Developer',
