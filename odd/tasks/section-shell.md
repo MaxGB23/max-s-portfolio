@@ -46,8 +46,10 @@ Consistencia estructural: 1 contenedor = 1 decisión. Si mañana el diseño quie
 
 ## Progress
 - [x] T1: Crear `components/section.tsx` con el shell (inset + inner opcional + props) — done, API: `as`, `ref`, `id`, `aria-label/labelledby`, `className`, `insetClassName` (reemplaza), `debug` (default/inverted/none), `container`, `innerId`, `innerClassName`; twMerge ya era dependencia existente
-- [x] T2: Crear `lib/rhythm.ts` con tokens y consumirlos en `section-spacing.tsx` — done: `SECTION_GAP = "h-24 md:h-32"`; `FEATURED_GAP`/`FEATURED_GAP_LG` exportados como referencia canónica (aún inline en featured-project-panel — fuera de scope)
+- [x] T2: Crear `lib/rhythm.ts` con tokens y consumirlos en `section-spacing.tsx` — done: `SECTION_GAP = "h-24 md:h-32"`; `FEATURED_GAP`/`FEATURED_GAP_LG` exportados como referencia canónica; **cableados** en featured-project-panel desde `748c17e` (className `${FEATURED_GAP} ${FEATURED_GAP_LG}`)
 - [x] T3: Refactor de secciones al shell — done: about, pricing, contact, all-projects (heading + grid), heading mobile de featured; pin `#proyectos` full-bleed intacto (verificado byte-identical)
 - [x] T4: Docs actualizadas (`docs/design/components.md` — tabla + sección shell + ritmo cita lib/rhythm.ts)
 
 Verificación: `npx tsc --noEmit` TSC_EXIT=0 (parent spot check + verifier); verificación independiente PASS (clases equivalentes, scope contenido, IDs/aria intactos, sin dependencias nuevas). Caveat informativo: contact-section gana un wrapper div plano (sin cambio visual).
+
+**Desvío WIP (referencia `352ab13`, cambios del propietario en vivo)**: la página envuelve los `SectionSpacing` en condicionales de orientación (Hero→About `portrait:md:hidden`; About→Projects `landscape:lg:hidden` + bloque ≤768px; Projects→AllProjects oculto en lg salvo landscape corto). El audit `scripts/section-spacing.mjs` cae a 8 desviaciones frente al contrato clásico — desviaciones aceptadas en vivo. Backlog: cerrar contrato por orientación (`rhythm/orientation-contract`, obs engram 824) y sincronizar al audit.

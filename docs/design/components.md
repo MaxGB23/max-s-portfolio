@@ -57,13 +57,24 @@ Inter-section spacing en una sola fuente: **96px mobile (`h-24`) · 128px ≥768
 
 **Audit de regresión**: `node scripts/section-spacing.mjs` (dev server en `:3001`) — falla con `exit 1` si cualquier gap gobernado por `SectionSpacing` se sale del contrato (±10px). Los pares con heading intermedio (`Projects → All projects`) usan sanity de mínimo (altura de heading variable); el gap post-pin landscape no se aserta (el pin es dueño de su altura).
 
+> [!WARNING]
+> **Estado WIP (referencia `352ab13`)**: la página condiciona los `SectionSpacing` por orientación. Con ese estado el audit reporta **8 desviaciones frente al contrato clásico** (Hero→About=0 en tablet portrait; About→Projects=0 en desktop/wide; Projects→All=183<224 en iPad Pro portrait) — desviaciones **aceptadas en vivo** por decisión del propietario (cada régimen resuelve su propio layout; la última variante ordenada gana). Pendiente: cerrar el contrato por orientación (backlog `rhythm/orientation-contract`) y sincronizar el audit con el nuevo contrato.
+
 | Elemento | Valor | Dónde |
 |----------|-------|-------|
-| `SectionSpacing` | `SECTION_GAP` (`h-24` 96px / `md:h-32` 128px) — token de `lib/rhythm.ts` consumido por `components/section-spacing.tsx` | `app/page.tsx`: entre Hero, About, Projects, Pricing y Contact (también antes del Footer) |
-| `FEATURED_GAP` | `gap-12` (48px) — token del gap heading↔card del stack featured | **Exportado pero aún inlineado** en `featured-project-panel.tsx` (`panel-content`); cablearlo al token es el siguiente paso (archivo fuera de alcance del refactor del shell) |
-| `FEATURED_GAP_LG` | `[@media(min-width:1280px)_and_(min-height:900px)]:gap-30` (120px) — variante del mismo gap en viewports altos | Ídem: exportado en `lib/rhythm.ts`, inlineado en `featured-project-panel.tsx` |
-| **Excepción — Featured** | El stack de proyectos NO usa `SectionSpacing`: en landscape el pin de GSAP es dueño de su altura; el ritmo interno vive en `featured-project-panel.tsx` / `featured-projects.tsx`; el grid vive en `all-projects.tsx` |
+| `SectionSpacing` | `SECTION_GAP` (`h-24` 96px / `md:h-32` 128px) — token de `lib/rhythm.ts` consumido por `components/section-spacing.tsx` | `app/page.tsx`: entre Hero, About, Projects, Pricing y Contact (también antes del Footer). Desde `352ab13` los tres primeros spacers van envueltos en **condicionales de orientación** (tabla abajo) |
+| `FEATURED_GAP` | `gap-12` (48px) — token del gap heading↔card del stack featured | Consumido por `featured-project-panel.tsx` desde `748c17e` (className interpolado `${FEATURED_GAP} ${FEATURED_GAP_LG}`) |
+| `FEATURED_GAP_LG` | `[@media(min-width:1280px)_and_(min-height:900px)]:gap-30` (120px) — variante del mismo gap en viewports altos | Ídem: consumido por `featured-project-panel.tsx` desde `748c17e` |
+| **Excepción — Featured** | El stack de proyectos NO usa `SectionSpacing`: en landscape el pin de GSAP es dueño de su altura; el ritmo interno vive en `featured-project-panel.tsx` / `featured-projects.tsx`; el grid vive en `all-projects.tsx`. Fuera del gate (landscape de altura <768px) los paneles fluyen a **altura de contenido** — desde `352ab13` se eliminó `landscape:lg:min-h-screen` |
 | **Excepción — Hero** | Única sección que conserva espaciado grande intencional: mantiene su hueco con el indicador "deslizar" para que About aparezca al hacer scroll — decisión de diseño, no un bug (`docs/features/hero-design.md`) |
+
+**Condicionales WIP (`352ab13`)** — envuelven los `SectionSpacing` de la página para eliminar aire redundante por régimen (el componente queda `aria-hidden`; el wrapper condicional decide si se renderiza):
+
+| Par | Clases del wrapper | Efecto |
+|-----|--------------------|--------|
+| Hero → About | `portrait:md:hidden` | En tablet portrait (≥md) el spacer se oculta: el hero full-viewport ya da el aire |
+| About → Projects | `landscape:lg:hidden landscape:[@media(max-height:768px)]:block` | Oculto en landscape lg alto (deja el siguiente spacer); visible en landscape de altura ≤768px |
+| Projects → AllProjects | `portrait:lg:hidden landscape:lg:hidden landscape:lg:[@media(max-height:767px)]:block` | Oculto en lg (cualquier orientación); visible solo en landscape corto ≤767px |
 
 ### Featured en lg portrait (2 cols sin pin) — ritmo interno
 
@@ -71,9 +82,9 @@ Fuera del gate landscape (portrait lg, ej. iPad Pro), los paneles fluyen en 2 co
 
 | Relación | Clase | Valor |
 |----------|-------|-------|
-| Título "Proyectos Destacados" → card 1 | overlay `mb-8 portrait:lg:mb-16` + `gap-12` del `panel-content` | **112px** portrait lg · 80px landscape (solo `mb-8` + `gap-12`) |
+| Título "Proyectos Destacados" → card 1 | overlay `mb-8` + `gap-12` del `panel-content` | **80px** portrait lg y landscape (desde `352ab13`; antes 112px portrait lg con `portrait:lg:mb-16`) |
 | Card → card | `portrait:lg:mb-24` en el `article` | **96px** portrait lg · 0 landscape (el pin lo controla todo) |
-| Última card → "Todos los Proyectos" | `pt-24 lg:landscape:pt-0` en `ProjectsTransition` | **96px** portrait lg · 0 landscape (tras el pin) |
+| Última card → "Todos los Proyectos" | `SectionSpacing` a nivel de página entre `FeaturedProjects` y `AllProjects` (condicional WIP: oculto en lg salvo landscape de altura ≤767px) | `SECTION_GAP` 96/128px donde visible · tras el pin landscape el spacer queda oculto y manda el flujo del pin |
 
 ---
 
@@ -123,7 +134,7 @@ Categoría: **estructurales**. Única fuente del patrón de contenedor de las se
 | `id` / `aria-label` / `aria-labelledby` | `string` | Identidad y relaciones ARIA, preservadas del markup original |
 | `className` | `string` | Clases extra **appendeadas** al elemento externo (layout propio de la sección) |
 | `insetClassName` | `string` | **REEMPLAZA** el inset default (`px-6 md:px-12`): p. ej. `px-6`, `px-6 md:px-8 lg:px-12`. Reemplazo intencional: un override no puede "quitar" `md:px-12` por append |
-| `debug` | `"default" \| "inverted" \| "none"` (default `"default"`) | Ubicación de los markers QA: `default` = l1@outer/l2@inner; `inverted` = l2@outer/l1@inner (bloque "Todos los Proyectos"); `none` = sin markers (heading mobile del featured pin) |
+| `debug` | `"default" \| "inverted" \| "none"` (default `"default"`) | Ubicación de los markers QA: `default` = l1@outer/l2@inner; `inverted` = l2@outer/l1@inner (bloque "Todos los Proyectos"); `none` = sin markers automáticos (heading mobile del featured pin — desde `352ab13` añade `debug-l2` manual por `className` para QA) |
 | `container` | `boolean` (default `true`) | `false` omite el contenedor interno `mx-auto max-w-7xl` (contenido full-bleed) |
 | `innerId` | `string` | `id` del contenedor interno (p. ej. `#all-projects-content`, **contrato del snapshot QA** en `scripts/snapshot-check.mjs`) |
 | `innerClassName` | `string` | Clases extra appendeadas al contenedor interno; los conflictos se resuelven con tailwind-merge (p. ej. `max-w-6xl` reemplaza el `max-w-7xl` default) |
