@@ -144,6 +144,18 @@ Todos son `clamp(min, rem + vw, max)` — base en rems, pendiente en vw (cumple 
 
 > La descripción toma el ancho de la línea más ancha del `h1` (hook `useTitleWidth`, mide los `<span>` del título). Sin "valores mágicos": max-width solo en multi-columna (md+, 768px); en mobile fluye al ancho natural del contenedor.
 
+#### Régimen de altura del hero (2026-09)
+
+El hero tiene dos medias de altura que conviven con el escalón `text-fluid-display` (40→80px por ancho, independiente de altura):
+
+| Variable | Clase | Valor |
+|----------|-------|-------|
+| Padding superior | `pt-22 sm:pt-24 lg:[@media(min-height:700px)]:pt-34 2xl:pt-40` | 88px → 96px → **136px** (lg + altura ≥700) → 160px (2xl ≥1536) |
+| Título en viewport bajo | `lg:[@media(max-height:800px)]:text-6xl` | 60px fijo (solo lg, altura ≤800) |
+| Título en viewport alto | `text-fluid-display` | `clamp(2.5rem, 1.88rem + 3.13vw, 5rem)` — 40→80px por ancho |
+
+> La frontera de 800px produce una discontinuidad: en 801px el display fluido se reanuda y crece con el ancho (≈62px @1024w → 70px @1280w → 80px ≥1600w). Ese fallback nació por un desborde del título en viewports bajos (768px de altura); con los clamps custom ese desborde ya no ocurre, así que su necesidad está **en evaluación** — si la validación en vivo (1280×700, 1366×768, 1920×800) confirma que el hero cabe sin el cap, se elimina y el título queda puramente vw-driven.
+
 ---
 
 ## About (`components/about-section.tsx`)
