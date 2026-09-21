@@ -21,13 +21,13 @@ Dado que el portfolio es una **SPA de una sola ruta** (no hay rutas `/es` o `/en
 
 1. Una **cookie** (`lang`) como fuente de verdad: legible en el **servidor** para el primer render y escribible en el cliente al cambiar de idioma.
 2. Un **React Context** (`LanguageContext`) que expone el idioma activo (inicializado desde el servidor) y la función para cambiarlo.
-3. **`navigator.language`** como fallback de detección automática en el primer acceso (resuelto en el cliente solo cuando no hay cookie).
+3. **`Accept-Language`** como fallback de detección automática en el primer acceso (resuelto en el **servidor** cuando no hay cookie, para cero flash incluso en la primera visita).
 
 > **¿Por qué cookie y no `localStorage`?**
 > `localStorage` no es accesible durante SSR. Si el default del servidor es `'es'`, un usuario con navegador en inglés ve contenido en español que "salta" a inglés después de hidratar (flash de contenido). La cookie viaja en cada request, así que el servidor renderiza directamente en el idioma correcto. Cero parpadeo.
 
 > **¿Por qué no `next-intl`?**
-> `next-intl` está pensado para apps con rutas por idioma (`/es/about`, `/en/about`). Para un portfolio de una sola página añadiría complejidad innecesaria (middleware, configuración de routing, etc.).
+> Aclaración 2026: `next-intl` **sí** soporta este escenario (detección por cookie + `localePrefix: 'never'`, sin rutas `/es`, `/en`). La decisión es de peso, no de capacidad: para 2 idiomas con textos estáticos, la librería añade dependencias y configuración sin beneficio real. Si el portfolio crece (fechas, plurals, `hreflang`, 3+ idiomas), next-intl es el camino; este enfoque casero se queda corto ahí.
 
 ---
 
@@ -38,22 +38,22 @@ El orden de prioridad es:
 ```
 Servidor (primer render):
 1. Cookie 'lang' → si ya eligió antes → renderiza en ese idioma
-
-Cliente (solo si no hay cookie válida):
-2. navigator.language / navigator.languages → preferencia del navegador
+2. Header Accept-Language → preferencia del navegador en el primer acceso
 3. Fallback: 'es' → default si nada coincide
 ```
 
-### Snippet de detección (cliente)
+> **¿Por qué en el servidor y no en el cliente con `navigator.language`?**
+> Si la detección ocurre en un `useEffect` del cliente, un visitante nuevo con navegador en inglés ve `es` renderizado y "salta" a `en` tras hidratar: exactamente el flash que queremos eliminar. `Accept-Language` viaja en cada request, así que el servidor decide antes del primer byte. Cero flash también en la primera visita, sin middleware y sin Vercel.
+
+### Snippet de detección (servidor)
 
 ```ts
-function detectLanguage(): Lang {
-  const browserLang = navigator.language?.slice(0, 2).toLowerCase();
-  return browserLang === 'en' ? 'en' : 'es';
+// Sin cookie: el navegador ya declaró su preferencia en Accept-Language
+// y el servidor la decide ANTES del primer byte.
+function detectLanguage(acceptLanguage: string | null): Lang {
+  return acceptLanguage?.startsWith('en') ? 'en' : 'es';
 }
 ```
-
-> **Vercel no es necesario aquí.** La geolocalización por IP de Vercel (Edge Middleware) requeriría rutas separadas. `navigator.language` da la preferencia del sistema operativo/navegador del usuario, lo cual es suficiente y más preciso.
 
 ---
 
@@ -71,7 +71,7 @@ components/
   language-toggle.tsx       ← Botón ES | EN (nuevo componente)
 
 app/
-  layout.tsx                ← Leer cookie (server) y envolver con <LanguageProvider>
+  layout.tsx                ← Leer cookie + Accept-Language (server) y envolver con <LanguageProvider>
 ```
 
 ---
@@ -81,55 +81,56 @@ app/
 ### 1. `data/translations.ts`
 
 ```ts
-export const translations = {
-  es: {
-    // Navbar
-    'nav.available': 'Disponible para trabajo remoto',
-    'nav.available.short': 'Disponible en remoto',
-    'nav.home': 'Inicio',
-    'nav.about': 'Sobre mí',
-    'nav.projects': 'Proyectos',
-    'nav.pricing': 'Precios',
-    'nav.contact': 'Contacto',
+const es = {
+  // Navbar
+  'nav.available': 'Disponible para trabajo remoto',
+  'nav.available.short': 'Disponible en remoto',
+  'nav.home': 'Inicio',
+  'nav.about': 'Sobre mí',
+  'nav.projects': 'Proyectos',
+  'nav.pricing': 'Precios',
+  'nav.contact': 'Contacto',
 
-    // Hero
-    'hero.greeting': 'Hola, soy Max',
-    'hero.role': 'Full Stack Developer',
-    'hero.cta': 'Ver proyectos',
-    'hero.contact': 'Contacto',
+  // Hero
+  'hero.greeting': 'Hola, soy Max',
+  'hero.role': 'Full Stack Developer',
+  'hero.cta': 'Ver proyectos',
+  'hero.contact': 'Contacto',
 
-    // Agregar secciones según se necesite...
-  },
-  en: {
-    'nav.available': 'Available for remote work',
-    'nav.available.short': 'Available remotely',
-    'nav.home': 'Home',
-    'nav.about': 'About me',
-    'nav.projects': 'Projects',
-    'nav.pricing': 'Pricing',
-    'nav.contact': 'Contact',
-
-    'hero.greeting': "Hi, I'm Max",
-    'hero.role': 'Full Stack Developer',
-    'hero.cta': 'View projects',
-    'hero.contact': 'Contact',
-  },
+  // Agregar secciones según se necesite...
 } as const;
 
-export type Lang = keyof typeof translations;
-
 // Claves tipadas: t('nav.abut') NO compila ✅
-export type TranslationKey = keyof typeof translations['es'];
+export type TranslationKey = keyof typeof es;
+
+const en = {
+  'nav.available': 'Available for remote work',
+  'nav.available.short': 'Available remotely',
+  'nav.home': 'Home',
+  'nav.about': 'About me',
+  'nav.projects': 'Projects',
+  'nav.pricing': 'Pricing',
+  'nav.contact': 'Contact',
+
+  'hero.greeting': "Hi, I'm Max",
+  'hero.role': 'Full Stack Developer',
+  'hero.cta': 'View projects',
+  'hero.contact': 'Contact',
+} as const satisfies Record<TranslationKey, string>;
+
+export const translations = { es, en } as const;
+
+export type Lang = keyof typeof translations;
 ```
 
-> **Type safety garantizada:** `TranslationKey` se deriva de `es`; si `en` llega a quedarse sin alguna clave, el tipo `satisfies` del paso siguiente lo detecta en compilación.
+> **Type safety garantizada:** `TranslationKey` se deriva de `es`; `en` con `satisfies Record<TranslationKey, string>` detecta en compilación tanto una clave faltante como una de más. Añadir una clave a `es` sin traducirla en `en` = error de build. ✅
 
 ### 2. `contexts/language-context.tsx`
 
 ```tsx
 'use client';
 
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useState } from 'react';
 import { translations, type Lang, type TranslationKey } from '@/data/translations';
 
 interface LanguageContextValue {
@@ -149,24 +150,10 @@ export function LanguageProvider({
 }) {
   const [lang, setLangState] = useState<Lang>(initialLang); // ← viene del servidor, sin flash
 
-  // Solo la primera vez: si no había cookie válida, detectar por navegador
-  useEffect(() => {
-    const stored = document.cookie
-      .split('; ')
-      .find((row) => row.startsWith('lang='))
-      ?.split('=')[1];
-
-    if (stored !== 'es' && stored !== 'en') {
-      const browserLang = navigator.language?.slice(0, 2).toLowerCase();
-      const detected: Lang = browserLang === 'en' ? 'en' : 'es';
-      setLangState(detected);
-      document.cookie = `lang=${detected}; path=/; max-age=31536000; samesite=lax`;
-    }
-  }, []);
-
   const setLang = (newLang: Lang) => {
     setLangState(newLang);
-    document.cookie = `lang=${newLang}; path=/; max-age=31536000; samesite=lax`;
+    document.documentElement.lang = newLang; // sincroniza <html lang> con el contenido
+    document.cookie = `lang=${newLang}; path=/; max-age=31536000; samesite=lax; secure`;
   };
 
   const t = (key: TranslationKey): string => translations[lang][key];
@@ -187,7 +174,7 @@ export function useLanguage() {
 
 Puntos clave:
 
-- **Cero flash**: el estado inicial viene del servidor vía `initialLang`.
+- **Cero flash**: el estado inicial viene del servidor vía `initialLang`, y el primer acceso también (`cookie` o `Accept-Language` decididos en el servidor).
 - **Import estático**: sin `require()` — ESM puro, tree-shakeable y lint-friendly.
 - **Claves tipadas**: `t` acepta solo claves existentes; typo = error de compilación.
 - **Cookie compartida**: la misma cookie que lee el servidor escribe el cliente, así ambas partes siempre coinciden.
@@ -195,15 +182,19 @@ Puntos clave:
 ### 3. `app/layout.tsx` (Server Component)
 
 ```tsx
-import { cookies } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 import { LanguageProvider } from '@/contexts/language-context';
-import { translations, type Lang } from '@/data/translations';
+import type { Lang } from '@/data/translations';
 
-// Next 15+: cookies() es asíncrono
+// Next 15+: cookies() y headers() son asíncronos (Next 16 eliminó el acceso síncrono)
 async function getInitialLang(): Promise<Lang> {
   const store = await cookies();
-  const lang = store.get('lang')?.value;
-  return lang === 'es' || lang === 'en' ? lang : 'es';
+  const cookieLang = store.get('lang')?.value;
+  if (cookieLang === 'es' || cookieLang === 'en') return cookieLang;
+
+  // Primer acceso (sin cookie): decidir en el SERVIDOR con Accept-Language → cero flash real
+  const accept = (await headers()).get('accept-language') ?? '';
+  return accept.startsWith('en') ? 'en' : 'es';
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
@@ -219,9 +210,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 }
 ```
 
-Bonus: `<html lang={initialLang}>` ahora refleja el idioma real desde SSR — mejora accesibilidad (screen readers) y SEO sin esfuerzo extra.
-
-> Si tu versión de Next es < 15, `cookies()` es síncrono: `const store = cookies()` sin `await`.
+Bonus: `<html lang={initialLang}>` ahora refleja el idioma real desde SSR — mejora accesibilidad (screen readers) y SEO sin esfuerzo extra. Al cambiar de idioma en el cliente, `setLang` lo mantiene sincronizado.
 
 ### 4. `components/language-toggle.tsx` (nuevo)
 
@@ -324,7 +313,7 @@ export function HeroSection() {
 
 ## Notas y decisiones
 
-- **Cero flash real**: la cookie permite al servidor conocer el idioma antes del primer byte. A diferencia del enfoque con `localStorage`, no hay cambio visible de idioma tras hidratar.
+- **Cero flash real**: cookie + `Accept-Language` deciden el idioma en el servidor antes del primer byte, también en el primer acceso. A diferencia del enfoque con `localStorage` (o con detección `navigator.language` en el cliente), no hay cambio visible de idioma tras hidratar.
 - **Cookie vs `localStorage` tradeoff aceptado**: la cookie añade ~10 bytes al header de cada request. Para un portfolio estático, el beneficio (SSR correcto) supera con creces el costo.
 - **Sin librería extra**: no se instala `next-intl`, `i18next` ni nada externo. Cero dependencias nuevas.
 - **Type-safe end-to-end**: `TranslationKey` derivado de las traducciones hace imposible usar una clave inexistente; añadir una clave nueva sin su traducción falla en compilación.
