@@ -2,7 +2,7 @@
 
 Este documento es la **fuente de verdad** de la tipografía del portfolio: qué familia, qué token, qué tamaño por resolución usa CADA elemento de CADA sección, según el estado actual del código (rama `feat/fluid-typo`, worktree `M:\worktrees\maxgb23-portfolio\fluid-typo`).
 
-Complementa a `typography-system.md` (que es un borrador teórico de sistema); aquí se documenta lo que **realmente** está implementado.
+Complementa a `typography-system.md` ~~(que es un borrador teórico de sistema)~~ *(archivado/eliminado 2026-09-20 — este documento es la única fuente de verdad)*; aquí se documenta lo que **realmente** está implementado.
 
 ---
 

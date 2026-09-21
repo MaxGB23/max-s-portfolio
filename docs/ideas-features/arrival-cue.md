@@ -31,4 +31,4 @@ Replay (segundo clic en el mismo CTA): `classList.remove("arrive")` → forced r
 ## 📁 Archivos
 - `hooks/use-lenis.tsx` — `announceArrival()` + `duration: 1.4`
 - `app/globals.css` — `#contacto.arrive` + keyframes + bloque reduced-motion + scroll-margin
-- `docs/features/arrival-cue.md` — este doc
+- `docs/ideas-features/arrival-cue.md` — este doc

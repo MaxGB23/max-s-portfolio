@@ -1,5 +1,8 @@
 # Plan de Refactorización: Variables de Color a Tailwind Theme
 
+> [!WARNING] **HISTÓRICO — ARCHIVADO (2026-09-20)**
+> Este plan **ya fue aplicado**: no queda ningún `bg-[var(...)]` ni `style={{ color: "var(...)" }}` en `components/`. El tema vive en `@theme inline` de `app/globals.css`. Se conserva como referencia del proceso.
+
 ## Análisis del Problema
 Actualmente, el proyecto utiliza variables CSS nativas inyectadas a través de estilos en línea (ej. `style={{ color: "var(--accent-purple)" }}`) o clases arbitrarias de Tailwind (ej. `bg-[var(--nav-bg)]`). Aunque esto funciona visualmente, trae desventajas en mantenibilidad, escalabilidad y consistencia (no hay IntelliSense ni verificación en el IDE, el código es más verboso de lo necesario).
 

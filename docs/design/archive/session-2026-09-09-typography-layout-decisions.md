@@ -1,5 +1,8 @@
 # Draft — Decisiones de Tipografía y Layout (Sesión 2026-09-09)
 
+> [!WARNING] **HISTÓRICO — ARCHIVADO (2026-09-20)**
+> Este documento es un draft de decisión ya cerrada. La mayoría de sus valores concretos NO coinciden con el código actual (la escala fluida fue recalibrada después: `app/globals.css` es la verdad). Se conserva por su valor de razonamiento: el *porqué* de decisiones aún vigentes (eyebrow kicker, ventana unificada 375→1600, regla grid vs flex, <320 estructural). Para el estado real, ver **[typography-families.md](../typography-families.md)** y **[components.md](../components.md)**.
+
 > **Estado**: DRAFT. Documento de trabajo para consolidar en la versión final de `typography-families.md` / `typography-system.md`. Rama `feat/fluid-typo` (worktree `M:\worktrees\maxgb23-portfolio\fluid-typo`).
 
 ---
