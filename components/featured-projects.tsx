@@ -136,7 +136,7 @@ export function FeaturedProjects() {
         className="debug-l2 flex justify-center lg:hidden"
         innerClassName="flex flex-col items-center text-center"
       >
-        <FadeIn>
+        <FadeIn delayEnter>
           <SectionHeading />
         </FadeIn>
       </Section>
@@ -157,7 +157,7 @@ export function FeaturedProjects() {
             project={project}
             overlay={
               index === 0 ? (
-                <FadeIn>
+                <FadeIn delayEnter>
                   <div id="featured-projects-label" className="debug-l1 flex flex-col items-center text-center">
                     <SectionHeading />
                   </div>

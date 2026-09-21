@@ -40,7 +40,7 @@ export function AllProjects() {
         className="relative text-center"
         innerClassName="flex flex-col items-center text-center"
       >
-        <FadeIn>
+        <FadeIn delayEnter>
           <h2 id="all-projects-heading" className="flex flex-col gap-2 md:gap-3 justify-center items-center font-serif font-black uppercase text-fluid-section leading-[0.9] tracking-tighter text-foreground ">
             <span>Todos los</span>
             <span className="text-purple-accent brightness-110">Proyectos</span>
@@ -55,7 +55,7 @@ export function AllProjects() {
         className="pt-12 lg:pt-16"
         innerId="all-projects-content"
       >
-        <FadeInStagger className="debug-l3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <FadeInStagger delayEnter className="debug-l3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {allProjects.map((project) => (
             <FadeInItem key={project.id}>
               <ProjectCard project={project} />

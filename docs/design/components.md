@@ -98,12 +98,12 @@ Fuera del gate landscape (portrait lg, ej. iPad Pro), los paneles fluyen en 2 co
 
 ## Primitivas de motion (`components/motion-primitives.tsx`)
 
-Motor: **framer-motion** (`^12.0.0`). Viewport compartido `{ once: true, amount: 0.15 }`.
+Motor: **framer-motion** (`^12.0.0`). Viewport por defecto `{ once: true, amount: 0.15 }`. Variante **retrasada** (`delayEnter`) añade `margin: "0px 0px -15% 0px"` (rootMargin): el disparo espera a que el elemento esté ~15% de la altura del viewport dentro de pantalla, mismo ritmo que AboutSection (GSAP `start: "top 85%"`). Se usa en las secciones de proyectos (titulares y grid); contacto/footer conservan el disparo temprano por diseño.
 
 | Export | Props | Uso real |
 |--------|-------|----------|
-| `FadeIn` | `children`, `delay?` (0), `className?`, resto `HTMLMotionProps<"div">` | Footer, FeaturedProjectPanel (`contentWrapper`), SectionHeading, ContactBanner |
-| `FadeInStagger` | `children`, `className?`, `stagger?` (0.1), `delay?` (0.05) | Grid de proyectos |
+| `FadeIn` | `children`, `delay?` (0), `delayEnter?` (false), `className?`, resto `HTMLMotionProps<"div">` | Footer, FeaturedProjectPanel (`contentWrapper`), SectionHeading, ContactBanner — titulares de featured/all-projects con `delayEnter` |
+| `FadeInStagger` | `children`, `className?`, `stagger?` (0.1), `delay?` (0.05), `delayEnter?` (false) | Grid de proyectos (con `delayEnter`) |
 | `FadeInItem` | `children`, `className?` | Cada card del grid (hijo de `FadeInStagger`) |
 | `SlideIn` | `children`, `from?: "left" \| "right"`, `delay?` | **SIN consumidores** (muerto) |
 | `ScaleIn` | `children`, `delay?` | **SIN consumidores** (muerto) |

@@ -20,12 +20,23 @@ import { type ReactNode } from "react";
 // ---------------------------------------------------------------------------
 const VIEWPORT = { once: true, amount: 0.15 } as const;
 
+// Delayed variant: a negative bottom rootMargin waits until the element is
+// ~15% of the viewport height into the screen before animating, matching the
+// GSAP rhythm of AboutSection ("top 85%"): content only reveals once the user
+// has scrolled INTO it, not the instant it peeks from the bottom edge.
+const VIEWPORT_DELAYED = { once: true, amount: 0.15, margin: "0px 0px -15% 0px" } as const;
+
 // Stagger containers can be very tall on mobile (a single-column grid is
 // several thousand px). A %-of-element threshold would force the user to
 // scroll deep into the list before the animation fires. "some" triggers as
 // soon as the container starts entering the viewport, so items animate as
 // they scroll into view instead of appearing long after they were seen.
 const STAGGER_VIEWPORT = { once: true, amount: "some" } as const;
+
+// Delayed variant for stagger containers: same rootMargin delay as
+// VIEWPORT_DELAYED so the cascade starts only once the grid is well inside
+// the viewport instead of at its first pixel.
+const STAGGER_VIEWPORT_DELAYED = { once: true, amount: "some", margin: "0px 0px -15% 0px" } as const;
 
 // ---------------------------------------------------------------------------
 // FadeIn
@@ -43,15 +54,17 @@ interface FadeInProps extends HTMLMotionProps<"div"> {
   children: ReactNode;
   delay?: number;
   as?: keyof typeof motion;
+  /** Wait until the element is ~15% of the viewport height into the screen before animating. */
+  delayEnter?: boolean;
 }
 
-export function FadeIn({ children, delay = 0, className, ...rest }: FadeInProps) {
+export function FadeIn({ children, delay = 0, className, delayEnter = false, ...rest }: FadeInProps) {
   return (
     <motion.div
       variants={fadeInVariants}
       initial="hidden"
       whileInView="visible"
-      viewport={VIEWPORT}
+      viewport={delayEnter ? VIEWPORT_DELAYED : VIEWPORT}
       transition={{ delay }}
       className={className}
       {...rest}
@@ -79,9 +92,11 @@ interface FadeInStaggerProps {
   className?: string;
   stagger?: number;
   delay?: number;
+  /** Wait until the container is ~15% of the viewport height into the screen before starting the cascade. */
+  delayEnter?: boolean;
 }
 
-export function FadeInStagger({ children, className, stagger = 0.1, delay = 0.05 }: FadeInStaggerProps) {
+export function FadeInStagger({ children, className, stagger = 0.1, delay = 0.05, delayEnter = false }: FadeInStaggerProps) {
   const variants: Variants = {
     hidden: {},
     visible: {
@@ -94,7 +109,7 @@ export function FadeInStagger({ children, className, stagger = 0.1, delay = 0.05
       variants={variants}
       initial="hidden"
       whileInView="visible"
-      viewport={STAGGER_VIEWPORT}
+      viewport={delayEnter ? STAGGER_VIEWPORT_DELAYED : STAGGER_VIEWPORT}
       className={className}
     >
       {children}
