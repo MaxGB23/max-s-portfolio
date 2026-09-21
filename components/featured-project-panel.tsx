@@ -52,7 +52,7 @@ export function FeaturedProjectPanel({ project, children, overlay }: FeaturedPro
    */
   return (
     <article
-      className="debug-l4 featured-panel relative flex items-center portrait:lg:mb-24 landscape:lg:[@media(max-height:768px)]:mb-24 landscape:lg:[@media(max-height:768px)]:last:mb-0 w-full px-6 md:px-8 lg:px-12"
+      className="debug-l4 featured-panel relative flex items-center portrait:lg:mb-24 landscape:lg:[@media(max-height:768px)]:mb-24 landscape:lg:[@media(max-height:767px)]:last:mb-0 w-full px-6 md:px-8 lg:px-12"
       data-panel-id={project.id}
       style={{ backgroundColor: project.bgColor }}
       aria-labelledby={`featured-title-${project.id}`}
