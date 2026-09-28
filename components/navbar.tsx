@@ -157,7 +157,7 @@ export function Navbar() {
         </Link>
 
         {/* Desktop nav links */}
-        <nav className="hidden md:flex items-center gap-8" aria-label={t("nav.aria.sections")}>
+        <nav className="hidden nav:flex items-center gap-8" aria-label={t("nav.aria.sections")}>
           {navLinks.map((link) => (
             <Link
               key={link.key}
@@ -177,7 +177,7 @@ export function Navbar() {
         </nav>
 
         {/* Right side: dark mode (hidden) + language + contact */}
-        <div className="hidden md:flex items-center gap-3">
+        <div className="hidden nav:flex items-center gap-3">
           {/* <DarkModeToggle /> */}
           <LanguageToggle />
           <Button asChild variant="primary" shape="pill" size="sm">
@@ -191,7 +191,7 @@ export function Navbar() {
         </div>
 
         {/* Mobile menu button */}
-        <div className="flex md:hidden items-center gap-2">
+        <div className="flex nav:hidden items-center gap-2">
           {/* <DarkModeToggle /> */}
           <LanguageToggle />
           <button
@@ -221,7 +221,7 @@ export function Navbar() {
         {mobileOpen && (
           <motion.div
             id="mobile-menu"
-            className="md:hidden overflow-hidden border-t border-border/50 bg-nav"
+            className="nav:hidden overflow-hidden border-t border-border/50 bg-nav"
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}

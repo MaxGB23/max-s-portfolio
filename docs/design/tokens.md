@@ -220,6 +220,14 @@ Vocabulario del sistema (sin inventar):
 - Gates de media en codigo: `FEATURED_STACK_GATE` en `lib/breakpoints.ts`
   (unica fuente, compartida por GSAP y ScrollRestorer):
   `(min-width: 1024px) and (min-height: 768px) and (orientation: landscape)`.
+- **DEUDA (2026-09-21)**: el navbar usa un breakpoint custom nuevo
+  `--breakpoint-nav: 830px` (token Tailwind v4 en `@theme`, clase `nav:`) para
+  decidir desktop vs movil por ancho de contenido. El contenido en espanol del
+  navbar desktop mide ~767px minimos (badge corto tracking-wider + 4 links +
+  switch + Contacto sm + px-6); 830 deja ~63px de colchon real (medido en vivo
+  2026-09-21). Tradeoff: el iPad Air (820px) queda en modo movil; el iPad Pro
+  11" (834px) ve el navbar completo. Documentar como token de layout del
+  sistema al aprobar la work unit 4 (language-switcher).
 - Escalado de featured a 120px: `>=1280px` de ancho y `>=900px` de alto
   (`FEATURED_GAP_LG`).
 - Hero: `lg:[@media(min-height:700px)]:pt-34` (pad superior alto en pantallas
