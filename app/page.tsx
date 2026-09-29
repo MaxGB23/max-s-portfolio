@@ -14,10 +14,11 @@ export default function Home() {
     <main className="min-h-screen bg-background text-foreground overflow-x-hidden">
       <ScrollProgress />
       <Navbar />
-
+{/* Espaciado deseado, el hero es la unica seccion que inicia con tamaño de viewport */}
       <HeroSection />
       <PageSpacing pair="hero-about" />
 
+{/* Pendiente hacer consistente el flujo about->featured y featured->all-projects, ya que ahora ya no depende del viewport, ahora es una seccion consistente al resto */}
       <AboutSection />
       <PageSpacing pair="about-projects" />
 

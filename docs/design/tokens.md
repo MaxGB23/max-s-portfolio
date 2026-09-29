@@ -175,7 +175,7 @@ El ritmo vertical es un contrato de codigo con fuente unica en
 | Par | Clase |
 |---|---|
 | `hero-about` | `portrait:md:hidden` |
-| `about-projects` | `landscape:lg:hidden landscape:[@media(max-height:768px)]:block` |
+| `about-projects` | (sin wrapper condicional) |
 | `projects-all-projects` | `portrait:lg:hidden landscape:lg:hidden landscape:lg:[@media(max-height:767px)]:block` |
 | `all-projects-pricing` | (sin wrapper condicional) |
 | `pricing-contact` | (sin wrapper condicional) |

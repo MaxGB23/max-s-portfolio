@@ -45,10 +45,9 @@ Rhythm System (predictable, token-based)  ❌  VS  ❌  GSAP Pin (viewport-depen
 
 **Approach**
 - Panels render in **natural document flow** (static layout)
-- Each panel animates on scroll entry: `opacity: 0 → 1`, `translateY: 40px → 0`, `scale: 0.98 → 1`
-- **GSAP `batch()`** for orchestrated stagger (0.12s between panels, 0.08s between internal elements)
-- **Optional subtle parallax**: background layer `yPercent: 15` at `scrub: 0.3` (purely decorative)
-- **Title**: Sticky heading above stack (`position: sticky; top: 0`), fades out when panel 1 enters (`ScrollTrigger` onEnter)
+- Each panel reveals with the site's shared **`FadeIn` primitive** (`opacity` + `translateY(20px)`), triggered when the panel's top crosses 60% of the viewport (`margin: 0px 0px -40% 0px`, `once`) so the reader finishes the previous card before the next appears — same entrance as every section title, for all users (`docs/issues/reduced-motion.md` policy)
+- **Optional subtle parallax**: background layer `yPercent: 15` at `scrub: 0.3` (purely decorative, reduced-motion gated)
+- **Title**: in-flow heading inside `#proyectos` with the standard `FadeIn delayEnter` pattern used by every other section title (sticky variant discarded in QA: overlapped About on desktop, faded too early, left an empty band)
 - **CSS scroll-driven animations** for simple reveals where GSAP adds no value
 
 **Why this wins**
@@ -194,13 +193,13 @@ git checkout -b feat/featured-static-expand       # Variant E
 - `components/featured-projects.tsx` — main orchestrator
 - `components/featured-project-panel.tsx` — panel internals
 - `lib/breakpoints.ts` — may simplify/remove `FEATURED_STACK_GATE`
-- `lib/rhythm.ts` — verify tokens work unchanged
+- `lib/rhythm.ts` — `about-projects` wrapper retirado (el título vive dentro de `#proyectos`)
 - `hooks/use-lenis.tsx` — remove `PIN_MEDIA` / scroll restorer pin logic
 - `data/projects.ts` — no changes (data source unchanged)
 - `data/translations.ts` — no changes
 
 ### GSAP Patterns to Reference
-- `gsap.batch()` — staggered reveals
+- ~~`gsap.batch()`~~ — NO existe en GSAP 3.14 core (error real en `d5d8387`); el reveal final usa la primitiva compartida `FadeIn`
 - `ScrollTrigger` — `start: "top 85%"`, `toggleActions: "play none none reverse"`
 - `gsap.timeline()` — orchestration
 - `ScrollTrigger.matchMedia()` — responsive enable/disable (if needed)
