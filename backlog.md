@@ -46,13 +46,13 @@ Rhythm System (predictable, token-based)  ❌  VS  ❌  GSAP Pin (viewport-depen
 **Approach**
 - Panels render in **natural document flow** (static layout)
 - Each panel reveals with the site's shared **`FadeIn` primitive** (`opacity` + `translateY(20px)`), triggered when the panel's top crosses 60% of the viewport (`margin: 0px 0px -40% 0px`, `once`) so the reader finishes the previous card before the next appears — same entrance as every section title, for all users (`docs/issues/reduced-motion.md` policy)
-- **Optional subtle parallax**: background layer `yPercent: 15` at `scrub: 0.3` (purely decorative, reduced-motion gated)
+- **Parallax: removed after QA** (in-frame `yPercent: 15` without overscan made images "sink" on desktop 2-col; the section is GSAP-free)
 - **Title**: in-flow heading inside `#proyectos` with the standard `FadeIn delayEnter` pattern used by every other section title (sticky variant discarded in QA: overlapped About on desktop, faded too early, left an empty band)
 - **CSS scroll-driven animations** for simple reveals where GSAP adds no value
 
 **Why this wins**
 - Rhythm system intact — spacing = design tokens
-- ~15 lines GSAP vs ~50 current
+- Zero GSAP vs ~50 current
 - Full accessibility, zero CLS
 - Extensible: add projects without touching animation code
 

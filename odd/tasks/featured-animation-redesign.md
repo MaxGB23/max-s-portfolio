@@ -14,11 +14,11 @@ Replace the GSAP pin-based stacking animation with a scroll-reactive animation t
 ## Success Criteria
 - [x] Section spacing governed **exclusively** by `lib/rhythm.ts` tokens
 - [x] Zero media queries for spacing fixes
-- [x] `prefers-reduced-motion` respected per site policy (`docs/issues/reduced-motion.md`): entrances play for everyone like every `FadeIn`; parallax gated off under `reduce`
+- [x] `prefers-reduced-motion` respected per site policy (`docs/issues/reduced-motion.md`): entrances play for everyone like every `FadeIn`; no gated motion left in the section (parallax removed after QA)
 - [ ] Lighthouse CLS = 0 on mobile/desktop
 - [ ] Adding a 4th project = data entry only (no animation recalculation)
 - [ ] Visual impact ≥ current (staggered reveal + micro-interactions)
-- [x] GSAP lines of code reduced by ≥60% (now ~15 decorative-only parallax lines; reveal/title moved to shared primitives)
+- [x] GSAP lines of code reduced by ≥60% (**zero GSAP in the section**: reveal/title = shared primitives; decorative parallax removed after QA)
 
 ## Variants (Branches)
 | Variant | Branch | Status |
@@ -35,6 +35,7 @@ Reported by owner after testing on `:3001`:
 2. **Heading overlapped About on desktop** — `PAGE_SPACER_CLASSES["about-projects"]` was `landscape:lg:hidden` (pin-era: the title lived inside panel 1 on lg+) and the new heading added `-mt-12 lg:-mt-16`. Fix: heading moved inside `#proyectos`, wrapper retired to `""`.
 3. **Heading faded too early + empty band** — fade trigger `firstPanel top 85%` fired almost immediately; `opacity: 0` kept occupying space; the `sticky` was a no-op (parent = FadeIn wrapper with zero travel + `main overflow-x-hidden` scrollport). Fix: all three removed; heading is standard in-flow `FadeIn delayEnter`.
 4. **Next card revealed too early** — triggers fired at the viewport edge. Fix: reveal margin `-40%` (panel top crosses 60% of viewport).
+5. **Images "sank" with scroll** — the decorative parallax (`yPercent: 15`, no overscan on a `fill` image) drifted the photo down inside its frame as you scrolled; very noticeable on desktop 2-col vs the static text column. Decision (owner): **remove the parallax** — the section is now GSAP-free.
 
 ## Implementation Tasks (Variant A)
 
@@ -56,9 +57,9 @@ Reported by owner after testing on `:3001`:
 - [x] Deleted the whole custom GSAP reveal (initial `gsap.set` + 4 triggers per panel; `gsap.batch()` does not exist in GSAP 3.14 core — see `d5d8387`)
 - [x] Entrance plays for all users per `docs/issues/reduced-motion.md` policy (consistent with every other title)
 
-### Task 4: Optional subtle parallax (decorative only)
-- [x] Background layer `yPercent: 15` at `scrub: 0.3` (purely decorative)
-- [x] Guard with `prefers-reduced-motion` media query
+### Task 4: Optional subtle parallax (decorative only) — REMOVED after QA
+- [x] Implemented, then removed on owner decision: in-frame drift without overscan read as the image "sinking" (desktop 2-col showed it hardest); section is now GSAP-free
+- [x] `featured-panel-bg` targeting class removed from `featured-project-panel.tsx`
 
 ### Task 5: Title behavior (v2) - in-flow like every other section title
 - [x] Heading lives inside `#proyectos` (also the `aria-labelledby` target — `sr-only` duplicate removed)
@@ -86,11 +87,19 @@ Reported by owner after testing on `:3001`:
 - [x] QA mirror `scripts/rhythm-contract.mjs`: `about-projects` now asserts `spacing±10` in all regimes (heading is inside `#proyectos`, so the measured gap is only the spacer)
 - [x] Synced canon: `docs/design/tokens.md`, `docs/design/components.md`, `odd/tasks/orientation-contract.md`, stale comment in `components/section-spacing.tsx`
 
+### Task 8c: Restore rhythm for featured→all-projects (owner QA comment)
+- [x] `lib/rhythm.ts`: `projects-all-projects` wrapper retired (`""`) — featured now spacing-consistent on both sides
+- [x] QA mirror: uniform `min: spacing` sanity (the measured gap includes the "Todos" heading, which lives outside `#all-projects`); stale `gate/pin` null case removed
+- [x] Synced canon: `docs/design/tokens.md`, `docs/design/components.md`, `odd/tasks/orientation-contract.md`; resolved the pending comment in `app/page.tsx`
+
+### Task 8d: Last panel yields bottom padding (owner QA)
+- [x] Last panel renders `pt-12 lg:pt-20` instead of `py-12 lg:py-20` (`isLast` prop) — the page-level `SECTION_GAP` owns the exit; no more double spacing (panel pb + spacer)
+
 ### Task 9: Verify rhythm compliance (PENDING - manual QA)
 - [ ] Visual diff: no overlap About↔title on desktop; section gaps match `lib/rhythm.ts` tokens at 320px, 768px, 1024px, 1440px, 1920px
 - [ ] Rhythm audit: dev server on `:3001` → `node scripts/section-spacing.mjs` → **RHYTHM OK**
 - [ ] Reveal timing: next card starts appearing only when its top crosses 60% of the viewport (tune `-40%` live if needed)
-- [ ] `prefers-reduced-motion` ON: cards + titles fade identically, parallax off, layout intact
+- [ ] `prefers-reduced-motion` ON: cards + titles fade identically, no parallax in section, layout intact
 - [ ] Test: 125% OS scaling, 150% zoom, iPad Pro (1024×1366), ultra-wide (3440×1440), short laptop (1366×768)
 - [ ] Lighthouse mobile: CLS=0, TBT<100ms
 - [ ] Add 4th project to `data/projects.ts` → verify no animation code changes needed
@@ -107,8 +116,8 @@ Reported by owner after testing on `:3001`:
 - All tasks direct **inline** (parent orchestrator): one non-trivial file (`components/featured-projects.tsx`, fully specified by the approved plan) + mechanical single-line/mirror edits; full file context already loaded — delegating would only re-transfer it. Writer trigger NOT fired (1 non-trivial file); mirror/docs edits mechanical.
 
 ## Files Touched
-- `components/featured-projects.tsx` — main orchestrator (FadeIn reveal + in-flow heading + decorative parallax)
-- `components/featured-project-panel.tsx` — panel internals (natural flow, rhythm spacing, parallax class)
+- `components/featured-projects.tsx` — main orchestrator (FadeIn reveal + in-flow heading, GSAP-free)
+- `components/featured-project-panel.tsx` — panel internals (natural flow, rhythm spacing, `isLast` yields bottom padding)
 - `lib/breakpoints.ts` — deprecated `FEATURED_STACK_GATE`
 - `hooks/use-lenis.tsx` — simplified ScrollRestorer (no pin watchdog)
 - `lib/rhythm.ts` — `about-projects` wrapper retired (`""`)
@@ -128,6 +137,5 @@ All success criteria met + Variant A evaluation checklist ≥ 27/30 weighted sco
 2. `node scripts/section-spacing.mjs` → RHYTHM OK
 3. Run evaluation checklist (backlog.md lines 166-187)
 4. **Pre-merge: flip `LAYOUT_DEBUG` back to `false` in `app/layout.tsx`** (committed `true` for QA)
-5. Pending (owner comment in `app/page.tsx`): retire the `projects-all-projects` wrapper so featured→all-projects matches the rest of the rhythm
-6. If all criteria pass → merge `feat/featured-stagger-reveal` to main
-7. After merge → unblock navbar CTA separation + active state (see backlog.md Deferred section)
+5. If all criteria pass → merge `feat/featured-stagger-reveal` to main
+6. After merge → unblock navbar CTA separation + active state (see backlog.md Deferred section)

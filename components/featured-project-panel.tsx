@@ -25,9 +25,11 @@ export interface FeaturedProject {
 interface FeaturedProjectPanelProps {
   project: FeaturedProject;
   children?: React.ReactNode;
+  /** Last panel: top-only padding — the page-level SECTION_GAP owns the exit. */
+  isLast?: boolean;
 }
 
-export function FeaturedProjectPanel({ project, children }: FeaturedProjectPanelProps) {
+export function FeaturedProjectPanel({ project, children, isLast = false }: FeaturedProjectPanelProps) {
   const { t } = useLanguage();
 
   // Extract last word for the purple accent styling
@@ -42,7 +44,11 @@ export function FeaturedProjectPanel({ project, children }: FeaturedProjectPanel
       style={{ backgroundColor: project.bgColor }}
       aria-labelledby={`featured-title-${project.id}`}
     >
-      <div className={`debug-l1 panel-content w-full max-w-7xl mx-auto flex flex-col ${FEATURED_GAP} ${FEATURED_GAP_LG} py-12 lg:py-20`}>
+      <div
+        className={`debug-l1 panel-content w-full max-w-7xl mx-auto flex flex-col ${FEATURED_GAP} ${FEATURED_GAP_LG} ${
+          isLast ? "" : "pb-12 lg:pb-20"
+        }`}
+      >
         <div className="flex flex-col justify-center">
           {children && (
             <div className="w-full mb-12 md:mb-16">
@@ -126,7 +132,7 @@ export function FeaturedProjectPanel({ project, children }: FeaturedProjectPanel
                     src={project.image}
                     alt={project.imageAlt}
                     fill
-                    className="featured-panel-bg object-cover"
+                    className="object-cover"
                     sizes="(max-width: 1024px) 100vw, 50vw"
                     priority={project.index === 1}
                   />
