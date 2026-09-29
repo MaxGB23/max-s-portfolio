@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="100%" height="100%">
+  <defs>
+    <style>
+      .light { fill: #b967f0; }
+      .dark { fill: #9c28e8; }
+    </style>
+  </defs>
+  <g transform="translate(100, 95)">
+    
+    <!-- Grupo Superior -->
+    <!-- Desplazado ligeramente hacia arriba para crear el espacio negativo -->
+    <g transform="translate(0, -5)">
+      <polygon class="light" points="-50,-86.603 50,-86.603 0,0" />
+      <polygon class="dark" points="0,0 100,0 50,-86.603" />
+    </g>
+
+    <!-- Grupo Inferior Izquierdo -->
+    <!-- Desplazado hacia abajo y a la izquierda -->
+    <g transform="translate(-4.33, 2.5)">
+      <polygon class="light" points="0,0 50,86.603 -50,86.603" />
+      <polygon class="dark" points="0,0 100,0 50,86.603" />
+    </g>
+
+    <!-- Grupo Inferior Derecho -->
+    <!-- Desplazado hacia abajo y a la derecha -->
+    <g transform="translate(4.33, 2.5)">
+      <polygon class="dark" points="50,86.603 150,86.603 100,0" />
+      <polygon class="light" points="50,86.603 150,86.603 100,173.205" />
+    </g>
+    
+  </g>
+</svg>
