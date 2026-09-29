@@ -28,6 +28,10 @@ const brandSlug: Record<string, string> = {
   CSS3: "css3.svg",
   "Inertia.js": "inertia.svg",
   "ML-Agents": "ml-agents.svg",
+  Verified: "verified.svg",
+  "Terminal UI": "terminal.svg",
+  "Open VSX": "open-vsx.svg",
+  Zed: "zed.svg",
 }
 
 interface StackIconProps {
