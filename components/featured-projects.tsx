@@ -80,65 +80,69 @@ export function FeaturedProjects() {
         });
       }
 
-      // Staggered reveal using gsap.batch()
-      // Respects prefers-reduced-motion via toggleActions
+      // Staggered reveal: one ScrollTrigger per panel with index-based delay
       const panels = gsap.utils.toArray<HTMLElement>(".featured-panel");
 
       if (panels.length > 0) {
-        // Initial state for panels (will be animated by batch)
+        // Initial state (will be animated on enter)
         gsap.set(panels, {
           opacity: prefersReducedMotion ? 1 : 0,
           y: prefersReducedMotion ? 0 : 40,
           scale: prefersReducedMotion ? 1 : 0.98,
         });
 
-        // Batch for orchestrated stagger
-        gsap.batch(".featured-panel", {
-          interval: 0.12, // 120ms between panels
-          batchMax: 3,
-          onEnter: (batchElements) => {
-            gsap.to(batchElements, {
-              opacity: 1,
-              y: 0,
-              scale: 1,
-              duration: 0.8,
-              ease: "expo.out",
-              stagger: 0.08, // 80ms between internal elements
-            });
-          },
-          onLeave: (batchElements) => {
-            // Optional: reset when scrolling back up past trigger
-            gsap.to(batchElements, {
-              opacity: prefersReducedMotion ? 1 : 0,
-              y: prefersReducedMotion ? 0 : 40,
-              scale: prefersReducedMotion ? 1 : 0.98,
-              duration: 0.5,
-              ease: "power2.in",
-            });
-          },
-          onEnterBack: (batchElements) => {
-            gsap.to(batchElements, {
-              opacity: 1,
-              y: 0,
-              scale: 1,
-              duration: 0.8,
-              ease: "expo.out",
-              stagger: 0.08,
-            });
-          },
-          onLeaveBack: (batchElements) => {
-            gsap.to(batchElements, {
-              opacity: prefersReducedMotion ? 1 : 0,
-              y: prefersReducedMotion ? 0 : 40,
-              scale: prefersReducedMotion ? 1 : 0.98,
-              duration: 0.5,
-              ease: "power2.in",
-            });
-          },
-          // ScrollTrigger config for each batched element
-          start: "top 85%",
-          end: "bottom 20%",
-          once: false, // Allow re-animation on scroll back
+        // Create a ScrollTrigger for each panel with staggered delay
+        panels.forEach((panel, index) => {
+          const delay = index * 0.12; // 120ms between panels
+
+          ScrollTrigger.create({
+            trigger: panel,
+            start: "top 85%",
+            end: "bottom 20%",
+            onEnter: () => {
+              gsap.to(panel, {
+                opacity: 1,
+                y: 0,
+                scale: 1,
+                duration: 0.8,
+                ease: "expo.out",
+                delay,
+              });
+            },
+            onLeave: () => {
+              if (!prefersReducedMotion) {
+                gsap.to(panel, {
+                  opacity: 0,
+                  y: 40,
+                  scale: 0.98,
+                  duration: 0.5,
+                  ease: "power2.in",
+                });
+              }
+            },
+            onEnterBack: () => {
+              gsap.to(panel, {
+                opacity: 1,
+                y: 0,
+                scale: 1,
+                duration: 0.8,
+                ease: "expo.out",
+                delay,
+              });
+            },
+            onLeaveBack: () => {
+              if (!prefersReducedMotion) {
+                gsap.to(panel, {
+                  opacity: 0,
+                  y: 40,
+                  scale: 0.98,
+                  duration: 0.5,
+                  ease: "power2.in",
+                });
+              }
+            },
+            once: false, // Allow re-animation on scroll back
+          });
         });
       }
 
