@@ -22,7 +22,7 @@ export function LanguageToggle() {
         size="sm"
         onClick={() => setLang(isEs ? "en" : "es")}
         aria-label={label}
-        className="hidden sm:inline-flex shrink-0"
+        className="hidden sm:inline-flex shrink-0 hover:border-purple-accent/15 border-purple-accent/15"
       >
         {isEs ? "ES" : "EN"}
       </Button>
@@ -34,7 +34,7 @@ export function LanguageToggle() {
         size="compact"
         onClick={() => setLang(isEs ? "en" : "es")}
         aria-label={label}
-        className="inline-flex shrink-0 sm:hidden"
+        className="inline-flex shrink-0 sm:hidden hover:border-purple-accent/15 border-purple-accent/15"
       >
         {isEs ? "ES" : "EN"}
       </Button>
