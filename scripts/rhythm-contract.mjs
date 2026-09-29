@@ -18,11 +18,7 @@ export function expectedGap(pair, vp) {
     case "about-projects":
       return { min: spacing - T, max: spacing + T };                 // "" → spacer estandar (el titulo vive dentro de #proyectos)
     case "projects-all-projects":
-      if (r.landscape && r.lg) return vp.height <= 767
-        ? { min: spacing }                                                  // spacer + heading "Todos" (fluido, fuera de #all-projects); last:mb-0 evita que la última card empuje
-        : null;                                                           // gate: pin dueño (sin asertar)
-      if (r.portrait && r.lg) return { min: 96 };                         // wrapper oculto; manda mb-24 (96)
-      return { min: spacing };
+      return { min: spacing };                            // "" → spacer estandar; el gap medido incluye el heading "Todos" (vive fuera de #all-projects, sanity min)
     case "all-projects-pricing":
     case "pricing-contact":
     case "contact-footer":

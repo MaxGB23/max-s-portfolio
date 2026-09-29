@@ -18,7 +18,6 @@ export default function Home() {
       <HeroSection />
       <PageSpacing pair="hero-about" />
 
-{/* Pendiente hacer consistente el flujo about->featured y featured->all-projects, ya que ahora ya no depende del viewport, ahora es una seccion consistente al resto */}
       <AboutSection />
       <PageSpacing pair="about-projects" />
 

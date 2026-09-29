@@ -34,10 +34,7 @@ Convertir los condicionales WIP de `app/page.tsx` (referencia `352ab13`) en un *
 | hero-about | portrait width ≥768 | `0..10` (wrapper `portrait:md:hidden`) |
 | hero-about | resto (landscape / mobile) | `≥ spacing` (excepción Hero: sanity, nunca exacto) |
 | about-projects | todos | `spacing±10` (wrapper retirado por la feature featured-animation-redesign: el título vive dentro de `#proyectos`, el gap es solo el spacer) |
-| projects-all-projects | gate GSAP (landscape ≥1024×768) | `null` (el pin es dueño de su altura) |
-| projects-all-projects | portrait lg | `≥ 96` (wrapper oculto; manda mb-24 del panel = 96) |
-| projects-all-projects | landscape lg AND height ≤767 | `≥ spacing` (sanity: spacer 128 + heading "Todos" fluido fuera de `#all-projects`; `last:mb-0` → la última card ya NO empuja) |
-| projects-all-projects | resto (<lg) | `≥ spacing` |
+| projects-all-projects | todos | `≥ spacing` (wrapper retirado por la feature featured-animation-redesign: spacer estándar + heading "Todos" que vive fuera de `#all-projects` suma altura → sanity min) |
 | all-projects-pricing / pricing-contact / contact-footer | todos | `spacing±10` |
 | featured-card-card | gate GSAP (landscape ≥1024×768) | `null` (el pin es dueño de su altura) |
 | featured-card-card | portrait lg | `96±10` (`portrait:lg:mb-24` en el `article`) |

@@ -39,8 +39,7 @@ export type PageSpacerPair =
 export const PAGE_SPACER_CLASSES: Record<PageSpacerPair, string> = {
   "hero-about": "portrait:md:hidden",
   "about-projects": "",
-  "projects-all-projects":
-    "portrait:lg:hidden landscape:lg:hidden landscape:lg:[@media(max-height:767px)]:block",
+  "projects-all-projects": "",
   "all-projects-pricing": "",
   "pricing-contact": "",
   "contact-footer": "",
