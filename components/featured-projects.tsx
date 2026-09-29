@@ -1,11 +1,10 @@
 "use client";
 
-import { useLayoutEffect, useRef } from "react";
+import { useLayoutEffect, useRef, useEffect, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { FeaturedProjectPanel, type FeaturedProject } from "@/components/featured-project-panel";
 import { FadeIn } from "@/components/motion-primitives";
-import { FEATURED_STACK_GATE } from "@/lib/breakpoints";
 import { getFeaturedProjects } from "@/data/projects";
 import { Section } from "@/components/section";
 import { useLanguage } from "@/contexts/language-context";
@@ -29,7 +28,7 @@ const featuredProjects: FeaturedProject[] = getFeaturedProjects()
   }));
 
 // ---------------------------------------------------------------------------
-// SectionHeading - "Proyectos Destacados" block, rendered in two variants
+// SectionHeading - "Proyectos Destacados" block
 // ---------------------------------------------------------------------------
 function SectionHeading() {
   const { t } = useLanguage();
@@ -42,130 +41,157 @@ function SectionHeading() {
 }
 
 // ---------------------------------------------------------------------------
-// FeaturedProjects - the GSAP stacking stack (pin owns its height)
+// FeaturedProjects - Staggered Reveal on Scroll (Variant A)
 // ---------------------------------------------------------------------------
 export function FeaturedProjects() {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+
+  // Detect prefers-reduced-motion on mount
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setPrefersReducedMotion(mediaQuery.matches);
+    const handler = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
+    mediaQuery.addEventListener("change", handler);
+    return () => mediaQuery.removeEventListener("change", handler);
+  }, []);
 
   useLayoutEffect(() => {
     if (!sectionRef.current) return;
     gsap.registerPlugin(ScrollTrigger);
 
-    // Scope = DOM element (not the ref object): GSAP warns "Invalid scope"
-    // when the ref's .current is null at selector-resolution time (HMR /
-    // matchMedia re-runs in dev). An element is always resolvable.
+    // Scope = DOM element for HMR safety
     const ctx = gsap.context(() => {
-      const mm = gsap.matchMedia();
+      // Sticky heading fade-out logic
+      const heading = document.getElementById("featured-sticky-heading");
+      const firstPanel = document.querySelector<HTMLElement>(".featured-panel");
 
-      // Stacking animation is landscape desktop editorial only: it needs enough
-      // BOTH width (lg+, 1024px) and height (768px+) so the in-flow heading and
-      // the full two-column card fit the pinned viewport, and landscape
-      // orientation (a 1024x1366 iPad Pro portrait would otherwise activate the
-      // pin and buy a ~2300px scroll spacer between featured and the grid).
-      // Outside that range the panels render in normal flow — each card (CTA
-      // included) fully visible with native scroll, no jank, no overlap.
-      mm.add(FEATURED_STACK_GATE, () => {
-        const panels = gsap.utils.toArray<HTMLElement>(".featured-panel");
-        if (panels.length === 0) return;
-
-        // Container setup
-        gsap.set(".featured-section", {
-          height: "100vh",
-          overflow: "hidden",
-          position: "relative"
+      if (heading && firstPanel) {
+        ScrollTrigger.create({
+          trigger: firstPanel,
+          start: "top 85%",
+          end: "bottom top",
+          onEnter: () => {
+            gsap.to(heading, { opacity: 0, duration: 0.4, ease: "power2.out" });
+          },
+          onLeaveBack: () => {
+            gsap.to(heading, { opacity: 1, duration: 0.4, ease: "power2.out" });
+          },
         });
+      }
 
-        // Panels setup
+      // Staggered reveal using gsap.batch()
+      // Respects prefers-reduced-motion via toggleActions
+      const panels = gsap.utils.toArray<HTMLElement>(".featured-panel");
+
+      if (panels.length > 0) {
+        // Initial state for panels (will be animated by batch)
         gsap.set(panels, {
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100vh",
-          zIndex: (i) => i
+          opacity: prefersReducedMotion ? 1 : 0,
+          y: prefersReducedMotion ? 0 : 40,
+          scale: prefersReducedMotion ? 1 : 0.98,
         });
 
-        gsap.set(panels.slice(1), { yPercent: 100 });
-
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: ".featured-section",
-            start: "top top",
-            // Make the scroll distance dependent on the number of transitions (-1)
-            // and reduce it slightly to 80% per panel so it feels a bit faster
-            end: `+=${(panels.length - 1) * 80}%`,
-            pin: true,
-            scrub: true,
-          }
+        // Batch for orchestrated stagger
+        gsap.batch(".featured-panel", {
+          interval: 0.12, // 120ms between panels
+          batchMax: 3,
+          onEnter: (batchElements) => {
+            gsap.to(batchElements, {
+              opacity: 1,
+              y: 0,
+              scale: 1,
+              duration: 0.8,
+              ease: "expo.out",
+              stagger: 0.08, // 80ms between internal elements
+            });
+          },
+          onLeave: (batchElements) => {
+            // Optional: reset when scrolling back up past trigger
+            gsap.to(batchElements, {
+              opacity: prefersReducedMotion ? 1 : 0,
+              y: prefersReducedMotion ? 0 : 40,
+              scale: prefersReducedMotion ? 1 : 0.98,
+              duration: 0.5,
+              ease: "power2.in",
+            });
+          },
+          onEnterBack: (batchElements) => {
+            gsap.to(batchElements, {
+              opacity: 1,
+              y: 0,
+              scale: 1,
+              duration: 0.8,
+              ease: "expo.out",
+              stagger: 0.08,
+            });
+          },
+          onLeaveBack: (batchElements) => {
+            gsap.to(batchElements, {
+              opacity: prefersReducedMotion ? 1 : 0,
+              y: prefersReducedMotion ? 0 : 40,
+              scale: prefersReducedMotion ? 1 : 0.98,
+              duration: 0.5,
+              ease: "power2.in",
+            });
+          },
+          // ScrollTrigger config for each batched element
+          start: "top 85%",
+          end: "bottom 20%",
+          once: false, // Allow re-animation on scroll back
         });
+      }
 
-        panels.forEach((panel, index) => {
-          if (index === 0) return;
-
-          const prevPanels = panels.slice(0, index);
-
-          // The incoming panel slides up
-          tl.to(panel, {
-            yPercent: 0,
-            ease: "none"
-          });
-
-          // All previously stacked panels shrink concurrently
-          tl.to(
-            prevPanels,
-            {
-              scale: 0.95,
-              ease: "none"
+      // Optional subtle parallax on background images (decorative only)
+      if (!prefersReducedMotion) {
+        const bgImages = gsap.utils.toArray<HTMLElement>(".featured-panel-bg");
+        bgImages.forEach((bg) => {
+          gsap.to(bg, {
+            yPercent: 15,
+            ease: "none",
+            scrollTrigger: {
+              trigger: bg.closest(".featured-panel"),
+              start: "top bottom",
+              end: "bottom top",
+              scrub: 0.3,
             },
-            "<" // "<" aligns this tween to start at the exact same time as the previous tween
-          );
+          });
         });
-      });
+      }
     }, sectionRef.current);
 
     return () => ctx.revert();
-  }, []);
+  }, [prefersReducedMotion]);
 
   return (
     <div ref={sectionRef}>
-      {/* Section heading, mobile/tablet (<lg): the card stacks image-on-top so
-          the title cannot overlay it — it flows as a normal block above the stack.
-          In lg+ the overlay heading inside the panel takes over and this
-          standalone block hides (portrait tablets included). */}
+      {/* Sticky heading above the stack - fades when panel 1 enters */}
       <Section
         as="div"
         debug="none"
-        className="debug-l2 flex justify-center lg:hidden"
+        className="debug-l2 flex justify-center"
         innerClassName="flex flex-col items-center text-center"
       >
         <FadeIn delayEnter>
-          <SectionHeading />
+          <div id="featured-sticky-heading" className="sticky top-0 z-10 w-full -mt-12 lg:-mt-16 mb-12 lg:mb-16 px-6">
+            <SectionHeading />
+          </div>
         </FadeIn>
       </Section>
 
-      {/* Featured stacking section — Opción B (desktop lg+): the section heading is
-          an in-flow block at the top of panel 1 (never overlaps the centered card),
-          and because it lives inside panel 1 it stacks/scales away with the card as
-          GSAP advances — it never lingers over the following cards. On mobile (<lg)
-          the overlay is hidden and the standalone heading above the stack handles it. */}
+      {/* Featured section - natural document flow, no pin */}
       <section
         id="proyectos"
         className="featured-section relative"
         aria-labelledby="featured-projects-label"
       >
+        <div id="featured-projects-label" className="sr-only">
+          <SectionHeading />
+        </div>
         {featuredProjects.map((project, index) => (
           <FeaturedProjectPanel
             key={project.id}
             project={project}
-            overlay={
-              index === 0 ? (
-                <FadeIn delayEnter>
-                  <div id="featured-projects-label" className="debug-l1 flex flex-col items-center text-center">
-                    <SectionHeading />
-                  </div>
-                </FadeIn>
-              ) : undefined
-            }
           />
         ))}
       </section>

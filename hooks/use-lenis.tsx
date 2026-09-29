@@ -3,7 +3,6 @@
 import { createContext, useContext, useRef, useCallback, useEffect, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import type Lenis from "lenis";
-import { FEATURED_STACK_GATE } from "@/lib/breakpoints";
 
 const LenisContext = createContext<Lenis | null>(null);
 
@@ -136,6 +135,8 @@ export function takeHomeScroll(): number | null {
  *   Lenis would clobber it with the home page's stale scroll).
  * - Returning to `/` via the Volver pill or the browser back button: land
  *   exactly where the user left the grid.
+ * 
+ * NOTE: No more GSAP pin, so no pin-spacer growth to wait for. Simple restore.
  */
 export function ScrollRestorer() {
   const pathname = usePathname();
@@ -162,65 +163,14 @@ export function ScrollRestorer() {
       if (target == null) return;
       pendingRestore = null;
 
-      // The featured stack (desktop) pins with a ScrollTrigger pin-spacer that
-      // GROWS the document in later refresh passes, AFTER React paints and
-      // even after the spacer first appears. Applying the restore against a
-      // partially-grown layout clamps the target to that smaller max scroll
-      // and leaves us short (e.g. back at a featured card): once the spacer
-      // finishes growing, everything below it shifts down and we're stuck.
-      // So: wait until the layout is stable (and the pin exists, when a pin is
-      // expected), then apply with Lenis — and if the document grows again
-      // right after, re-apply the same absolute target.
-      // Shared gate: same media query that activates the GSAP pin, imported —
-      // not re-typed. If GSAP pins, this must expect a pin-spacer too.
-      const PIN_MEDIA = FEATURED_STACK_GATE;
-      const pinExpected = window.matchMedia(PIN_MEDIA).matches;
-      const hasPinSpacer = () =>
-        !!document
-          .querySelector(".featured-section")
-          ?.parentElement?.matches?.(".pin-spacer");
-
-      const apply = () => {
-        if (lenis) {
-          lenis.resize(); // recalc the scroll limit against the final layout
-          lenis.scrollTo(target, { immediate: true });
-        } else {
-          window.scrollTo(0, target);
-        }
-      };
-
-      const deadline = Date.now() + 1200;
-      let lastHeight = -1; // first sample always counts as "grew"
-      let lastAppliedY = window.scrollY;
-
-      // Post-apply watchdog: if the document grows again (pin spacer finishing
-      // late), the same absolute target still points at the grid — jump again,
-      // unless the user has taken control of the scroll.
-      let watchRuns = 0;
-      const watch = () => {
-        if (watchRuns++ > 20) return; // ~1.2s cap
-        const h = document.documentElement.scrollHeight;
-        if (h > lastHeight) {
-          lastHeight = h;
-          if (Math.abs(window.scrollY - lastAppliedY) < 60) apply();
-        }
-        setTimeout(watch, 60);
-      };
-
-      const check = () => {
-        const h = document.documentElement.scrollHeight;
-        const grew = h !== lastHeight;
-        lastHeight = h;
-        const ready = hasPinSpacer() || !pinExpected;
-        if ((ready && !grew) || Date.now() > deadline) {
-          apply();
-          lastAppliedY = window.scrollY;
-          setTimeout(watch, 60);
-          return;
-        }
-        setTimeout(check, 40);
-      };
-      check();
+      // No GSAP pin anymore — no pin-spacer growth to wait for.
+      // Simple: recalc Lenis limits and scroll to target.
+      if (lenis) {
+        lenis.resize(); // recalc the scroll limit against the final layout
+        lenis.scrollTo(target, { immediate: true });
+      } else {
+        window.scrollTo(0, target);
+      }
       return;
     }
 
