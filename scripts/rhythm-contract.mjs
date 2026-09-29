@@ -16,10 +16,7 @@ export function expectedGap(pair, vp) {
       if (r.portrait && vp.width >= 768) return { min: 0, max: T };      // portrait:md:hidden
       return { min: spacing };                                            // excepción Hero (sanity)
     case "about-projects":
-      if (r.landscape && r.lg && vp.height > 768) return { min: 0, max: T }; // landscape:lg:hidden
-      if (r.landscape && r.lg) return { min: spacing - T, max: spacing + T }; // [@media(max-height:768px)]:block
-      if (r.portrait && r.lg) return { min: spacing - T, max: spacing + T }; // heading oculto en lg+
-      return { min: spacing };                                            // <lg: heading visible (sanity)
+      return { min: spacing - T, max: spacing + T };                 // "" → spacer estandar (el titulo vive dentro de #proyectos)
     case "projects-all-projects":
       if (r.landscape && r.lg) return vp.height <= 767
         ? { min: spacing }                                                  // spacer + heading "Todos" (fluido, fuera de #all-projects); last:mb-0 evita que la última card empuje

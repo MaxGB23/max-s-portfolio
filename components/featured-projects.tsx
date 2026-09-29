@@ -27,13 +27,28 @@ const featuredProjects: FeaturedProject[] = getFeaturedProjects()
     bgColor: "var(--background)",
   }));
 
+/**
+ * Reveal viewport for each panel: fire when the panel's top has crossed 60% of
+ * the viewport (not the bottom edge), so the reader can finish the previous
+ * card before the next one starts fading in. `once` keeps it a single entrance.
+ */
+const PANEL_REVEAL_VIEWPORT = {
+  once: true,
+  amount: "some",
+  margin: "0px 0px -40% 0px",
+} as const;
+
 // ---------------------------------------------------------------------------
-// SectionHeading - "Proyectos Destacados" block
+// SectionHeading - "Proyectos Destacados" block (same in-flow FadeIn pattern
+// as every other section title in the site)
 // ---------------------------------------------------------------------------
 function SectionHeading() {
   const { t } = useLanguage();
   return (
-    <h2 className="flex flex-col gap-2 md:gap-3 justify-center items-center font-serif font-black uppercase text-fluid-section leading-[0.9] tracking-tighter text-foreground">
+    <h2
+      id="featured-projects-label"
+      className="flex flex-col gap-2 md:gap-3 justify-center items-center font-serif font-black uppercase text-fluid-section leading-[0.9] tracking-tighter text-foreground"
+    >
       <span>{t("section.featured.title.first")}</span>
       <span className="text-purple-accent brightness-110">{t("section.featured.title.second")}</span>
     </h2>
@@ -41,7 +56,8 @@ function SectionHeading() {
 }
 
 // ---------------------------------------------------------------------------
-// FeaturedProjects - Staggered Reveal on Scroll (Variant A)
+// FeaturedProjects - natural document flow: in-flow heading + FadeIn reveals.
+// GSAP only owns the optional decorative parallax (reduced-motion guarded).
 // ---------------------------------------------------------------------------
 export function FeaturedProjects() {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -62,90 +78,6 @@ export function FeaturedProjects() {
 
     // Scope = DOM element for HMR safety
     const ctx = gsap.context(() => {
-      // Sticky heading fade-out logic
-      const heading = document.getElementById("featured-sticky-heading");
-      const firstPanel = document.querySelector<HTMLElement>(".featured-panel");
-
-      if (heading && firstPanel) {
-        ScrollTrigger.create({
-          trigger: firstPanel,
-          start: "top 85%",
-          end: "bottom top",
-          onEnter: () => {
-            gsap.to(heading, { opacity: 0, duration: 0.4, ease: "power2.out" });
-          },
-          onLeaveBack: () => {
-            gsap.to(heading, { opacity: 1, duration: 0.4, ease: "power2.out" });
-          },
-        });
-      }
-
-      // Staggered reveal: one ScrollTrigger per panel with index-based delay
-      const panels = gsap.utils.toArray<HTMLElement>(".featured-panel");
-
-      if (panels.length > 0) {
-        // Initial state (will be animated on enter)
-        gsap.set(panels, {
-          opacity: prefersReducedMotion ? 1 : 0,
-          y: prefersReducedMotion ? 0 : 40,
-          scale: prefersReducedMotion ? 1 : 0.98,
-        });
-
-        // Create a ScrollTrigger for each panel with staggered delay
-        panels.forEach((panel, index) => {
-          const delay = index * 0.12; // 120ms between panels
-
-          ScrollTrigger.create({
-            trigger: panel,
-            start: "top 85%",
-            end: "bottom 20%",
-            onEnter: () => {
-              gsap.to(panel, {
-                opacity: 1,
-                y: 0,
-                scale: 1,
-                duration: 0.8,
-                ease: "expo.out",
-                delay,
-              });
-            },
-            onLeave: () => {
-              if (!prefersReducedMotion) {
-                gsap.to(panel, {
-                  opacity: 0,
-                  y: 40,
-                  scale: 0.98,
-                  duration: 0.5,
-                  ease: "power2.in",
-                });
-              }
-            },
-            onEnterBack: () => {
-              gsap.to(panel, {
-                opacity: 1,
-                y: 0,
-                scale: 1,
-                duration: 0.8,
-                ease: "expo.out",
-                delay,
-              });
-            },
-            onLeaveBack: () => {
-              if (!prefersReducedMotion) {
-                gsap.to(panel, {
-                  opacity: 0,
-                  y: 40,
-                  scale: 0.98,
-                  duration: 0.5,
-                  ease: "power2.in",
-                });
-              }
-            },
-            once: false, // Allow re-animation on scroll back
-          });
-        });
-      }
-
       // Optional subtle parallax on background images (decorative only)
       if (!prefersReducedMotion) {
         const bgImages = gsap.utils.toArray<HTMLElement>(".featured-panel-bg");
@@ -169,34 +101,28 @@ export function FeaturedProjects() {
 
   return (
     <div ref={sectionRef}>
-      {/* Sticky heading above the stack - fades when panel 1 enters */}
-      <Section
-        as="div"
-        debug="none"
-        className="debug-l2 flex justify-center"
-        innerClassName="flex flex-col items-center text-center"
-      >
-        <FadeIn delayEnter>
-          <div id="featured-sticky-heading" className="sticky top-0 z-10 w-full -mt-12 lg:-mt-16 mb-12 lg:mb-16 px-6">
-            <SectionHeading />
-          </div>
-        </FadeIn>
-      </Section>
-
-      {/* Featured section - natural document flow, no pin */}
       <section
         id="proyectos"
         className="featured-section relative"
         aria-labelledby="featured-projects-label"
       >
-        <div id="featured-projects-label" className="sr-only">
-          <SectionHeading />
-        </div>
-        {featuredProjects.map((project, index) => (
-          <FeaturedProjectPanel
-            key={project.id}
-            project={project}
-          />
+        {/* Section heading — in flow, standard FadeIn delayEnter like other titles */}
+        <Section
+          as="div"
+          debug="none"
+          className="debug-l2 flex justify-center"
+          innerClassName="flex flex-col items-center text-center"
+        >
+          <FadeIn delayEnter className="w-full mb-12 lg:mb-16">
+            <SectionHeading />
+          </FadeIn>
+        </Section>
+
+        {/* Panels — natural flow; reveal deep enough to finish reading the previous card */}
+        {featuredProjects.map((project) => (
+          <FadeIn key={project.id} viewport={PANEL_REVEAL_VIEWPORT}>
+            <FeaturedProjectPanel project={project} />
+          </FadeIn>
         ))}
       </section>
     </div>
