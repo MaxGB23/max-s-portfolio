@@ -101,12 +101,32 @@ Reported by owner after testing on `:3001`:
 - [x] `motion-reduce:transition-none` + `motion-reduce:opacity-100`: under reduced motion no fade, content stays visible (same policy family as the removed parallax)
 - [x] Reveal (`FadeIn`, `once`) untouched; fade targets the `article` (own element) so framer and the observer never write the same property
 - [ ] Owner QA: fade timing, upward-scroll restore, reduced-motion ON, rhythm audit unchanged, ES/EN
+- [x] Superseded by Task 8g: owner evolved the route from "recede previous" to the one-slide engaged rule + hybrid heading
+
+### Task 8g: One-slide engaged rule + hybrid heading (owner decision)
+- [x] Replaced reveal-once + `recede[]` with a single level-triggered rule: panel i is **engaged** iff `top_i <= 0.6*vh && (no successor || top_{i+1} > 0.6*vh)` — exactly one panel visible at a time; fixes the up-scroll stacking artifact (multiple once-revealed cards lingered together) and the last-card-never-hides gap
+- [x] Panels: framer `FadeIn` removed (net deletion) — opacity + 20px rise now CSS-transitioned on a wrapper div, state-tied so re-engagement replays the entrance; `PANEL_REVEAL_VIEWPORT` deleted; `faded` prop removed from the panel (opacity moved to the wrapper); `motion-reduce:transition-none` + `opacity-100` + `translate-y-0` kept
+- [x] Heading hybrid (owner): early entrance kept (`FadeIn delayEnter`, coherent with every other section title) + exit shares panel-0 state via gate `panel0EverEngaged && !engaged[0]` — no more orphan title over a vanishing card (tall-viewport artifact: the 60% line scales with vh, title height doesn't)
+- [x] Purely visual: opacity/transform only, panels keep flow — rhythm contract untouched
+- [x] `pnpm exec tsc --noEmit` OK, `pnpm build` OK
+- [ ] Owner QA: entry (title early, card engages at the line), up-scroll handoff (exactly one slide, title+card0 exit together), tall-viewport artifact gone, reduced-motion ON, rhythm audit `RHYTHM OK`, ES/EN
+- [x] Superseded in part by Task 8h: RM overrides removed + heading/panel-0 exit reworked to advance-only
+
+### Task 8h: Reduced-motion policy + advance-only exit (owner decisions)
+- [x] **Reduced motion: animations stay ON** — title AND cards keep fading/rising under `prefers-reduced-motion`, consistent with the rest of the site (no `MotionConfig reducedMotion` anywhere); all `motion-reduce:*` overrides removed from the heading gate, the panel wrappers and the reveal states
+- [x] A first attempt branched render output on framer's `useReducedMotion()` (static heading under reduce) → React hydration error (SSR/client branch over a media query — the exact anti-pattern in the ReactHydrationError docs) + invisible title; reverted. Never branch render output on media-query hooks during render; owner decision is to keep animating
+- [x] Heading exit = **advance-only**: the gate flips only when panel 1 crosses the line (`advanced = tops[1] <= 0.6*vh`); scrolling up toward About now scrolls title + card 0 off naturally like any other section (fixes "si hago scroll hacia about, el title desaparece"); entrance unchanged (`FadeIn delayEnter`)
+- [x] Panel 0 = **sticky entry slide**: `visible[0] = entered0 && !advanced` with `entered0` sticky once `top_0` crosses the line — panel 0 no longer vanishes by its own top crossing; title and card 0 share the same exit signal (no orphan title over an empty slot on tall viewports)
+- [x] Panels 1..n keep the Task 8g engaged rule — one-slide invariant holds: title/card 0 visible ⇔ panel 1 has NOT crossed; panel i visible ⇔ `top_i <= line && next > line` (mutually exclusive on `top_{i+1}`)
+- [x] State consolidated into one atomic `slide` object `{visible[], headingHidden, entered0}` with structural bail-out (no re-render when nothing changed)
+- [x] `pnpm exec tsc --noEmit` OK, `pnpm build` OK
+- [ ] Owner QA: title+card0 scroll off toward About (no mid-screen fade), exit exactly on the advance to card 2, entry animation intact, RM ON still animates everything, rhythm audit `RHYTHM OK`, ES/EN
 
 ### Task 9: Verify rhythm compliance (PENDING - manual QA)
 - [ ] Visual diff: no overlap About↔title on desktop; section gaps match `lib/rhythm.ts` tokens at 320px, 768px, 1024px, 1440px, 1920px
 - [ ] Rhythm audit: dev server on `:3001` → `node scripts/section-spacing.mjs` → **RHYTHM OK**
 - [ ] Reveal timing: next card starts appearing only when its top crosses 60% of the viewport (tune `-40%` live if needed)
-- [ ] `prefers-reduced-motion` ON: cards + titles fade identically, no parallax in section, layout intact
+- [ ] `prefers-reduced-motion` ON: title + cards KEEP animating (owner decision — no RM overrides in this section), no parallax in section, layout intact
 - [ ] Test: 125% OS scaling, 150% zoom, iPad Pro (1024×1366), ultra-wide (3440×1440), short laptop (1366×768)
 - [ ] Lighthouse mobile: CLS=0, TBT<100ms
 - [ ] Add 4th project to `data/projects.ts` → verify no animation code changes needed
