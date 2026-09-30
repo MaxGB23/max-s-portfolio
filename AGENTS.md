@@ -18,14 +18,25 @@ Cuando respondas en español, usa siempre español neutro. Evita el voseo y los 
 - Siempre usar pnpm.
 - Nunca pushear a main con errores de lint o build.
 
+### Dev servers
+- Los levanta y cierra el usuario; el agente nunca deja uno abierto al terminar.
+- Puerto por defecto `3000`; si está ocupado, el siguiente libre. Por defecto se trabaja con UN solo dev server: nunca asumir worktrees en `3001` ni levantar dos en paralelo salvo comparación A/B explícita del usuario (ver `### Worktrees`).
+- Antes de levantar, sondear el puerto:
+  - Ya responde y sirve este checkout → reutilizar y NO cerrarla.
+  - Ya responde y sirve otro checkout/rama → no matarla; usar otro puerto.
+  - No responde y Next reclama `Unable to acquire lock` → instancia zombie (no sirve a nadie): matar solo esa y relanzar.
+  - Nunca matar una instancia que sí está respondiendo.
+- Si la verificación necesita navegador (Playwright, auditoría de ritmo): server transitorio, correr y cerrar en la misma tarea.
+
 ### Worktrees (pruebas A/B en vivo)
+- **Alcance (leer primero)**: esta estrategia de dos servers en paralelo SOLO aplica cuando el usuario la pide explícitamente — cambios grandes que exigen comparar versiones en vivo. Por defecto se trabaja con UN solo dev server (ver `### Dev servers`); no asumir `:3000` + `:3001` ni levantar dos por cuenta propia.
 - Los worktrees viven en `M:\worktrees\maxgb23-portfolio` — NUNCA dentro del repo ni en `~`.
 - Convención de nombre: `<nombre-experimento>` (ej: `fluid-typo`).
 - Estrategia para probar 2 versiones en vivo:
   1. Commitear el estado actual (punto de retorno limpio).
   2. `git worktree add "M:\worktrees\maxgb23-portfolio\<nombre>" -b feat/<experimento>` desde el commit base.
   3. `pnpm install` en el worktree (node_modules/.next son por-checkout).
-  4. Dev servers en paralelo: principal `:3000`, worktree `:3001` (`pnpm dev --port 3001`).
+  4. Dev servers en paralelo (principal `:3000`, worktree `:3001` — `pnpm dev --port 3001`), solo dentro de esta estrategia A/B.
   5. Aplicar cambios SOLO en el worktree; comparar en vivo contra `:3000`.
   6. Al aprobar: merge a la rama principal y `git worktree remove` para limpiar.
 - Al borrar un worktree: `git worktree remove <ruta>`; si tiene cambios sin mergear, confirmar antes con el usuario.
