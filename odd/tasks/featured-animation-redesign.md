@@ -95,6 +95,13 @@ Reported by owner after testing on `:3001`:
 ### Task 8d: Last panel yields bottom padding (owner QA)
 - [x] Last panel renders `pt-12 lg:pt-20` instead of `py-12 lg:py-20` (`isLast` prop) — the page-level `SECTION_GAP` owns the exit; no more double spacing (panel pb + spacer)
 
+### Task 8f: Previous card recedes on next reveal (owner request — Route A)
+- [x] When panel i+1 crosses the reveal threshold (60% line), panel i fades to `opacity-0` (`duration-500`) — **visual only**: its space in flow stays put, rhythm contract untouched
+- [x] Level-triggered state (NOT event-driven): `recede[i]` recomputed per scroll frame from geometry — `panel[i+1].top <= innerHeight * 0.6` (the reveal's threshold). Owner QA caught the event-driven version going stale: a fast scroll coalesced an `IntersectionObserver` crossing to "no change", the recede never recorded and never self-healed → cards stayed visible after scroll-up/scroll-down cycles. Geometry-derived state self-heals (fast scroll, resize, zoom, language switch, anchors); "scrolled past" needs no direction branch
+- [x] `motion-reduce:transition-none` + `motion-reduce:opacity-100`: under reduced motion no fade, content stays visible (same policy family as the removed parallax)
+- [x] Reveal (`FadeIn`, `once`) untouched; fade targets the `article` (own element) so framer and the observer never write the same property
+- [ ] Owner QA: fade timing, upward-scroll restore, reduced-motion ON, rhythm audit unchanged, ES/EN
+
 ### Task 9: Verify rhythm compliance (PENDING - manual QA)
 - [ ] Visual diff: no overlap About↔title on desktop; section gaps match `lib/rhythm.ts` tokens at 320px, 768px, 1024px, 1440px, 1920px
 - [ ] Rhythm audit: dev server on `:3001` → `node scripts/section-spacing.mjs` → **RHYTHM OK**

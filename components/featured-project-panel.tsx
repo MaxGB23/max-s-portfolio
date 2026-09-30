@@ -27,9 +27,11 @@ interface FeaturedProjectPanelProps {
   children?: React.ReactNode;
   /** Last panel: top-only padding — the page-level SECTION_GAP owns the exit. */
   isLast?: boolean;
+  /** Recedes (opacity only — space in flow stays) when the next panel enters. */
+  faded?: boolean;
 }
 
-export function FeaturedProjectPanel({ project, children, isLast = false }: FeaturedProjectPanelProps) {
+export function FeaturedProjectPanel({ project, children, isLast = false, faded = false }: FeaturedProjectPanelProps) {
   const { t } = useLanguage();
 
   // Extract last word for the purple accent styling
@@ -39,7 +41,9 @@ export function FeaturedProjectPanel({ project, children, isLast = false }: Feat
 
   return (
     <article
-      className="debug-l4 featured-panel relative w-full px-6 md:px-8 lg:px-12"
+      className={`debug-l4 featured-panel relative w-full px-6 md:px-8 lg:px-12 transition-opacity duration-500 ease-out motion-reduce:transition-none ${
+        faded ? "opacity-0 motion-reduce:opacity-100" : ""
+      }`}
       data-panel-id={project.id}
       style={{ backgroundColor: project.bgColor }}
       aria-labelledby={`featured-title-${project.id}`}

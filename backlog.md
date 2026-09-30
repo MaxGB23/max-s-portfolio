@@ -47,6 +47,7 @@ Rhythm System (predictable, token-based)  ❌  VS  ❌  GSAP Pin (viewport-depen
 - Panels render in **natural document flow** (static layout)
 - Each panel reveals with the site's shared **`FadeIn` primitive** (`opacity` + `translateY(20px)`), triggered when the panel's top crosses 60% of the viewport (`margin: 0px 0px -40% 0px`, `once`) so the reader finishes the previous card before the next appears — same entrance as every section title, for all users (`docs/issues/reduced-motion.md` policy)
 - **Parallax: removed after QA** (in-frame `yPercent: 15` without overscan made images "sink" on desktop 2-col; the section is GSAP-free)
+- **Previous card recedes**: when the next panel crosses the reveal threshold the previous one fades out (opacity only — its space stays; disabled under `prefers-reduced-motion`)
 - **Title**: in-flow heading inside `#proyectos` with the standard `FadeIn delayEnter` pattern used by every other section title (sticky variant discarded in QA: overlapped About on desktop, faded too early, left an empty band)
 - **CSS scroll-driven animations** for simple reveals where GSAP adds no value
 

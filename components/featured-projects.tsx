@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { FeaturedProjectPanel, type FeaturedProject } from "@/components/featured-project-panel";
 import { FadeIn } from "@/components/motion-primitives";
 import { getFeaturedProjects } from "@/data/projects";
@@ -57,6 +58,56 @@ function SectionHeading() {
 // This section is intentionally GSAP-free (parallax removed after QA).
 // ---------------------------------------------------------------------------
 export function FeaturedProjects() {
+  // Level-triggered truth (NOT event-driven): recede[i] is recomputed from
+  // geometry — panel i+1's top above the reveal's 60% line — on every scroll
+  // frame. Edge-triggered IntersectionObserver missed crossings during fast
+  // scrolls (coalesced to "no change" → state went stale and never healed),
+  // leaving cards visible after scrolling back up and down again.
+  // Purely visual: the panel keeps its space in flow, so no spacer or section
+  // boundary moves (rhythm contract untouched).
+  const [receded, setReceded] = useState<boolean[]>(() =>
+    featuredProjects.map(() => false),
+  );
+
+  useEffect(() => {
+    const panels = Array.from(
+      document.querySelectorAll<HTMLElement>("#proyectos .featured-panel"),
+    );
+    if (panels.length < 2) return;
+
+    let raf = 0;
+    const evaluate = () => {
+      raf = 0;
+      const line = window.innerHeight * 0.6; // reveal threshold: top crossing 60%
+      setReceded((prev) => {
+        let changed = false;
+        const next = prev.map((value, i) => {
+          const nextPanel = panels[i + 1];
+          if (!nextPanel) return value; // last panel never recedes (no successor)
+          const shouldRecede = nextPanel.getBoundingClientRect().top <= line;
+          if (shouldRecede !== value) {
+            changed = true;
+            return shouldRecede;
+          }
+          return value;
+        });
+        return changed ? next : prev;
+      });
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(evaluate);
+    };
+
+    evaluate();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      cancelAnimationFrame(raf);
+    };
+  }, []);
+
   return (
     <section
       id="proyectos"
@@ -82,6 +133,7 @@ export function FeaturedProjects() {
           <FeaturedProjectPanel
             project={project}
             isLast={index === featuredProjects.length - 1}
+            faded={receded[index]}
           />
         </FadeIn>
       ))}
