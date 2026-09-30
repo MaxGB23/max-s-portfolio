@@ -45,12 +45,24 @@ Auditoria de separaciones: `scripts/section-spacing.mjs` (9 viewports, toleranci
 +/-10px, excepciones declaradas).
 
 - `SECTION_GAP` = `h-24 md:h-32` (96/128px): separacion entre secciones
-  top-level, consumida por `components/section-spacing.tsx`.
+  top-level, consumida por `components/section-spacing.tsx` como altura del
+  spacer de pagina.
+- `SECTION_GAP_Y` = `py-24 md:py-32` (96/128px): padding vertical DENTRO del
+  contenedor interno `#contact-content` de `#contacto`, consumido por
+  `contact-section.tsx` (`innerClassName`). Contacto es la UNICA seccion con
+  padding vertical propio: su cue de llegada (ring inset) se pinta en ese hijo
+  directo, asi que ahi necesita aire. Pintarlo en el shell daria un rectangulo
+  full-bleed. Por eso los pares de pagina pasan de 6 a 4 (`pricing-contact` y
+  `contact-footer` retirados de `PageSpacerPair`/`PAGE_SPACER_CLASSES`): el
+  ritmo visual entre Pricing<->Contacto y Contacto<->Footer sigue siendo
+  96/128px, ahora aportado por ese padding (regla de 2 niveles: shell + primer
+  hijo, la misma que usan el aterrizaje del scroll y la auditoria).
 - `FEATURED_GAP` = `gap-12` (48px) y `FEATURED_GAP_LG` =
   `[@media(min-width:1280px)_and_(min-height:900px)]:gap-30` (120px):
   gap titulo<->card dentro del stack featured, consumido por
   `featured-project-panel.tsx` desde `748c17e`.
-- `PAGE_SPACER_CLASSES` (contrato de orientacion, verbatim desde `352ab13`):
+- `PAGE_SPACER_CLASSES` (contrato de orientacion, verbatim desde `352ab13`;
+  4 pares desde que contacto es dueño de su spacing vertical):
 
 | Par | Clase |
 |---|---|
@@ -58,11 +70,13 @@ Auditoria de separaciones: `scripts/section-spacing.mjs` (9 viewports, toleranci
 | `about-projects` | (sin wrapper condicional) |
 | `projects-all-projects` | (sin wrapper condicional) |
 | `all-projects-pricing` | (sin wrapper condicional) |
-| `pricing-contact` | (sin wrapper condicional) |
-| `contact-footer` | (sin wrapper condicional) |
 
 Reglas: no hand-editear estos valores (editar `lib/rhythm.ts` y correr el
 contrato); las variantes arbitrarias ganan por orden CSS.
+Excepcion de medicion: como esos dos pares de contacto ya no tienen spacer de
+pagina, `scripts/section-spacing.mjs` compensa el padding propio de
+`#contacto` (`PADDING_OWNED_PAIRS`) al asertarlos — los valores del contrato
+(`scripts/rhythm-contract.mjs`) no cambiaron.
 
 ## 3. Gates de media
 
@@ -189,7 +203,11 @@ en otro archivo.
 
 ### 4.8 Contacto (`contact-section.tsx`) - VIVO en `page.tsx`
 
-- `Section#contacto` con `insetClassName="px-6"`, `innerClassName="max-w-6xl"`.
+- `Section#contacto` con `insetClassName="px-6"`, `innerId="contact-content"` e
+  `innerClassName={`max-w-6xl ${SECTION_GAP_Y}`}` — el padding vertical propio
+  (unica seccion con `py`, el ring de llegada necesita aire) vive en el
+  contenedor interno, que es donde se pinta el cue: el ring queda como un panel
+  `max-w-6xl` centrado en vez de un rectangulo full-bleed.
 - Badge "Disponible para proyectos": pill `border-purple-accent/25
   bg-purple-accent/10 text-purple-accent`.
 - h2 "Trabajemos juntos": `font-serif font-black uppercase text-fluid-section
@@ -289,7 +307,12 @@ en otro archivo.
   `wheelMultiplier: 1`; `gsap.registerPlugin(ScrollTrigger)`,
   `lenisInstance.on("scroll", ScrollTrigger.update)` con rAF nativo y
   `gsap.ticker.lagSmoothing(0)`.
-- `useScrollToAnchor(64)`: duracion 1.4s; al completar, `announceArrival`
+- `useScrollToAnchor(64)`: duracion 1.4s; aterriza con el CONTENIDO del
+  target bajo el navbar (compensa la suma de `padding-top` de 2 niveles:
+  shell + primer hijo — para `#contacto` eso lee el `SECTION_GAP_Y` que vive en
+  `#contact-content` y devuelve el badge/titulo justo bajo el navbar; para el
+  resto de anclas ambos niveles son 0, o sea no-op); al completar,
+  `announceArrival`
   (fija hash con `history.replaceState` + clase `arrive` reflow forzado;
   mobile: `window.scrollTo` + timeout 1000ms). NO usa `:target`
   (replaceState no lo actualiza, ver seccion 9).
@@ -303,7 +326,9 @@ en otro archivo.
 
 - Los CTA de pricing y el boton "Contacto" de la navbar hacen smooth-scroll a
   `#contacto`; al completar, `announceArrival` agrega la clase `arrive` que
-  reproduce el wash morado (`#contacto.arrive` en globals.css).
+  reproduce el wash morado (`#contacto.arrive #contact-content` en globals.css
+  — el cue se pinta en el contenedor interno para que el ring sea un panel
+  `max-w-6xl` centrado y no un rectangulo full-bleed).
 - Un clic repetido lo repite: quitar clase, reflow, re-agregar.
 - Reduced motion: wash + ring estaticos mientras la clase esta presente
   (el hook la quita ~2.2s).

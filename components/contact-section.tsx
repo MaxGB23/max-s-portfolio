@@ -6,6 +6,7 @@ import { FadeIn } from "@/components/motion-primitives";
 import { Button } from "@/components/ui/button";
 import { Section } from "@/components/section";
 import { useLanguage } from "@/contexts/language-context";
+import { SECTION_GAP_Y } from "@/lib/rhythm";
 
 const CONTACT_EMAIL = "maxgonzalezballesteros@gmail.com";
 
@@ -29,8 +30,14 @@ export function ContactSection() {
     <Section
       id="contacto"
       aria-labelledby="contact-heading"
+      // Contact owns its vertical spacing (the two page-level spacers around
+      // it moved inside): the arrival ring is drawn at the section box border,
+      // so it needs air INSIDE the box — 96/128px of padding the ring encloses.
+      // The padding lives on the INNER container (not the outer section) so the
+      // ring is painted on a max-w-6xl panel instead of a full-bleed rectangle.
+      innerId="contact-content"
       insetClassName="px-6"
-      innerClassName="max-w-6xl"
+      innerClassName={`max-w-6xl ${SECTION_GAP_Y}`}
     >
       <FadeIn>
         {/* Section header */}

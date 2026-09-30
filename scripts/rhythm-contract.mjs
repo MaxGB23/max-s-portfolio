@@ -1,5 +1,11 @@
-// Rhythm contract by orientation regime — QA mirror of lib/rhythm.ts PAGE_SPACER_CLASSES.
+// Rhythm contract by orientation regime — QA mirror of lib/rhythm.ts.
 // Usage: expectedGap(pair, viewport) → { min, max? } | null (null = unasserted)
+//
+// Note on the contact pairs: `pricing-contact` and `contact-footer` are no
+// longer backed by page-level spacers (PAGE_SPACER_CLASSES) — that whitespace
+// is now the vertical padding of #contacto itself (SECTION_GAP_Y). The
+// expected values below are unchanged; scripts/section-spacing.mjs compensates
+// the contact section's own padding when measuring those two pairs.
 export function regime(vp) {
   const W = vp.width, H = vp.height;
   const landscape = W > H;

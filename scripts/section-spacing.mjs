@@ -35,13 +35,17 @@ function attr(el, prop) {
 
 // ---------------------------------------------------------------------------
 // RHYTHM CONTRACT — importada de scripts/rhythm-contract.mjs (espejo QA de
-// lib/rhythm.ts PAGE_SPACER_CLASSES). expectedGap(pair, viewport) declara el
-// gap esperado por régimen; null = sin asertar para ese par/viewport (p. ej.
-// tras el pin GSAP el remanente no se aserta). Pairs → (from,to):
+// lib/rhythm.ts). expectedGap(pair, viewport) declara el gap esperado por
+// régimen; null = sin asertar para ese par/viewport (p. ej. tras el pin GSAP
+// el remanente no se aserta). Pairs → (from,to):
 //   hero-about → Hero→About · about-projects → About→Projects
 //   projects-all-projects → Projects→All projects
-//   all-projects-pricing → All projects→Pricing · pricing-contact → Pricing→Contact
-//   contact-footer → Contact→Footer
+//   all-projects-pricing → All projects→Pricing
+//   pricing-contact → Pricing→Contact · contact-footer → Contact→Footer
+//   (estos dos últimos ya NO son spacers de página: el blanco lo aporta el
+//   padding propio que vive en #contact-content (hijo directo de #contacto,
+//   SECTION_GAP_Y) — assertRhythm compensa ese padding por la regla de 2
+//   niveles contentPad*; ver PADDING_OWNED_PAIRS).
 // ---------------------------------------------------------------------------
 const PAIRS = [
   ["hero-about", "Hero", "About"],
@@ -52,13 +56,21 @@ const PAIRS = [
   ["contact-footer", "Contact", "Footer"],
 ];
 
+// Pairs whose whitespace is provided by #contacto's own vertical padding
+// (SECTION_GAP_Y, living on its inner container #contact-content — regla de 2
+// niveles: contentPad*) instead of a page-level spacer: the raw box-to-box gap
+// is 0, so the assertion compensates the contact box's padding to recover the
+// visual whitespace. Neighbour padding is intentionally NOT compensated —
+// e.g. footer's py-16 lives inside its own box and was never part of this gap.
+const PADDING_OWNED_PAIRS = new Set(["pricing-contact", "contact-footer"]);
+
 function rhythmExpectations(vp) {
   const e = [];
   for (const [pair, from, to] of PAIRS) {
     const ex = expectedGap(pair, vp);
     if (!ex) continue; // null → sin expectativa para este par en este viewport
     const kind = ex.max == null ? "exception" : ex.min === 0 ? "hidden" : "spacing";
-    e.push({ from, to, kind, min: ex.min, max: ex.max ?? null });
+    e.push({ pair, from, to, kind, min: ex.min, max: ex.max ?? null });
   }
   return e;
 }
@@ -70,7 +82,17 @@ function assertRhythm(vp, present) {
     const a = byLabel[ex.from];
     const b = byLabel[ex.to];
     if (!a || !b) continue;
-    const measured = Math.round(b.top - a.bottom);
+    // Padding-owned pairs: compensate #contacto's own padding (the side of the
+    // contact box facing this gap, 2-level contentPad*); other pairs: raw
+    // box-to-box gap.
+    const contact = byLabel["Contact"];
+    const pad =
+      PADDING_OWNED_PAIRS.has(ex.pair) && contact
+        ? ex.from === "Contact"
+          ? contact.contentPadBottom
+          : contact.contentPadTop
+        : 0;
+    const measured = Math.round(b.top - a.bottom + pad);
     const belowMin = measured < ex.min;
     const aboveMax = ex.max != null && measured > ex.max;
     if (belowMin || aboveMax) out.push({ ...ex, measured, viewport: vp.name });
@@ -103,6 +125,12 @@ for (const vp of viewports) {
         continue;
       }
       const rect = el.getBoundingClientRect();
+      // Regla de 2 niveles (misma que hooks/use-lenis.tsx): el espaciado que un
+      // shell cede a su contenedor interno sigue siendo blanco visual de la
+      // sección. #contacto dejó de llevar py en el exterior para que su cue de
+      // llegada se pinte en un panel max-w-6xl en vez de un rectángulo
+      // full-bleed, así que su padding vive en #contact-content (hijo directo).
+      const first = el.firstElementChild;
       out.push({
         ...s,
         found: true,
@@ -112,6 +140,8 @@ for (const vp of viewports) {
         height: rect.height,
         paddingTop: attrOf(el, "paddingTop"),
         paddingBottom: attrOf(el, "paddingBottom"),
+        contentPadTop: attrOf(el, "paddingTop") + (first ? attrOf(first, "paddingTop") : 0),
+        contentPadBottom: attrOf(el, "paddingBottom") + (first ? attrOf(first, "paddingBottom") : 0),
         marginTop: attrOf(el, "marginTop"),
       });
     }
@@ -146,11 +176,11 @@ for (const vp of viewports) {
   for (let i = 0; i < present.length - 1; i++) {
     const a = present[i];
     const b = present[i + 1];
-    const gap = b.top - a.bottom;                       // externo (margins + intermedios)
-    const internal = a.paddingBottom + b.paddingTop;    // dentro de las cajas
-    const whitespace = gap + internal;                  // blanco visual total entre contenidos
+    const gap = b.top - a.bottom;                             // externo (margins + intermedios)
+    const internal = a.contentPadBottom + b.contentPadTop;    // dentro de las cajas (regla 2 niveles)
+    const whitespace = gap + internal;                        // blanco visual total entre contenidos
     console.log(
-      `  ${a.label.padEnd(13)} → ${b.label.padEnd(13)} cajas=${String(Math.round(gap)).padStart(5)}px externo | interno=${String(Math.round(internal)).padStart(5)}px (pbA${Math.round(a.paddingBottom)}+ptB${Math.round(b.paddingTop)}) | blanco total=${String(Math.round(whitespace)).padStart(5)}px`
+      `  ${a.label.padEnd(13)} → ${b.label.padEnd(13)} cajas=${String(Math.round(gap)).padStart(5)}px externo | interno=${String(Math.round(internal)).padStart(5)}px (pbA${Math.round(a.contentPadBottom)}+ptB${Math.round(b.contentPadTop)}) | blanco total=${String(Math.round(whitespace)).padStart(5)}px`
     );
   }
 

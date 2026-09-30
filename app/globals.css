@@ -299,8 +299,12 @@ body {
    class, forces a reflow, and re-adds it.
    Class-triggered on purpose — history.replaceState with a fragment
    does not update `:target`, so the pseudo-class route is unreliable.
+   The cue is painted on the INNER container (#contact-content, which
+   owns SECTION_GAP_Y padding) instead of the full-bleed section: the
+   ring becomes a centered max-w-6xl panel with air on both axes instead
+   of a viewport-wide rectangle.
    ============================================================ */
-#contacto.arrive {
+#contacto.arrive #contact-content {
   animation: contact-arrive 1.5s ease-out;
 }
 
@@ -319,7 +323,7 @@ body {
 @media (prefers-reduced-motion: reduce) {
   /* No motion, but still a visible arrival cue: static wash + ring while the
      `arrive` class is present (the hook removes it after ~2.2s). */
-  #contacto.arrive {
+  #contacto.arrive #contact-content {
     animation: none;
     background-color: color-mix(in oklab, var(--accent-purple) 10%, transparent);
     box-shadow: inset 0 0 0 2px color-mix(in oklab, var(--accent-purple) 35%, transparent);

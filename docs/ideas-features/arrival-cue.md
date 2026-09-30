@@ -19,7 +19,7 @@ Disparo:
 Replay (segundo clic en el mismo CTA): `classList.remove("arrive")` → forced reflow (`void target.offsetWidth`) → `classList.add("arrive")`.
 
 ## 🧱 CSS — `app/globals.css`
-- `#contacto.arrive` → animación `contact-arrive` **1.5s**: wash púrpura **5%** + ring inset **2px al 25%**, hold 20%, fade out suave (volumen final; fue calibrado en vivo desde 22% hasta 5%).
+- `#contacto.arrive #contact-content` → animación `contact-arrive` **1.5s**: wash púrpura + ring inset **2px**, hold 20%, fade out suave. El selector apunta al **contenedor interno** (`innerId="contact-content"`, que es quien lleva `SECTION_GAP_Y`): si el cue se pintara en la sección el ring sería un rectángulo full-bleed del ancho del viewport; sobre el hijo (con `max-w-6xl`) queda un panel centrado con aire en ambos ejes.
 - `prefers-reduced-motion` → versión **ESTÁTICA** (wash 10% + ring 2px 35%) mientras la clase está presente (~2.2s). Degradar el feedback, nunca eliminarlo.
 - `section[id] { scroll-margin-top: 5rem }` → al refrescar con hash, el target cae debajo del navbar fijo (64px).
 
@@ -30,5 +30,6 @@ Replay (segundo clic en el mismo CTA): `classList.remove("arrive")` → forced r
 
 ## 📁 Archivos
 - `hooks/use-lenis.tsx` — `announceArrival()` + `duration: 1.4`
-- `app/globals.css` — `#contacto.arrive` + keyframes + bloque reduced-motion + scroll-margin
+- `app/globals.css` — `#contacto.arrive #contact-content` + keyframes + bloque reduced-motion + scroll-margin
+- `components/contact-section.tsx` — `innerId="contact-content"` + `SECTION_GAP_Y` en `innerClassName` (el cue y el aire viven en el mismo nodo)
 - `docs/ideas-features/arrival-cue.md` — este doc

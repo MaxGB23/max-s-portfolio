@@ -236,15 +236,19 @@ html {
    clase, fuerza un reflow y la vuelve a agregar.
    Clase deliberada - history.replaceState con fragmento NO actualiza
    `:target`, asi que la ruta pseudo-clase no es confiable.
+   El cue se pinta en el CONTENEDOR INTERNO (#contact-content, que es
+   quien lleva SECTION_GAP_Y) y no en la seccion full-bleed: el ring
+   queda como un panel max-w-6xl centrado con aire en ambos ejes, en
+   vez de un rectangulo del ancho del viewport.
    ============================================================ */
-#contacto.arrive {
+#contacto.arrive #contact-content {
   animation: contact-arrive 1.5s ease-out;
 }
 
 @keyframes contact-arrive {
   0%,
   20% {
-    background-color: color-mix(in oklab, var(--accent-purple) 5%, transparent);
+    background-color: color-mix(in oklab, var(--accent-purple) 12%, transparent);
     box-shadow: inset 0 0 0 2px color-mix(in oklab, var(--accent-purple) 25%, transparent);
   }
   100% {
@@ -256,7 +260,7 @@ html {
 @media (prefers-reduced-motion: reduce) {
   /* Sin movimiento, pero cue de llegada visible: wash + ring estaticos
      mientras la clase `arrive` este presente (el hook la quita ~2.2s). */
-  #contacto.arrive {
+  #contacto.arrive #contact-content {
     animation: none;
     background-color: color-mix(in oklab, var(--accent-purple) 10%, transparent);
     box-shadow: inset 0 0 0 2px color-mix(in oklab, var(--accent-purple) 35%, transparent);

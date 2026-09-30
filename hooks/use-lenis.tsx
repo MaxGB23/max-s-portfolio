@@ -48,7 +48,9 @@ function announceArrival(href: string) {
 }
 
 /**
- * Scroll to a hash target using Lenis, compensating for the fixed navbar height.
+ * Scroll to a hash target using Lenis, compensating for the fixed navbar height
+ * and the target's own padding-top (so its content, not its box, lands under
+ * the navbar).
  * Falls back to native scrollIntoView when Lenis is unavailable.
  * Reflects the target hash on arrival (see reflectHashInUrl).
  */
@@ -63,7 +65,21 @@ export function useScrollToAnchor(navbarHeight = 64) {
       const target = document.getElementById(id);
       if (!target) return false;
 
-      const y = Math.max(target.getBoundingClientRect().top + window.scrollY - navbarHeight, 0);
+      // Land with the target's CONTENT under the navbar, not its box: sections
+      // that own their vertical spacing would otherwise park their content one
+      // padding below the navbar. The air can live on the section shell or on
+      // its first child (the inner container — #contact-content carries
+      // SECTION_GAP_Y so the arrival ring encloses air), so sum both levels.
+      // 2-level rule: no-op for every other anchor target (#sobre-mi,
+      // #proyectos, #precios have padding-top 0 at both levels).
+      const inner = target.firstElementChild;
+      const padTop =
+        (parseFloat(getComputedStyle(target).paddingTop) || 0) +
+        (inner ? parseFloat(getComputedStyle(inner).paddingTop) || 0 : 0);
+      const y = Math.max(
+        target.getBoundingClientRect().top + window.scrollY - navbarHeight + padTop,
+        0
+      );
       // Announce arrival only when the scroll completes: the CSS cue must fire
       // at arrival, not at click time (the user is still looking at the
       // previous section).

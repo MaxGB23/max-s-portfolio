@@ -165,10 +165,22 @@ El ritmo vertical es un contrato de codigo con fuente unica en
 
 | Token | Valor | Uso |
 |---|---|---|
-| `SECTION_GAP` | `h-24 md:h-32` (96 / 128px) | Separacion entre secciones top-level |
+| `SECTION_GAP` | `h-24 md:h-32` (96 / 128px) | Separacion entre secciones top-level (altura del spacer de pagina) |
+| `SECTION_GAP_Y` | `py-24 md:py-32` (96 / 128px) | Padding vertical DENTRO del contenedor interno de `#contacto` (`#contact-content`, excepcion unica, ver nota) |
 | `FEATURED_GAP` | `gap-12` (48px) | Titulo <-> card dentro del stack destacado |
 | `FEATURED_GAP_LG` | `[@media(min-width:1280px)_and_(min-height:900px)]:gap-30` (120px) | El mismo gap en pantallas altas y anchas |
-| `PAGE_SPACER_CLASSES` | ver tabla | Clase del wrapper por par de secciones |
+| `PAGE_SPACER_CLASSES` | ver tabla | Clase del wrapper por par de secciones (4 pares) |
+
+Excepcion `SECTION_GAP_Y`: contacto es la unica seccion que escribe padding
+vertical propio, y lo hace en su CONTENEDOR INTERNO (`#contact-content`), no en
+el shell. Motivo: su cue de llegada (ring `box-shadow: inset`) se pinta en ese
+hijo directo, y ahi es donde debe tener aire; pintarlo en el shell haria un
+rectangulo del ancho del viewport, en vez de un panel `max-w-6xl` centrado. Los
+dos spacers de pagina que la rodeaban (`pricing-contact` y `contact-footer`) se
+retiraron: el ritmo visual total sigue siendo 96/128px, ahora aportado por ese
+padding. La regla de 2 niveles (shell + primer hijo) es la que usan tanto
+`hooks/use-lenis.tsx` (aterrizaje) como `scripts/section-spacing.mjs` (auditoria)
+para recuperar el blanco visual.
 
 `PAGE_SPACER_CLASSES` (contrato de orientacion, verbatim):
 
@@ -178,8 +190,6 @@ El ritmo vertical es un contrato de codigo con fuente unica en
 | `about-projects` | (sin wrapper condicional) |
 | `projects-all-projects` | (sin wrapper condicional) |
 | `all-projects-pricing` | (sin wrapper condicional) |
-| `pricing-contact` | (sin wrapper condicional) |
-| `contact-footer` | (sin wrapper condicional) |
 
 Las variantes arbitrarias ganan por orden CSS: el ultimo variant ordenado
 resuelve el layout. NO reescribir estos valores a mano: editar `lib/rhythm.ts`
