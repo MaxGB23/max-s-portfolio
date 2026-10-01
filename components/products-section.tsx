@@ -151,7 +151,7 @@ export function ProductsSection() {
       ease: "power2.out",
       scrollTrigger: {
         trigger: ".products-header",
-        start: "top 85%",
+        start: "top 80%",
         once: true,
       },
     });

@@ -25,6 +25,7 @@ derivado de tokens, sin UI para alternar. Detalle completo:
 | `components.md` | Shell Section, contrato de ritmo, gates, geometria por componente, motion, scroll | Layout verificada de cada seccion |
 | `buttons.md` | API de Button, variantes, hovers, inventario por seccion, historia v1->v3 | Que boton usar donde |
 | `pointer-gestures.md` | Reglas de pointer/drag/select + lightbox (detalle) | Interaccion con el puntero y lightbox |
+| `section-animations.md` | Patron unificado de animacion de titulos, excepciones, familias | Como se anima cada seccion y por que |
 | `iteration-guide.md` | Reglas de decision, E9/E15, flujo serif/sans/mono, gotchas | Como iterar sin romper el sistema |
 | `../../app/globals.css` | Fuente de verdad del tema (no es doc, es codigo) | Leerlo primero si dudas de valores |
 

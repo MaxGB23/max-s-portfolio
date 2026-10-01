@@ -24,9 +24,9 @@ export function AboutSection() {
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: containerRef.current,
-        start: "top 85%",
+        start: "top 80%",
       },
-      defaults: { ease: "power3.out" },
+      defaults: { ease: "power2.out" },
     });
 
     tl.to(".about-portrait", {
@@ -42,7 +42,7 @@ export function AboutSection() {
       )
       .to(
         ".about-title",
-        { autoAlpha: 1, x: 0, duration: 0.4, startAt: { x: 20 } },
+        { autoAlpha: 1, y: 0, duration: 0.55, startAt: { y: 24 } },
         "-=0.3"
       )
       .to(
@@ -57,7 +57,7 @@ export function AboutSection() {
       id="sobre-mi"
       ref={containerRef}
       aria-label={t("section.about.ariaLabel")}
-      className="relative flex flex-col items-center justify-center"
+      className="relative flex flex-col items-center justify-center min-h-[60dvh]"
       insetClassName="px-6 md:px-8 lg:px-12"
       innerClassName="relative z-10 flex flex-col-reverse md:flex-row items-center justify-center w-full max-w-5xl gap-8 md:gap-12 lg:gap-14 xl:gap-16"
     >

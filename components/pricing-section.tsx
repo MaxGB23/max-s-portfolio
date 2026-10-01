@@ -231,7 +231,7 @@ export function PricingSection() {
         ease: "power2.out",
         scrollTrigger: {
           trigger: ".pricing-header",
-          start: "top 85%",
+          start: "top 80%",
           toggleActions: "play none none none",
           once: true,
         },
