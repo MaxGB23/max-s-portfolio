@@ -99,7 +99,7 @@ duration-200` (outline, inverted).
 | Navbar desktop | Contacto | `primary pill sm` | Sin shadow; hover opacidad |
 | Navbar mobile | Contacto | `primary pill sm fullWidth py-2.5` | Ocupa el ancho |
 | Hero | Ver Proyectos | `primary pill md` + `shadow-md` | shadow heredada (deuda 10.1) |
-| Hero | Descargar CV | `outline pill md glow` | Firma morada |
+| Hero | Descargar CV | `outline pill md glow` | Firma morada; `href` de `data/cv.ts` (mismo PDF por idioma que contacto); EN dice "Resume" |
 | Detalle | Volver | `primary pill md` + `back-btn hover:bg-foreground/80 transition-colors` | Excepcion: hover de fondo, NUNCA opacity (GSAP lo controla) |
 | Detalle | Ver codigo / Ver demo | `inverted lg rounded` | Cambio pleno a morado |
 | Detalle | CTA final (Volver a proyectos) | `primary md` | En banda morada suave |
@@ -109,11 +109,12 @@ duration-200` (outline, inverted).
 | Contacto | Conectemos en LinkedIn | `primary lg` | Unico primary en contacto |
 | Contacto | Escríbeme... | `outline glow lg` | Firma morada |
 | Contacto | Copiar correo | `outline glow lg` | Estado copiado: `border-purple-accent/40 text-purple-accent brightness-110` |
-| Contacto | GitHub | `outline glow lg` | Firma morada |
+| Contacto | Descargar CV | `outline glow lg` | Icono `Download` primero (patrón de la fila); `href` de `data/cv.ts` (un PDF por idioma) con `download`; label corto `CV`/`Resume` en <sm; va ANTES de GitHub (prioridad: contacto > evidencia) |
+| Contacto | GitHub | `outline glow lg` | Firma morada; comparte fila (2 columnas) con Descargar CV por debajo de `lg` |
 | Products (no renderizado) | Saber mas | `outline fullWidth px-5 py-3 justify-between` | Import muerto en page.tsx (ver components.md 4.11) |
 
 Nota: el inventario anterior incluia un boton "Banner" `compact px-4 py-2.5
-w-11` que NO existe en el codigo actual: el contacto real usa 4 botones
+w-11` que NO existe en el codigo actual: el contacto real usa 5 botones
 grandes (lg) y la clase `compact` no tiene consumidores. El inventario de
 este canon refleja el codigo.
 

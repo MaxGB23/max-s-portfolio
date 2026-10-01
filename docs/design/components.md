@@ -120,7 +120,8 @@ en otro archivo.
   text-muted-foreground brightness-110` (excepcion documentada: brightness
   sobre muted, ver iteration-guide).
 - CTA: "Ver Proyectos" primary pill md con `shadow-md` heredado; "Descargar CV"
-  outline pill md con `glow` (ver buttons.md).
+  outline pill md con `glow`, `href` de `data/cv.ts` (`cvHref(lang)`, un PDF por
+  idioma — mismo archivo que contacto; EN dice "Resume"). Ver buttons.md.
 - Cue "Deslizar": indicador de scroll (decisional, ver
   `docs/ideas-features/hero-design.md`; ref corregida desde el canon anterior).
 
@@ -213,10 +214,16 @@ en otro archivo.
 - h2 "Trabajemos juntos": `font-serif font-black uppercase text-fluid-section
   leading-[0.9] tracking-tighter`, palabra "juntos" en acento + brightness-110
   (patron E9).
-- CTA row: `flex flex-col md:flex-row gap-3`; 4 botones (LinkedIn primary lg;
-  Escríbeme outline glow lg; copiar correo outline glow lg con estado copiado
-  `border-purple-accent/40 text-purple-accent brightness-110`; GitHub outline
-  glow lg). Ver buttons.md.
+- CTA row: `flex flex-col lg:flex-row gap-3` — UNA sola fila recién en `lg`
+  (a partir de `md` los 5 no caben); por debajo se apila en bloques de 2
+  columnas. Orden por prioridad: LinkedIn `primary lg` · grupo [Escríbeme +
+  copiar correo] (`outline glow lg`, con estado copiado
+  `border-purple-accent/40 text-purple-accent brightness-110`) · grupo
+  [Descargar CV + GitHub] (`outline glow lg` cada uno). Descargar CV: icono
+  `Download` primero, `href` de `data/cv.ts` — `cvHref(lang)`, un PDF por
+  idioma (hoy ES y EN apuntan al mismo PDF EN) — con `download`, y label corto
+  `CV`/`Resume` en <sm (clave `ctaCvShort`, el mismo truco de `emailShort`).
+  El CV ya no vive solo en el hero. Ver buttons.md.
 - `copyEmail`: `navigator.clipboard` con fallback `mailto:`; mensaje de copiado
   temporizado (mejorado en v3, ver buttons.md historial).
 - Cue de llegada: wash morado via clase `arrive` (ver seccion 9).

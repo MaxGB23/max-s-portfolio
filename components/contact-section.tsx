@@ -1,17 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Copy, Github, Linkedin, Mail } from "lucide-react";
+import { Check, Copy, Download, Github, Linkedin, Mail } from "lucide-react";
 import { FadeIn } from "@/components/motion-primitives";
 import { Button } from "@/components/ui/button";
 import { Section } from "@/components/section";
 import { useLanguage } from "@/contexts/language-context";
+import { cvHref } from "@/data/cv";
 import { SECTION_GAP_Y } from "@/lib/rhythm";
 
 const CONTACT_EMAIL = "maxgonzalezballesteros@gmail.com";
 
 export function ContactSection() {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const [copied, setCopied] = useState(false);
 
   const copyEmail = async () => {
@@ -56,8 +57,9 @@ export function ContactSection() {
           </p>
         </header>
 
-        {/* CTA row */}
-        <div className="debug-l3 flex flex-col md:flex-row justify-center items-center gap-3">
+        {/* CTA row: single row from lg (5 buttons don't fit at md). Below lg
+            it stacks in blocks of 2 columns, mirroring email + copy. */}
+        <div className="debug-l3 flex flex-col lg:flex-row justify-center items-center gap-3">
           <Button asChild variant="primary" size="lg">
             <a
               href="https://www.linkedin.com/in/maxballesteros"
@@ -93,16 +95,26 @@ export function ContactSection() {
             </Button>
           </div>
 
-          <Button asChild variant="outline" glow size="lg">
-            <a
-              href="https://github.com/MaxGB23"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Github size={16} aria-hidden="true" />
-              GitHub
-            </a>
-          </Button>
+          <div className="flex items-center gap-3">
+            <Button asChild variant="outline" glow size="lg">
+              <a href={cvHref(lang)} download>
+                <Download size={16} aria-hidden="true" />
+                <span className="hidden sm:block">{t("section.contact.ctaCv")}</span>
+                <span className="sm:hidden">{t("section.contact.ctaCvShort")}</span>
+              </a>
+            </Button>
+
+            <Button asChild variant="outline" glow size="lg">
+              <a
+                href="https://github.com/MaxGB23"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Github size={16} aria-hidden="true" />
+                GitHub
+              </a>
+            </Button>
+          </div>
         </div>
       </FadeIn>
     </Section>

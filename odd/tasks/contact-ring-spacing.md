@@ -80,8 +80,21 @@ del viewport (aire vertical sí, aéreo a los lados no).
 - [x] Verificación observada (ver Checks): tsc PASS · auditoría idéntica al
       baseline de WU1 · Playwright desktop/mobile/reduced.
 
-### WU2 — CV en contacto (pendiente, no iniciada)
-- [ ] Botón outline con icono `Download` en la CTA row de `contact-section.tsx`.
+### WU2 — CV en contacto (hecha)
+- [x] Botón `outline glow lg` con icono `Download` en la CTA row, **antes de
+      GitHub** (orden por prioridad: contacto > evidencia).
+- [x] i18n: `section.contact.ctaCv` ES "Descargar CV" / EN "Download Resume",
+      `ctaCvShort` ES "CV" / EN "Resume" (variante corta <sm, truco de
+      `copy.emailShort`). `hero.cta.cv` EN pasó a "Download Resume" para no
+      contradecir contacto.
+- [x] PDF por idioma: `data/cv.ts` con `cvHref(lang)` — fuente única para hero
+      y contacto. Hoy ES y EN apuntan al mismo PDF EN (no existe versión ES;
+      el dueño la añadirá después).
+- [x] Layout CTA row: `md:flex-row` → **`lg:flex-row`** (los 5 no caben desde
+      `md`); por debajo se apila en bloques de 2 columnas — grupos
+      [Escríbeme + copiar correo] y **[CV + GitHub]**.
+- [x] Canon: `docs/design/buttons.md` (filas + orden) y
+      `docs/design/components.md` (CTA row 216+, hero CTA 122+).
 
 ## Acceptance criteria
 
@@ -111,19 +124,24 @@ del viewport (aire vertical sí, aéreo a los lados no).
   ring 2px 0.35 **sobre el inner** (el bloque reducido matchea el selector nuevo).
 - Sync de canon: T6 (WU1) + WU1b (`tokens.md`, `components.md`,
   `arrival-cue.md`, espejo `tailwind-v4-theme.css`).
+- WU2 — layout de la CTA row medido con Playwright: 390px → 3 bloques
+  (LinkedIn / Escríbeme+Correo / CV+GitHub, cortos `CV` y `Correo`); 768px →
+  sigue en 3 bloques (no en 1); **1024px → 1 sola fila** con los 5 (ancho total
+  68..956, cabe); 390px con cookie `lang=en` → label "Resume". `tsc` PASS.
 
-## Deuda detectada (pre-existente, NO de esta feature)
+## Deuda detectada
 
-- Wash del cue: `app/globals.css` usa **12%** mientras el espejo
-  `docs/design/tailwind-v4-theme.css` documenta **5%**
-  (`docs/ideas-features/arrival-cue.md` ya no declara porcentaje desde WU1b).
-  No se tocó: decidir cuál es el valor canónico (código 12% vs doc 5%,
-  "calibrado en vivo hasta 5%") y sincronizar el resto.
+- ~~Wash del cue 12% en código vs 5% en el espejo~~ → **RESUELTO** en `4ea4a64`
+  (espejo `tailwind-v4-theme.css` llevado a 12%; el usuario confirmó que 12% es
+  el valor bueno).
+- Pre-existente y fuera de alcance: `RHYTHM FAIL [4]` card→card (ver T7).
 
 ## Progress
 
 - [x] Diagnóstico confirmado en código (ring = `box-shadow: inset` en `#contacto`).
-- [x] WU1 implementada + verificada.
-- [x] WU1b (cue en el contenedor interno → panel centrado) implementada + verificada.
-- [ ] Commit de WU1 + WU1b — pendiente de decisión del usuario.
-- [ ] WU2 (CV en contacto) — no iniciada.
+- [x] WU1 + WU1b — commit `4ea4a64 feat(contact): split vertical rhythm and
+      paint arrival cue on inner panel` (14 archivos).
+- [x] Regla de dev servers en `AGENTS.md` — commit `0d6a0ab`.
+- [x] WU2 (CV en contacto) implementada, tsc PASS — pendiente de commit.
+- [ ] Auditoría de 9 viewports con el split mitad/mitad (pedido ir por la
+      visual primero; correr con server transitorio antes del merge).

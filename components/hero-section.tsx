@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowDown, Download } from "lucide-react";
+import { cvHref } from "@/data/cv";
 import { motion } from "framer-motion";
 import { useGsapAnimation } from "@/hooks/use-gsap-animation";
 import { useScrollToAnchor } from "@/hooks/use-lenis";
@@ -20,7 +21,7 @@ const HERO_NAME = {
 };
 
 export function HeroSection() {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const [mounted, setMounted] = useState(false);
   const [isDark, setIsDark] = useState(false);
   const scrollToAnchor = useScrollToAnchor(64);
@@ -204,7 +205,7 @@ export function HeroSection() {
           </Button>
           <Button asChild variant="outline" shape="pill" size="md" glow>
             <a
-              href="/documents/Maximiliano_Gonzalez_AI_Engineer_Resume.pdf"
+              href={cvHref(lang)}
               download
             >
               {t("hero.cta.cv")}
