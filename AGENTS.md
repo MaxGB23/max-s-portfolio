@@ -40,6 +40,7 @@ Cuando respondas en español, usa siempre español neutro. Evita el voseo y los 
   5. Aplicar cambios SOLO en el worktree; comparar en vivo contra `:3000`.
   6. Al aprobar: merge a la rama principal y `git worktree remove` para limpiar.
 - Al borrar un worktree: `git worktree remove <ruta>`; si tiene cambios sin mergear, confirmar antes con el usuario.
+- **Copias entre worktrees/ramas:** Antes de copiar archivos entre worktrees o ramas, verificar con `git diff <origen> <destino> -- <archivo>` que la versión de origen no sea más antigua que la del destino. Si hay diferencias a favor del destino, no copiar — aplicar los cambios manualmente en el destino.
 
 ### Código fuente y sintaxis
 - Usar siempre caracteres ASCII estándar para sintaxis y operadores. Nunca sustituir caracteres ASCII por caracteres Unicode visualmente similares.

@@ -1,16 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Copy, Github, Linkedin, Mail } from "lucide-react";
+import { Check, Copy, Download, Github, Linkedin, Mail } from "lucide-react";
 import { useGsapAnimation } from "@/hooks/use-gsap-animation";
 import { Button } from "@/components/ui/button";
 import { Section } from "@/components/section";
 import { useLanguage } from "@/contexts/language-context";
+import { cvHref } from "@/data/cv";
+import { SECTION_GAP_Y } from "@/lib/rhythm";
 
 const CONTACT_EMAIL = "maxgonzalezballesteros@gmail.com";
 
 export function ContactSection() {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const [copied, setCopied] = useState(false);
 
   const sectionRef = useGsapAnimation<HTMLElement>((gsap) => {
@@ -50,7 +52,8 @@ export function ContactSection() {
       ref={sectionRef}
       aria-labelledby="contact-heading"
       insetClassName="px-6"
-      innerClassName="max-w-6xl"
+      innerId="contact-content"
+      innerClassName={`max-w-6xl ${SECTION_GAP_Y}`}
     >
       {/* Section header + CTA row */}
       <header className="debug-l3 contact-header flex flex-col items-center text-center mb-5 md:mb-8">
@@ -104,16 +107,26 @@ export function ContactSection() {
               </Button>
             </div>
 
-            <Button asChild variant="outline" glow size="lg">
-              <a
-                href="https://github.com/MaxGB23"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Github size={16} aria-hidden="true" />
-                GitHub
-              </a>
-            </Button>
+            <div className="flex items-center gap-3">
+              <Button asChild variant="outline" glow size="lg">
+                <a href={cvHref(lang)} download>
+                  <Download size={16} aria-hidden="true" />
+                  <span className="hidden sm:block">{t("section.contact.ctaCv")}</span>
+                  <span className="sm:hidden">{t("section.contact.ctaCvShort")}</span>
+                </a>
+              </Button>
+
+              <Button asChild variant="outline" glow size="lg">
+                <a
+                  href="https://github.com/MaxGB23"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Github size={16} aria-hidden="true" />
+                  GitHub
+                </a>
+              </Button>
+            </div>
           </div>
         </header>
     </Section>
