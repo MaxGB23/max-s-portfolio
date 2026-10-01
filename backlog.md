@@ -247,9 +247,14 @@ Carried here so it is not lost. Deliberately **not** started before the Featured
 
 ### Item: Navbar — mobile CTA separation + section active state
 
-**Status**: ⛔ Blocked — decide only after the winning variant branch is merged to `main`.
+**Status**: ✅ Done — implemented by work unit `odd/tasks/navbar-active-state.md`
+(branch `feat/recede-fade`, 2026-09-30): `hooks/use-active-section.ts`
+(IntersectionObserver scroll-spy, `rootMargin -40% 0 -40% 0`, hero clears,
+last-active-wins, no Lenis coupling) + `aria-current="page"` and static
+underline on desktop AND mobile + menu `gap-6` with the CTA at
+`mt-4 justify-start pl-5` (44px axis intact). QA: `scripts/navbar-active.mjs`.
 
-**Why it is blocked**
+**Why it was blocked**
 
 1. **Geometry coupling** — the scroll-spy `rootMargin` must be calibrated against real section heights. `#proyectos` is the section being refactored, including the GSAP pin and its pin-spacer growth (see `hooks/use-lenis.tsx` for the documented growth race). Calibrating now means calibrating against geometry that is about to change.
 2. **One alignment pass, not two** — the mobile `pl-5` is a deliberate alignment contract, not an arbitrary indent (below). An active-state marker must live inside that same axis, so the separation and the active state have to be designed together. Doing the separation first means redoing the alignment reasoning.

@@ -6,6 +6,7 @@ import { Menu, X } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useScrollToAnchor, useScrollToTop } from "@/hooks/use-lenis";
+import { useActiveSection } from "@/hooks/use-active-section";
 import { Button } from "@/components/ui/button";
 import { LanguageToggle } from "@/components/language-toggle";
 import { useLanguage } from "@/contexts/language-context";
@@ -18,6 +19,25 @@ const navLinks = [
   { key: "nav.pricing", href: "#precios" },
 ] as const;
 
+// Secciones del scroll-spy en orden documental (D2): se observan TODAS las
+// secciones de la home, incluida la hero. `#inicio` limpia el estado (arriba
+// no hay link activo). `all-projects` enciende "Proyectos" vía SECTION_ALIAS
+// (decisión del usuario: es la misma sección conceptualmente); los ids sin
+// link ni alias (contacto, footer) no encienden ningún link.
+// Referencia estable (módulo): si cambia, el hook re-observa.
+const spySections = [
+  "inicio",
+  "sobre-mi",
+  "proyectos",
+  "all-projects",
+  "precios",
+  "contacto",
+  "footer",
+] as const;
+
+// Sección activa → link que debe encenderse (alias del scroll-spy).
+const SECTION_ALIAS: Record<string, string> = { "all-projects": "proyectos" };
+
 const SCROLL_THRESHOLD = 8; // px mínimos de delta para disparar cambio de visibilidad
 
 export function Navbar() {
@@ -25,9 +45,53 @@ export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [visible, setVisible] = useState(true);
+  // Link bajo el puntero (D10): el underline es de canal único — al hacer
+  // hover en OTRO link el activo se colapsa y el hover toma el canal.
+  const [hovered, setHovered] = useState<string | null>(null);
   const navRef = useRef<HTMLDivElement>(null);
   const scrollToAnchor = useScrollToAnchor(64); // compensa la altura del navbar
   const scrollToTop = useScrollToTop();
+  // Estado compartido desktop + mobile: mismo spy, mismo underline (D3).
+  const activeSection = useActiveSection(spySections);
+
+  // Un link está activo si su href ancla coincide con la sección activa
+  // (directa o vía SECTION_ALIAS). El link "Inicio" ("/") nunca coincide:
+  // la hero limpia el estado (D2).
+  const isActiveLink = (href: string) => {
+    if (!href.startsWith("#")) return false;
+    const id = href.slice(1);
+    if (activeSection === id) return true;
+    return activeSection != null && SECTION_ALIAS[activeSection] === id;
+  };
+
+  // Underline de CANAL ÚNICO (D10, revisión 2026-10-01) — desktop y mobile
+  // comparten la misma línea: activa = «estás aquí», hover = «puedes ir
+  // aquí», nunca ambas a la vez. Al hacer hover en OTRO link el activo se
+  // colapsa (w-0, 200ms) y el hover toma el canal al 100%. Handoff
+  // SECUENCIAL al retirar el puntero: el activo espera (delay 200ms, a la
+  // par de que la línea hover termina de colapsar) y crece LENTO (400ms) —
+  // nunca hay dos líneas ni el rebote rápido que se percibía. Hover sobre
+  // el propio activo no cambia nada (hovered === own → w-full, sin flicker
+  // — D1). Grosor único h-px y bg-purple-accent al 100% en ambas ramas:
+  // se retiran el /60 y el 1.5px del activo (D7 queda superseded).
+  const underlineClass = (active: boolean, own: string) => {
+    const hoveredOther = hovered !== null && hovered !== own;
+    return cn(
+      "absolute -bottom-0.5 left-0 h-px bg-purple-accent transition-[width] duration-200",
+      active
+        ? hoveredOther
+          ? "w-0"
+          : "w-full delay-[200ms] duration-[400ms]"
+        : "w-0 group-hover:w-full"
+    );
+  };
+
+  // El menú mobile se desmonta al cerrarse: el mouseleave del link no llega,
+  // así que se limpia `hovered` al cerrar para no dejar el underline activo
+  // colapsado por un hover fantasma (D10).
+  useEffect(() => {
+    if (!mobileOpen) setHovered(null);
+  }, [mobileOpen]);
 
   // Cerrar el menú al hacer clic o tocar fuera del Navbar
   useEffect(() => {
@@ -158,22 +222,26 @@ export function Navbar() {
 
         {/* Desktop nav links */}
         <nav className="hidden nav:flex items-center gap-8" aria-label={t("nav.aria.sections")}>
-          {navLinks.map((link) => (
-            <Link
-              key={link.key}
-              href={link.href}
-              onClick={(e) => {
-                handleAnchorClick(e, link.href);
-                handleHomeClick(e, link.href);
-              }}
-              className="text-base font-medium transition-colors duration-100 relative group"
-            >
-              {t(link.key)}
-              <span
-                className="absolute -bottom-0.5 left-0 h-px w-0 group-hover:w-full transition-all duration-200 bg-purple-accent"
-              />
-            </Link>
-          ))}
+          {navLinks.map((link) => {
+            const active = isActiveLink(link.href);
+            return (
+              <Link
+                key={link.key}
+                href={link.href}
+                aria-current={active ? "page" : undefined}
+                onClick={(e) => {
+                  handleAnchorClick(e, link.href);
+                  handleHomeClick(e, link.href);
+                }}
+                onMouseEnter={() => setHovered(link.href)}
+                onMouseLeave={() => setHovered((h) => (h === link.href ? null : h))}
+                className="text-base font-medium transition-colors duration-100 relative group"
+              >
+                {t(link.key)}
+                <span className={underlineClass(active, link.href)} />
+              </Link>
+            );
+          })}
         </nav>
 
         {/* Right side: dark mode (hidden) + language + contact */}
@@ -227,27 +295,42 @@ export function Navbar() {
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
           >
-            <div className="debug-l2 max-w-6xl mx-auto px-6 py-4 flex flex-col gap-8">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.key}
-                  href={link.href}
-                  onClick={(e) => {
-                    handleAnchorClick(e, link.href);
-                    handleHomeClick(e, link.href);
-                  }}
-                  className="text-base pl-5 text-foreground font-medium hover:text-foreground transition-colors"
-                >
-                  {t(link.key)}
-                </Link>
-              ))}
+            <div className="debug-l2 max-w-6xl mx-auto px-6 py-4 flex flex-col gap-3">
+              {navLinks.map((link) => {
+                const active = isActiveLink(link.href);
+                return (
+                  <Link
+                    key={link.key}
+                    href={link.href}
+                    aria-current={active ? "page" : undefined}
+                    onClick={(e) => {
+                      handleAnchorClick(e, link.href);
+                      handleHomeClick(e, link.href);
+                    }}
+                    onMouseEnter={() => setHovered(link.href)}
+                    onMouseLeave={() => setHovered((h) => (h === link.href ? null : h))}
+                    className="group text-base pl-5 py-2.5 text-foreground font-medium hover:text-foreground transition-colors"
+                  >
+                    {/* Wrapper que abraza SOLO el label: es el contexto de
+                        posicionamiento del underline, así el marker cae en el
+                        eje 44px (px-6 + pl-5) con el ancho del texto — mismo
+                        lenguaje visual que desktop (D3). `py-2.5` amplía el
+                        target táctil a 44px (Apple HIG); con `gap-3` el ritmo
+                        texto-a-texto queda en 56px = el `gap-8` histórico. */}
+                    <span className="relative inline-block">
+                      {t(link.key)}
+                      <span className={underlineClass(active, link.href)} />
+                    </span>
+                  </Link>
+                );
+              })}
               <Button
                 asChild
                 variant="primary"
                 shape="pill"
                 size="sm"
                 fullWidth
-                className="py-2.5"
+                className="py-2.5 mt-7"
               >
                 <Link
                   href="#contacto"

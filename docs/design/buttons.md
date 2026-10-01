@@ -97,7 +97,7 @@ duration-200` (outline, inverted).
 | Seccion | Uso | Variante / shape / size | Notas |
 |---|---|---|---|
 | Navbar desktop | Contacto | `primary pill sm` | Sin shadow; hover opacidad |
-| Navbar mobile | Contacto | `primary pill sm fullWidth py-2.5` | Ocupa el ancho |
+| Navbar mobile | Contacto | `primary pill sm fullWidth py-2.5 mt-7` | Ancho completo con label CENTRADO (es un action, no un item de la lista: el eje 44px es contrato de la lista de links); `mt-7` sobre `gap-3` = 40px de separacion vs 12px entre links; los links llevan `py-2.5` → targets de 44px |
 | Hero | Ver Proyectos | `primary pill md` + `shadow-md` | shadow heredada (deuda 10.1) |
 | Hero | Descargar CV | `outline pill md glow` | Firma morada; `href` de `data/cv.ts` (mismo PDF por idioma que contacto); EN dice "Resume" |
 | Detalle | Volver | `primary pill md` + `back-btn hover:bg-foreground/80 transition-colors` | Excepcion: hover de fondo, NUNCA opacity (GSAP lo controla) |

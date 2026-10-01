@@ -98,9 +98,42 @@ en otro archivo.
   `#sobre-mi`, Proyectos `#proyectos`, Precios `#precios`.
 - Con scroll (umbral 8px): `bg-nav backdrop-blur-none md:backdrop-blur-md
   border-b border-border shadow-sm`.
-- Mobile: menu hamburguesa auto-ocultable (`hover:bg-secondary`), CTA abajo.
+- Scroll-spy de seccion activa (`hooks/use-active-section.ts`,
+  `useActiveSection(spySections)`): IntersectionObserver con
+  `rootMargin "-40% 0px -40% 0px"` (banda central del 20%), sin dependencias y
+  agnostico al motor de scroll (Lenis desktop / nativo mobile). Observa TODAS
+  las secciones de la home en orden documental; `#inicio` limpia el estado
+  (arriba ningun link activo) y en huecos entre anclas gana el ultimo activo.
+  Entre las secciones presentes en la banda gana SIEMPRE la primera en orden
+  documental, evaluada sobre el set COMPLETO de intersecciones (los `entries`
+  del IO son deltas por batch: sin el set, el aterrizaje animado de una
+  seccion corta — About a 2 columnas en md — dejaba encendida la siguiente
+  en iPad portrait 768x1024, donde la banda 409..819 alcanza el top de
+  Projects ~552).
+  El link activo recibe `aria-current="page"` (se mantiene SIEMPRE, incluso
+  mientras su linea colapsada — accesibilidad) + underline de CANAL UNICO:
+  una sola linea a la vez — activa = "estas aqui" o hover = "puedes ir
+  aqui". Al hacer hover en OTRO link el activo colapsa (`w-0`) y el hover
+  toma el canal al 100% (via `transition-[width]`); al retirar el puntero
+  el handoff es SECUENCIAL: la linea hover colapsa (200ms) y el activo
+  espera `delay-[200ms]` y crece lento (`duration-[400ms]`) — nunca hay
+  dos lineas a la vez. Hover sobre el propio activo no cambia la
+  linea (sin flicker). Grosor unico `h-px` y `bg-purple-accent` al 100% en
+  ambas ramas (sin `/60` ni 1.5px); estado `hovered` en navbar.tsx, limpiado
+  al cerrar el menu mobile. Mismo estilo en desktop y mobile;
+  `all-projects` enciende "Proyectos" via `SECTION_ALIAS`; `contacto` y
+  `footer` (sin link en navLinks) no encienden ninguno.
+- Mobile: menu hamburguesa auto-ocultable (`hover:bg-secondary`), links en
+  `flex-col gap-3` (12px) con `py-2.5` → target de 44px (Apple HIG) y ritmo
+  texto-a-texto de 56px (= el gap-8 historico, decision revisada); CTA abajo
+  con `mt-7` (12+28 = 40px visual de separacion, spacing puro — sin divider).
+  Eje de alineacion 44px intacto (`px-6` + `pl-5`); el underline del marker
+  vive dentro del eje via un wrapper `relative inline-block` que abraza solo
+  el label.
 - CTA "Contacto": `variant="primary" shape="pill" size="sm"` desktop;
-  `size="sm" fullWidth className="py-2.5"` mobile (ver buttons.md).
+  `size="sm" fullWidth className="py-2.5 mt-7"` mobile (ancho completo,
+  label CENTRADO — es un action, no un item de la lista; el eje 44px es
+  contrato de la lista de links — ver buttons.md).
 - `useScrollToAnchor(64)` (ancla con offset de navbar) y `useScrollToTop`.
 
 ### 4.2 Hero (`hero-section.tsx`)
