@@ -134,6 +134,12 @@ en otro archivo.
   `size="sm" fullWidth className="py-2.5 mt-7"` mobile (ancho completo,
   label CENTRADO — es un action, no un item de la lista; el eje 44px es
   contrato de la lista de links — ver buttons.md).
+- LanguageToggle (`language-toggle.tsx`): outline pill con icono `Globe` +
+  codigo ISO (`ES`/`EN`) — el icono da la affordance de control de idioma y
+  el codigo el estado actual. `size="sm"` en `sm:+` y `size="compact"` en
+  `<sm` (fila mobile ajustada); `gap-1.5` (el gap base 2 ensancharia la fila).
+  WCAG 2.5.3 Label in Name: `aria-label` = `"{code} — {switchTo}"`, contiene
+  el label visible. `hover:border-purple-accent/15 border-transparent`.
 - `useScrollToAnchor(64)` (ancla con offset de navbar) y `useScrollToTop`.
 
 ### 4.2 Hero (`hero-section.tsx`)
@@ -163,6 +169,9 @@ en otro archivo.
 - `Section#sobre-mi` con `insetClassName="px-6 md:px-8 lg:px-12"`, inner
   `max-w-5xl`, `flex-col-reverse md:flex-row`, gaps
   `gap-8 md:gap-12 lg:gap-14 xl:gap-16`.
+- `min-h-[60dvh]`: la seccion nunca baja del 60% del viewport — garantiza que
+  toque la banda centrada del scroll-spy en viewports altos (D11, resolucion
+  2026-10-01; ver `section-animations.md` punto 5).
 - Retrato `aspect-11/9 rounded-4xl shadow-xl`, alto escalado por breakpoint:
   `md:h-[280px] lg:h-[320px] xl:h-[360px] 2xl:h-[380px]`, `max-w-[400px]`
   mobile.
