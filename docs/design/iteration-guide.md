@@ -150,7 +150,9 @@ prescripcion:
 5. Motion: `FadeIn`/`FadeInStagger` (framer-motion). NO revertir a
    `SlideIn`/`ScaleIn`. GSAP solo donde ya vive (pin featured, detalle,
    pricing, about).
-6. QA: `layout-debug` (data-debug + debug-l1..l4) antes de pedir review.
+6. QA: `layout-debug-canon` (activar solo los canales que interesen y
+   `debug-test` para una caja puntual) antes de pedir review.
+   Ver `components.md` 10.
 
 ## 9. Gotchas de entorno
 

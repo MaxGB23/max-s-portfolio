@@ -411,8 +411,20 @@ en otro archivo.
 
 - `Section.debug`: `default` (l1 outer / l2 inner), `inverted` (l2 outer /
   l1 inner), `none` (sin markers). Sin cambios de layout en produccion
-  (los markers dependen de `data-debug` en `<html>`).
-- Manual QA con clases `debug-l1..l4` + `data-debug`: ver skill `layout-debug`.
+  (los markers dependen de `data-debug-<canal>` en `<html>`).
+- Activacion por canal: `LAYOUT_DEBUG: DebugChannel[]` en `app/layout.tsx`;
+  cada entrada del array anade un atributo `data-debug-<canal>` al `<html>`.
+  `[]` = apagado.
+- `l1`..`l4` son nivel de profundidad (l1 = contenedor marcado mas externo,
+  cada marcador anidado +1). `test` es sonda desechable de una caja puntual
+  (icono, imagen, span) y es ortogonal a la profundidad: nunca cuenta como
+  nivel.
+- Un canal solo (`LAYOUT_DEBUG = ['l2']`) para depurar el padding de un
+  contenedor sin el ruido de los niveles vecinos.
+- Mecanismo: `outline` + `outline-offset: -1px`, nunca `border` (cero shift).
+- CSS en `app/globals.css` (`@layer utilities`), una regla por canal.
+  Uso diario en la skill `layout-debug-canon`; instalacion en otro
+  proyecto en la skill global `layout-debug`.
 
 ## 11. Gotchas
 
@@ -448,3 +460,7 @@ en otro archivo.
 - 13.5 La nota "Vercel Preview Deployment activado para la rama
   feat/fluid-typo" del canon anterior se ELIMINO del canon vivo (informacion
   de rama agotada; el snapshot `2026-09-21-pre-designmd` la conserva).
+- 13.6 Marcadores `debug-lN` con nivel incoherente respecto a su profundidad real
+  (NO corregidos en v2, se decide al usar): `featured-project-panel.tsx` (:42, :48,
+  :59, :61, :88), `hero-section.tsx:147`, `about-section.tsx` (:65, :88, :89).
+  Sin enforcement automatico.

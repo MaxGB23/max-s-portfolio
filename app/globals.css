@@ -222,16 +222,20 @@ body {
 /* ============================================================
    Layout Debug Overlay (manual QA)
    ------------------------------------------------------------
-   Only renders when the root <html> element carries data-debug.
-   Levels follow container nesting depth so the hierarchy is easy
-   to read at a glance:
-     l1 = <section> root        (red)
-     l2 = main layout wrapper   (green)
-     l3 = sub-block / column    (yellow)
-     l4 = leaf element          (blue)
+   Outlines render only under the channel that matches them: the
+   root <html> carries one data-debug-<channel> attribute per
+   channel listed in LAYOUT_DEBUG (app/layout.tsx), so one level can
+   be inspected without the noise of its nested neighbors.
+   Levels follow container nesting depth:
+     l1 = outermost marked container (red)
+     l2 = one level in                (green)
+     l3 = two levels in               (ambar)
+     l4 = three levels in             (blue)
+   test is not a level: it marks one disposable box (icon, image,
+   inline span) with a dashed neutral outline.
 
-   Activate: add data-debug to <html> in app/layout.tsx.
-   Deactivate: remove it. No component edits needed.
+   Activate: list the channels in LAYOUT_DEBUG (app/layout.tsx).
+   Deactivate: empty the array. No component edits needed.
    ============================================================ */
 /* ============================================================
    Architecture tree connectors
@@ -268,20 +272,26 @@ body {
 }
 
 @layer utilities {
-  [data-debug] .debug-l1 {
+  [data-debug-l1] .debug-l1 {
     outline: 1px solid #f87171;
     outline-offset: -1px;
   }
-  [data-debug] .debug-l2 {
+  [data-debug-l2] .debug-l2 {
     outline: 1px solid #22c55e;
     outline-offset: -1px;
   }
-  [data-debug] .debug-l3 {
+  [data-debug-l3] .debug-l3 {
     outline: 1px solid #eab308;
     outline-offset: -1px;
   }
-  [data-debug] .debug-l4 {
+  [data-debug-l4] .debug-l4 {
     outline: 1px solid #60a5fa;
+    outline-offset: -1px;
+  }
+  /* Disposable probe for a single box (icon, image, inline span). Dashed +
+     neutral on purpose: three signals that it is not a depth level. */
+  [data-debug-test] .debug-test {
+    outline: 1px dashed #f5f5f5;
     outline-offset: -1px;
   }
 }

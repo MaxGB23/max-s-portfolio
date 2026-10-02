@@ -59,5 +59,5 @@ fuentes. Regla del canon: cada tema lista la suya, una sola vez.
 | Por que el featured se apila en ciertas pantallas? | `components.md` 3 (`FEATURED_STACK_GATE`) |
 | Que variante de Button para el CTA de pricing? | `buttons.md` 8 |
 | Puedo usar text-white? | `iteration-guide.md` 5 |
-| Como se activa el debug de layout? | `components.md` 10 (o skill `layout-debug`) |
+| Como se activa el debug de layout? | `components.md` 10 (o skill `layout-debug-canon`) |
 | De donde se extrae el espejo del tema? | `app/globals.css` -> `tailwind-v4-theme.css` |
