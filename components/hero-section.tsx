@@ -177,8 +177,6 @@ export function HeroSection() {
             >
               <motion.span
                 className="text-4xl md:text-5xl text-white origin-bottom-right"
-                role="img"
-                aria-label="wave"
                 animate={{ rotate: [0, 20, -10, 20, -10, 0] }}
                 transition={{ repeat: Infinity, duration: 2, repeatDelay: 1, ease: "easeInOut" }}
               >
