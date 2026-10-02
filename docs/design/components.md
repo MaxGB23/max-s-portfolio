@@ -293,8 +293,14 @@ en otro archivo.
   sobre acento).
 - Metrica: `text-fluid-metric` con cifra en acento (section token dedicado,
   ver typography). Boton copiar estilo.
-- Switch (descripcion/creditos): `p-1 rounded-xl bg-card border`; tab activo
-  `shadow-sm`; foco visible.
+- Switch (metricas/arquitectura): `p-1 rounded-xl bg-card border`; tab activo
+  `shadow-sm`; foco visible. Patron ARIA de tabs: `role="tablist"` sobre el
+  contenedor, `role="tab"` + `aria-selected` + `aria-controls` por boton,
+  `role="tabpanel"` con `aria-labelledby` en el panel. `roving tabindex`
+  (solo la tab activa con `tabIndex={0}`) + flechas ←/→ para moverse, que
+  seleccionan al mover. NO adoptar `components/ui/tabs.tsx` (shadcn): cambia el
+  DOM y obliga a reestilizar. `Home`/`End` fuera a proposito — con dos vistas las
+  flechas ya recorren el grupo.
 - Visual principal: `max-w-5xl aspect-video rounded-3xl` con glow suave.
 - Links: `variant="inverted"` tamaños `lg` (excepcion al tamano default md).
 - Editorial: `max-w-3xl` con `text-base 2xl:text-lg` (`2xl:text-lg` por
@@ -302,9 +308,28 @@ en otro archivo.
 - Galeria: grid `1/2/3` con `gap-4`; imagenes con `data-tag`? para lightbox.
 - CTA final: banda `rounded-3xl border-purple-accent/30 bg-purple-accent/5
   px-6 py-12 md:p-14` con `Volver a proyectos` primary md.
-- Lightbox: `z-[70] bg-black/90`, overlay `touch-pan-y pointer-events-none`
-  (ver `docs/design/pointer-gestures.md`), controles `bg-white/10 text-white`,
-  contador `text-white/80`, figcaption, `draggable={false}`.
+- Lightbox: `z-[70] bg-black/90`, overlay `touch-pan-y select-none`
+  (ver `docs/design/pointer-gestures.md`), figcaption `text-white/70`,
+  `draggable={false}`.
+  - **`z-10` en los tres controles** (X, ◀, ▶). El `<figure>` es `relative` y va
+    despues en el DOM: sin `z-index` la imagen pintaba encima y recortaba ~28px de
+    cada flecha entre `nav` y ~1144px, donde el figure aun es mas angosto que
+    `max-w-5xl`.
+  - Flechas ◀ ▶: `bg-black/40 xl:bg-white/10`; X y contador `bg-white/10`. El velo
+    blanco se pierde sobre captura clara; ver la regla en `iteration-guide.md`.
+  - Breakpoint `nav:` (830px), no `sm:` — entre 640 y 830 hay tablets/landscape con
+    swipe, que no necesitan controles de puntero.
+  - Teclado: `Escape` cierra, `←`/`→` recorren la galeria (con wrap-around, solo si
+    hay >1 imagen). El trap de Tab va en el `div` del dialog, **nunca en
+    `window`**: alli seguiria atrapando tras el desmontaje, porque el cleanup del
+    scroll-lock corre despues del re-render. Focables filtrados por
+    `getClientRects()` para que las flechas ocultas bajo `nav` no cuenten como
+    destino.
+  - Foco: entra al abrir (boton de cerrar, tras `rAF` porque `backdrop-blur` fuerza
+    compositing en el primer frame) y vuelve al boton de galeria al cerrar. El
+    efecto de gestion de foco depende del booleano `isLightboxOpen`, no de
+    `lightboxIndex`: si dependiera del indice, cada flecha re-ejecutaria el efecto
+    y capturaria un control del lightbox como "opener".
 
 ### 4.11 ProductsSection - NO RENDERIZADA
 

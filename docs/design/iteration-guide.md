@@ -61,9 +61,22 @@ acotada y verificada (22 matches en el codigo):
 - Texto sobre fill morado (`bg-purple-accent`): badges de categoria,
   pricing destacado (`text-white/70` y `/75` en el tier highlight).
 - Texto y controles sobre fotografia / backdrop oscuro: hero badge (sobre
-  la foto), lightbox (`bg-white/10 text-white`, contador `text-white/80`,
-  figcaption).
+  la foto), lightbox (X `text-white`, contador `text-white`, figcaption
+  `text-white/70`).
 - Prohibido sobre canvas o superficie neutra (background/card).
+
+**Velo de overlay: blanco solo si lo que hay debajo tambien es oscuro.** Regla
+del lightbox — el control que puede caer SOBRE la imagen no puede llevar un velo
+blanco, porque una captura clara se lo come. Medido: 3 de 11 capturas de galeria
+tienen interfaz clara (`caf/dashboard-light` 243, `autoshop/crud` 221,
+`caf/editar_profile` 203, luminancia media 0-255).
+- Flechas ◀ ▶: `bg-black/40` bajo `xl`, `xl:bg-white/10` desde `xl`. Bajo `xl`
+  el figure es mas angosto que `max-w-5xl` y las flechas lo pisan; desde `xl`
+  ya no lo tocan y vuelven al velo blanco.
+- X de cerrar y contador: `bg-white/10` en todos los anchos — viven en esquina,
+  nunca sobre la imagen.
+- El hover sigue el mismo canal que el fondo: `hover:bg-white/20` se lee sobre
+  el overlay casi negro; un `black/40 → black/55` no se lee sobre negro.
 
 **Opacidades de texto (excepcion tag-label):**
 - `text-foreground/60` y `text-foreground/70` SOLO en micro labels de tags
