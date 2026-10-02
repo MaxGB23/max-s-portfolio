@@ -362,7 +362,24 @@ export function ProjectDetail({ project }: { project: Project }) {
     lenis?.stop();
 
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") closeLightbox();
+      if (event.key === "Escape") {
+        closeLightbox();
+        return;
+      }
+      // ←/→ recorren la galería, igual que los botones ◀ ▶. Sin esto el lightbox
+      // solo se navega con mouse: el teclado no tenía forma de cambiar de imagen.
+      // Con una sola imagen no hay destino, así que no se intercepta (los botones
+      // ◀ ▶ tampoco se renderizan en ese caso).
+      if (realImages.length < 2) return;
+      if (event.key === "ArrowRight") {
+        event.preventDefault(); // sin esto la página scrollea en horizontal
+        nextLightbox();
+        return;
+      }
+      if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        prevLightbox();
+      }
     };
     window.addEventListener("keydown", onKeyDown);
 
@@ -372,7 +389,7 @@ export function ProjectDetail({ project }: { project: Project }) {
       lenis?.start();
       window.removeEventListener("keydown", onKeyDown);
     };
-  }, [lightboxIndex, closeLightbox, lenis]);
+  }, [lightboxIndex, closeLightbox, lenis, realImages.length, nextLightbox, prevLightbox]);
 
   // Touch swipe navigation — zero dependencies, plain pointer events. A ~50px
   // deltaX threshold with the horizontal axis dominant (so vertical drags are
