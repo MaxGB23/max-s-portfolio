@@ -221,18 +221,22 @@ vuelva a proponer ni se re-audite desde cero.
 | **P2, P3, P4, P6** | Consolidar scroll, IntersectionObserver, code-splitting, unificar motores de animación | Tacan o arriesgan el comportamiento visual aprobado; P2/P3/P4 sin beneficio demostrable. Correcciones registradas en la sección 3 |
 | **Lint** | Instalar ESLint | Fuera del alcance original de esta auditoría (a11y / archivos / rendimiento). Ver nota abajo |
 
-## Nota: no hay lint en el repo
+## Nota: no hay lint en el repo — resuelto
 
-`package.json` declara `"lint": "eslint ."`, pero **eslint no está en
-`devDependencies`, no hay archivo de configuración y no está instalado** —
-`pnpm lint` falla con "no se reconoce el comando". El script nunca corrió en
-este checkout; es una deuda preexistente, no algo que este trabajo haya
-introducido.
+**Estado original:** `package.json` declaraba `"lint": "eslint ."`, pero eslint
+no estaba en `devDependencies`, no había configuración y no estaba instalado.
+`pnpm lint` fallaba con "no se reconoce el comando". El script nunca corrió en
+este checkout; era una deuda preexistente.
 
-Además `next.config.mjs` tiene `typescript.ignoreBuildErrors: true`, así que
-el build de Vercel **no falla por errores de tipo**. El único control
-estático real es correr `pnpm exec tsc --noEmit` a mano.
+**Resuelto (mismo commit que `ignoreBuildErrors`):** el script se eliminó y el
+chequeo de tipos pasó a tener nombre propio — `pnpm typecheck` (`tsc --noEmit`).
 
-Se cierra aquí porque instalar eslint + escribir su config es alcance nuevo, y
-`tsc` alcanza para el trabajo actual. Si alguna vez se quiere, es decisión de
-tooling, no de esta auditoría.
+**Sobre `typescript.ignoreBuildErrors`:** estaba en `next.config.mjs` como `true`,
+lo que hacía que el build de producción imprimiera "Skipping validation of types"
+y dejara pasar errores de tipo a producción en silencio. Se quitó, el build pasó
+a reportar "Running TypeScript ..." y terminó limpio: **no había errores ocultos**,
+el flag era peso muerto.
+
+Nota: no se instaló ESLint. Es decisión de tooling, no de esta auditoría, y
+`tsc` alcanza para el trabajo actual. Si algún día se quiere un linter real, se
+instala con su config y su propio script.

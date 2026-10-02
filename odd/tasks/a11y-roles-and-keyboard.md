@@ -117,18 +117,21 @@ ronda por work unit, no una sola al final:
 5. Con mouse, click en las pestañas y en el lightbox se comportan exactamente como antes.
 6. Ningún anillo de foco aparece como consecuencia de abrir o cerrar el lightbox con mouse.
 7. El render no cambió: mismos colores, tamaños y ritmo en hero, panel destacado, footer y detail.
-8. `pnpm exec tsc --noEmit` PASS. No hay check de lint disponible en el repo (ver *Applicable checks*).
+8. `pnpm typecheck` PASS. El build de producción también valida tipos desde que
+   se retiró `ignoreBuildErrors` (ver *Applicable checks*).
 
 ## Applicable checks
 
-- `pnpm exec tsc --noEmit` — **PASS (exit 0)** en los ocho work units. Es la
-  verificación automatizada disponible.
-- `pnpm lint` — **NO DISPONIBLE (falla en la base, preexistente).** El script
-  `"lint": "eslint ."` existe en `package.json`, pero `eslint` no está en
-  `devDependencies`, no hay archivo de configuración en el repo y no está
-  instalado en `node_modules`. El script nunca corrió en este checkout. No se
-  arregla acá: instalar eslint y escribir su config es scope creep. Registrar
-  el gap, no simular un PASS.
+- `pnpm typecheck` (antes `pnpm exec tsc --noEmit`) — **PASS (exit 0)** en los ocho
+  work units. Es la verificación automatizada disponible. El script se agregó en
+  el mismo commit que retiró `ignoreBuildErrors`, para que el chequeo de tipos sea
+  un comando con nombre en vez de una invocación suelta.
+- `pnpm lint` — **ya no existe.** El script `"lint": "eslint ."` estaba en
+  `package.json` pero eslint no estaba en `devDependencies`, no había config y no
+  estaba instalado: `pnpm lint` fallaba con "no se reconoce el comando". Se
+  eliminó el script en vez de instalar eslint, que es alcance de tooling y no de
+  esta auditoría. Si algún día se quiere un linter real, se reinstala con su
+  config y su propio script.
 - Comparación visual antes/después en `:3000` (hero, panel destacado, footer, detail).
 - Test manual de teclado, gate por work unit. Ver *Verificación (T9)*.
 
@@ -162,8 +165,12 @@ Deuda que queda, sin tocar:
   componente sale del `rootRef`, los selectores dejan de matchear y las
   animaciones **dejan de reproducirse sin error**. Valor cero para quien ve el
   sitio: es higiene de código, no señal de contratación.
-- **`pnpm lint`** — el script existe pero eslint no está instalado ni
-  configurado. Preexistente, no lo introduce este trabajo.
+- **Imágenes** — `pnpm build` **PASS** tras retirar `ignoreBuildErrors`; el build
+  pasó a reportar "Running TypeScript ..." en vez de "Skipping validation of
+  types". No había errores de tipo ocultos: el flag era peso muerto.
+- **`pnpm lint`** — el script existía pero eslint no estaba instalado ni
+  configurado. Preexistente, no lo introduce este trabajo. Retirado en el mismo
+  commit; el chequeo de tipos quedó con nombre (`pnpm typecheck`).
 
 ## Delivery strategy
 
