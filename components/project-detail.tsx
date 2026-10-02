@@ -313,6 +313,26 @@ export function ProjectDetail({ project }: { project: Project }) {
   };
 
   const [viewMode, setViewMode] = useState<"topology" | "kpis">("kpis");
+
+  /** Flechas ←/→ para moverse entre las dos pestañas (patrón ARIA de tabs).
+      Solo intercepta esas dos teclas: ↑/↓ quedan libres y el scroll vertical con
+      Lenis o nativo no se ve afectado. `Home`/`End` se dejan fuera a propósito —
+      son el patrón completo pero agregan superficie sin necesidad con dos vistas.
+      El foco se mueve al elemento nuevo: sin esto el lector de pantalla anuncia
+      la pestaña correcta pero el foco sigue en la anterior. */
+  const onViewTabKeyDown = (
+    event: React.KeyboardEvent<HTMLButtonElement>,
+    current: "topology" | "kpis"
+  ) => {
+    if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+    event.preventDefault();
+    const next = current === "kpis" ? "topology" : "kpis";
+    setViewMode(next);
+    document
+      .getElementById(next === "kpis" ? "detail-tab-kpis" : "detail-tab-topology")
+      ?.focus();
+  };
+
   const realImages = gallery.filter((g): g is ProjectImage => g !== null);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const closeLightbox = useCallback(() => setLightboxIndex(null), []);
@@ -486,11 +506,30 @@ export function ProjectDetail({ project }: { project: Project }) {
                 </div>
 
                 {/* Switcher de Vistas — Métricas primero (primaria, default),
-                    Grafo a la derecha (secundario pero igual de visible) */}
-                <div className="flex items-center gap-1.5 p-1 rounded-xl bg-card border border-border shrink-0 self-start md:self-auto">
+                    Grafo a la derecha (secundario pero igual de visible).
+
+                    Patrón ARIA de tabs: el switcher es un conjunto
+                    mutuamente excluyente, no dos botones sueltos. Antes solo se
+                    distinguía la activa por el fondo oscuro, así que un lector de
+                    pantalla no tenía forma de saber qué vista estaba activa.
+
+                    `onClick` intacto y `tabIndex` derivado de `viewMode`: el click
+                    de mouse sigue siendo exactamente el mismo camino, y la
+                    pestaña pulsada queda activa en el re-render siguiente. */}
+                <div
+                  role="tablist"
+                  aria-label={t("section.projects.metricsSectionAria")}
+                  className="flex items-center gap-1.5 p-1 rounded-xl bg-card border border-border shrink-0 self-start md:self-auto"
+                >
                   <button
                     type="button"
+                    role="tab"
+                    id="detail-tab-kpis"
+                    aria-selected={viewMode === "kpis"}
+                    aria-controls="detail-panel-kpis"
+                    tabIndex={viewMode === "kpis" ? 0 : -1}
                     onClick={() => setViewMode("kpis")}
+                    onKeyDown={(event) => onViewTabKeyDown(event, "kpis")}
                     className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-sm 2xl:text-base font-sans font-medium transition-all duration-200 ${
                       viewMode === "kpis"
                         ? "bg-foreground text-background shadow-sm"
@@ -502,7 +541,13 @@ export function ProjectDetail({ project }: { project: Project }) {
                   </button>
                   <button
                     type="button"
+                    role="tab"
+                    id="detail-tab-topology"
+                    aria-selected={viewMode === "topology"}
+                    aria-controls="detail-panel-topology"
+                    tabIndex={viewMode === "topology" ? 0 : -1}
                     onClick={() => setViewMode("topology")}
+                    onKeyDown={(event) => onViewTabKeyDown(event, "topology")}
                     className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-sm 2xl:text-base font-sans font-medium transition-all duration-200 ${
                       viewMode === "topology"
                         ? "bg-foreground text-background shadow-sm"
@@ -515,16 +560,26 @@ export function ProjectDetail({ project }: { project: Project }) {
                 </div>
               </div>
 
-              {/* Vista 1: Grafo de Arquitectura Real (árbol extraído de docs/projects) */}
-              {viewMode === "topology" &&
-                (project.architecture ? (
-                  <ProjectArchitecture tree={project.architecture} />
-                ) : (
-                  <ArchitectureEmptyState />
-                ))}
+              {/* Una sola vista montada a la vez (kpis o topology), envuelta en el
+                  tabpanel que la pestaña activa controla. El wrapper es un div
+                  block dentro de un section block, junto al header block: el
+                  apilado vertical no cambia. */}
+              <div
+                role="tabpanel"
+                id={viewMode === "kpis" ? "detail-panel-kpis" : "detail-panel-topology"}
+                aria-labelledby={viewMode === "kpis" ? "detail-tab-kpis" : "detail-tab-topology"}
+              >
+                {/* Vista 1: Grafo de Arquitectura Real (árbol extraído de docs/projects) */}
+                {viewMode === "topology" &&
+                  (project.architecture ? (
+                    <ProjectArchitecture tree={project.architecture} />
+                  ) : (
+                    <ArchitectureEmptyState />
+                  ))}
 
-              {/* Vista 2: Vista de Métricas & KPIs Numéricos (Cards Clásicas con Animación) */}
-              {viewMode === "kpis" && <KpiGrid metrics={detail.metrics} />}
+                {/* Vista 2: Vista de Métricas & KPIs Numéricos (Cards Clásicas con Animación) */}
+                {viewMode === "kpis" && <KpiGrid metrics={detail.metrics} />}
+              </div>
             </section>
           )}
         </div>
