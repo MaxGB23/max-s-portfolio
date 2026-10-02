@@ -1,3 +1,24 @@
+# RFC: Featured Section Animation Redesign
+
+> **STATUS: CLOSED — no open work items.**
+>
+> | | Outcome | Commit |
+> |---|---|---|
+> | Variant A (Staggered Reveal) — the primary direction | **Shipped** | `280a483` |
+> | Deferred: navbar CTA separation + active state | **Shipped** | `b5e7cba` |
+> | Variants B–E | Not built — A met the bar, so they were skipped per the decision gate | — |
+>
+> This document is kept as the **decision record**: it explains *why* the featured
+> section is built the way it is. The "Next Actions" and "Timeline" sections below
+> are the original plan and were executed as written; they do not describe work
+> still to do.
+>
+> Archived from `backlog.md` (repo root) — the name invited new items, but this was
+> never a backlog. Explore-and-decide documents live in `docs/rfcs/`.
+> Audit findings and open technical items live in `docs/issues/`.
+
+---
+
 # Backlog: Featured Section Animation Redesign
 
 ## Problem Statement
