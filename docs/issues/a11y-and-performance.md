@@ -1,14 +1,18 @@
 # Accesibilidad y rendimiento — auditoría
 
-> Registro de hallazgos, decisiones y descartes. **No es una lista de trabajo**:
-> lo ejecutable vive como work unit en `odd/tasks/`, uno por commit.
+> **CERRADO (2026-10-02). No es una lista de trabajo activa.**
+> Lo implementado está en "Qué se hizo" (abajo) con su commit; lo cerrado sin
+> hacer, con su motivo, en "Cerrado sin hacer". Ningún punto de este documento
+> está pendiente de ejecución. Se conserva como registro de qué se consideró y
+> por qué se descartó — el razonamiento es lo valioso, no la lista.
 >
-> **Objetivo que manda: solo lo mínimo necesario.** Si una corrección no aporta
-> valor visible o no es un defecto real, no se hace. Evitar sobreingeniería.
+> **Objetivo que mandaba: solo lo mínimo necesario.** Si una corrección no
+> aportaba valor visible o no era un defecto real, no se hizo. Evitar
+> sobreingeniería.
 >
 > Contexto: el sitio está desplegado en Vercel y funciona en móvil y desktop. El
-> diseño visual está aprobado, así que nada que altere el render entra en alcance
-> sin comparación visual previa.
+> diseño visual está aprobado, así que nada que altere el render entró en
+> alcance sin comparación visual previa.
 >
 > Método: lectura de código y `grep`/`glob`. Sin medición en runtime (sin
 > Lighthouse, sin axe, sin profiling). *[por verificar]* = necesita confirmación
@@ -179,41 +183,56 @@ inútiles sin tráfico.
 
 ---
 
-## Qué hacer, y cuándo
+## Qué se hizo
 
 Contexto: el sitio ya funciona en Vercel, en móvil y desktop, y el diseño está
-aprobado. La prioridad es la búsqueda de empleo, así que el criterio es
-**cambio pequeño + beneficio real**. Lo que no aporte a esa meta no se toca.
+aprobado. Criterio de selección: **cambio pequeño + beneficio real**. Lo que no
+aportaba a la meta de búsqueda de empleo no se tocó.
 
-### ✅ Decidido hacer
+Work units completos, cada uno commiteado (ver `odd/tasks/a11y-roles-and-keyboard.md`):
 
-Cada uno como work unit en `odd/tasks/`, con su propio commit, para que un
-revert sea un `git revert` y nada más.
-
-| # | Acción | Riesgo visual | Nota |
+| # | Acción | Riesgo visual | Commit |
 |---|---|---|---|
-| **A2** | Emoji 🖐: una decisión de atributo | Ninguno | Un atributo |
-| **S2** | `featured-project-panel.tsx:75` `h2` → `h3` | Ninguno | Una línea |
-| **S3** | `aria-label` del footer fijo en inglés | Ninguno | Una línea + clave en `translations.ts` (ES+EN) |
-| **A3** | Roles de tab en el switcher | Ninguno | **Como atributos.** No adoptar `ui/tabs.tsx`: ese primitive cambia el DOM y habría que reestilizar |
-| **A4** | Focus trap en el lightbox | Ninguno | Defecto real de teclado: el tabulador escapa al contenido de fondo. No altera layout |
-| **S1 + A1** | Reestructurar `<main>` + skip-link | Bajo | DOM/landmarks. S1 desbloquea A1. Verificar el render tras el cambio |
-| **2.1** | Dividir `project-detail.tsx` | Ninguno | *Move* puro. **Si hay tiempo y se ve sencillo** — delegable a un agente. Es higiene de código, no señal de contratación |
+| **A2** | Emoji 🖐: una decisión de atributo | Ninguno | `6cedb2e` |
+| **S2** | `featured-project-panel.tsx:75` `h2` → `h3` | Ninguno | `3f8191b` |
+| **S3** | `aria-label` del footer fijo en inglés | Ninguno | `9086820` |
+| **A3** | Roles de tab + flechas en el switcher | Ninguno | `50e8b30` |
+| **A4** | Focus trap + retorno de foco en el lightbox | Ninguno | `899783c` |
+| *(extra)* | Flechas ←/→ en el lightbox (WU4b) | Ninguno | `a5c675d` |
+| *(extra)* | `z-10` + breakpoint `nav` (WU4c) | Ninguno | `70c6275` |
+| *(extra)* | Contraste en capturas claras (WU4d) | Ninguno | `22418f2` |
 
-### Fuera de alcance (evaluar en el futuro)
+Los "extra" no estaban en la auditoría original: los destapó el testing manual
+con teclado. Ver la tabla de defectos en el feature doc.
 
-- **P5** (quitar `images.unoptimized`) — el único con riesgo visual real.
-  Exige comparación lado a lado del diseño aprobado.
-- **Reduced motion** — decisión registrada y auditada en
-  `docs/issues/reduced-motion.md`, no un hallazgo. Ese doc define su propio
-  gatillo de reevaluación (parallax, loops infinitos o movimiento de gran
-  amplitud). Ojo: Aurora es un loop continuo en background; si cuenta como
-  tal, ese gatillo ya se activó.
-- **SEO** (metadata + OpenGraph; idioma en URL) — ver la sección de arriba.
+## Cerrado sin hacer — decisión del owner (2026-10-02)
 
-### Descartado
+Nada de esto se va a tocar. Se deja registrado el **por qué** para que no se
+vuelva a proponer ni se re-audite desde cero.
 
-- **P2, P3, P4, P6** — tocan o arriesgan el comportamiento visual aprobado, y
-  P2/P3/P4 no tienen beneficio demostrable. Ver las correcciones registradas en
-  la sección 3.
-- **P1** (pausar el bucle de Aurora) — decisión del owner: no se toca.
+| # | Ítem | Por qué se cierra |
+|---|---|---|
+| **S1 + A1** | Reestructurar `<main>` + skip-link | Único punto con riesgo visual real: el navbar hereda `text-foreground` de `<main>`. No vale el riesgo contra el diseño aprobado |
+| **2.1** | Dividir `project-detail.tsx` (776 líneas) | Riesgo de regresión silenciosa — `gsap.context` resuelve los selectores por jerarquía DOM, no por árbol de React, así que un componente fuera del `rootRef` deja de animarse sin error. Cero valor para quien ve el sitio |
+| **P5** | Quitar `images.unoptimized` | Se mantiene la optimización apagada a propósito. Costo real: un móvil descarga la captura a resolución completa. Aceptado |
+| **Reduced motion** | — | Decisión ya auditada en `docs/issues/reduced-motion.md`. No es un hallazgo |
+| **SEO** | Metadata + OpenGraph; idioma en URL | Ver "Más adelante" arriba. No urgente: el link se comparte directo, no se busca |
+| **P1** | Pausar el bucle de Aurora | No se toca |
+| **P2, P3, P4, P6** | Consolidar scroll, IntersectionObserver, code-splitting, unificar motores de animación | Tacan o arriesgan el comportamiento visual aprobado; P2/P3/P4 sin beneficio demostrable. Correcciones registradas en la sección 3 |
+| **Lint** | Instalar ESLint | Fuera del alcance original de esta auditoría (a11y / archivos / rendimiento). Ver nota abajo |
+
+## Nota: no hay lint en el repo
+
+`package.json` declara `"lint": "eslint ."`, pero **eslint no está en
+`devDependencies`, no hay archivo de configuración y no está instalado** —
+`pnpm lint` falla con "no se reconoce el comando". El script nunca corrió en
+este checkout; es una deuda preexistente, no algo que este trabajo haya
+introducido.
+
+Además `next.config.mjs` tiene `typescript.ignoreBuildErrors: true`, así que
+el build de Vercel **no falla por errores de tipo**. El único control
+estático real es correr `pnpm exec tsc --noEmit` a mano.
+
+Se cierra aquí porque instalar eslint + escribir su config es alcance nuevo, y
+`tsc` alcanza para el trabajo actual. Si alguna vez se quiere, es decisión de
+tooling, no de esta auditoría.
