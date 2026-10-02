@@ -180,6 +180,12 @@ function KpiGrid({ metrics }: { metrics: ProjectMetric[] }) {
   );
 }
 
+/** Focables dentro del lightbox. El filtro de `getClientRects()` en el handler
+    descarta los ocultos: las flechas ◀ ▶ son `hidden` bajo `nav` (830px), así
+    que en móvil no son alcanzables con Tab y no pueden contar como destino. */
+const FOCUSABLE_IN_LIGHTBOX =
+  'button:not([disabled]), [href], input:not([disabled]), select, textarea, [tabindex]:not([tabindex="-1"])';
+
 export function ProjectDetail({ project }: { project: Project }) {
   const rootRef = useRef<HTMLDivElement>(null);
   const { t } = useLanguage();
@@ -335,7 +341,9 @@ export function ProjectDetail({ project }: { project: Project }) {
 
   const realImages = gallery.filter((g): g is ProjectImage => g !== null);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const isLightboxOpen = lightboxIndex !== null;
   const closeLightbox = useCallback(() => setLightboxIndex(null), []);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
   const nextLightbox = useCallback(() => {
     setLightboxIndex((current) => (current === null ? null : (current + 1) % realImages.length));
   }, [realImages.length]);
@@ -351,6 +359,76 @@ export function ProjectDetail({ project }: { project: Project }) {
   // hidden` on html/body; Lenis (desktop) gets stopped so it can't write
   // scroll on the next RAF and fight the lock.
   const lenis = useLenis();
+
+  /**
+   * Gestión de foco del lightbox, en dos momentos:
+   *
+   * Al ABRIR, el foco entra al dialog (al botón de cerrar). Si se quedara en el
+   * botón de galería —que está detrás del overlay— el trap no tendría dónde
+   * engancharse y `aria-modal="true"` seguiría prometiendo algo falso.
+   *
+   * Al CERRAR, el foco vuelve al botón que abrió el lightbox. Antes se perdía:
+   * al cerrarse, `document.activeElement` caía a `<body>` y el usuario de teclado
+   * tenía que volver a tabular desde el principio de la página.
+   *
+   * Depende del booleano `isLightboxOpen`, nunca de `lightboxIndex`: con las
+   * flechas de galería el índice cambia en cada pulsación, y si el efecto
+   * dependiera de él se re-ejecutaría capturando como "opener" un control del
+   * propio lightbox.
+   *
+   * `rAF` antes de enfocar: el overlay usa `backdrop-blur`, que fuerza
+   * compositing en el primer frame. Enfocar en el mismo tick haría que el
+   * navegador evaluara `:focus-visible` contra un layout todavía sin asentar.
+   */
+  useEffect(() => {
+    if (!isLightboxOpen) return;
+
+    const opener = document.activeElement;
+    const raf = requestAnimationFrame(() => closeButtonRef.current?.focus());
+
+    return () => {
+      cancelAnimationFrame(raf);
+      // `contains` cubre el desmontaje del componente: si el usuario navegó
+      // mientras el lightbox estaba abierto, el opener ya no está en el DOM.
+      if (opener instanceof HTMLElement && document.contains(opener)) {
+        opener.focus();
+      }
+    };
+  }, [isLightboxOpen]);
+
+  /**
+   * Atrapa el foco dentro del lightbox mientras está abierto.
+   *
+   * El handler va en el `div` del dialog, NO en `window`. En `window` atraparía
+   * el Tab de toda la página mientras el lightbox está abierto, y como el
+   * cleanup del efecto de scroll-lock corre después del re-render, seguiría
+   * atrapándolo en cuanto el overlay se desmontara.
+   *
+   * Solo intercepta cuando el foco está en el último elemento (Tab) o en el
+   * primero (Shift+Tab). En medio del recorrido deja pasar el Tab nativo, así el
+   * orden de tabulación dentro del dialog es el del DOM.
+   */
+  const trapLightboxFocus = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key !== "Tab") return;
+
+    const focusables = Array.from(
+      event.currentTarget.querySelectorAll<HTMLElement>(FOCUSABLE_IN_LIGHTBOX)
+    ).filter((element) => element.getClientRects().length > 0);
+
+    if (focusables.length === 0) return;
+
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
+    const current = document.activeElement;
+
+    if (event.shiftKey && current === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && current === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  };
 
   useLayoutEffect(() => {
     if (lightboxIndex === null) return;
@@ -776,11 +854,13 @@ export function ProjectDetail({ project }: { project: Project }) {
           role="dialog"
           aria-modal="true"
           aria-label={t("section.projects.lightboxViewer")}
+          onKeyDown={trapLightboxFocus}
           onClick={onLightboxBackdropClick}
           onPointerDown={onLightboxPointerDown}
           onPointerUp={onLightboxPointerUp}
         >
           <button
+            ref={closeButtonRef}
             type="button"
             onClick={closeLightbox}
             aria-label={t("section.projects.lightboxClose")}
