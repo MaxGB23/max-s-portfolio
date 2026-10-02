@@ -26,17 +26,15 @@ hasta merge del refactor de featured — condición YA cumplida: `main` contiene
 | D8 | `all-projects` → "Proyectos" (**decisión del usuario**) | `SECTION_ALIAS` en navbar.tsx: dentro de `#all-projects` queda encendido el link Proyectos (misma sección conceptual). `contacto`/`footer` siguen sin link → nada encendido. |
 | D9 | Spy: set COMPLETO de intersecciones (**fix iPad portrait, 2026-10-01**) | Los `entries` del IO son deltas por batch: el tie-break local dentro del batch dejaba que la sección siguiente pisara a la anterior durante el aterrizaje **animado** (About corto a 2 cols en md comparte la banda 409..819 con Projects, cuyo top está a ~552 en 768×1024). Fix: mantener el `Set` de intersecting y ganar SIEMPRE por orden documental sobre ese set completo. Corrige también el scroll hacia arriba (simétrico). Rojo→verde con test (e) en `scripts/navbar-active.mjs`. |
 | D10 | Underline de **canal único** (**decisión del usuario, 2026-10-01**) | Una sola línea a la vez: activa = «estás aquí», hover = «puedes ir aquí». Al hacer hover en OTRO link el activo **se colapsa** (`w-0`, 200ms) y el hover toma el canal al 100%; hover sobre el propio activo no cambia nada (D1 intacta). Grosor único `h-px` + `bg-purple-accent` 100% en ambas ramas — se retiran el `/60` y el `1.5px`. `aria-current` permanece siempre (accesibilidad). Implementación: estado `hovered` en `navbar.tsx` (se limpia al cerrar el menú mobile, cuyo desmontaje no dispara `mouseleave`). **Retorno SECUENCIAL (mini-fix 2026-10-01)**: al retirar el puntero el hover colapsa (200ms) y el activo espera `delay-[200ms]` y crece en `duration-[400ms]` — handoff secuencial, nunca dos líneas ni rebote rápido (medido en rojo: el activo ya estaba al 96% a los 150ms con la línea hover aún viva). |
+| D11 | About con `min-h-[60dvh]` (**resolución del debate, 2026-10-01, sesión 2**) | El spy en res grandes fallaba para About por su pequeño tamaño (h≈380px no tocaba la banda centrada con vh > ~1110). Resuelto por TAMAÑO, no por banda: About gana `min-h-[60dvh]` (commit `2cce463`) — con `h = 0.6·vh ≥ 0.4·vh − 64` siempre, toca la banda en cualquier viewport. Hipótesis del usuario (min-height tipo hero, que usa `min-h-[85dvh]`); About se queda en 60dvh. El fix de `rootMargin` anclada (`"-64px 0px -60% 0px"`) queda **DESCARTADO**. |
 
-## Pendiente (debate abierto — NO implementar aún)
+## Resuelto — activo en res grandes para About (2026-10-01, sesión 2)
 
-- **Banda del spy anclada al navbar**: cambiar `rootMargin "-40% 0px -40% 0px"` →
-  `"-64px 0px -60% 0px"` (zona y64..40%vh; el aterrizaje a top=64 queda dentro por
-  construcción). Diagnóstico medido 2026-10-01 en 2560×1440: banda y576..864, About
-  aterriza en y64..444 y NO toca la banda (regla: sección enciende solo si
-  `h ≥ 0.4·vh − 64` → About ≈380px falla con vh > ~1110), Projects (top 572) gana.
-  Conservaría D9/D2/D4. **El usuario pospuso el fix** hasta debatir tamaños de
-  secciones y espaciados, que pueden cambiar el diagnóstico. Al implementar:
-  tests (b)/(c5) pasan de `centerOn` a *landOn* y se añade test (f) 2560×1440.
+- **Decisión**: ver D11 — About con `min-h-[60dvh]`; el fix de banda anclada al
+  navbar queda descartado. Diagnóstico original (2026-10-01, 2560×1440): banda
+  centrada y576..864, About aterrizaba en y64..444 sin tocarla (regla: sección
+  enciende solo si `h ≥ 0.4·vh − 64` → About ≈380px fallaba con vh > ~1110) y
+  Projects (top 572) ganaba.
 
 ## Scope
 
