@@ -71,14 +71,18 @@ export function FeaturedProjectPanel({ project, children, isLast = false }: Feat
                 </span>
               </div>
 
-              {/* Title */}
-              <h2
+              {/* Title — h3: hijo lógico del h2 de la sección (#proyectos).
+                  Las otras tres rejillas ya usan h2 de sección + h3 de tarjeta;
+                  aquí el título del panel era hermano del h2 de sección. Todo el
+                  estilo viene de clases explícitas y ningún selector CSS depende
+                  de la etiqueta, así que el render no cambia. */}
+              <h3
                 id={`featured-title-${project.id}`}
                 className="font-serif font-black text-fluid-featured text-foreground leading-[1.05] tracking-tight text-balance mb-6 lg:[@media(max-height:800px)]:text-4xl"
               >
                 {mainTitle && <span>{mainTitle} </span>}
                 <span className="text-purple-accent brightness-125">{lastWord}</span>
-              </h2>
+              </h3>
 
               {/* Description */}
               <p className="debug-l4 text-fluid-body leading-relaxed text-content mb-6 mr-6 sm:mr-0 max-w-[50ch]">
