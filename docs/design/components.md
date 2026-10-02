@@ -29,7 +29,7 @@ Contenido:
 - `outer` por defecto: `px-6 md:px-12` + `debug-l1` (marcador QA).
 - `inner` por defecto: `mx-auto max-w-7xl` + `debug-l2`.
 - Props: `as`, `ref`, `id`, `aria-*`, `className` (al wrapper), `insetClassName`
-  (REEMPLAZA el padding por defecto), `debug` (`default` | `inverted` | `none`),
+  (REEMPLAZA el padding por defecto), `debug` (`default` | `none`),
   `container` (bool; `false` = full-bleed sin contenido max-width),
   `innerId`, `innerClassName` (SE ANEXA al inner, no lo reemplaza).
 
@@ -210,7 +210,8 @@ en otro archivo.
 
 ### 4.5 Todos los proyectos (`all-projects.tsx`)
 
-- Heading: `Section debug=inverted` con clase real `insetClassName="px-6"`.
+- Heading: `Section` (markers `default` l1/l2) con clase real
+  `insetClassName="px-6"`.
 - Grid: `Section#all-projects` con `insetClassName="px-6 pt-12 lg:pt-16"`,
   `innerId="all-projects-content"`; grid `1/2/3` con `gap-6`.
 - h2 `text-fluid-section` con palabra "Proyectos" acento + brightness-110.
@@ -409,16 +410,21 @@ en otro archivo.
 
 ## 10. Debug overlay
 
-- `Section.debug`: `default` (l1 outer / l2 inner), `inverted` (l2 outer /
-  l1 inner), `none` (sin markers). Sin cambios de layout en produccion
-  (los markers dependen de `data-debug-<canal>` en `<html>`).
+- Convencion de profundidad: se cuenta desde el ancestro marcado mas externo.
+  Los wrappers sin marcar (pin GSAP, wrappers de animacion, `motion.div`) NO
+  cuentan, y varias raices hermanas arrancan cada una en l1. Regla: ningun
+  marker puede tener nivel <= el de un ancestro marcado.
+- `Section.debug`: `default` (l1 outer / l2 inner) o `none` (sin markers). El
+  shell no re-mapea niveles: no puede emitir un marker por encima del de su
+  ancestro marcado. Sin cambios de layout en produccion (los markers dependen
+  de `data-debug-<canal>` en `<html>`).
 - Activacion por canal: `LAYOUT_DEBUG: DebugChannel[]` en `app/layout.tsx`;
   cada entrada del array anade un atributo `data-debug-<canal>` al `<html>`.
   `[]` = apagado.
-- `l1`..`l4` son nivel de profundidad (l1 = contenedor marcado mas externo,
-  cada marcador anidado +1). `test` es sonda desechable de una caja puntual
-  (icono, imagen, span) y es ortogonal a la profundidad: nunca cuenta como
-  nivel.
+- `l1`..`l5` son nivel de profundidad (l1 = contenedor marcado mas externo,
+  cada marcador anidado +1; paleta en `app/globals.css`). `test` es sonda
+  desechable de una caja puntual (icono, imagen, span): marca una caja, no un
+  nivel, y es ortogonala la profundidad.
 - Un canal solo (`LAYOUT_DEBUG = ['l2']`) para depurar el padding de un
   contenedor sin el ruido de los niveles vecinos.
 - Mecanismo: `outline` + `outline-offset: -1px`, nunca `border` (cero shift).
@@ -460,7 +466,3 @@ en otro archivo.
 - 13.5 La nota "Vercel Preview Deployment activado para la rama
   feat/fluid-typo" del canon anterior se ELIMINO del canon vivo (informacion
   de rama agotada; el snapshot `2026-09-21-pre-designmd` la conserva).
-- 13.6 Marcadores `debug-lN` con nivel incoherente respecto a su profundidad real
-  (NO corregidos en v2, se decide al usar): `featured-project-panel.tsx` (:42, :48,
-  :59, :61, :88), `hero-section.tsx:147`, `about-section.tsx` (:65, :88, :89).
-  Sin enforcement automatico.

@@ -37,7 +37,6 @@ export function AllProjects() {
           is owned by SectionSpacing at the page level. */}
       <Section
         as="div"
-        debug="inverted"
         insetClassName="px-6"
         className="relative text-center"
         innerClassName="flex flex-col items-center text-center"

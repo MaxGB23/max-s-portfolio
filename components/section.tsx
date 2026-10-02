@@ -13,11 +13,11 @@
  *   - `innerClassName` APPENDS to the inner container; conflicting utilities
  *     resolve via tailwind-merge (e.g. `innerClassName="max-w-6xl"` replaces
  *     the default `max-w-7xl`).
- *   - `debug` re-maps the QA marker placement. The codebase actually contains
- *     three shapes: l1@outer/l2@inner (default), l2@outer/l1@inner (inverted,
- *     the "Todos los Proyectos" heading block), and none (the featured mobile
- *     heading). Marker levels must be preserved where they exist — QA reads
- *     them.
+ *   - `debug` places the QA markers on both wrappers: l1@outer / l2@inner
+ *     (default) or none (the featured mobile heading). Depth is the only
+ *     axis, so the shell has exactly two shapes: a wrapper marked at or above
+ *     the level of its marked ancestor is a contract breach, never a mode.
+ *     Marker levels must be preserved where they exist - QA reads them.
  *   - `container={false}` opts out of the inner wrapper entirely (full-bleed
  *     inner content).
  *
@@ -29,17 +29,15 @@ import { cn } from "@/lib/utils";
 const DEFAULT_INSET = "px-6 md:px-12";
 const DEFAULT_INNER = "mx-auto max-w-7xl";
 
-type DebugMode = "default" | "inverted" | "none";
+type DebugMode = "default" | "none";
 
 const DEBUG_OUTER: Record<DebugMode, string | undefined> = {
   default: "debug-l1",
-  inverted: "debug-l2",
   none: undefined,
 };
 
 const DEBUG_INNER: Record<DebugMode, string | undefined> = {
   default: "debug-l2",
-  inverted: "debug-l1",
   none: undefined,
 };
 
@@ -64,7 +62,7 @@ export interface SectionProps {
   insetClassName?: string;
   /**
    * QA debug marker placement on both wrappers:
-   * "default" (l1@outer / l2@inner) · "inverted" (l2@outer / l1@inner) · "none".
+   * "default" (l1@outer / l2@inner) or "none".
    */
   debug?: DebugMode;
   /**

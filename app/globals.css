@@ -231,6 +231,7 @@ body {
      l2 = one level in                (green)
      l3 = two levels in               (ambar)
      l4 = three levels in             (blue)
+     l5 = four levels in              (violeta)
    test is not a level: it marks one disposable box (icon, image,
    inline span) with a dashed neutral outline.
 
@@ -286,6 +287,10 @@ body {
   }
   [data-debug-l4] .debug-l4 {
     outline: 1px solid #60a5fa;
+    outline-offset: -1px;
+  }
+  [data-debug-l5] .debug-l5 {
+    outline: 1px solid #a78bfa;
     outline-offset: -1px;
   }
   /* Disposable probe for a single box (icon, image, inline span). Dashed +

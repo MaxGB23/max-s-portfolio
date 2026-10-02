@@ -17,8 +17,12 @@ no lo tiene, usa la skill global `layout-debug` (instalacion cross-project).
 
 ## Hard Rules
 
-- Default apagado: `LAYOUT_DEBUG: DebugChannel[] = []` en `app/layout.tsx`.
-- Activa UN canal por vez. Ver los 4 niveles anidados a la vez es el ruido que
+- Default apagado: `LAYOUT_DEBUG: DebugChannel[] = []` en `app/layout.tsx`. Este repo
+  tiene 5 niveles + `test`, pero el estado por defecto es apagado: enciende solo lo
+  que vayas a mirar y apagalo antes de commitear.
+- La profundidad se cuenta desde el ancestro marcado mas externo; los wrappers sin
+  marcar no cuentan. Ningun marker puede tener nivel <= el de un ancestro marcado.
+- Activa UN canal por vez. Ver los 5 niveles anidados a la vez es el ruido que
   el overlay evita; para padding de un contenedor concreto, lista solo ese nivel.
 - `debug-test` es una sonda desechable para UNA caja (icono, imagen, span inline).
   Ortogonal a la profundidad: nunca cuenta como nivel. Se quita al terminar la
@@ -34,6 +38,7 @@ no lo tiene, usa la skill global `layout-debug` (instalacion cross-project).
 | `l2` | `#22c55e` verde | un nivel adentro |
 | `l3` | `#eab308` ambar | dos niveles adentro |
 | `l4` | `#60a5fa` azul | tres niveles adentro |
+| `l5` | `#a78bfa` violeta | cuatro niveles adentro |
 | `test` | `#f5f5f5` discontinuo | sonda de una caja, NO es nivel |
 
 ## Donde vive
@@ -43,7 +48,18 @@ no lo tiene, usa la skill global `layout-debug` (instalacion cross-project).
 | El array de canales | `app/layout.tsx` (`LAYOUT_DEBUG`) |
 | Las reglas CSS | `app/globals.css`, bloque `@layer utilities` |
 | El contrato y los modos de `Section` | `docs/design/components.md` seccion 10 |
-| Deuda de marcadores con nivel incoherente | `docs/design/components.md` seccion 13.6 |
+
+## Anadir un nivel
+
+Tres sitios, y los tres o nada — el cuarto es esta tabla, que se pudre en silencio
+si se olvida:
+
+1. La union `DebugChannel` en `app/layout.tsx`.
+2. Una regla `[data-debug-lN] .debug-lN` en el bloque `@layer utilities` de `app/globals.css`.
+3. Una fila en la tabla de canales de esta skill.
+
+Nada limita el numero de niveles: el techo lo pone la profundidad real de tus
+componentes, no la paleta.
 
 ## Verification
 

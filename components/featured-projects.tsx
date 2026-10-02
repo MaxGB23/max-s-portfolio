@@ -133,7 +133,7 @@ export function FeaturedProjects() {
       <Section
         as="div"
         debug="none"
-        className="debug-l2 flex justify-center"
+        className="debug-l1 flex justify-center"
         innerClassName="flex flex-col items-center text-center"
       >
         <div

@@ -39,13 +39,13 @@ export function FeaturedProjectPanel({ project, children, isLast = false }: Feat
 
   return (
     <article
-      className="debug-l4 featured-panel relative w-full px-6 md:px-8 lg:px-12"
+      className="debug-l1 featured-panel relative w-full px-6 md:px-8 lg:px-12"
       data-panel-id={project.id}
       style={{ backgroundColor: project.bgColor }}
       aria-labelledby={`featured-title-${project.id}`}
     >
       <div
-        className={`debug-l1 panel-content w-full max-w-7xl mx-auto flex flex-col ${FEATURED_GAP} ${FEATURED_GAP_LG} ${
+        className={`debug-l2 panel-content w-full max-w-7xl mx-auto flex flex-col ${FEATURED_GAP} ${FEATURED_GAP_LG} ${
           isLast ? "" : "pb-12 lg:pb-20"
         }`}
       >
@@ -56,9 +56,9 @@ export function FeaturedProjectPanel({ project, children, isLast = false }: Feat
             </div>
           )}
 
-          <div className="debug-l2 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-0 justify-center items-start">
+          <div className="debug-l3 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-0 justify-center items-start">
             {/* Left - Text */}
-            <div className="debug-l3 flex flex-col order-2 lg:order-1">
+            <div className="debug-l4 flex flex-col order-2 lg:order-1">
               {/* Index + Category */}
               <div className="flex items-center gap-4 mb-6">
                 <span className="text-sm 2xl:text-lg font-mono text-muted-foreground tabular-nums font-bold">
@@ -85,7 +85,7 @@ export function FeaturedProjectPanel({ project, children, isLast = false }: Feat
               </h3>
 
               {/* Description */}
-              <p className="debug-l4 text-fluid-body leading-relaxed text-content mb-6 mr-6 sm:mr-0 max-w-[50ch]">
+              <p className="debug-l5 text-fluid-body leading-relaxed text-content mb-6 mr-6 sm:mr-0 max-w-[50ch]">
                 {project.description}
               </p>
 

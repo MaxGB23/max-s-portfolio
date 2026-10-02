@@ -20,13 +20,14 @@ const spaceGrotesk = Space_Grotesk({
 
 /**
  * Layout debug overlay for manual QA (visual only).
- * "l1".."l4" are depth levels: l1 = outermost marked container, each nested
- * marker +1. "test" is a disposable one-off marker for a single box (icon,
- * image, inline span); it is orthogonal to depth and never counts as a level.
+ * "l1".."l5" are depth levels: l1 = outermost marked container, each nested
+ * marker +1; unmarked wrappers in between do not count. "test" is a disposable
+ * one-off marker for a single box (icon, image, inline span); it is orthogonal
+ * to depth and never counts as a level.
  * One attribute per channel, so toggling is deleting a word.
  * Empty array = off.
  */
-type DebugChannel = 'l1' | 'l2' | 'l3' | 'l4' | 'test'
+type DebugChannel = 'l1' | 'l2' | 'l3' | 'l4' | 'l5' | 'test'
 
 const LAYOUT_DEBUG: DebugChannel[] = []
 

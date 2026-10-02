@@ -144,7 +144,7 @@ export function HeroSection() {
             </h1>
 
             <div className="hero-description debug-l4 px-4 sm:px-16 md:px-0 text-fluid-body leading-relaxed text-content max-w-full" style={{ opacity: 0, visibility: 'hidden', maxWidth: titleWidth ? `min(${titleWidth}px, 60ch)` : undefined }}>
-              <div className="debug-l1">
+              <div className="debug-test">
                 <p >{t("hero.description")}</p>
               </div>
             </div>
