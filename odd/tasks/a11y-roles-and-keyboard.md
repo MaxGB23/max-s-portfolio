@@ -61,12 +61,52 @@ cosas que un usuario de teclado o de lector de pantalla no puede sortear.
 
 ## Tasks
 
-- [ ] T1 (WU1) `hero-section.tsx` — emoji 🖐: una sola intención.
-- [ ] T2 (WU2) `featured-project-panel.tsx:75` — `h2` → `h3`.
-- [ ] T3 (WU3) `footer.tsx:48` + `data/translations.ts` — `aria-label` por `t()`.
-- [ ] T4 (WU4) `project-detail.tsx:490-527` — `role="tablist"` / `role="tab"` / `aria-selected` / `aria-controls` + panel con `id` y `role="tabpanel"` + `roving tabindex` y flechas ←/→.
-- [ ] T5 (WU5) `project-detail.tsx:697-772` — trap de foco dentro del dialog + foco al opener en `useEffect` de cierre.
-- [ ] T6 (WU6) Test manual de teclado. Evidencia de que A3 y A4 funcionan; no hay cobertura automatizada.
+Todos completos. WU4b/c/d no estaban en el plan original: los destapó el testing
+manual de teclado del usuario, no la auditoría.
+
+- [x] T1 (WU1) `hero-section.tsx` — emoji 🖐: una sola intención. `6cedb2e`
+- [x] T2 (WU2) `featured-project-panel.tsx:75` — `h2` → `h3`. `3f8191b`
+- [x] T3 (WU3) `footer.tsx:48` — `aria-label` por `t()`. `9086820`
+- [x] T4 (WU4) `project-detail.tsx` — roles de tab + `roving tabindex` + flechas. `50e8b30`
+- [x] T5 (WU4b) `project-detail.tsx` — flechas ←/→ en el lightbox. `a5c675d`
+- [x] T6 (WU4c) `project-detail.tsx` — `z-10` + breakpoint `sm:` → `nav:`. `70c6275`
+- [x] T7 (WU4d) `project-detail.tsx` — `bg-black/40` bajo `xl` en las flechas. `22418f2`
+- [x] T8 (WU5) `project-detail.tsx` — trap de foco + retorno al opener. `899783c`
+- [x] T9 (WU6) Test manual de teclado, gate por work unit (ver abajo).
+
+### Defectos que el testing manual destapó (no estaban en la auditoría)
+
+La auditoría leyó código; estos tres solo aparecen mirando el comportamiento.
+Por eso T9 no es una nota: es la razón de que los ocho work units anteriores
+estén verificados uno por uno.
+
+| ID | Defecto | Por qué la auditoría no lo vio | Fix |
+|---|---|---|---|
+| WU4b | El lightbox no tenía navegación por teclado: `onKeyDown` solo manejaba `Escape`. Solo se recorría con los botones ◀ ▶ (ocultos bajo `nav`) o swipe | El código parecía completo — `role="dialog"`, Escape, scroll-lock — pero faltaba una tecla. Un lector de usuario de teclado lo encuentra en un segundo, una auditoría de estática no | `ArrowLeft`/`ArrowRight` con wrap-around, guardadas por `realImages.length > 1` |
+| WU4c | Los controles pintaban **debajo** de la imagen: el `<figure>` es `relative` y va después en el DOM, así que sin `z-index` el `z` document tapaba ~28px de cada flecha entre `nav` y ~1144px | Es un bug de **orden de pintado**, no de tamaño. La geometría daba la impresión de "no cabe" cuando la causa era el stacking context | `z-10` en X, ◀ y ▶ |
+| WU4d | Con velo `bg-white/10`, los controles eran invisibles sobre capturas de interfaz clara — 3 de 11 por luminancia medida (caf/dashboard-light 243, autoshop/crud 221, caf/editar_profile 203). El "3 / 9" también: `text-white/80` sobre blanco | Necesita medir el contenido real. `bg-white/10` sobre una captura oscura se ve bien, y las capturas mayoritarias son oscuras — el caso raro se ve bien en pantalla y falla en la excepción | `bg-black/40` bajo `xl`, `xl:bg-white/10` desde `xl` (donde las flechas ya no tocan la imagen) |
+
+### Verificación (T9)
+
+No hay cobertura automatizada de a11y en el repo, así que cada work unit se
+aprobó con teclado y mouse **antes** de commitear. El usuario ejecutó esta
+ronda por work unit, no una sola al final:
+
+- **Anillo de foco por Tab** — llega a la pestaña activa, no a las dos; sale del
+  switcher con `Tab`; `←`/`→` mueven foco y selección
+- **Foco entra al lightbox** — al abrir con `Enter`, el anillo queda en la X
+- **Trap** — cinco vueltas de `Tab` ciclan X → ◀ → ▶ → X sin salir al fondo
+- **Retorno de foco** — `Escape`, X y click en el fondo devuelven el foco a la
+  imagen de galería (antes caía a `<body>`)
+- **Sin anillo con mouse** — abrir y cerrar con click no muestra anillo
+- **Caso de una imagen** (`funky-theme`) — sin flechas, sin contador, `Tab` no
+  escapa
+- **`document.activeElement.getAttribute('aria-label')`** → `"Cerrar visor"`, que
+  es `section.projects.lightboxClose` (el botón de cerrar). El dialog lleva
+  `"Visor de imagen"` = `lightboxViewer`; son claves distintas y el resultado
+  confirma que el foco está en la X, no en el contenedor
+- **Consola** — verificado que nunca devuelve `INPUT`/`TEXTAREA`, lo que
+  confirmaría que `preventDefault` no agarró las flechas
 
 ## Acceptance criteria
 
@@ -81,21 +121,49 @@ cosas que un usuario de teclado o de lector de pantalla no puede sortear.
 
 ## Applicable checks
 
-- `pnpm exec tsc --noEmit` — **PASS** (exit 0) en WU1. Es la verificación disponible.
+- `pnpm exec tsc --noEmit` — **PASS (exit 0)** en los ocho work units. Es la
+  verificación automatizada disponible.
 - `pnpm lint` — **NO DISPONIBLE (falla en la base, preexistente).** El script
   `"lint": "eslint ."` existe en `package.json`, pero `eslint` no está en
   `devDependencies`, no hay archivo de configuración en el repo y no está
   instalado en `node_modules`. El script nunca corrió en este checkout. No se
   arregla acá: instalar eslint y escribir su config es scope creep. Registrar
   el gap, no simular un PASS.
-- Comparación visual antes/después en `:3001` (hero, panel destacado, footer, detail).
-- Test manual de teclado (T6): tres rondas — lightbox no escapa el foco · foco vuelve al opener · flechas en el switcher.
+- Comparación visual antes/después en `:3000` (hero, panel destacado, footer, detail).
+- Test manual de teclado, gate por work unit. Ver *Verificación (T9)*.
 
 ## Route
 
-ODD — directo/delegado, sin SDD. Tres work units mecánicos (WU1–WU3) y dos con
-lógica propia (WU4–WU5). Cada work unit se ejecuta y verifica antes del siguiente;
-ninguno depende del anterior.
+ODD — directo, sin SDD. Cinco work units mecánicos y tres con lógica propia
+(roles de tab, flechas del lightbox, trap de foco). Ninguno depende del otro;
+cada uno se ejecutó, verificó y commiteó antes del siguiente.
+
+Dos desviaciones de las decisiones originales, ambas porque el código forzó
+el camino: `Home`/`End` se dejaron fuera del patrón de tabs (con dos vistas las
+flechas ya recorren el grupo, y sumaban superficie de verificación en un momento
+donde el teclado era lo más frágil), y el tratamiento de fondo de los controles
+terminó siendo condicional por breakpoint en vez de uniforme — la X nunca toca
+la imagen y las flechas sí, así que no comparten caso.
+
+## Outcome
+
+Los cinco work units aprobados quedaron commiteados y verificados por teclado y
+mouse antes de pasar al siguiente. Tres defectos que la auditoría estática no
+vio quedaron corregidos de paso (ver la tabla en *Tasks*).
+
+Deuda que queda, sin tocar:
+
+- **S1 + A1** — reestructurar `<main>` + skip-link. El navbar hereda
+  `text-foreground` de `<main>`, así que requiere mover las clases y verificar
+  píxeles. Único punto del documento con riesgo visual real.
+- **Dividir `project-detail.tsx`** — riesgo de regresión silenciosa: `gsap.context`
+  resuelve `.detail-hero > *`, `.detail-section`, `.back-btn` y
+  `.detail-gallery-item` por jerarquía DOM, no por árbol de React. Si un
+  componente sale del `rootRef`, los selectores dejan de matchear y las
+  animaciones **dejan de reproducirse sin error**. Valor cero para quien ve el
+  sitio: es higiene de código, no señal de contratación.
+- **`pnpm lint`** — el script existe pero eslint no está instalado ni
+  configurado. Preexistente, no lo introduce este trabajo.
 
 ## Delivery strategy
 
