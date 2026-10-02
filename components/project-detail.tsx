@@ -795,7 +795,7 @@ export function ProjectDetail({ project }: { project: Project }) {
                 type="button"
                 onClick={(e) => { e.stopPropagation(); prevLightbox(); }}
                 aria-label={t("section.projects.lightboxPrev")}
-                className="absolute left-4 z-10 hidden nav:inline-flex items-center justify-center w-11 h-11 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors duration-200 touch-manipulation"
+                className="absolute left-4 z-10 hidden nav:inline-flex items-center justify-center w-11 h-11 rounded-full bg-black/40 xl:bg-white/10 text-white hover:bg-white/20 transition-colors duration-200 touch-manipulation"
               >
                 <ChevronLeft size={20} aria-hidden="true" />
               </button>
@@ -803,26 +803,26 @@ export function ProjectDetail({ project }: { project: Project }) {
                 type="button"
                 onClick={(e) => { e.stopPropagation(); nextLightbox(); }}
                 aria-label={t("section.projects.lightboxNext")}
-                className="absolute right-4 z-10 hidden nav:inline-flex items-center justify-center w-11 h-11 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors duration-200 touch-manipulation"
+                className="absolute right-4 z-10 hidden nav:inline-flex items-center justify-center w-11 h-11 rounded-full bg-black/40 xl:bg-white/10 text-white hover:bg-white/20 transition-colors duration-200 touch-manipulation"
               >
                 <ChevronRight size={20} aria-hidden="true" />
               </button>
 
-{/* Controls carry `z-10`: the figure is `relative` and comes later in the DOM,
-                  so with no z-index the image painted on top and clipped ~28px of
-                  each arrow between `nav` and ~1168px, where the figure is still
-                  narrower than `max-w-5xl`. The same defect could hide the close
-                  button on short windows.
+{/* Arrows go `bg-black/40` below `xl` because a white veil vanishes over a light
+                  screenshot (3 of 11 gallery captures are light UI). From `xl` up
+                  they clear the image, so the original white veil returns over the
+                  dark overlay — which also restores a hover that reads. Close button
+                  and counter keep white at every width: neither sits over the image.
+                  No ring anywhere: the disc covers the light capture, the veil
+                  covers the wide one. A ring was tried and read as clutter.
 
-                  Arrows use `nav` (830px, the project's own mobile/desktop line, the
-                  same one the navbar keys off) rather than `sm` (640px): between
-                  640 and 830 sit tablets and landscape phones, which have swipe and
-                  should not be given mouse controls.
-
-                  Position affordance for touch users (prev/next hidden below `nav`):
-                  swipe replaces the arrows, "3 / 9" says where you are. */}
+                  `z-10` because the figure is `relative` and comes later in the DOM:
+                  without it the image painted over these controls. Arrows use `nav`
+                  (830px, the project's own mobile/desktop line) rather than `sm`
+                  (640px) — below that sit tablets with swipe, not mouse controls.
+                  Counter is the touch affordance: "3 / 9" says where you are. */}
               <span
-                className="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-white/10 px-3 py-1 text-xs font-medium tabular-nums text-white/80 select-none"
+                className="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-white/10 px-3 py-1 text-xs font-medium tabular-nums text-white select-none"
                 aria-live="polite"
                 onClick={(e) => e.stopPropagation()}
               >
