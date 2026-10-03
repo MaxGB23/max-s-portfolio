@@ -56,7 +56,7 @@ export function FeaturedProjectPanel({ project, children, isLast = false }: Feat
             </div>
           )}
 
-          <div className="debug-l3 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-0 justify-center items-start">
+          <div className="debug-l3 grid grid-cols-1 lg:grid-cols-2 gap-12 justify-center items-start">
             {/* Left - Text */}
             <div className="debug-l4 flex flex-col order-2 lg:order-1">
               {/* Index + Category */}

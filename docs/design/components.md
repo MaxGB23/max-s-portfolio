@@ -175,8 +175,8 @@ en otro archivo.
   fold. Es intencionado y esta aprobado; no "corregir" la caja ni el
   `min-h-[85dvh]` para traerlo al viewport.
 - inner `max-w-5xl`, gaps `gap-8 md:gap-12 lg:gap-20`; bloque principal
-  `gap-10 2xl:gap-14`; columns `md:flex-row` con TITULO Y BADGE en columna
-  **invertida** (imagen derecha, texto izquierda; `md:flex-row-reverse`).
+  `gap-10 2xl:gap-14`; columns `md:flex-row` con la columna de TEXTO primero en
+  el DOM (queda a la izquierda) y el retrato a la derecha.
 - h1 `text-fluid-display` con ancho medido por JS (`useTitleWidth`, fallback
   ELIMINADO desde 2026-09-20); description `min(titleWidth + 4, 60ch)`.
 - Badge flotante: `absolute -bottom-6 -right-6 w-24 h-24 rounded-full shadow-2xl`
@@ -229,15 +229,25 @@ en otro archivo.
   listaba aqui NO EXISTEN en el repo, y por eso el par `featured-card-card`
   esta sin asertar en `scripts/rhythm-contract.mjs` (ver nota de medicion).
   El heading mobile del panel usa `mb-12 md:mb-16`.
-- Panel: `article px-6 md:px-8 lg:px-12`; `panel-content max-w-7xl flex
-  flex-col justify-center gap-12 lg:gap-0 pt-12 md:pt-14 lg:pt-0`.
-- Grid interno `lg:grid-cols-2 gap-12 lg:gap-0` (imagen izquierda, texto
-  derecha, o invertido por panel).
+- Panel: `article px-6 md:px-8 lg:px-12`; `panel-content w-full max-w-7xl
+  mx-auto flex flex-col` + `FEATURED_GAP`/`FEATURED_GAP_LG` interpolados
+  (`gap-12 [@media(min-width:1280px)_and_(min-height:900px)]:gap-30`) +
+  `pb-12 lg:pb-20` (omitido en el ultimo panel, el spacer de pagina cierra).
+- Grid interno `grid-cols-1 lg:grid-cols-2 gap-12` (texto `order-2 lg:order-1`,
+  imagen `order-1 lg:order-2`): el `gap-12` es la separacion horizontal real
+  entre texto e imagen y se mantiene en TODOS los anchos >=1024. Antes era
+  `gap-12 lg:gap-0`, que anulaba el gap justo en el breakpoint donde las
+  columnas son mas estrechas (464px a 1024). Medido: sin el, el
+  `max-w-[50ch]` de la descripcion NO ata por debajo de ~1280 y el texto
+  llegaba al borde de la imagen; con el, la columna de texto es mas estrecha
+  que el limite de medida en todo el rango. El titulo nunca lleva `max-w`.
 - Imagen mockup: `aspect-4/3 rounded-2xl shadow-2xl ring-1 ring-black/5`;
   badge flotante `-bottom-4 -right-4 w-14 h-14 rounded-full shadow-lg`;
   chips de stack con `shadow-sm` y rings.
-- h2 `text-fluid-featured` serif black uppercase con cap de altura y ultima
-  palabra `text-purple-accent + brightness-125` (patron E9).
+- h3 `text-fluid-featured` serif black con ultima palabra
+  `text-purple-accent + brightness-125` (patron E9). Es `h3` — hijo logico del
+  `h2` de la seccion `#proyectos` (cambio de `h2` a `h3` en `3f8191b`); el
+  estilo viene de clases explicitas, no del selector de etiqueta.
 - Stacking por pin GSAP con `matchMedia(FEATURED_STACK_GATE)`; comentario en
   el codigo advierte: NO agregar `overflow-y-auto` al panel (rompe el pin y
   crea scrollbars fantasma).
