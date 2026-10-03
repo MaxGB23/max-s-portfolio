@@ -142,7 +142,7 @@ export function FeaturedProjects() {
           }`}
         >
           {/* Espaciado title - Primera card */}
-          <FadeIn delayEnter className="w-full mb-12 lg:mb-16">
+          <FadeIn delayEnter className="w-full mb-6 md:mb-12 lg:mb-16">
             <SectionHeading />
           </FadeIn>
         </div>

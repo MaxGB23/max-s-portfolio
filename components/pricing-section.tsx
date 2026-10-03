@@ -291,7 +291,7 @@ export function PricingSection() {
       innerClassName="max-w-6xl"
     >
       {/* Section header */}
-      <header className="debug-l3 pricing-header flex flex-col items-center text-center mb-5 lg:mb-16">
+      <header className="debug-l3 pricing-header flex flex-col items-center text-center mb-6 lg:mb-16">
           <h2 id="pricing-heading" className="flex flex-col md:flex-row gap-2 md:gap-3 justify-center items-center font-serif font-black uppercase text-fluid-section leading-[0.9] tracking-tighter text-foreground mb-5">
             <span>{t("section.pricing.title.first")}</span>
             <span className="text-purple-accent brightness-110">{t("section.pricing.title.second")}</span>

@@ -15,7 +15,7 @@ export default function Home() {
     <main className="min-h-screen bg-background text-foreground overflow-x-hidden">
       <ScrollProgress />
       <Navbar />
-{/* Espaciado deseado, el hero es la unica seccion que inicia con tamaño de viewport */}
+
       <HeroSection />
       <PageSpacing pair="hero-about" />
 
@@ -30,9 +30,9 @@ export default function Home() {
 
       <PricingSection />
 
-      {/* EXPERIMENTO (visual): el ritmo se parte 50/50 — media altura como
+      {/* El ritmo se parte 50/50 — media altura como
           spacer de página y media dentro de #contacto (SECTION_GAP_Y), para
-          que el arrival ring encierre la mitad de aire. El blanco visual total
+          que el arrival ring encierre la mitad de aire. El espacio negativo total
           sigue siendo 96/128px. */}
       <PageSpacing pair="pricing-contact" height={SECTION_GAP_HALF} />
       <ContactSection />

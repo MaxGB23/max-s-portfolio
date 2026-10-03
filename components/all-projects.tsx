@@ -53,7 +53,7 @@ export function AllProjects() {
         id="all-projects"
         aria-labelledby="all-projects-heading"
         insetClassName="px-6"
-        className="pt-12 lg:pt-16"
+        className="pt-6 md:pt-12 lg:pt-16"
         innerId="all-projects-content"
       >
         <FadeInStagger delayEnter className="debug-l3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
