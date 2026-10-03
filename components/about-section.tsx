@@ -57,7 +57,7 @@ export function AboutSection() {
       id="sobre-mi"
       ref={containerRef}
       aria-label={t("section.about.ariaLabel")}
-      className="relative flex flex-col items-center justify-center min-h-[60dvh] portrait:min-h-[40dvh]"
+      className="relative flex flex-col items-center justify-center min-h-[60dvh] portrait:min-h-[50dvh]"
       insetClassName="px-6 md:px-8 lg:px-12"
       innerClassName="relative z-10 flex flex-col-reverse md:flex-row items-center justify-center w-full max-w-5xl gap-8 md:gap-12 lg:gap-14 xl:gap-16"
     >
