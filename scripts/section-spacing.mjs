@@ -1,9 +1,10 @@
 // Section-spacing audit: real inter-section gaps per viewport.
-// Usage: node scripts/section-spacing.mjs  (dev server must be on :3001)
+// Usage: node scripts/section-spacing.mjs  (dev server must be on :3001,
+// or point AUDIT_BASE at another one)
 import { chromium } from "playwright";
 import { expectedGap } from "./rhythm-contract.mjs";
 
-const BASE = "http://localhost:3001";
+const BASE = process.env.AUDIT_BASE ?? "http://localhost:3001";
 
 // Sections in document order as rendered by app/page.tsx.
 const sections = [
