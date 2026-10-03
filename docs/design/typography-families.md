@@ -159,8 +159,11 @@ El contraste de lectura:
 > [!NOTE] 2026-09-20 - Hero: fallback ELIMINADO y regimen de altura
 > Los gradientes de fallback que simulaban el ancho del titulo fueron
 > eliminados; el ancho lo mide JS (`useTitleWidth`). El pad superior es un
-> regimen de altura: `pt-22 sm:pt-24 lg:[@media(min-height:700px)]:pt-34 2xl:pt-40`
-> (el hero respira segun la ALTURA disponible, no solo el ancho).
+> regimen de altura: `pt-22 sm:pt-24 lg:[@media(min-height:700px)]:pt-34`
+> (el hero respira segun la ALTURA disponible, no solo el ancho). Hubo un
+> escalon `2xl:pt-40` que se elimino como codigo muerto: `pt-34` se ordena
+> despues en el CSS y siempre ganaba, asi que el valor de 160px nunca se
+> aplico (medido 136px en 1920x1080).
 
 > [!NOTE] 2026-09-14 - Footer minimal
 > El footer dejo de ser un navegador (sin nav, sin reloj en vivo) y se

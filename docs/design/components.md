@@ -47,29 +47,38 @@ Auditoria de separaciones: `scripts/section-spacing.mjs` (9 viewports, toleranci
 - `SECTION_GAP` = `h-24 md:h-32` (96/128px): separacion entre secciones
   top-level, consumida por `components/section-spacing.tsx` como altura del
   spacer de pagina.
-- `SECTION_GAP_Y` = `py-24 md:py-32` (96/128px): padding vertical DENTRO del
+- `SECTION_GAP_Y` = `py-12 md:py-16` (48/64px): padding vertical DENTRO del
   contenedor interno `#contact-content` de `#contacto`, consumido por
   `contact-section.tsx` (`innerClassName`). Contacto es la UNICA seccion con
   padding vertical propio: su cue de llegada (ring inset) se pinta en ese hijo
   directo, asi que ahi necesita aire. Pintarlo en el shell daria un rectangulo
-  full-bleed. Por eso los pares de pagina pasan de 6 a 4 (`pricing-contact` y
-  `contact-footer` retirados de `PageSpacerPair`/`PAGE_SPACER_CLASSES`): el
-  ritmo visual entre Pricing<->Contacto y Contacto<->Footer sigue siendo
-  96/128px, ahora aportado por ese padding (regla de 2 niveles: shell + primer
-  hijo, la misma que usan el aterrizaje del scroll y la auditoria).
+  full-bleed. Por eso los dos pares de contacto (`pricing-contact` y
+  `contact-footer`) no llevan wrapper condicional: el ritmo se reparte 50/50
+  entre el spacer de pagina (`SECTION_GAP_HALF`, 48/64px, pasado explicitamente
+  por `app/page.tsx`) y ese padding (48/64px) — los mismos 96/128px visuales
+  entre Pricing<->Contacto y Contacto<->Footer (regla de 2 niveles: shell +
+  primer hijo, la misma que usan el aterrizaje del scroll y la auditoria).
 - `FEATURED_GAP` = `gap-12` (48px) y `FEATURED_GAP_LG` =
   `[@media(min-width:1280px)_and_(min-height:900px)]:gap-30` (120px):
   gap titulo<->card dentro del stack featured, consumido por
   `featured-project-panel.tsx` desde `748c17e`.
-- `PAGE_SPACER_CLASSES` (contrato de orientacion, verbatim desde `352ab13`;
-  4 pares desde que contacto es dueño de su spacing vertical):
+- `PAGE_SPACER_CLASSES` (contrato de orientacion, verbatim desde `lib/rhythm.ts`;
+  6 pares):
 
 | Par | Clase |
 |---|---|
-| `hero-about` | `portrait:md:hidden` |
-| `about-projects` | (sin wrapper condicional) |
+| `hero-about` | `landscape:hidden [@media(orientation:landscape)_and_(max-height:800px)]:block` |
+| `about-projects` | `landscape:hidden [@media(orientation:landscape)_and_(max-height:800px)]:block` |
 | `projects-all-projects` | (sin wrapper condicional) |
 | `all-projects-pricing` | (sin wrapper condicional) |
+| `pricing-contact` | (sin wrapper condicional) |
+| `contact-footer` | (sin wrapper condicional) |
+
+Regimen de visibilidad: `hero-about` y `about-projects` son los unicos pares con
+wrapper condicional — el spacer renderiza en portrait (cualquier ancho) y en
+landscape de hasta 800px de alto (umbral `max-height:800px`, inclusivo). Por
+encima de ese umbral el wrapper queda `hidden` y el gap se contrae a 0, porque
+el hero ya ocupa el viewport. Los otros cuatro pares son incondicionales.
 
 Reglas: no hand-editear estos valores (editar `lib/rhythm.ts` y correr el
 contrato); las variantes arbitrarias ganan por orden CSS.
@@ -145,8 +154,26 @@ en otro archivo.
 ### 4.2 Hero (`hero-section.tsx`)
 
 - `section#inicio` con `min-h-[85dvh]`, pad superior por regimen de altura:
-  `pt-22 sm:pt-24 lg:[@media(min-height:700px)]:pt-34 2xl:pt-40`,
-  `px-6 md:px-8 lg:px-12`.
+  `pt-22 sm:pt-24 lg:[@media(min-height:700px)]:pt-34` (88 / 96 / 136px),
+  `px-6 md:px-8 lg:px-12`. La escalera tiene TRES peldanos, no cuatro: no
+  existe peldan `2xl`. Un `2xl:pt-40` quedo como codigo muerto y se elimino
+  — nunca aplico, porque `lg:[@media(min-height:700px)]:pt-34` va despues en
+  la cascada y gana (medido: pt = 136px a 1920x1080, no 160px).
+- La `section` NO lleva `justify-center`: el centrado vive en el bloque l2
+  interior (`flex-1 flex flex-col items-center justify-center`), que es el que
+  absorbe el sobrante de `min-h-[85dvh]`.
+- `.hero-scroll` es el ULTIMO hijo de flujo de la `section` (NO del bloque l2),
+  con `shrink-0` y `mt-10 2xl:mt-14`. Al ser el borde inferior de la seccion,
+  el indicador queda SIEMPRE a ras de la caja: medido a ras en 390x844
+  (1005px), 768x1024 (870px) y 1920x1080 (918px). El espacio sobrante de
+  `min-h-[85dvh]` queda POR ENCIMA del indicador, dentro de la seccion — no
+  debajo del contenido. (En el canon anterior se describia al contrario: un
+  "hueco con el indicador para que About aparezca al hacer scroll". Ese
+  encuadre ya no describe el codigo.)
+- Mobile 390x844 (comportamiento APROBADO, NO un bug): la caja del hero mide
+  1005px de alto, asi que el indicador de scroll queda ~161px POR DEBAJO del
+  fold. Es intencionado y esta aprobado; no "corregir" la caja ni el
+  `min-h-[85dvh]` para traerlo al viewport.
 - inner `max-w-5xl`, gaps `gap-8 md:gap-12 lg:gap-20`; bloque principal
   `gap-10 2xl:gap-14`; columns `md:flex-row` con TITULO Y BADGE en columna
   **invertida** (imagen derecha, texto izquierda; `md:flex-row-reverse`).
@@ -161,17 +188,22 @@ en otro archivo.
 - CTA: "Ver Proyectos" primary pill md con `shadow-md` heredado; "Descargar CV"
   outline pill md con `glow`, `href` de `data/cv.ts` (`cvHref(lang)`, un PDF por
   idioma — mismo archivo que contacto; EN dice "Resume"). Ver buttons.md.
-- Cue "Deslizar": indicador de scroll (decisional, ver
-  `docs/ideas-features/hero-design.md`; ref corregida desde el canon anterior).
+- Cue "Deslizar": indicador de scroll. Es el ULTIMO hijo de flujo de la
+  `section`, o sea su BORDE INFERIOR, no un remate colgando debajo del
+  contenido: el sobrante de `min-h-[85dvh]` se acumula por encima del indicador
+  (dentro de la seccion) porque el bloque l2 lleva `flex-1`. Decisional, ver
+  `docs/ideas-features/hero-design.md`.
 
 ### 4.3 Sobre-mi (`about-section.tsx`)
 
 - `Section#sobre-mi` con `insetClassName="px-6 md:px-8 lg:px-12"`, inner
   `max-w-5xl`, `flex-col-reverse md:flex-row`, gaps
   `gap-8 md:gap-12 lg:gap-14 xl:gap-16`.
-- `min-h-[60dvh]`: la seccion nunca baja del 60% del viewport — garantiza que
-  toque la banda centrada del scroll-spy en viewports altos (D11, resolucion
-  2026-10-01; ver `section-animations.md` punto 5).
+- `min-h-[60dvh] portrait:min-h-[50dvh]`: en landscape la seccion nunca baja del
+  60% del viewport — garantiza que toque la banda centrada del scroll-spy en
+  viewports altos (D11, resolucion 2026-10-01; ver `section-animations.md`
+  punto 5). En portrait el alto minimo baja a 50%: en vertical el 60% obligaba
+  a un bloque desproporcionado antes del primer proyecto.
 - Retrato `aspect-11/9 rounded-4xl shadow-xl`, alto escalado por breakpoint:
   `md:h-[280px] lg:h-[320px] xl:h-[360px] 2xl:h-[380px]`, `max-w-[400px]`
   mobile.
@@ -190,11 +222,13 @@ en otro archivo.
   mueve, no lo estira.
 - Gaps titulo<->card: `FEATURED_GAP` + `FEATURED_GAP_LG` interpolados
   (`gap-12 [@media(min-width:1280px)_and_(min-height:900px)]:gap-30`).
-- Margenes inferiores FUERA del gate:
-  - `portrait:lg:mb-24`
-  - `landscape` con `max-height:768px`: `mb-24`
-  - `portrait` md con `max-height:768px`: `mb-12`
-  - `last:mb-0` en <=767px
+- Gap titulo -> primera card de la seccion `#proyectos` (desktop):
+  `mb-6 md:mb-12 lg:mb-16`. Este es el unico margen que separa el titulo del
+  stack: el `article` NO lleva margenes inferiores por regime. Los
+  `portrait:lg:mb-24` / `landscape:...mb-24` / `last:mb-0` que el canon anterior
+  listaba aqui NO EXISTEN en el repo, y por eso el par `featured-card-card`
+  esta sin asertar en `scripts/rhythm-contract.mjs` (ver nota de medicion).
+  El heading mobile del panel usa `mb-12 md:mb-16`.
 - Panel: `article px-6 md:px-8 lg:px-12`; `panel-content max-w-7xl flex
   flex-col justify-center gap-12 lg:gap-0 pt-12 md:pt-14 lg:pt-0`.
 - Grid interno `lg:grid-cols-2 gap-12 lg:gap-0` (imagen izquierda, texto
@@ -212,8 +246,9 @@ en otro archivo.
 
 - Heading: `Section` (markers `default` l1/l2) con clase real
   `insetClassName="px-6"`.
-- Grid: `Section#all-projects` con `insetClassName="px-6 pt-12 lg:pt-16"`,
-  `innerId="all-projects-content"`; grid `1/2/3` con `gap-6`.
+- Grid: `Section#all-projects` con `insetClassName="px-6"` y
+  `className="pt-6 md:pt-12 lg:pt-16"` (el pad vertical va en `className`, no en
+  el inset), `innerId="all-projects-content"`; grid `1/2/3` con `gap-6`.
 - h2 `text-fluid-section` con palabra "Proyectos" acento + brightness-110.
 - `FadeInStagger` + `FadeInItem` en cada card (grid).
 - Fuente de datos: `data/projects.ts` (`getFeaturedProjects`, categorias).
@@ -236,7 +271,7 @@ en otro archivo.
 ### 4.7 Pricing (`pricing-section.tsx`)
 
 - `Section#precios` con `innerClassName="max-w-6xl"`; header centrado
-  `mb-5 lg:mb-16`; grid `lg:grid-cols-3 gap-6 max-w-md lg:max-w-none`.
+  `mb-6 lg:mb-16`; grid `lg:grid-cols-3 gap-6 max-w-md lg:max-w-none`.
 - Destacado: card protagonista con `border-purple-accent shadow-2xl` y fondo
   `var(--accent-purple)` inline; badge "Mas popular" `absolute -top-3.5`.
   Texto sobre morado en blanco (regla de blancos, ver iteration-guide).

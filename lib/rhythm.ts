@@ -7,22 +7,32 @@
  * (`md:h-32`). Applied as the HEIGHT of the page-level spacer rendered by
  * `components/section-spacing.tsx`.
  *
- * SECTION_GAP_Y — vertical counterpart of SECTION_GAP (same values), applied
- * as padding INSIDE a section that owns its spacing instead of as a spacer at
- * page level. Contact is the only consumer: its arrival cue (`box-shadow:
- * inset` ring on `#contacto`) is drawn at the section box border, so the ring
- * needs air INSIDE the box. Consumed by `components/contact-section.tsx`.
+ * SECTION_GAP_Y — the INSIDE half of SECTION_GAP (same values as
+ * SECTION_GAP_HALF, NOT SECTION_GAP), applied as padding INSIDE a section that
+ * owns its spacing instead of as a spacer at page level. Contact is the only
+ * consumer: its arrival cue (`box-shadow: inset` ring on `#contacto`) is drawn
+ * at the section box border, so the ring needs air INSIDE the box. The rhythm
+ * there is split 50/50 — SECTION_GAP_HALF as the page spacer plus SECTION_GAP_Y
+ * as this padding — so the visual total stays SECTION_GAP. Consumed by
+ * `components/contact-section.tsx`.
  *
  * FEATURED_GAP / FEATURED_GAP_LG — heading↔card gap inside the featured stack:
  * 48px (`gap-12`), growing to 120px (`gap-30`) on tall×wide viewports
  * (≥1280px × ≥900px). Consumed by `featured-project-panel.tsx` since `748c17e`
  * (className interpolated `${FEATURED_GAP} ${FEATURED_GAP_LG}`).
  *
- * PAGE_SPACER_CLASSES — wrapper class per inter-section pair (4 pairs; the
- * contact pairs were retired when contact started owning its vertical spacing
- * via SECTION_GAP_Y), resolved by orientation regime (single source of the
- * orientation contract, byte-equal to `352ab13`). Consumed by
- * `components/page-spacing.tsx`; QA mirror in `scripts/rhythm-contract.mjs`.
+ * PAGE_SPACER_CLASSES — wrapper class per inter-section pair (6 pairs),
+ * resolved by orientation regime (single source of the orientation contract).
+ * Consumed by `components/page-spacing.tsx`; QA mirror in
+ * `scripts/rhythm-contract.mjs`.
+ *
+ * The contract itself: `hero-about` and `about-projects` are the only pairs
+ * with a conditional wrapper — the spacer renders in EVERY regime except
+ * landscape taller than 800px, where the hero already fills the viewport, so
+ * the extra air is dropped and the gap collapses to 0. The remaining four
+ * pairs are unconditional (`""` = no wrapper → full-height spacer); the two
+ * contact pairs carry `""` because contact owns its vertical spacing via
+ * SECTION_GAP_Y instead.
  */
 export const SECTION_GAP = "h-24 md:h-32";
 /** Half of SECTION_GAP — page-level share when contact splits its rhythm. */
