@@ -906,7 +906,12 @@ export const projects: Project[] = [
         "Distribución: VS Code Marketplace, Open VSX, .vsix store-agnostic",
         "Terminal IA: funky-theme-tui (Claude Code, OpenCode, Pi) — mismo SSOT, pre-estable",
       ],
-      gallery: [],
+      gallery: [
+        {
+          src: "/images/projects/funky-theme/icon.png",
+          alt: "Prueba",
+        },
+      ],
       cta: "¿Te interesa el diseño de temas con paleta semántica gobernada por SSOT? Hablemos.",
     },
     architecture: {
