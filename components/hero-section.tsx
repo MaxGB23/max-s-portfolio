@@ -109,7 +109,7 @@ export function HeroSection() {
       id="inicio"
       ref={containerRef}
       aria-label={t("hero.aria.intro")}
-      className="debug-l1 relative min-h-[85dvh] flex flex-col items-center justify-center pt-22 sm:pt-24 lg:[@media(min-height:700px)]:pt-34 2xl:pt-40 px-6 md:px-8 lg:px-12"
+      className="debug-l1 relative min-h-[85dvh] flex flex-col items-center pt-22 sm:pt-24 lg:[@media(min-height:700px)]:pt-34 2xl:pt-40 px-6 md:px-8 lg:px-12"
     >
       {/* Background Aurora */}
       <div
@@ -128,8 +128,9 @@ export function HeroSection() {
           />
         )}
       </div>
-      {/* Main hero layout */}
-      <div className="debug-l2 relative z-10 flex flex-col items-center w-full gap-10 2xl:gap-14">
+      {/* Main hero layout. flex-1 absorbs the leftover that min-h-[85dvh] leaves,
+          so the scroll indicator below always lands flush on the section edge. */}
+      <div className="debug-l2 relative z-10 flex-1 flex flex-col items-center justify-center w-full gap-10 2xl:gap-14">
         <div className="debug-l3 relative flex flex-col md:flex-row items-center justify-center w-full max-w-5xl mx-auto gap-8 md:gap-12 lg:gap-20">
 
           {/* Left Column: Info */}
@@ -226,18 +227,20 @@ export function HeroSection() {
           </div>
         </div>
 
-        {/* Scroll indicator */}
-        <div className="hero-scroll flex flex-col items-center gap-2 text-muted-foreground" style={{ opacity: 0, visibility: 'hidden' }}>
-          <span className="text-xs 2xl:text-base tracking-widest uppercase">{t("hero.scroll")}</span>
-          <motion.div
-            className="w-px h-8 bg-border brightness-150"
-            animate={{ scaleY: [1, 0.4, 1] }}
-            transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
-            style={{ originY: 0 }}
-            aria-hidden="true"
-          />
-        </div>
+      </div>
 
+      {/* Scroll indicator — last flow child of the section, so it always sits
+          flush on the bottom edge (the section boundary). mt-* ports the gap it
+          lost when it left the l2 stack. */}
+      <div className="hero-scroll relative z-10 shrink-0 flex flex-col items-center gap-2 mt-10 2xl:mt-14 text-muted-foreground" style={{ opacity: 0, visibility: 'hidden' }}>
+        <span className="text-xs 2xl:text-base tracking-widest uppercase">{t("hero.scroll")}</span>
+        <motion.div
+          className="w-px h-8 bg-border brightness-150"
+          animate={{ scaleY: [1, 0.4, 1] }}
+          transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+          style={{ originY: 0 }}
+          aria-hidden="true"
+        />
       </div>
     </section >
   );
