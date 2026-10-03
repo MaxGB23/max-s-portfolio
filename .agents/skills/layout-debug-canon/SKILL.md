@@ -4,31 +4,40 @@ description: "Trigger: debug de layout en este repo, activar canales de debug, v
 license: Apache-2.0
 metadata:
   author: "MaxGB23"
-  version: "2.0"
+  version: "2.1"
 ---
 
 # Skill: Layout Debug Overlay (este repo)
 
 ## Activation Contract
 
-Aplicar al USAR el overlay que ya existe aqui: elegir que canales ver, marcar una caja
-puntual, o localizar donde vive el contrato. Para MONTAR el overlay en un proyecto que
-no lo tiene, usa la skill global `layout-debug` (instalacion cross-project).
+**Paso 0, obligatorio.** Antes de nada, comprueba que este proyecto tiene el overlay
+montado: existe el tipo `DebugChannel` o hay marcadores `debug-lN` en el markup.
+Comprueba el CONTRACTO, no una ruta — el proyecto puede ser de otro framework.
+Si no existe, PARA: este proyecto necesita instalarlo, y de eso se ocupa la skill
+global `layout-debug`. No apliques las reglas de aqui a un proyecto sin overlay.
+
+Aplicar al USAR el overlay ya montado: elegir que canales ver, marcar una caja
+puntual, o localizar donde vive el contrato.
+
+Esta skill contiene los HECHOS de este repo. Las REGLAS (convencion de profundidad,
+como anadir un nivel) viven en la skill global `layout-debug` y no se duplican aqui.
 
 ## Hard Rules
 
-- Default apagado: `LAYOUT_DEBUG: DebugChannel[] = []` en `app/layout.tsx`. Este repo
-  tiene 5 niveles + `test`, pero el estado por defecto es apagado: enciende solo lo
-  que vayas a mirar y apagalo antes de commitear.
+- Default apagado: `LAYOUT_DEBUG: DebugChannel[] = []` en `app/layout.tsx`. Enciende
+  solo los canales que vayas a mirar y apagalos antes de commitear.
+- La tabla de canales de abajo es la verdad de este repo. Un marker con un nivel que
+  no aparece en la tabla esta mal.
 - La profundidad se cuenta desde el ancestro marcado mas externo; los wrappers sin
-  marcar no cuentan. Ningun marker puede tener nivel <= el de un ancestro marcado.
+  marcar no cuentan. Ningun marker puede tener nivel <= el de un ancestro marcado,
+  y varias raices hermanas arrancan cada una en l1.
 - Activa UN canal por vez. Ver los 5 niveles anidados a la vez es el ruido que
   el overlay evita; para padding de un contenedor concreto, lista solo ese nivel.
 - `debug-test` es una sonda desechable para UNA caja (icono, imagen, span inline).
   Ortogonal a la profundidad: nunca cuenta como nivel. Se quita al terminar la
   inspeccion; uno olvidado es inofensivo.
 - Los marcadores `debug-lN` se quedan en el markup permanentemente.
-- El canon es la unica fuente del contrato. Esta skill no lo duplica.
 
 ## Canales
 
@@ -47,19 +56,13 @@ no lo tiene, usa la skill global `layout-debug` (instalacion cross-project).
 |---|---|
 | El array de canales | `app/layout.tsx` (`LAYOUT_DEBUG`) |
 | Las reglas CSS | `app/globals.css`, bloque `@layer utilities` |
-| El contrato y los modos de `Section` | `docs/design/components.md` seccion 10 |
+| Contrato detallado (si existe) | `docs/design/components.md` seccion 10 — solo en este repo; si no esta, las reglas estan en `layout-debug` |
+| Las reglas y como anadir un nivel | skill global `layout-debug` |
 
 ## Anadir un nivel
 
-Tres sitios, y los tres o nada — el cuarto es esta tabla, que se pudre en silencio
-si se olvida:
-
-1. La union `DebugChannel` en `app/layout.tsx`.
-2. Una regla `[data-debug-lN] .debug-lN` en el bloque `@layer utilities` de `app/globals.css`.
-3. Una fila en la tabla de canales de esta skill.
-
-Nada limita el numero de niveles: el techo lo pone la profundidad real de tus
-componentes, no la paleta.
+Ver el paso 4 de la skill global `layout-debug`: cuatro sitios, todos o ninguno. El
+sitio que se olvida en silencio es la fila de la tabla de canales de arriba.
 
 ## Verification
 
