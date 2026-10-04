@@ -206,7 +206,10 @@ export function ProjectDetail({ project }: { project: Project }) {
       });
 
       // Per-section scroll reveal for each content section below the hero.
-      const sections = gsap.utils.toArray<HTMLElement>(".detail-section");
+      // `.detail-gallery` is excluded on purpose: it carries `detail-section` too,
+      // and fading the wrapper while its items un-curtain stacks two gestures on
+      // one block. The curtain below is the stronger, more specific gesture.
+      const sections = gsap.utils.toArray<HTMLElement>(".detail-section:not(.detail-gallery)");
       sections.forEach((section) => {
         gsap.from(section, {
           opacity: 0,
@@ -220,6 +223,24 @@ export function ProjectDetail({ project }: { project: Project }) {
           },
         });
       });
+
+      // Primary visual - same curtain wipe as the gallery items, so every image on
+      // the page is revealed the same way: text fades up, images un-curtain.
+      // Shorter than the gallery's 0.8s: this band is ~1280px wide against ~400px
+      // thumbnails, and the same duration reads slower on a surface that large.
+      const primaryVisual = gsap.utils.toArray<HTMLElement>(".detail-primary-visual");
+      if (primaryVisual.length > 0) {
+        gsap.from(primaryVisual, {
+          clipPath: "inset(100% 0% 0% 0%)",
+          duration: 0.65,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: primaryVisual[0],
+            start: "top 85%",
+            once: true,
+          },
+        });
+      }
 
       // Gallery - vertical curtain wipe clip-path reveal.
       const galleryItems = gsap.utils.toArray<HTMLElement>(".detail-gallery-item");
