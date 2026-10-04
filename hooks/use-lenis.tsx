@@ -80,11 +80,26 @@ export function useScrollToAnchor(navbarHeight = 64) {
         target.getBoundingClientRect().top + window.scrollY - navbarHeight + padTop,
         0
       );
-      // Announce arrival only when the scroll completes: the CSS cue must fire
-      // at arrival, not at click time (the user is still looking at the
-      // previous section).
+      // The cue must fire at arrival, not at click time (the visitor is still
+      // looking at the previous section).
       if (lenis) {
-        lenis.scrollTo(y, { duration: 1.4, onComplete: () => announceArrival(href) });
+        // onComplete gives the right timing when the tween lands, but it is
+        // SKIPPED when the visitor scrolls during the 1.4s tween — which used to
+        // drop the cue, and the URL hash with it, since both live in
+        // announceArrival. So the cue is unconditional and the backstop
+        // guarantees it; a missed cue is far worse than an arrival announced
+        // for a target the visitor nudged away from. A ring painted off-screen
+        // is invisible and self-cleans after ~2.2s.
+        const token = ++arrivalToken;
+        let fired = false;
+        const fire = () => {
+          if (fired || token !== arrivalToken) return;
+          fired = true;
+          announceArrival(href);
+        };
+
+        lenis.scrollTo(y, { duration: 1.4, onComplete: fire });
+        window.setTimeout(fire, ARRIVAL_FALLBACK_MS);
       } else {
         // Mobile real (sin Lenis): el mismo cálculo de offset que desktop.
         // scrollIntoView({smooth}) es flaky en Chrome Android cuando hay
@@ -128,6 +143,13 @@ export function useScrollToTop() {
 // doesn't overwrite what we just set.
 let savedHomeScroll: number | null = null;
 let pendingRestore: number | null = null;
+// Only one arrival can be pending: a newer anchor click supersedes the previous
+// one, so a stale backstop can never announce the wrong destination.
+let arrivalToken = 0;
+
+/** Backstop delay — just past the 1.4s tween, so it only fires when the tween
+ *  was interrupted and onComplete will never run. */
+const ARRIVAL_FALLBACK_MS = 1600;
 
 /** Called on portfolio card clicks: remember where the grid was. */
 export function saveHomeScroll(y: number) {
