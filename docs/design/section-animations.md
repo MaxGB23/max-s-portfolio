@@ -86,3 +86,11 @@ primera seccion y se anima on-load.
 - `motion-primitives.tsx` sigue exportando `FadeIn`, `FadeInStagger` y
   `FadeInItem`. Solo `FadeIn` se usa en `footer.tsx` y `featured-projects.tsx`.
   Si Contact vuelve a usar Framer en el futuro, el patron ya existe.
+
+## Known issue (diferido)
+
+- **FOUC con ancla:** carga fria con `/#precios` o `/#contacto` -> el SSR pinta la
+  seccion visible, GSAP aplica el estado "from" (opacity:0) al crearse el tween y
+  la vuelve a animar: doble render visible. Cosmetico, solo con ancla, bajo trafico.
+  Fix posible: skip de la entrada en `useGsapAnimation` (1 linea, rompe el canon) o
+  hidden state en CSS (`html.js` + `.reveal`, preserva la animacion).
