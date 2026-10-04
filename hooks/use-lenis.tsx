@@ -157,6 +157,11 @@ export function takeHomeScroll(): number | null {
 export function ScrollRestorer() {
   const pathname = usePathname();
   const lenis = useLenis();
+  // The effect deps are [pathname, lenis], and the Lenis instance arrives
+  // asynchronously — so it runs more than once per visit. Track the PATHNAME
+  // change instead of a run counter: a run counter treats Lenis's late arrival
+  // as a navigation and forces the top on reload, which is the bug.
+  const lastPathname = useRef<string | null>(null);
 
   // Any pop (Volver pill, browser back) may mean "return to the grid": promote
   // the captured position before the pathname effect consumes it. The pill
@@ -173,6 +178,9 @@ export function ScrollRestorer() {
   }, []);
 
   useEffect(() => {
+    const prevPathname = lastPathname.current;
+    lastPathname.current = pathname;
+
     // Home: restore the captured position.
     if (pathname === "/") {
       const target = pendingRestore;
@@ -192,6 +200,14 @@ export function ScrollRestorer() {
 
     // Entering a detail page: force scroll to top. Next does this natively,
     // but Lenis would clobber it with the home page's stale scroll.
+    //
+    // Only when the ROUTE CHANGED. On the first run of a given pathname (an
+    // initial load or a RELOAD) there is no stale home scroll to clobber, and
+    // the browser has already restored the reload position (~13ms, before
+    // hydration). Forcing top there raced that restore and produced a visible
+    // jump to top and back.
+    if (prevPathname == null || prevPathname === pathname) return;
+
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         if (lenis) lenis.scrollTo(0, { immediate: true });
