@@ -55,7 +55,7 @@ function renderInline(text: string) {
 
 function SectionTitle({ children }: { children: ReactNode }) {
   return (
-    <h2 className="font-serif font-bold text-fluid-subheading text-foreground mb-5">
+    <h2 className="font-serif font-bold text-fluid-subheading text-foreground mb-3 md:mb-3.5">
       {children}
     </h2>
   );
@@ -581,18 +581,18 @@ export function ProjectDetail({ project }: { project: Project }) {
       </div>
 
       {/* Hero - typographic, image-led proof lives lower in the primary visual. */}
-      <section className="debug-l1 detail-hero px-6 md:px-12 lg:px-20 pt-20 md:pt-24 pb-12">
+      <section className="debug-l1 detail-hero px-6 md:px-12 lg:px-20 pt-20 md:pt-24 pb-12 md:pb-16">
         <div className="debug-l2 max-w-5xl mx-auto">
           <div className="mb-6">
             <span className="px-3.5 py-1.5 rounded-full text-xs 2xl:text-sm font-semibold tracking-wide bg-purple-accent text-white">
               {project.category}
             </span>
           </div>
-          <h1 className="font-serif font-black text-fluid-detail text-foreground leading-[1.02] tracking-tight text-balance">
+          <h1 className="mb-4 md:mb-5 font-serif font-black text-fluid-detail text-foreground leading-[1.02] tracking-tight text-balance">
             {mainTitle && <span>{mainTitle} </span>}
             <span className="text-purple-accent brightness-110">{lastWord}</span>
           </h1>
-          <p className="mt-6 text-fluid-body text-content max-w-2xl leading-relaxed">
+          <p className="text-fluid-body text-content max-w-2xl leading-relaxed">
             {detail.headline}
           </p>
           {tags.length > 0 && (
@@ -741,14 +741,14 @@ export function ProjectDetail({ project }: { project: Project }) {
 
         <div className="debug-l2 max-w-3xl mx-auto">
           {/* Summary */}
-          <section className="detail-section mb-16">
+          <section className="detail-section mb-12 md:mb-16">
             <SectionTitle>{t("section.projects.sectionSummary")}</SectionTitle>
             <p className="text-content text-base 2xl:text-lg leading-relaxed">{renderInline(detail.summary)}</p>
           </section>
 
           {/* Problem */}
           {detail.problem && (
-            <section className="detail-section mb-16">
+            <section className="detail-section mb-12 md:mb-16">
               <SectionTitle>{t("section.projects.sectionProblem")}</SectionTitle>
               <p className="text-content text-base 2xl:text-lg leading-relaxed">
                 {renderInline(detail.problem)}
@@ -758,7 +758,7 @@ export function ProjectDetail({ project }: { project: Project }) {
 
           {/* Role */}
           {detail.role && detail.role.length > 0 && (
-            <section className="detail-section mb-16">
+            <section className="detail-section mb-12 md:mb-16">
               <SectionTitle>{t("section.projects.sectionRole")}</SectionTitle>
               <ul className="space-y-3">
                 {detail.role.map((item, index) => (
@@ -772,7 +772,7 @@ export function ProjectDetail({ project }: { project: Project }) {
           )}
 
           {/* Solution */}
-          <section className="detail-section mb-16">
+          <section className="detail-section mb-12 md:mb-16">
             <SectionTitle>{t("section.projects.sectionSolution")}</SectionTitle>
             <ul className="space-y-3">
               {detail.solution.map((item, index) => (
@@ -785,7 +785,7 @@ export function ProjectDetail({ project }: { project: Project }) {
           </section>
 
           {/* Gallery Spotlight - hover zoom affordance, click opens lightbox */}
-          <section className="detail-section detail-gallery mb-16">
+          <section className="detail-section detail-gallery mb-12 md:mb-16">
             <SectionTitle>{t("section.projects.sectionGallery")}</SectionTitle>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {(() => {
