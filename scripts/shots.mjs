@@ -5,7 +5,7 @@
 // Usage:
 //   node scripts/shots.mjs                             # all viewports
 //   node scripts/shots.mjs --vp 1024x768 --vp 390x844  # a subset
-//   node scripts/shots.mjs --url http://localhost:3001
+//   node scripts/shots.mjs --url http://localhost:<port>
 //
 // For each viewport it lands on #proyectos and captures 5 stops along the
 // stacking scroll range (0/25/50/75/100%), printing whether the page has any
@@ -14,6 +14,7 @@ import { chromium } from "playwright";
 import { mkdirSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { resolveBase } from "./audit-base.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const outDir = resolve(root, "shots");
@@ -24,7 +25,7 @@ const pick = (flag, fallback) => {
   return i >= 0 && args[i + 1] ? args[i + 1] : fallback;
 };
 
-const url = pick("--url", process.env.BASE_URL || "http://localhost:3001");
+const url = await resolveBase("shots");
 const viewports = args.includes("--vp")
   ? args
       .filter((a, i) => args[i - 1] === "--vp")

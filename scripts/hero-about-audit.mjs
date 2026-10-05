@@ -1,9 +1,10 @@
 // Hero/About internal audit: how much of the section box is real content
-// vs blank space, per viewport. Usage: node scripts/hero-about-audit.mjs
-// (dev server must be on :3001, or point AUDIT_BASE at another one)
+// vs blank space, per viewport.
+// Usage: node scripts/hero-about-audit.mjs [--url http://localhost:<port>]
 import { chromium } from "playwright";
+import { resolveBase } from "./audit-base.mjs";
 
-const BASE = process.env.AUDIT_BASE ?? "http://localhost:3001";
+const BASE = await resolveBase("hero-about-audit");
 
 const viewports = [
   { name: "mobile 390",        width: 390,  height: 844 },

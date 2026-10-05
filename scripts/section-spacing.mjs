@@ -1,10 +1,16 @@
 // Section-spacing audit: real inter-section gaps per viewport.
-// Usage: node scripts/section-spacing.mjs  (dev server must be on :3001,
-// or point AUDIT_BASE at another one)
+//
+// SCOPE: home page only (`page.goto(BASE)` below). It measures the inter-section
+// pairs declared in PAIRS against the rhythm contract. It does NOT visit
+// /proyectos/[id], so it cannot verify detail-page spacing — use
+// audit-detail.mjs for that.
+//
+// Usage: node scripts/section-spacing.mjs [--url http://localhost:<port>]
 import { chromium } from "playwright";
 import { expectedGap } from "./rhythm-contract.mjs";
+import { resolveBase } from "./audit-base.mjs";
 
-const BASE = process.env.AUDIT_BASE ?? "http://localhost:3001";
+const BASE = await resolveBase("section-spacing");
 
 // Sections in document order as rendered by app/page.tsx.
 const sections = [
@@ -159,7 +165,7 @@ for (const vp of viewports) {
   const present = data.sections.filter((d) => d.found);
   const cards = data.cards;
   if (present.length === 0) {
-    console.log("  NO SECTIONS FOUND — ¿server en :3001?");
+    console.log(`  NO SECTIONS FOUND — ${BASE} served something, but not this app.`);
     await page.close();
     continue;
   }

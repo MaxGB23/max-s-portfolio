@@ -1,6 +1,5 @@
 // Navbar active-state audit: desktop scroll-spy + mobile menu geometry.
-// Usage: node scripts/navbar-active.mjs  (dev server must be on :3001,
-//         or set BASE_URL when it runs on another port)
+// Usage: node scripts/navbar-active.mjs [--url http://localhost:<port>]
 //
 // Asserts (feature navbar-active-state, T5):
 //   (a) top/hero -> NO desktop link has aria-current (hero clears the state)
@@ -20,8 +19,9 @@
 //       the next section override while both shared the band - About is
 //       short at md and Projects pokes into it on that viewport)
 import { chromium } from "playwright";
+import { resolveBase } from "./audit-base.mjs";
 
-const BASE = process.env.BASE_URL || "http://localhost:3001";
+const BASE = await resolveBase("navbar-active");
 
 const failures = [];
 function check(ok, label, detail = "") {
