@@ -158,7 +158,7 @@ Mapa real en el codigo:
 
 No hay tokens de spacing custom: se usa la escala numerica de Tailwind
 (base 0.25rem: `h-24` = 96px, `h-32` = 128px, `gap-12` = 48px, `gap-30` = 120px,
-`pt-22` = 88px, `pt-34` = 136px, `pt-40` = 160px).
+`pt-20` = 80px, `pt-34` = 136px, `pt-40` = 160px).
 
 El ritmo vertical es un contrato de codigo con fuente unica en
 `lib/rhythm.ts` (espejo QA: `scripts/rhythm-contract.mjs`):

@@ -59,7 +59,7 @@ export function AboutSection() {
       aria-label={t("section.about.ariaLabel")}
       className="relative flex flex-col items-center justify-center min-h-[60dvh] portrait:min-h-[50dvh]"
       insetClassName="px-6 md:px-8 lg:px-12"
-      innerClassName="relative z-10 flex flex-col-reverse md:flex-row items-center justify-center w-full max-w-5xl gap-8 md:gap-12 lg:gap-14 xl:gap-16"
+      innerClassName="relative z-10 flex flex-col-reverse md:flex-row items-center justify-center w-full max-w-5xl gap-6 md:gap-12 lg:gap-14 xl:gap-16"
     >
       {/* Left Column: Portrait */}
       <div className="about-portrait debug-l3 relative rounded-4xl shadow-xl aspect-11/9 w-full max-w-[400px] sm:max-w-[440px] mx-auto md:mx-0 md:max-w-full md:w-auto md:h-[280px] lg:h-[320px] xl:h-[360px] 2xl:h-[380px] shrink-0 z-0" style={{ opacity: 0, visibility: 'hidden' }}>
@@ -80,7 +80,7 @@ export function AboutSection() {
           {t("section.about.label")}
         </p>
 
-        <h2 className="about-title md:flex md:gap-4 font-serif font-black uppercase text-fluid-section leading-[0.9] tracking-tighter text-foreground mb-6" style={{ opacity: 0, visibility: 'hidden' }}>
+        <h2 className="about-title md:flex md:gap-4 font-serif font-black uppercase text-fluid-section leading-[0.9] tracking-tighter text-foreground mb-4 md:mb-6" style={{ opacity: 0, visibility: 'hidden' }}>
           <span>{t("section.about.title.first")}</span>
           <span className="text-purple-accent"> {t("section.about.title.second")}</span>
         </h2>

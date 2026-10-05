@@ -109,7 +109,7 @@ export function HeroSection() {
       id="inicio"
       ref={containerRef}
       aria-label={t("hero.aria.intro")}
-      className="debug-l1 relative min-h-[85dvh] flex flex-col items-center pt-22 sm:pt-24 lg:[@media(min-height:700px)]:pt-34 px-6 md:px-8 lg:px-12"
+      className="debug-l1 relative min-h-[85dvh] flex flex-col items-center pt-20 sm:pt-24 lg:[@media(min-height:700px)]:pt-34 px-6 md:px-8 lg:px-12"
     >
       {/* Background Aurora */}
       <div
@@ -131,7 +131,7 @@ export function HeroSection() {
       {/* Main hero layout. flex-1 absorbs the leftover that min-h-[85dvh] leaves,
           so the scroll indicator below always lands flush on the section edge. */}
       <div className="debug-l2 relative z-10 flex-1 flex flex-col items-center justify-center w-full gap-10 2xl:gap-14">
-        <div className="debug-l3 relative flex flex-col md:flex-row items-center justify-center w-full max-w-5xl mx-auto gap-8 md:gap-12 lg:gap-20">
+        <div className="debug-l3 relative flex flex-col md:flex-row items-center justify-center w-full max-w-5xl mx-auto gap-2 md:gap-12 lg:gap-20">
 
           {/* Left Column: Info */}
           <div className="hero-info flex flex-col items-center md:items-start text-center md:text-left z-10 ">
@@ -139,7 +139,7 @@ export function HeroSection() {
             <p className="brightness-110 hero-label text-muted-foreground uppercase tracking-widest font-medium mb-4 text-fluid-eyebrow" style={{ opacity: 0, visibility: 'hidden' }}>
               {t("hero.role")}
             </p>
-            <h1 ref={titleRef} className="hero-title font-serif grid grid-cols-1 gap-3 font-black uppercase text-fluid-display leading-[0.9] tracking-tighter text-foreground mb-6" style={{ opacity: 0, visibility: 'hidden' }}>
+            <h1 ref={titleRef} className="hero-title font-serif grid grid-cols-1 gap-3 font-black uppercase text-fluid-display leading-[0.9] tracking-tighter text-foreground mb-4 md:mb-6" style={{ opacity: 0, visibility: 'hidden' }}>
               <span>{HERO_NAME.first}</span>
               <span className="text-purple-accent  sm:tracking-[0.01em]">{HERO_NAME.last}</span>
             </h1>

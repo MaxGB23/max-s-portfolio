@@ -159,7 +159,7 @@ en otro archivo.
 ### 4.2 Hero (`hero-section.tsx`)
 
 - `section#inicio` con `min-h-[85dvh]`, pad superior por regimen de altura:
-  `pt-22 sm:pt-24 lg:[@media(min-height:700px)]:pt-34` (88 / 96 / 136px),
+  `pt-20 sm:pt-24 lg:[@media(min-height:700px)]:pt-34` (80 / 96 / 136px),
   `px-6 md:px-8 lg:px-12`. La escalera tiene TRES peldanos, no cuatro: no
   existe peldan `2xl`. Un `2xl:pt-40` quedo como codigo muerto y se elimino
   — nunca aplico, porque `lg:[@media(min-height:700px)]:pt-34` va despues en
@@ -179,11 +179,16 @@ en otro archivo.
   1005px de alto, asi que el indicador de scroll queda ~161px POR DEBAJO del
   fold. Es intencionado y esta aprobado; no "corregir" la caja ni el
   `min-h-[85dvh]` para traerlo al viewport.
-- inner `max-w-5xl`, gaps `gap-8 md:gap-12 lg:gap-20`; bloque principal
+- inner `max-w-5xl`, gaps `gap-2 md:gap-12 lg:gap-20`; bloque principal
   `gap-10 2xl:gap-14`; columns `md:flex-row` con la columna de TEXTO primero en
-  el DOM (queda a la izquierda) y el retrato a la derecha.
+  el DOM (queda a la izquierda) y el retrato a la derecha. El gap mobile es
+  8px a proposito: en una sola columna el bloque se lee como un conjunto y no
+  como dos zonas separadas (`md:gap-12` conserva la escalera por resolucion).
 - h1 `text-fluid-display` con ancho medido por JS (`useTitleWidth`, fallback
   ELIMINADO desde 2026-09-20); description `min(titleWidth + 4, 60ch)`.
+  Margen titulo -> description `mb-4 md:mb-6`: en mobile el titulo y su
+  descripcion son un solo bloque, asi que el aire baja a 16px y `md+` conserva
+  los 24px. Mismo contrato que el h2 de sobre-mi.
 - Badge flotante: `absolute -bottom-6 -right-6 w-24 h-24 rounded-full shadow-2xl`
   sobre la foto del retrato.
 - Retrato: `rounded-4xl shadow-xl aspect-8/9`.
@@ -203,7 +208,7 @@ en otro archivo.
 
 - `Section#sobre-mi` con `insetClassName="px-6 md:px-8 lg:px-12"`, inner
   `max-w-5xl`, `flex-col-reverse md:flex-row`, gaps
-  `gap-8 md:gap-12 lg:gap-14 xl:gap-16`.
+  `gap-6 md:gap-12 lg:gap-14 xl:gap-16`.
 - `min-h-[60dvh] portrait:min-h-[50dvh]`: en landscape la seccion nunca baja del
   60% del viewport — garantiza que toque la banda centrada del scroll-spy en
   viewports altos (D11, resolucion 2026-10-01; ver `section-animations.md`
@@ -213,8 +218,9 @@ en otro archivo.
   `md:h-[280px] lg:h-[320px] xl:h-[360px] 2xl:h-[380px]`, `max-w-[400px]`
   mobile.
 - Texto: eyebrow uppercase `text-fluid-eyebrow` + h2 `text-fluid-section`
-  serif black con palabra acento; parrafos `text-fluid-body text-content
-  max-w-[48ch] leading-relaxed`.
+  serif black con palabra acento, con `mb-4 md:mb-6` (mismo criterio que el
+  h1 del hero: 16px en mobile, 24px desde md); parrafos `text-fluid-body
+  text-content max-w-[48ch] leading-relaxed`.
 - Animacion: timeline GSAP en scroll (autoAlpha + desplazamientos suaves),
   sin staggers; estados iniciales ocultos en el DOM para evitar flash.
 
