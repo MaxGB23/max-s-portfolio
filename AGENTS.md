@@ -12,7 +12,7 @@ Cuando respondas en español, usa siempre español neutro. Evita el voseo y los 
 - **Commitea al terminar cada work unit.** No acumules cambios sin commitear durante la sesión: un cambio no commiteado es trabajo sin punto de recuperación.
 - **El agente nunca asume que debe commitear.** Tras cualquier cambio (aunque sea mínimo), PREGUNTA al usuario antes de hacer commit — siempre hay ajustes pendientes.
 - Antes de operaciones destructivas de git (`git checkout --`, `git reset --hard`, force-push): ejecuta `git status` y revisa el diff. Si el archivo tiene cambios no commiteados, confirma explícitamente qué se pierde antes de revertir.
-- No reescribas archivos fuente con PowerShell (`Set-Content`/`Get-Content -Raw` corrompe UTF-8 en PS 5.1) — usa las herramientas de edición del asistente.
+- PowerShell no es seguro con UTF-8 en PS 5.1: no escribir archivos fuente con `Set-Content`/`Out-File` (corrompe acentos y em dash), y no leerlos con `Get-Content` para COMPARAR (lee UTF-8 como Windows-1252: una raya `—` U+2014 se ve como guion). Para editar, las herramientas del asistente; para inspeccionar caracteres, `[System.IO.File]::ReadAllText($p, [System.Text.Encoding]::UTF8)` y `[int]$c`.
 
 ### Dependencias
 - Siempre usar pnpm.
