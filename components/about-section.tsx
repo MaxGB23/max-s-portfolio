@@ -65,7 +65,7 @@ export function AboutSection() {
       <div className="about-portrait debug-l3 relative rounded-4xl shadow-xl aspect-11/9 w-full max-w-[400px] sm:max-w-[440px] mx-auto md:mx-0 md:max-w-full md:w-auto md:h-[280px] lg:h-[320px] xl:h-[360px] 2xl:h-[380px] shrink-0 z-0" style={{ opacity: 0, visibility: 'hidden' }}>
         <div className="w-full h-full rounded-4xl overflow-hidden relative">
           <Image
-            src="/images/about-max.png"
+            src="/images/about-max.webp"
             alt={t("section.about.imageAlt")}
             fill
             className="object-cover object-top 2xl:object-right"

@@ -158,7 +158,7 @@ export function HeroSection() {
           >
             <div className="w-full h-full rounded-4xl overflow-hidden relative">
               <Image
-                src="/images/max-gb-pfp.png"
+                src="/images/max-gb-pfp.webp"
                 alt="Maximiliano González Ballesteros Full Stack Developer Profile Picture"
                 fill
                 priority
