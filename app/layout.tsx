@@ -29,7 +29,9 @@ const spaceGrotesk = Space_Grotesk({
  */
 type DebugChannel = 'l1' | 'l2' | 'l3' | 'l4' | 'l5' | 'test'
 
+// Uncomment to enable layout debugging
 const LAYOUT_DEBUG: DebugChannel[] = []
+// const LAYOUT_DEBUG: DebugChannel[] = ['l1', 'l2', 'l3', 'l4', 'l5', 'test']
 
 const debugAttrs = Object.fromEntries(
   LAYOUT_DEBUG.map((channel) => [`data-debug-${channel}`, true]),
