@@ -348,9 +348,13 @@ en otro archivo.
 - Volver: `fixed` arriba-izquierda, pill primary md con `className="back-btn
   pointer-events-auto hover:bg-foreground/80 transition-colors"` (excepcion:
   hover de fondo, NUNCA transition-opacity - GSAP lo controla).
-- Hero detalle: `px-6 md:px-12 lg:px-20 pt-20 md:pt-24 pb-12 max-w-5xl`; h1
-  `text-fluid-detail` serif black; headline `max-w-2xl`; meta header: circulo
-  con numero (`text-foreground/70`, etiqueta degradada) + eyebrow mono.
+- Hero detalle: `px-6 md:px-12 lg:px-20 pt-20 md:pt-24 pb-12 md:pb-16 max-w-5xl`;
+  h1 `text-fluid-detail` serif black, con `mb-4 md:mb-5`; headline
+  `max-w-2xl` SIN margen propio (lo aporta el h1: una sola margen declarada en
+  vez de dos hermanos que colapsan); meta header: circulo con numero
+  (`text-foreground/70`, etiqueta degradada) + eyebrow mono. El bottom del hero
+  es la excepcion a la regla de mas abajo: AFLOJA en desktop (48 -> 64px)
+  mientras todo lo demas aprieta mobile.
 - Categorias: chips con badges `bg-purple-accent text-white` (regla de blanco
   sobre acento).
 - Metrica: `text-fluid-metric` con cifra en acento (section token dedicado,
@@ -363,11 +367,23 @@ en otro archivo.
   seleccionan al mover. NO adoptar `components/ui/tabs.tsx` (shadcn): cambia el
   DOM y obliga a reestilizar. `Home`/`End` fuera a proposito — con dos vistas las
   flechas ya recorren el grupo.
-- Bloques de arriba abajo con `mb-12 md:mb-16` (metrics, links) y `mb-6 md:mb-16`
-  (visual principal): el ancho ya no carga el margen de desktop, asi que cada
-  bloque lo declara y mobile va mas cerrado. El visual principal baja a `mb-6`
-  porque su banda es visualmente autosuficiente; los de metrics y links
-  mantienen `mb-12` porque separan bloques de lectura.
+- Bloques de arriba abajo con `mb-12 md:mb-16` (metrics, links, y tambien los
+  bloques de lectura `.detail-section`: summary, problem, role, solution,
+  gallery) y `mb-6 md:mb-16` (visual principal): el ancho ya no carga el margen
+  de desktop, asi que cada bloque lo declara y mobile va mas cerrado. El visual
+  principal baja a `mb-6` porque su banda es visualmente autosuficiente; los de
+  metrics, links y lectura mantienen `mb-12` porque separan bloques de lectura.
+- REGLA de espaciado del detail: cada margen declara su par mobile/desktop y
+  mobile va mas cerrado. `SectionTitle` la sigue en `mb-3 md:mb-3.5` (antes
+  `mb-5` plano). Los `.detail-section` dejaron de llevar `mb-16` plano al
+  adoptarla — la regla ya existia para metrics y links, el codigo de lectura
+  era el que se habia quedado atras.
+- Estos valores son LOCALES a `project-detail.tsx`, NO salen de `lib/rhythm.ts`:
+  el contrato de ritmo se scopea al espaciado entre secciones de primer nivel y
+  excluye explicito los gaps intra-componente (mismo caso que `gap-6 md:gap-12`
+  del featured panel). `mb-12 md:mb-16` coincide NUMERICAMENTE con
+  `SECTION_GAP_Y` (`py-12 md:py-16`) por conveniencia, no por acoplamiento: no
+  deduplicar uno contra otro.
 - Visual principal: `max-w-5xl aspect-video rounded-3xl` con glow suave. La
   imagen sale de `detail.visual?.src ?? project.image` — `visual` es la portada
   propia del detail y es opcional; sin ella cae a la imagen de la card.
