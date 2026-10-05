@@ -465,6 +465,31 @@ en otro archivo.
   `takeHomeScroll`/`ScrollRestorer` en el retorno; `PIN_MEDIA` =
   `FEATURED_STACK_GATE` (no pinear en mobile); watchdog del restorer:
   intervalo 60ms, max 20 runs (~1.2s de deadline).
+- **Gate de 768px: decision consciente, NO tocar.** `syncTouch = false` es el
+  default de Lenis y el codigo no lo overridea, asi que en touch Lenis es
+  pasivo: `onVirtualScroll` retorna temprano (lenis.mjs:649-655, sin
+  `preventDefault` ni `scrollTo`) y `onNativeScroll` solo adopta la posicion
+  del navegador (lenis.mjs:696-707). Por eso la imprecision del gate (un tablet
+  o un telefono al rotar cruzan 768px y activan Lenis) no cuesta nada
+  perceptible.
+- **Descartado: cambiar el gate por `(hover: hover) and (any-pointer: fine)`.**
+  Ningun ancho separa desktop de touch (landscape de telefono ~932-956 CSS px
+  < portrait de iPad Pro 12.9 = 1024) y ademas seria perdida neta: touch
+  dejaria de tener `lenis.scrollTo(..., { onComplete })` preciso para
+  `announceArrival` y el `lenis.resize()` del `ScrollRestorer`, degradando a
+  `window.scrollTo` + `setTimeout(1000)`.
+- **Descartado: mover los imports de `gsap`/`ScrollTrigger` a dynamic.**
+  Medido en el chunk del root layout: lenis 4.8 KB + ScrollTrigger 17.4 KB +
+  gsap 27.6 KB = 49.9 KB gzip. Ahorraria 0 bytes: `ScrollTrigger` se registra
+  solo en `use-gsap-animation.ts:41-45`, `scroll-progress.tsx:17-19` y
+  `project-detail.tsx:126,196`, y `ScrollProgress` se renderiza en todas las
+  rutas (`app/page.tsx:16`, `app/proyectos/[id]/page.tsx:48`). Solo moveria el
+  fetch a un chunk async.
+- El 768 es un literal en `smooth-scroll.tsx:14`, NO vive en
+  `lib/breakpoints.ts` (seccion 3): no lo centralices sin releer esta seccion.
+  `ScrollTrigger` no depende de que Lenis este vivo, asi que el gate no puede
+  romper animaciones de scroll. Nota: `import gsap from "gsap"` resuelve por
+  `module: index.js` (bundle completo, 71.1 KB), no a un core minimo.
 
 ## 9. Cue de llegada a contacto
 
