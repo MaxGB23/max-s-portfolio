@@ -56,11 +56,11 @@ export function FeaturedProjectPanel({ project, children, isLast = false }: Feat
             </div>
           )}
 
-          <div className="debug-l3 grid grid-cols-1 lg:grid-cols-2 gap-12 justify-center items-start">
+          <div className="debug-l3 grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-12 justify-center items-start">
             {/* Left - Text */}
-            <div className="debug-l4 flex flex-col order-2 lg:order-1">
+            <div className="debug-l4 flex flex-col gap-6 order-2 lg:order-1">
               {/* Index + Category */}
-              <div className="flex items-center gap-4 mb-6">
+              <div className="flex items-center gap-4">
                 <span className="text-sm 2xl:text-lg font-mono text-muted-foreground tabular-nums font-bold">
                   {String(project.index).padStart(2, "0")}
                 </span>
@@ -78,26 +78,26 @@ export function FeaturedProjectPanel({ project, children, isLast = false }: Feat
                   de la etiqueta, así que el render no cambia. */}
               <h3
                 id={`featured-title-${project.id}`}
-                className="font-serif font-black text-fluid-featured text-foreground leading-[1.05] tracking-tight text-balance mb-6 lg:[@media(max-height:800px)]:text-4xl"
+                className="font-serif font-black text-fluid-featured text-foreground leading-[1.05] tracking-tight text-balance lg:[@media(max-height:800px)]:text-4xl"
               >
                 {mainTitle && <span>{mainTitle} </span>}
                 <span className="text-purple-accent brightness-125">{lastWord}</span>
               </h3>
 
               {/* Description */}
-              <p className="debug-l5 text-fluid-body leading-relaxed text-content mb-6 mr-6 sm:mr-0 max-w-[50ch]">
+              <p className="debug-l5 text-fluid-body leading-relaxed text-content mr-6 sm:mr-0 max-w-[50ch] md:max-w-[60ch] lg:max-w-[53ch]">
                 {project.description}
               </p>
 
               {/* Key metric */}
-              <div className="inline-flex self-start items-center gap-2 rounded-full border border-purple-accent/30 bg-purple-accent/10 px-4 py-2 mb-8">
+              <div className="inline-flex xl:mb-2 self-start items-center gap-2 rounded-full border border-purple-accent/30 bg-purple-accent/10 px-4 py-2 ">
                 <span className="text-xs sm:text-sm font-semibold text-purple-accent">
                   {project.metric}
                 </span>
               </div>
 
               {/* Tech stack tags */}
-              <div className="flex items-center gap-1.5 mb-10" aria-label={t("common.technologiesUsed")}>
+              <div className="flex items-center gap-1.5 xl:mb-2 " aria-label={t("common.technologiesUsed")}>
                 {project.tags.map((tag, index) => (
                   <div
                     key={index}

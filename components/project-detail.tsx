@@ -608,7 +608,7 @@ export function ProjectDetail({ project }: { project: Project }) {
         <div className="debug-l2 max-w-5xl mx-auto">
           {/* Metrics & Architecture Topology */}
           {detail.metrics.length > 0 && (
-            <section className="debug-l3 detail-section mb-16" aria-label={t("section.projects.metricsSectionAria")}>
+            <section className="debug-l3 detail-section mb-12 md:mb-16" aria-label={t("section.projects.metricsSectionAria")}>
               {/* Header con Tag, Titular, Subtítulo y Switch de Vistas */}
               <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
                 <div>
@@ -701,7 +701,7 @@ export function ProjectDetail({ project }: { project: Project }) {
         </div>
 
         {/* Primary Visual - wide proof band, full width */}
-        <div className="debug-l2 max-w-5xl mx-auto mb-12">
+        <div className="debug-l2 max-w-5xl mx-auto mb-6 md:mb-16">
           <div className="detail-primary-visual w-full">
             <figure className="aspect-video rounded-3xl overflow-hidden border border-border relative">
               <Image
@@ -718,7 +718,7 @@ export function ProjectDetail({ project }: { project: Project }) {
 
         {/* Project links - acciones tras la prueba visual */}
         {project.links.length > 0 && (
-          <div className="max-w-5xl mx-auto mb-16">
+          <div className="max-w-5xl mx-auto mb-12 md:mb-16">
             <div className="flex flex-wrap gap-3 justify-center">
               {project.links.map((link, index) => {
                 const Icon = linkIcon(link.kind);
@@ -815,7 +815,7 @@ export function ProjectDetail({ project }: { project: Project }) {
                     <figure
                       key={index}
                       className={`group detail-gallery-item rounded-2xl overflow-hidden border border-border ${
-                        isWide ? "sm:col-span-2 lg:col-span-3" : ""
+                        isWide ? "sm:col-span-2 lg:col-span-3 " : ""
                       }`}
                     >
                       <button
