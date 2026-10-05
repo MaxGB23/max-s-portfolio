@@ -27,6 +27,8 @@ Cuando respondas en español, usa siempre español neutro. Evita el voseo y los 
   - No responde y Next reclama `Unable to acquire lock` → instancia zombie (no sirve a nadie): matar solo esa y relanzar.
   - Nunca matar una instancia que sí está respondiendo.
 - Si la verificación necesita navegador (Playwright, auditoría de ritmo): server transitorio, correr y cerrar en la misma tarea.
+- **Los scripts de QA asumen `:3001`**, no el puerto por defecto: `scripts/section-spacing.mjs` usa `AUDIT_BASE` (default `http://localhost:3001`) y `scripts/snapshot-check.mjs` usa `--url` / `BASE_URL` (default `http://localhost:3001`). Con el server en `:3000` fallan con `ERR_CONNECTION_REFUSED`, no con un mensaje que apunte al puerto: o se levanta en `:3001`, o se pasan las variables.
+- Al cerrar un server en Windows: los logs (`dev3001.log`, `dev3001.err`) están retenidos por el proceso y no se pueden borrar hasta que mueren sus 3 procesos node (padre, worker de build, `.next/dev`). Matar solo el padre deja el archivo bloqueado y el worktree con untracked.
 
 ### Worktrees (pruebas A/B en vivo)
 - **Alcance (leer primero)**: esta estrategia de dos servers en paralelo SOLO aplica cuando el usuario la pide explícitamente — cambios grandes que exigen comparar versiones en vivo. Por defecto se trabaja con UN solo dev server (ver `### Dev servers`); no asumir `:3000` + `:3001` ni levantar dos por cuenta propia.
@@ -40,6 +42,7 @@ Cuando respondas en español, usa siempre español neutro. Evita el voseo y los 
   5. Aplicar cambios SOLO en el worktree; comparar en vivo contra `:3000`.
   6. Al aprobar: merge a la rama principal y `git worktree remove` para limpiar.
 - Al borrar un worktree: `git worktree remove <ruta>`; si tiene cambios sin mergear, confirmar antes con el usuario.
+- Para dejar el worktree limpio: matar los procesos por ruta (`Get-CimInstance Win32_Process | Where CommandLine -match '<nombre-worktree>'`) antes de borrar logs, y `pnpm install` queda por-checkout.
 - **Copias entre worktrees/ramas:** Antes de copiar archivos entre worktrees o ramas, verificar con `git diff <origen> <destino> -- <archivo>` que la versión de origen no sea más antigua que la del destino. Si hay diferencias a favor del destino, no copiar — aplicar los cambios manualmente en el destino.
 
 ### Código fuente y sintaxis
