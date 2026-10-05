@@ -144,13 +144,23 @@ prescripcion:
    y tipografia ANTES de maquetar.
 2. Respeta el contrato de ritmo (`lib/rhythm.ts` + etiquetas de pares);
    corre `scripts/rhythm-contract.mjs` y `scripts/section-spacing.mjs`.
-3. Textos: regla de jerarquia (seccion 4) y de blancos (seccion 5).
-4. Botones: usa `Button` con las variantes del canon; si necesitas un hover
+   OJO CON EL ALCANCE: `rhythm-contract.mjs` es estatico (compara los
+   strings de los tokens). `section-spacing.mjs` necesita server porque mide
+   layout computado, y solo navega la HOME — no toca `/proyectos/[id]`, asi
+   que su "OK" no dice nada sobre el ritmo de una pagina de detail. Para eso
+   esta `audit-detail.mjs --slug <id>`. Cada script declara su alcance en el
+   encabezado; leerlo antes de citarlo como evidencia.
+3. Verificar en orden de costo: estatico (`tsc`, `build`, grep sobre el CSS
+   compilado, `Test-Path` de rutas de imagen) antes que render. Solo el
+   navegador computa layout real, y un server mal consultado cuesta mas que
+   el check que reemplaza.
+4. Textos: regla de jerarquia (seccion 4) y de blancos (seccion 5).
+5. Botones: usa `Button` con las variantes del canon; si necesitas un hover
    nuevo, justificalo en buttons.md.
-5. Motion: `FadeIn`/`FadeInStagger` (framer-motion). NO revertir a
+6. Motion: `FadeIn`/`FadeInStagger` (framer-motion). NO revertir a
    `SlideIn`/`ScaleIn`. GSAP solo donde ya vive (pin featured, detalle,
    pricing, about).
-6. QA: `layout-debug-canon` (activar solo los canales que interesen y
+7. QA: `layout-debug-canon` (activar solo los canales que interesen y
    `debug-test` para una caja puntual) antes de pedir review.
    Ver `components.md` 10.
 

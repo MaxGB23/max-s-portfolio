@@ -18,20 +18,14 @@ Cuando respondas en español, usa siempre español neutro. Evita el voseo y los 
 - Siempre usar pnpm.
 - Nunca pushear a main con errores de lint o build.
 
-### Dev servers
-- Los levanta y cierra el usuario; el agente nunca deja uno abierto al terminar.
-- Puerto por defecto `3000`; si está ocupado, el siguiente libre. Por defecto se trabaja con UN solo dev server: nunca asumir worktrees en `3001` ni levantar dos en paralelo salvo comparación A/B explícita del usuario (ver `### Worktrees`).
-- Antes de levantar, sondear el puerto:
-  - Ya responde y sirve este checkout → reutilizar y NO cerrarla.
-  - Ya responde y sirve otro checkout/rama → no matarla; usar otro puerto.
-  - No responde y Next reclama `Unable to acquire lock` → instancia zombie (no sirve a nadie): matar solo esa y relanzar.
-  - Nunca matar una instancia que sí está respondiendo.
-- Si la verificación necesita navegador (Playwright, auditoría de ritmo): server transitorio, correr y cerrar en la misma tarea.
-- **Los scripts de QA asumen `:3001`**, no el puerto por defecto: `scripts/section-spacing.mjs` usa `AUDIT_BASE` (default `http://localhost:3001`) y `scripts/snapshot-check.mjs` usa `--url` / `BASE_URL` (default `http://localhost:3001`). Con el server en `:3000` fallan con `ERR_CONNECTION_REFUSED`, no con un mensaje que apunte al puerto: o se levanta en `:3001`, o se pasan las variables.
-- Al cerrar un server en Windows: los logs (`dev3001.log`, `dev3001.err`) están retenidos por el proceso y no se pueden borrar hasta que mueren sus 3 procesos node (padre, worker de build, `.next/dev`). Matar solo el padre deja el archivo bloqueado y el worktree con untracked.
+### Dev servers (gestion del usuario; el agente no los levanta)
+- **El agente NO levanta dev servers**: no ve la pantalla, asi que un audit con browser le da numeros sin contexto. Verificacion por defecto = `tsc --noEmit`, `build`, grep sobre el CSS compilado y checks de rutas de imagen. El pase visual es del usuario; los audits de `scripts/` son herramientas suyas. Detalle en `iteration-guide.md` 8.
+- Puerto por defecto `3000` (scripts de QA incluidos, via `scripts/audit-base.mjs`: no hardcodear URLs); si esta ocupado, el siguiente libre. UN solo dev server por defecto; dos en paralelo solo si el usuario pide comparacion A/B (ver `### Worktrees`).
+- Si el usuario levanta uno, reutilizarlo y no cerrarlo: sondear el puerto antes de asumir, nunca matar una instancia que responde, y tratar `Unable to acquire lock` sin respuesta como zombie (matar solo esa).
+- Un comando con timeout largo no reporta progreso: no encadenar arranque + build sin necesidad.
 
 ### Worktrees (pruebas A/B en vivo)
-- **Alcance (leer primero)**: esta estrategia de dos servers en paralelo SOLO aplica cuando el usuario la pide explícitamente — cambios grandes que exigen comparar versiones en vivo. Por defecto se trabaja con UN solo dev server (ver `### Dev servers`); no asumir `:3000` + `:3001` ni levantar dos por cuenta propia.
+- **Alcance (leer primero)**: esta estrategia de dos servers en paralelo SOLO aplica cuando el usuario la pide explícitamente — cambios grandes que exigen comparar versiones en vivo. Por defecto se trabaja con UN solo dev server (ver arriba); no asumir `:3000` + `:3001` ni levantar dos por cuenta propia.
 - Los worktrees viven en `M:\worktrees\maxgb23-portfolio` — NUNCA dentro del repo ni en `~`.
 - Convención de nombre: `<nombre-experimento>` (ej: `fluid-typo`).
 - Estrategia para probar 2 versiones en vivo:
@@ -42,7 +36,6 @@ Cuando respondas en español, usa siempre español neutro. Evita el voseo y los 
   5. Aplicar cambios SOLO en el worktree; comparar en vivo contra `:3000`.
   6. Al aprobar: merge a la rama principal y `git worktree remove` para limpiar.
 - Al borrar un worktree: `git worktree remove <ruta>`; si tiene cambios sin mergear, confirmar antes con el usuario.
-- Para dejar el worktree limpio: matar los procesos por ruta (`Get-CimInstance Win32_Process | Where CommandLine -match '<nombre-worktree>'`) antes de borrar logs, y `pnpm install` queda por-checkout.
 - **Copias entre worktrees/ramas:** Antes de copiar archivos entre worktrees o ramas, verificar con `git diff <origen> <destino> -- <archivo>` que la versión de origen no sea más antigua que la del destino. Si hay diferencias a favor del destino, no copiar — aplicar los cambios manualmente en el destino.
 
 ### Código fuente y sintaxis
