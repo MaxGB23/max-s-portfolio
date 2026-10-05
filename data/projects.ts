@@ -90,7 +90,7 @@ export const projects: Project[] = [
       "Prisma",
       "Tailwind CSS",
     ],
-    image: "/images/projects/caf/prueba2.webp",
+    image: "/images/projects/caf/caf-demo.webp",
     imageAlt: "Dashboard principal y agenda del Sistema de Gestión Clínica",
     featured: true,
     links: [
@@ -171,20 +171,20 @@ export const projects: Project[] = [
       ],
       gallery: [
         {
-          src: "/images/projects/caf/editar_profile.png",
+          src: "/images/projects/caf/editar_profile.webp",
           alt: "Edición de perfil de usuario",
         },
         {
-          src: "/images/projects/caf/dashboard-light.png",
+          src: "/images/projects/caf/dashboard-light.webp",
           alt: "Dashboard Principal",
         },
 
         {
-          src: "/images/projects/caf/agenda-light.png",
+          src: "/images/projects/caf/agenda-light.webp",
           alt: "Agenda de citas del Sistema de Gestión Clínica",
         },
         {
-          src: "/images/projects/caf/analiticas-caf.png",
+          src: "/images/projects/caf/analiticas-caf.webp",
           alt: "Panel de analíticas adicional del Sistema de Gestión Clínica",
         },
       ],
@@ -259,7 +259,7 @@ export const projects: Project[] = [
       "Prisma",
       "Tailwind CSS",
     ],
-    image: "/images/projects/presidencia-acambaro/presidencia-light.png",
+    image: "/images/projects/presidencia-acambaro/presidencia-demo.webp",
     imageAlt:
       "Dashboard de métricas y gestión de solicitudes del Sistema de Apoyos Sociales",
     featured: true,
@@ -317,11 +317,19 @@ export const projects: Project[] = [
       ],
       gallery: [
         {
-          src: "/images/projects/presidencia-acambaro/presidencia-light.png",
+          src: "/images/projects/presidencia-acambaro/login.webp",
           alt: "Panel de métricas del Sistema de Apoyos Sociales (tema claro)",
         },
         {
-          src: "/images/projects/presidencia-acambaro/presidencia-dark.png",
+          src: "/images/projects/presidencia-acambaro/solicitudes.webp",
+          alt: "Panel de métricas del Sistema de Apoyos Sociales (tema oscuro)",
+        },
+        {
+          src: "/images/projects/presidencia-acambaro/estadisticas.webp",
+          alt: "Panel de métricas del Sistema de Apoyos Sociales (tema oscuro)",
+        },
+        {
+          src: "/images/projects/presidencia-acambaro/generacion-pdf.webp",
           alt: "Panel de métricas del Sistema de Apoyos Sociales (tema oscuro)",
         },
       ],
@@ -378,9 +386,9 @@ export const projects: Project[] = [
     title: "Funky AI",
     category: "Dev Tools / AI Engineering",
     hook: "Toolkit CLI para ingeniería de software: scaffolding, planificación con IA, memoria persistente, seguridad de dependencias y desarrollo SDD agéntico.",
-    metric: "Prompt-based agentic harness: 27 reglas ≈ 11.5k tokens",
+    metric: "SDD agéntico: 27 reglas y memoria persistente entre sesiones",
     tags: ["Node.js", "TypeScript", "CLI", "pnpm", "Vitest", "GitHub Actions"],
-    image: "/images/projects/funky-ai/funky-ai-main.jpg",
+    image: "/images/projects/funky-ai/funky-ai-main.webp",
     imageAlt: "Terminal del CLI de funky-ai mostrando el pipeline SDD",
     links: [
       {
@@ -390,7 +398,6 @@ export const projects: Project[] = [
         external: true,
       },
     ],
-    featured: true,
     detail: {
       headline: "Toolkit CLI para ingeniería de software: scaffolding, planificación con IA, memoria persistente, seguridad de dependencias y desarrollo SDD agéntico.",
       summary:
@@ -415,9 +422,9 @@ export const projects: Project[] = [
         { value: "≈11.5k", label: "tokens del harness completo: 27 reglas agénticas (inventario medido)" },
       ],
       visual: {
-          src: "/images/projects/funky-ai/funky-ai-logo.jpg",
-          alt: "Funky-AI logo",
-        },
+        src: "/images/projects/funky-ai/funky-ai-main.webp",
+        alt: "Funky-AI logo",
+      },
       problem:
         "Las tareas grandes de IA asistida que arrancan de un único prompt masivo fallan de forma predecible: la ventana de contexto se desborda, el modelo alucina sobre partes que ya no recuerda y no hay punto natural de intervención humana. Los agentes no tienen memoria confiable entre sesiones, cada sesión re-aprende desde cero recargando contexto caro, y la planificación de proyectos ocurre ad-hoc, después de elegir el stack.",
       role: [
@@ -447,19 +454,19 @@ export const projects: Project[] = [
       ],
       gallery: [
         {
-          src: "/images/projects/funky-ai/funky-forge.png",
+          src: "/images/projects/funky-ai/funky-forge.webp",
           alt: "Pipeline Funky Forge",
         },
         {
-          src: "/images/projects/funky-ai/funky-sdd.jpg",
+          src: "/images/projects/funky-ai/funky-secure-neon-diagram.webp",
           alt: "Ejecución del pipeline SDD de funky-ai",
         },
         {
-          src: "/images/projects/funky-ai/funky-secure.png",
+          src: "/images/projects/funky-ai/funkygram-neon.webp",
           alt: "Vista general de Funky Secure",
         },
         {
-          src: "/images/projects/funky-ai/funkygram.png",
+          src: "/images/projects/funky-ai/funky-sdd-neon.webp",
           alt: "Interfaz de terminal de Funkygram",
         },
       ],
@@ -539,426 +546,14 @@ export const projects: Project[] = [
       ],
     },
   },
-  {
-    id: "one-click-ti",
-    title: "One Click Ti — PWA",
-    category: "Full Stack / PWA",
-    hook: "PWA full-stack para una empresa de TI: landing pública + sistema de gestión interno, instalable en dispositivos.",
-    metric: "PWA instalable (manifest + service worker)",
-    tags: ["Laravel", "Vue 3", "Inertia.js", "MySQL", "Laravel Breeze"],
-    image: "/images/projects/oneclickti/proyectos.png",
-    imageAlt: "Landing pública y panel de gestión de One Click Ti",
-    links: [
-      {
-        label: "Ver código",
-        kind: "code",
-        url: "https://github.com/MaxGB23/ABMODEL",
-        external: true,
-      },
-    ],
-    detail: {
-      headline:
-        "Presencia digital y gestión interna en una sola PWA instalable",
-      summary:
-        "PWA full-stack desarrollada por contrato para One Click Ti (Querétaro, sep – dic 2024). Integra una landing page pública con un sistema de gestión interno en una sola aplicación instalable, con autenticación y control de acceso por roles. Mi primera aproximación profesional a Laravel + Vue con arquitectura PWA.",
-      metrics: [
-        {
-          value: "PWA",
-          label:
-            "completa: manifest + service worker, instalable en dispositivos",
-        },
-        {
-          value: "2",
-          label:
-            "superficies integradas: landing pública + sistema de gestión interno",
-        },
-        {
-          value: "Contrato",
-          label: "entregado a cliente real (sep - dic 2024)",
-        },
-      ],
-      problem:
-        "La empresa necesitaba dos cosas en una: una presencia pública profesional (landing) y herramientas internas de gestión, sin mantener sistemas separados. Una PWA instalable evita pasar por una app store y funciona offline-first como aplicación de escritorio/móvil.",
-      role: [
-        "Desarrollé la PWA full-stack completa con Vue 3, MySQL, Laravel e Inertia.js.",
-        "Construí la landing page pública y el sistema de gestión interno.",
-        "Implementé autenticación, control de acceso por roles (RBAC) y las capacidades PWA (manifest + service worker) usando Laravel Breeze.",
-      ],
-      solution: [
-        "**Landing pública:** cara profesional de la empresa, conectada con el sistema interno.",
-        "**Sistema de gestión interno:** administración de contenido y operación del negocio.",
-        "**Autenticación y roles:** Laravel Breeze con RBAC para separar accesos.",
-        "**PWA instalable:** manifest + service worker, instalable y utilizable como app nativa.",
-        "**Arquitectura unificada:** Laravel (backend) + Vue 3 e Inertia.js (frontend) en un solo proyecto.",
-      ],
-      stack: [
-        "Backend: Laravel (PHP)",
-        "Frontend: Vue 3, Inertia.js",
-        "Base de datos: MySQL",
-        "Autenticación: Laravel Breeze",
-        "PWA: manifest + service worker",
-      ],
-      gallery: [
-        {
-          src: "/images/projects/oneclickti/hero.png",
-          alt: "Landing pública de One Click Ti",
-        },
-        {
-          src: "/images/projects/oneclickti/proyectos.png",
-          alt: "Sección de proyectos de la landing de One Click Ti",
-        },
-        {
-          src: "/images/projects/oneclickti/contacto.png",
-          alt: "Sección de contacto de One Click Ti",
-        },
-        {
-          src: "/images/projects/oneclickti/crud.png",
-          alt: "Sistema de gestión interno de One Click Ti",
-        },
-      ],
-      cta: "¿Necesitas una PWA instalable que combine presencia digital y gestión interna? Hablemos.",
-    },
-    architecture: {
-      name: "One Click Ti — PWA",
-      description:
-        "PWA full-stack por contrato: una sola aplicación instalable que integra landing pública y sistema de gestión interno.",
-      children: [
-        {
-          name: "Landing pública",
-          description:
-            "Cara profesional de la empresa, conectada con el sistema interno.",
-        },
-        {
-          name: "Sistema de gestión interno",
-          description: "Administración de contenido y operación del negocio.",
-        },
-        {
-          name: "Autenticación y roles",
-          description: "Laravel Breeze con RBAC para separar accesos.",
-        },
-        {
-          name: "PWA instalable",
-          description:
-            "Manifest + service worker; instalable y utilizable como app nativa.",
-        },
-        {
-          name: "Arquitectura unificada",
-          description:
-            "Laravel (backend) + Vue 3 e Inertia.js (frontend) en un solo proyecto.",
-        },
-      ],
-    },
-  },
-  {
-    id: "autoshop",
-    title: "AutoShop Taller",
-    category: "Full Stack / PHP",
-    hook: "Sitio full-stack para una empresa de servicios automotrices: landing pública + panel admin con CMS propio hecho desde cero en PHP puro.",
-    metric: "De días a minutos en actualización de contenido",
-    tags: ["PHP", "MySQL", "JavaScript", "Bootstrap", "HTML5", "CSS3"],
-    image: "/images/projects/autoshop/main.jpg",
-    imageAlt: "Landing pública y panel de administración de AutoShop",
-    links: [],
-    detail: {
-      headline:
-        "Presencia digital y gestión de contenido sin depender de un desarrollador",
-      summary:
-        "Sitio web full-stack para una empresa de servicios automotrices en Maravatío, Michoacán (prácticas profesionales, may – ago 2023). Incluye landing pública y un panel de administración con CMS desarrollado desde cero en PHP puro — sin framework — con el que el personal no técnico pasó a gestionar servicios, promociones y consultas por sí mismo.",
-      metrics: [
-        {
-          value: "Días → minutos",
-          label: "actualización de contenido por staff no técnico (CMS propio)",
-        },
-        { value: "0", label: "frameworks: CMS completo en PHP puro + MySQL" },
-        {
-          value: "2",
-          label: "superficies: landing pública + panel de administración",
-        },
-        {
-          value: "2",
-          label: "niveles de rol (admin/staff), sin cuentas para clientes",
-        },
-      ],
-      problem:
-        "La empresa automotriz no tenía presencia digital profesional ni forma de actualizar su propio contenido: cualquier cambio en servicios, promociones o consultas requería intervención técnica y tardaba días en el mejor caso.",
-      role: [
-        "Desarrollé el sitio full-stack completo en PHP puro, sin framework (MySQL, JavaScript, Bootstrap, HTML5, CSS3).",
-        "Construí un CMS a medida que permite al personal no técnico auto-gestionar listados de servicios, promociones por calendario y consultas de contacto.",
-        "Implementé gestión de usuarios por roles (admin/staff), sin cuentas de acceso para clientes.",
-        "Colaboré con el equipo administrativo para optimizar la estructura de contenido y la presentación de servicios.",
-      ],
-      solution: [
-        "**Landing pública:** cara profesional del taller, orientada a captar clientes.",
-        "**Panel de administración + CMS a medida:** el staff gestiona servicios, promociones calendario y consultas sin tocar código.",
-        "**Control de acceso por roles:** niveles admin/staff para el equipo del taller.",
-        "**Tecnología honesta:** PHP puro, MySQL, JavaScript y Bootstrap — sin framework, fundamentos al desnudo.",
-      ],
-      stack: [
-        "Backend: PHP puro (sin framework)",
-        "Frontend: HTML5, CSS3, JavaScript, Bootstrap",
-        "Base de datos: MySQL",
-      ],
-      gallery: [
-        {
-          src: "/images/projects/autoshop/HomeCensured.png",
-          alt: "Landing pública de AutoShop",
-        },
-        {
-          src: "/images/projects/autoshop/ServiciosCensured.png",
-          alt: "Sección de servicios de AutoShop",
-        },
-        {
-          src: "/images/projects/autoshop/crud.png",
-          alt: "Panel de administración (CMS) de AutoShop",
-        },
-      ],
-      cta: "¿Te interesa ver cómo se construye un CMS a medida partiendo de cero, sin framework? Hablemos.",
-    },
-    architecture: {
-      name: "AutoShop Taller",
-      description:
-        "Sitio full-stack para una empresa de servicios automotrices: landing pública + panel admin con CMS propio en PHP puro, sin framework.",
-      children: [
-        {
-          name: "Landing pública",
-          description: "Cara profesional del taller, orientada a captar clientes.",
-        },
-        {
-          name: "Panel de administración + CMS a medida",
-          description:
-            "El staff gestiona servicios, promociones por calendario y consultas sin tocar código.",
-        },
-        {
-          name: "Control de acceso por roles",
-          description:
-            "Niveles admin/staff para el equipo del taller, sin cuentas para clientes.",
-        },
-      ],
-    },
-  },
-  {
-    id: "color-highlight-v2",
-    title: "Color Highlight v2",
-    category: "Dev Tools / VS Code",
-    hook: "Fork modernizado de la extensión de VS Code que resalta colores en el editor; reconstruido con TypeScript, esbuild y pnpm.",
-    metric: "Render sin lag — debounce de 150ms",
-    tags: ["TypeScript", "esbuild", "pnpm", "VS Code"],
-    image: "/images/projects/color-highlight-v2/main.jpg",
-    imageAlt: "Editor de VS Code con colores resaltados por la extensión",
-    links: [
-      {
-        label: "Ver código",
-        kind: "code",
-        url: "https://github.com/MaxGB23/color-highlight-v2",
-        external: true,
-      },
-    ],
-    detail: {
-      headline: "Un fork modernizado, con crédito a los autores originales",
-      summary:
-        "Fork modernizado de `vscode-ext-color-highlight` (GPL-3.0): la extensión de VS Code que resalta colores en el editor, reconstruida con un stack moderno — TypeScript, esbuild y pnpm — e incorporando mejoras de rendimiento y accesibilidad. Se presenta siempre como fork de un proyecto existente, nunca como creación propia.",
-      metrics: [
-        { value: "150ms", label: "debounce → render sin lag en el editor" },
-        { value: "WCAG", label: "auto-contraste sobre el color resaltado" },
-        {
-          value: ".vsix",
-          label: "distribución agnóstica de la tienda (store-agnostic)",
-        },
-        {
-          value: "GPL-3.0",
-          label: "fork con crédito explícito a los autores originales",
-        },
-      ],
-      problem:
-        "La extensión original resolvía un problema real — ver los colores del código directamente en el editor — pero su base había envejecido: sin tipado, build lento y dependencias pesadas. Modernizarla la hace mantenible y rápida sin abandonar la licencia ni el crédito a sus autores.",
-      role: [
-        "Modernicé un proyecto open source existente (GPL-3.0) reconstruyéndolo con TypeScript, esbuild y pnpm.",
-        "Apliqué mejoras de rendimiento y accesibilidad: render con debounce de 150ms y auto-contraste WCAG.",
-        "Preparé la distribución `.vsix` agnóstica de la tienda de extensiones.",
-        "Mantuve la licencia GPL-3.0 y el crédito a los autores originales — el proyecto se presenta como fork modernizado, nunca como invención propia.",
-      ],
-      solution: [
-        "**Stack moderno:** TypeScript (tipado), esbuild (build rápido), pnpm (dependencias modernas y reproducibles).",
-        "**Render sin lag:** debounce de 150ms para no bloquear el editor al teclear.",
-        "**Auto-contraste WCAG:** el color del texto se ajusta para mantener legibilidad sobre cualquier color resaltado.",
-        "**Distribución store-agnostic:** `.vsix` instalable sin depender de una tienda concreta.",
-      ],
-      stack: [
-        "Lenguaje: TypeScript",
-        "Build: esbuild",
-        "Package manager: pnpm",
-        "Plataforma: API de extensiones de VS Code",
-        "Licencia: GPL-3.0 (fork de `vscode-ext-color-highlight`)",
-      ],
-      gallery: [],
-      cta: "¿Quieres ver cómo modernizo un proyecto open source existente sin romper su licencia? Hablemos.",
-    },
-    architecture: {
-      name: "color-highlight-v2",
-      description:
-        "Fork modernizado de vscode-ext-color-highlight (GPL-3.0) reconstruido con TypeScript, esbuild y pnpm, con mejoras de rendimiento y accesibilidad.",
-      children: [
-        {
-          name: "Stack moderno",
-          description:
-            "TypeScript (tipado), esbuild (build rápido), pnpm (dependencias modernas y reproducibles).",
-        },
-        {
-          name: "Render sin lag",
-          description:
-            "Debounce de 150ms para no bloquear el editor al teclear.",
-        },
-        {
-          name: "Auto-contraste WCAG",
-          description:
-            "El color del texto se ajusta para mantener legibilidad sobre cualquier color resaltado.",
-        },
-        {
-          name: "Distribución store-agnostic",
-          description:
-            "Archivo .vsix instalable sin depender de una tienda concreta.",
-        },
-      ],
-    },
-  },
-  {
-    id: "funky-theme",
-    title: "Funky Theme",
-    category: "Dev Tools / VS Code",
-    hook: "Tema oscuro semántico original para VS Code: 5 variantes derivadas de una paleta jerárquica definida en un único config (SSOT).",
-    metric: "2,000 descargas semanales",
-    tags: ["VS Code", "Verified", "Open VSX", "Zed", "Token Colors", "Terminal UI"],
-    image: "/images/projects/funky-theme/icon.png",
-    imageAlt: "Editor de VS Code mostrando las variantes de funky-theme",
-    links: [
-      {
-        label: "Ver código",
-        kind: "code",
-        url: "https://github.com/MaxGB23/funky-theme",
-        external: true,
-      },
-      {
-        label: "VS Code Marketplace",
-        kind: "code",
-        url: "https://marketplace.visualstudio.com/items?itemName=MaxGB23.funky-theme-vscode",
-        external: true,
-      },
-      {
-        label: "Open VSX",
-        kind: "code",
-        url: "https://open-vsx.org/extension/MaxGB23/funky-theme-vscode",
-        external: true,
-      },
-      {
-        label: "funky-theme-tui (terminales IA)",
-        kind: "code",
-        url: "https://github.com/MaxGB23/funky-theme-tui",
-        external: true,
-      },
-    ],
-    detail: {
-      headline:
-        "Un tema original, con la paleta gobernada por una única fuente de verdad",
-      summary:
-        "Tema oscuro semántico original para VS Code, publicado bajo MIT. Cinco variantes derivadas de una paleta jerárquica definida en un solo archivo de configuración (SSOT): se toca un valor y todo el tema se mantiene coherente, sin colores duplicados entre cientos de archivos. Lanzado como estable en v3.0.0 (21/09/2026) tras 6 release candidates, publicado en VS Code Marketplace y Open VSX. **Verified Open VSX Publisher (namespace MaxGB23)**. Tracción: **2k descargas/semana en Open VSX**, **128 adquisiciones/30 días en VS Code Marketplace** con **funnel de conversión 84.21%** (page views → installs). Soporte **Zed** en mantenimiento activo. Release blindado tras hotfix real: guardias automáticas (changelog empaquetado + vsix vs allowlist). Expansión en curso: **funky-theme-tui** (mismo SSOT para terminales IA: Claude Code, OpenCode, Pi) en desarrollo.",
-      metrics: [
-        {
-          value: "Verified",
-          label: "Open VSX Publisher (namespace MaxGB23)",
-        },
-        { value: "2k/sem", label: "descargas Open VSX (ritmo sostenido)" },
-        { value: "128/30d", label: "adquisiciones VS Code Marketplace" },
-        { value: "84.21%", label: "funnel de conversión (page views → installs)" },
-        { value: "5", label: "variantes del tema" },
-        { value: "1", label: "fuente de verdad: paleta jerárquica en un único config" },
-        { value: "MIT", label: "tema original, sin créditos a terceros" },
-        { value: "Zed", label: "soporte en mantenimiento activo" },
-        { value: "2", label: "guardias automáticas del release: changelog + vsix vs allowlist" },
-        { value: "1", label: "repo TUI: funky-theme-tui (terminales IA) en desarrollo" },
-      ],
-      problem:
-        "La mayoría de los temas de editor duplican valores de color en cientos de archivos: cualquier cambio exige editar todo a mano y los colores terminan desincronizados. Una paleta única como SSOT elimina el drift — el diseño del tema queda gobernado por un solo archivo.",
-      role: [
-        "Diseñé un tema original para VS Code publicado bajo licencia MIT.",
-        "Definí la paleta jerárquica como única fuente de verdad (un solo archivo de configuración).",
-        "Derivé las 5 variantes del tema desde esa paleta.",
-        "Gestioné el ciclo completo de release: 6 release candidates (rc.1 → rc.6) hasta el estable v3.0.0, con pipeline propio de build + empaquetado + GitHub Release (SemVer estricto, convención RC → estable).",
-        "Publiqué y operé la extensión en VS Code Marketplace y Open VSX (empaquetado de vsix, keywords optimizados al límite documentado de 30, changelog append-only).",
-        "Blindé el pipeline de release tras un hotfix de packaging: guardias automáticas (changelog empaquetado verificado + vsix coincidente con su allowlist) y el error real documentado como regla dura en la skill de release.",
-      ],
-      solution: [
-        "**Paleta semántica SSOT:** colores definidos por rol semántico (UI, sintaxis, estados), no arbitrarios, en un solo config.",
-        "**Variantes separadas por familias visuales:** el feedback de devs en foros y comunidades (Discord, etc.) guía qué se aplica en cada variante — italics, bold, etc. solo donde es deseado; para quien no los quiere, hay una variante a su medida.",
-        "**5 variantes coherentes:** todas se mantienen en sincronía porque comparten la misma fuente.",
-        "**Tema original:** propio, sin copia de otros temas, publicado bajo MIT.",
-        "**Publicación en markets:** release estable en VS Code Marketplace y Open VSX, con keywords optimizados al límite documentado (30) para descubribilidad multiplataforma (VS Code, VSCodium, Google Antigravity, Cursor, Windsurf, Theia).",
-        "**CI / control de calidad:** workflow de build-check con pnpm que valida las 5 variantes (existencia y parseo de los JSON) en cada push y PR; releases SemVer estrictas y trazables.",
-        "**Release blindado tras aprendizaje de errores:** el changelog se finaliza antes de empaquetar (el vsix lleva la sección de la versión) y una guardia verifica que el vsix coincida exactamente con su `.vscodeignore` (sin fugas ni assets faltantes) — un hotfix de packaging real dejó el proceso más robusto y documentado en la skill de release.",
-        "**Tracción validada:** **Verified Open VSX Publisher**; **2k descargas/semana** en Open VSX; **128 adquisiciones/30d** en VS Code Marketplace con **funnel 84.21%** (page views → installs) — posicionamiento SEO orgánico demostrado.",
-        "**Cross-editor:** soporte **Zed** en mantenimiento activo (misma paleta SSOT).",
-        "**Expansión terminal:** **funky-theme-tui** — misma filosofía SSOT para agentes de código en terminal (Claude Code, OpenCode, Pi); repo público, pre-estable.",
-      ],
-      stack: [
-        "Formato: VS Code theme (token colors)",
-        "Package manager: pnpm",
-        "Licencia: MIT (original)",
-        "Editores: VS Code, VSCodium, Cursor, Windsurf, Zed (en mantenimiento), Theia",
-        "Distribución: VS Code Marketplace, Open VSX, .vsix store-agnostic",
-        "Terminal IA: funky-theme-tui (Claude Code, OpenCode, Pi) — mismo SSOT, pre-estable",
-      ],
-      gallery: [
-        {
-          src: "/images/projects/funky-theme/icon.png",
-          alt: "Prueba",
-        },
-      ],
-      cta: "¿Te interesa el diseño de temas con paleta semántica gobernada por SSOT? Hablemos.",
-    },
-    architecture: {
-      name: "funky-theme",
-      description:
-        "Tema oscuro semántico original para VS Code (MIT): 5 variantes derivadas de una paleta jerárquica en un único config (SSOT) — se toca un valor y todo el tema se mantiene coherente. Expansión cross-editor (Zed) y terminal IA (funky-theme-tui) reutilizando la misma SSOT.",
-      children: [
-        {
-          name: "Paleta semántica SSOT",
-          description:
-            "Colores definidos por rol semántico (UI, sintaxis, estados), no arbitrarios, en un solo config. Única fuente de verdad para todos los targets.",
-        },
-        {
-          name: "5 variantes por familias visuales",
-          description:
-            "Derivadas de la misma fuente; italics y bold solo donde es deseado, con una variante a medida para quien no los quiere.",
-        },
-        {
-          name: "Tema original",
-          description: "Propio, sin copia de otros temas, publicado bajo MIT.",
-        },
-        {
-          name: "Publicación y release blindado",
-          description:
-            "VS Code Marketplace + Open VSX (Verified Publisher). Keywords optimizados (límite 30). CI pnpm valida 5 variantes. Release guardado: changelog empaquetado verificado + vsix vs allowlist exacto (hotfix real → skill de release).",
-        },
-        {
-          name: "Cross-editor: Zed",
-          description:
-            "Soporte en mantenimiento activo. Misma paleta SSOT → tema Zed sin duplicar lógica de color.",
-        },
-        {
-          name: "Terminal IA: funky-theme-tui",
-          description:
-            "Repo público (MaxGB23/funky-theme-tui). Misma filosofía SSOT para Claude Code, OpenCode, Pi. Pre-estable. Demuestra que la arquitectura de paleta única escala a nuevos targets sin duplicar lógica.",
-        },
-      ],
-    },
-  },
-  {
+   {
     id: "grinchmas-kart",
     title: "Grinchmas Kart",
     category: "Game Dev / Unity",
     hook: "Kart racing 3D end-to-end (ABMODEL Games) con IA rival entrenada con Reinforcement Learning (ML-Agents), físicas arcade y modelos 3D propios en Blender.",
     metric: "IA rival con Reinforcement Learning (ML-Agents)",
     tags: ["Unity", "C#", "Blender", "ML-Agents"],
-    image: "/images/projects/grinchmas-kart/inicio.png",
+    image: "/images/projects/grinchmas-kart/inicio.webp",
     imageAlt:
       "Gameplay de Grinchmas Kart: kart 3D en pista navideña con IA rival",
     links: [
@@ -1022,19 +617,19 @@ export const projects: Project[] = [
       ],
       gallery: [
         {
-          src: "/images/projects/grinchmas-kart/inicio.png",
+          src: "/images/projects/grinchmas-kart/inicio.webp",
           alt: "Pantalla de inicio de Grinchmas Kart",
         },
         {
-          src: "/images/projects/grinchmas-kart/nivel1.png",
+          src: "/images/projects/grinchmas-kart/nivel1.webp",
           alt: "Gameplay del nivel 1 de Grinchmas Kart",
         },
         {
-          src: "/images/projects/grinchmas-kart/countdown.png",
+          src: "/images/projects/grinchmas-kart/countdown.webp",
           alt: "Cuenta atrás de la carrera en Grinchmas Kart",
         },
         {
-          src: "/images/projects/grinchmas-kart/victoria.png",
+          src: "/images/projects/grinchmas-kart/victoria.webp",
           alt: "Pantalla de victoria de Grinchmas Kart",
         },
       ],
@@ -1112,7 +707,7 @@ export const projects: Project[] = [
     hook: "Plataformero 2D pixel-art con programación de gameplay 100% propia: salto variable, enemigos con FSM y efecto ripple de agua en la cámara.",
     metric: "1,055 LOC de gameplay (11 scripts) + pixel-art a mano",
     tags: ["Unity", "C#", "Blender"],
-    image: "/images/projects/cumyxel/nivel1.png",
+    image: "/images/projects/cumyxel/nivel1.webp",
     imageAlt:
       "Gameplay de Cumyxel: plataformero 2D pixel-art con enemigos y salto variable",
     links: [
@@ -1149,6 +744,10 @@ export const projects: Project[] = [
           label: "repo Cumyxel-code: solo código de gameplay, reusable",
         },
       ],
+      visual: {
+        src: "/images/projects/cumyxel/logo.webp",
+        alt: "Nivel 1 de Cumyxel",
+      },
       problem:
         "El objetivo fue superar un 'juego de muestra' con *game-feel* real: un plataformero cuyo salto tuviera dos fases, cuyos enemigos persiguieran y atacaran con un comportamiento de máquina de estados (no sprites decorativos), y una cámara con efectos visuales (ripple de agua) que machasen la sensación de calidad.",
       role: [
@@ -1172,20 +771,20 @@ export const projects: Project[] = [
       ],
       gallery: [
         {
-          src: "/images/projects/cumyxel/nivel1.png",
+          src: "/images/projects/cumyxel/nivel1.webp",
           alt: "Nivel 1 de Cumyxel",
         },
         {
-          src: "/images/projects/cumyxel/bossfight.png",
+          src: "/images/projects/cumyxel/bossfight.webp",
           alt: "Boss fight de Cumyxel",
         },
         {
-          src: "/images/projects/cumyxel/pve.png",
-          alt: "Combate del jugador contra enemigos en Cumyxel",
+          src: "/images/projects/cumyxel/npc-interaction.webp",
+          alt: "Interacción con NPC en Cumyxel",
         },
         {
-          src: "/images/projects/cumyxel/npc-interaction.png",
-          alt: "Interacción con NPC en Cumyxel",
+          src: "/images/projects/cumyxel/tutorial.webp",
+          alt: "Combate del jugador contra enemigos en Cumyxel",
         },
       ],
       cta: "¿Quieres ver cómo se construye un plataformero 2D con game-feel real, FSM y pixel-art a mano? Hablemos.",
@@ -1223,6 +822,456 @@ export const projects: Project[] = [
           name: "Cumyxel-code",
           description:
             "Repo público MIT con solo el código de gameplay: separa código del contenido y muestra mentalidad open-source.",
+        },
+      ],
+    },
+  },
+  {
+    id: "one-click-ti",
+    title: "One Click Ti — PWA",
+    category: "Full Stack / PWA",
+    hook: "PWA full-stack para una empresa de TI: landing pública + sistema de gestión interno, instalable en dispositivos.",
+    metric: "PWA instalable (manifest + service worker)",
+    tags: ["Laravel", "Vue 3", "Inertia.js", "MySQL", "Laravel Breeze"],
+    image: "/images/projects/oneclickti/proyectos.webp",
+    imageAlt: "Landing pública y panel de gestión de One Click Ti",
+    links: [
+      {
+        label: "Ver código",
+        kind: "code",
+        url: "https://github.com/MaxGB23/ABMODEL",
+        external: true,
+      },
+    ],
+    detail: {
+      headline:
+        "Presencia digital y gestión interna en una sola PWA instalable",
+      summary:
+        "PWA full-stack desarrollada por contrato para One Click Ti (Querétaro, sep – dic 2024). Integra una landing page pública con un sistema de gestión interno en una sola aplicación instalable, con autenticación y control de acceso por roles. Mi primera aproximación profesional a Laravel + Vue con arquitectura PWA.",
+      metrics: [
+        {
+          value: "PWA",
+          label:
+            "completa: manifest + service worker, instalable en dispositivos",
+        },
+        {
+          value: "2",
+          label:
+            "superficies integradas: landing pública + sistema de gestión interno",
+        },
+        {
+          value: "Contrato",
+          label: "entregado a cliente real (sep - dic 2024)",
+        },
+      ],
+      problem:
+        "La empresa necesitaba dos cosas en una: una presencia pública profesional (landing) y herramientas internas de gestión, sin mantener sistemas separados. Una PWA instalable evita pasar por una app store y funciona offline-first como aplicación de escritorio/móvil.",
+      role: [
+        "Desarrollé la PWA full-stack completa con Vue 3, MySQL, Laravel e Inertia.js.",
+        "Construí la landing page pública y el sistema de gestión interno.",
+        "Implementé autenticación, control de acceso por roles (RBAC) y las capacidades PWA (manifest + service worker) usando Laravel Breeze.",
+      ],
+      solution: [
+        "**Landing pública:** cara profesional de la empresa, conectada con el sistema interno.",
+        "**Sistema de gestión interno:** administración de contenido y operación del negocio.",
+        "**Autenticación y roles:** Laravel Breeze con RBAC para separar accesos.",
+        "**PWA instalable:** manifest + service worker, instalable y utilizable como app nativa.",
+        "**Arquitectura unificada:** Laravel (backend) + Vue 3 e Inertia.js (frontend) en un solo proyecto.",
+      ],
+      stack: [
+        "Backend: Laravel (PHP)",
+        "Frontend: Vue 3, Inertia.js",
+        "Base de datos: MySQL",
+        "Autenticación: Laravel Breeze",
+        "PWA: manifest + service worker",
+      ],
+      gallery: [
+        {
+          src: "/images/projects/oneclickti/hero.webp",
+          alt: "Landing pública de One Click Ti",
+        },
+        {
+          src: "/images/projects/oneclickti/proyectos.webp",
+          alt: "Sección de proyectos de la landing de One Click Ti",
+        },
+        {
+          src: "/images/projects/oneclickti/contacto.webp",
+          alt: "Sección de contacto de One Click Ti",
+        },
+        {
+          src: "/images/projects/oneclickti/crud.webp",
+          alt: "Sistema de gestión interno de One Click Ti",
+        },
+      ],
+      cta: "¿Necesitas una PWA instalable que combine presencia digital y gestión interna? Hablemos.",
+    },
+    architecture: {
+      name: "One Click Ti — PWA",
+      description:
+        "PWA full-stack por contrato: una sola aplicación instalable que integra landing pública y sistema de gestión interno.",
+      children: [
+        {
+          name: "Landing pública",
+          description:
+            "Cara profesional de la empresa, conectada con el sistema interno.",
+        },
+        {
+          name: "Sistema de gestión interno",
+          description: "Administración de contenido y operación del negocio.",
+        },
+        {
+          name: "Autenticación y roles",
+          description: "Laravel Breeze con RBAC para separar accesos.",
+        },
+        {
+          name: "PWA instalable",
+          description:
+            "Manifest + service worker; instalable y utilizable como app nativa.",
+        },
+        {
+          name: "Arquitectura unificada",
+          description:
+            "Laravel (backend) + Vue 3 e Inertia.js (frontend) en un solo proyecto.",
+        },
+      ],
+    },
+  },
+  {
+    id: "autoshop",
+    title: "AutoShop Taller",
+    category: "Full Stack / PHP",
+    hook: "Sitio full-stack para una empresa de servicios automotrices: landing pública + panel admin con CMS propio hecho desde cero en PHP puro.",
+    metric: "De días a minutos en actualización de contenido",
+    tags: ["PHP", "MySQL", "JavaScript", "Bootstrap", "HTML5", "CSS3"],
+    image: "/images/projects/autoshop/main.webp",
+    imageAlt: "Landing pública y panel de administración de AutoShop",
+    links: [],
+    detail: {
+      headline:
+        "Presencia digital y gestión de contenido sin depender de un desarrollador",
+      summary:
+        "Sitio web full-stack para una empresa de servicios automotrices en Maravatío, Michoacán (prácticas profesionales, may – ago 2023). Incluye landing pública y un panel de administración con CMS desarrollado desde cero en PHP puro — sin framework — con el que el personal no técnico pasó a gestionar servicios, promociones y consultas por sí mismo.",
+      metrics: [
+        {
+          value: "Días → minutos",
+          label: "actualización de contenido por staff no técnico (CMS propio)",
+        },
+        { value: "0", label: "frameworks: CMS completo en PHP puro + MySQL" },
+        {
+          value: "2",
+          label: "superficies: landing pública + panel de administración",
+        },
+        {
+          value: "2",
+          label: "niveles de rol (admin/staff), sin cuentas para clientes",
+        },
+      ],
+      problem:
+        "La empresa automotriz no tenía presencia digital profesional ni forma de actualizar su propio contenido: cualquier cambio en servicios, promociones o consultas requería intervención técnica y tardaba días en el mejor caso.",
+      role: [
+        "Desarrollé el sitio full-stack completo en PHP puro, sin framework (MySQL, JavaScript, Bootstrap, HTML5, CSS3).",
+        "Construí un CMS a medida que permite al personal no técnico auto-gestionar listados de servicios, promociones por calendario y consultas de contacto.",
+        "Implementé gestión de usuarios por roles (admin/staff), sin cuentas de acceso para clientes.",
+        "Colaboré con el equipo administrativo para optimizar la estructura de contenido y la presentación de servicios.",
+      ],
+      solution: [
+        "**Landing pública:** cara profesional del taller, orientada a captar clientes.",
+        "**Panel de administración + CMS a medida:** el staff gestiona servicios, promociones calendario y consultas sin tocar código.",
+        "**Control de acceso por roles:** niveles admin/staff para el equipo del taller.",
+        "**Tecnología honesta:** PHP puro, MySQL, JavaScript y Bootstrap — sin framework, fundamentos al desnudo.",
+      ],
+      stack: [
+        "Backend: PHP puro (sin framework)",
+        "Frontend: HTML5, CSS3, JavaScript, Bootstrap",
+        "Base de datos: MySQL",
+      ],
+      gallery: [
+        {
+          src: "/images/projects/autoshop/HomeCensured.webp",
+          alt: "Landing pública de AutoShop",
+        },
+        {
+          src: "/images/projects/autoshop/ServiciosCensured.webp",
+          alt: "Sección de servicios de AutoShop",
+        },
+        {
+          src: "/images/projects/autoshop/crud.webp",
+          alt: "Panel de administración (CMS) de AutoShop",
+        },
+        {
+          src: "/images/projects/autoshop/main.webp",
+          alt: "Panel de administración (CMS) de AutoShop",
+        },
+      ],
+      cta: "¿Te interesa ver cómo se construye un CMS a medida partiendo de cero, sin framework? Hablemos.",
+    },
+    architecture: {
+      name: "AutoShop Taller",
+      description:
+        "Sitio full-stack para una empresa de servicios automotrices: landing pública + panel admin con CMS propio en PHP puro, sin framework.",
+      children: [
+        {
+          name: "Landing pública",
+          description: "Cara profesional del taller, orientada a captar clientes.",
+        },
+        {
+          name: "Panel de administración + CMS a medida",
+          description:
+            "El staff gestiona servicios, promociones por calendario y consultas sin tocar código.",
+        },
+        {
+          name: "Control de acceso por roles",
+          description:
+            "Niveles admin/staff para el equipo del taller, sin cuentas para clientes.",
+        },
+      ],
+    },
+  },
+  {
+    id: "color-highlight-v2",
+    title: "Color Highlight v2",
+    category: "Dev Tools / VS Code",
+    hook: "Fork modernizado de la extensión de VS Code que resalta colores en el editor; reconstruido con TypeScript, esbuild y pnpm.",
+    metric: "Render sin lag — debounce de 150ms",
+    tags: ["TypeScript", "esbuild", "pnpm", "VS Code"],
+    image: "/images/projects/color-highlight-v2/main.webp",
+    imageAlt: "Editor de VS Code con colores resaltados por la extensión",
+    links: [
+      {
+        label: "Ver código",
+        kind: "code",
+        url: "https://github.com/MaxGB23/color-highlight-v2",
+        external: true,
+      },
+    ],
+    detail: {
+      headline: "Un fork modernizado, con crédito a los autores originales",
+      summary:
+        "Fork modernizado de `vscode-ext-color-highlight` (GPL-3.0): la extensión de VS Code que resalta colores en el editor, reconstruida con un stack moderno — TypeScript, esbuild y pnpm — e incorporando mejoras de rendimiento y accesibilidad. Se presenta siempre como fork de un proyecto existente, nunca como creación propia.",
+      metrics: [
+        { value: "150ms", label: "debounce → render sin lag en el editor" },
+        { value: "WCAG", label: "auto-contraste sobre el color resaltado" },
+        {
+          value: ".vsix",
+          label: "distribución agnóstica de la tienda (store-agnostic)",
+        },
+        {
+          value: "GPL-3.0",
+          label: "fork con crédito explícito a los autores originales",
+        },
+      ],
+      problem:
+        "La extensión original resolvía un problema real — ver los colores del código directamente en el editor — pero su base había envejecido: sin tipado, build lento y dependencias pesadas. Modernizarla la hace mantenible y rápida sin abandonar la licencia ni el crédito a sus autores.",
+      role: [
+        "Modernicé un proyecto open source existente (GPL-3.0) reconstruyéndolo con TypeScript, esbuild y pnpm.",
+        "Apliqué mejoras de rendimiento y accesibilidad: render con debounce de 150ms y auto-contraste WCAG.",
+        "Preparé la distribución `.vsix` agnóstica de la tienda de extensiones.",
+        "Mantuve la licencia GPL-3.0 y el crédito a los autores originales — el proyecto se presenta como fork modernizado, nunca como invención propia.",
+      ],
+      solution: [
+        "**Stack moderno:** TypeScript (tipado), esbuild (build rápido), pnpm (dependencias modernas y reproducibles).",
+        "**Render sin lag:** debounce de 150ms para no bloquear el editor al teclear.",
+        "**Auto-contraste WCAG:** el color del texto se ajusta para mantener legibilidad sobre cualquier color resaltado.",
+        "**Distribución store-agnostic:** `.vsix` instalable sin depender de una tienda concreta.",
+      ],
+      stack: [
+        "Lenguaje: TypeScript",
+        "Build: esbuild",
+        "Package manager: pnpm",
+        "Plataforma: API de extensiones de VS Code",
+        "Licencia: GPL-3.0 (fork de `vscode-ext-color-highlight`)",
+      ],
+      gallery: [
+        {
+          src: "/images/projects/color-highlight-v2/demo-vscode.webp",
+          alt: "Color Highlight v2 en VS Code",
+        },
+        {
+          src: "/images/projects/color-highlight-v2/main.webp",
+          alt: "Color Highlight v2 en VS Code",
+        },
+      ],
+      cta: "¿Quieres ver cómo modernizo un proyecto open source existente sin romper su licencia? Hablemos.",
+    },
+    architecture: {
+      name: "color-highlight-v2",
+      description:
+        "Fork modernizado de vscode-ext-color-highlight (GPL-3.0) reconstruido con TypeScript, esbuild y pnpm, con mejoras de rendimiento y accesibilidad.",
+      children: [
+        {
+          name: "Stack moderno",
+          description:
+            "TypeScript (tipado), esbuild (build rápido), pnpm (dependencias modernas y reproducibles).",
+        },
+        {
+          name: "Render sin lag",
+          description:
+            "Debounce de 150ms para no bloquear el editor al teclear.",
+        },
+        {
+          name: "Auto-contraste WCAG",
+          description:
+            "El color del texto se ajusta para mantener legibilidad sobre cualquier color resaltado.",
+        },
+        {
+          name: "Distribución store-agnostic",
+          description:
+            "Archivo .vsix instalable sin depender de una tienda concreta.",
+        },
+      ],
+    },
+  },
+  {
+    id: "funky-theme",
+    title: "Funky Theme",
+    category: "Dev Tools / VS Code",
+    hook: "Tema oscuro semántico original compatible en cualquier VSCode-based editor y Terminales: 5 variantes derivadas de una paleta jerárquica definida en un único config (SSOT).",
+    metric: "~2,700 descargas en Open VSX",
+    tags: ["VS Code", "Verified", "Open VSX", "Zed", "Token Colors", "Terminal UI"],
+    image: "/images/projects/funky-theme/funky-theme-demo.webp",
+    imageAlt: "Editor de VS Code mostrando funky-theme",
+    featured: true,
+    links: [
+      {
+        label: "Ver código",
+        kind: "code",
+        url: "https://github.com/MaxGB23/funky-theme",
+        external: true,
+      },
+      {
+        label: "VSCode Marketplace",
+        kind: "landing",
+        url: "https://marketplace.visualstudio.com/items?itemName=MaxGB23.funky-theme-vscode",
+        external: true,
+      },
+      {
+        label: "Open VSX",
+        kind: "landing",
+        url: "https://open-vsx.org/extension/MaxGB23/funky-theme-vscode",
+        external: true,
+      },
+      {
+        label: "Terminales (TUI)",
+        kind: "code",
+        url: "https://github.com/MaxGB23/funky-theme-tui",
+        external: true,
+      },
+    ],
+    detail: {
+      headline:
+        "Un tema original, con la paleta gobernada por una única fuente de verdad",
+      summary:
+        "Tema oscuro semántico original para VS Code, publicado bajo MIT. Cinco variantes derivadas de una paleta jerárquica definida en un solo archivo de configuración (SSOT): se toca un valor y todo el tema se mantiene coherente, sin colores duplicados entre cientos de archivos. Lanzado como estable en v3.0.0 (21/09/2026) tras 6 release candidates, publicado en VS Code Marketplace y Open VSX. **Verified Open VSX Publisher (namespace MaxGB23)**. Tracción: **2,686 descargas acumuladas en Open VSX** (medido el 3 oct 2026), de las cuales **2.000+ en la primera semana** de lanzamiento; **128 adquisiciones/30 días en VS Code Marketplace** con **funnel de conversión 84.21%** (page views → installs) y **valoración media 5.0** (3 reseñas). Soporte **Zed** en mantenimiento activo. Release blindado tras hotfix real: guardias automáticas (changelog empaquetado + vsix vs allowlist). Expansión en curso: **funky-theme-tui** (mismo SSOT para terminales IA: Claude Code, OpenCode, Pi) en desarrollo.",
+      metrics: [
+        {
+          value: "2,686",
+          label: "descargas acumuladas en Open VSX desde el estable v3.0.0 (medido el 3 oct 2026)",
+        },
+        {
+          value: "2.000+",
+          label: "descargas en la primera semana de lanzamiento",
+        },
+        { value: "5.0", label: "valoración media en Open VSX (3 reseñas)" },
+        {
+          value: "Verified",
+          label: "Open VSX Publisher (namespace MaxGB23)",
+        },
+        { value: "128/30d", label: "adquisiciones VS Code Marketplace" },
+        { value: "84.21%", label: "funnel de conversión (page views → installs)" },
+        { value: "5", label: "variantes del tema" },
+        { value: "1", label: "fuente de verdad: paleta jerárquica en un único config" },
+        { value: "MIT", label: "tema original, sin créditos a terceros" },
+        { value: "Zed", label: "soporte en mantenimiento activo" },
+        { value: "2", label: "guardias automáticas del release: changelog + vsix vs allowlist" },
+        { value: "1", label: "repo TUI: funky-theme-tui (terminales IA) en desarrollo" },
+      ],
+      visual: {
+        src: "/images/projects/funky-theme/perifericos.webp",
+        alt: "Editor de VS Code mostrando funky-theme",
+      },
+      problem:
+        "La mayoría de los temas de editor duplican valores de color en cientos de archivos: cualquier cambio exige editar todo a mano y los colores terminan desincronizados. Una paleta única como SSOT elimina el drift — el diseño del tema queda gobernado por un solo archivo.",
+      role: [
+        "Diseñé un tema original para VS Code publicado bajo licencia MIT.",
+        "Definí la paleta jerárquica como única fuente de verdad (un solo archivo de configuración).",
+        "Derivé las 5 variantes del tema desde esa paleta.",
+        "Gestioné el ciclo completo de release: 6 release candidates (rc.1 → rc.6) hasta el estable v3.0.0, con pipeline propio de build + empaquetado + GitHub Release (SemVer estricto, convención RC → estable).",
+        "Publiqué y operé la extensión en VS Code Marketplace y Open VSX (empaquetado de vsix, keywords optimizados al límite documentado de 30, changelog append-only).",
+        "Blindé el pipeline de release tras un hotfix de packaging: guardias automáticas (changelog empaquetado verificado + vsix coincidente con su allowlist) y el error real documentado como regla dura en la skill de release.",
+      ],
+      solution: [
+        "**Paleta semántica SSOT:** colores definidos por rol semántico (UI, sintaxis, estados), no arbitrarios, en un solo config.",
+        "**Variantes separadas por familias visuales:** el feedback de devs en foros y comunidades (Discord, etc.) guía qué se aplica en cada variante — italics, bold, etc. solo donde es deseado; para quien no los quiere, hay una variante a su medida.",
+        "**5 variantes coherentes:** todas se mantienen en sincronía porque comparten la misma fuente.",
+        "**Tema original:** propio, sin copia de otros temas, publicado bajo MIT.",
+        "**Publicación en markets:** release estable en VS Code Marketplace y Open VSX, con keywords optimizados al límite documentado (30) para descubribilidad multiplataforma (VS Code, VSCodium, Google Antigravity, Cursor, Windsurf, Theia).",
+        "**CI / control de calidad:** workflow de build-check con pnpm que valida las 5 variantes (existencia y parseo de los JSON) en cada push y PR; releases SemVer estrictas y trazables.",
+        "**Release blindado tras aprendizaje de errores:** el changelog se finaliza antes de empaquetar (el vsix lleva la sección de la versión) y una guardia verifica que el vsix coincida exactamente con su `.vscodeignore` (sin fugas ni assets faltantes) — un hotfix de packaging real dejó el proceso más robusto y documentado en la skill de release.",
+        "**Tracción validada:** **Verified Open VSX Publisher**; **2k descargas/semana** en Open VSX; **128 adquisiciones/30d** en VS Code Marketplace con **funnel 84.21%** (page views → installs) — posicionamiento SEO orgánico demostrado.",
+        "**Cross-editor:** soporte **Zed** en mantenimiento activo (misma paleta SSOT).",
+        "**Expansión terminal:** **funky-theme-tui** — misma filosofía SSOT para agentes de código en terminal (Claude Code, OpenCode, Pi); repo público, pre-estable.",
+      ],
+      stack: [
+        "Formato: VS Code theme (token colors)",
+        "Package manager: pnpm",
+        "Licencia: MIT (original)",
+        "Editores: VS Code, VSCodium, Cursor, Windsurf, Zed (en mantenimiento), Theia",
+        "Distribución: VS Code Marketplace, Open VSX, .vsix store-agnostic",
+        "Terminal IA: funky-theme-tui (Claude Code, OpenCode, Pi) — mismo SSOT, pre-estable",
+      ],
+      gallery: [
+        {
+          src: "/images/projects/funky-theme/funky-tui-opencode.webp",
+          alt: "Funky Theme en TUI OpenCode",
+        },
+        {
+          src: "/images/projects/funky-theme/funky-dark-tsx.webp",
+          alt: "Funky Theme Dark - TSX code",
+        },
+        {
+          src: "/images/projects/funky-theme/funky-darker-typescript.webp",
+          alt: "Funky Theme Darker - TS code",
+        },
+        {
+          src: "/images/projects/funky-theme/IDE-completo.webp",
+          alt: "Funky Theme en VSCode",
+        },
+      ],
+      cta: "¿Te interesa el diseño de temas con paleta semántica gobernada por SSOT? Hablemos.",
+    },
+    architecture: {
+      name: "funky-theme",
+      description:
+        "Tema oscuro semántico original para VS Code (MIT): 5 variantes derivadas de una paleta jerárquica en un único config (SSOT) — se toca un valor y todo el tema se mantiene coherente. Expansión cross-editor (Zed) y terminal IA (funky-theme-tui) reutilizando la misma SSOT.",
+      children: [
+        {
+          name: "Paleta semántica SSOT",
+          description:
+            "Colores definidos por rol semántico (UI, sintaxis, estados), no arbitrarios, en un solo config. Única fuente de verdad para todos los targets.",
+        },
+        {
+          name: "5 variantes por familias visuales",
+          description:
+            "Derivadas de la misma fuente; italics y bold solo donde es deseado, con una variante a medida para quien no los quiere.",
+        },
+        {
+          name: "Tema original",
+          description: "Propio, sin copia de otros temas, publicado bajo MIT.",
+        },
+        {
+          name: "Publicación y release blindado",
+          description:
+            "VS Code Marketplace + Open VSX (Verified Publisher). Keywords optimizados (límite 30). CI pnpm valida 5 variantes. Release guardado: changelog empaquetado verificado + vsix vs allowlist exacto (hotfix real → skill de release).",
+        },
+        {
+          name: "Cross-editor: Zed",
+          description:
+            "Soporte en mantenimiento activo. Misma paleta SSOT → tema Zed sin duplicar lógica de color.",
+        },
+        {
+          name: "Terminal IA: funky-theme-tui",
+          description:
+            "Repo público (MaxGB23/funky-theme-tui). Misma filosofía SSOT para Claude Code, OpenCode, Pi. Pre-estable. Demuestra que la arquitectura de paleta única escala a nuevos targets sin duplicar lógica.",
         },
       ],
     },
