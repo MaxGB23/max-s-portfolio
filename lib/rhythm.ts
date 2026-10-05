@@ -16,10 +16,16 @@
  * as this padding — so the visual total stays SECTION_GAP. Consumed by
  * `components/contact-section.tsx`.
  *
- * FEATURED_GAP / FEATURED_GAP_LG — heading↔card gap inside the featured stack:
- * 48px (`gap-12`), growing to 120px (`gap-30`) on tall×wide viewports
- * (≥1280px × ≥900px). Consumed by `featured-project-panel.tsx` since `748c17e`
- * (className interpolated `${FEATURED_GAP} ${FEATURED_GAP_LG}`).
+ * FEATURED_GAP / FEATURED_GAP_LG — vertical gap between the stacked blocks of a
+ * featured panel: 48px (`gap-12`), growing to 120px (`gap-30`) on tall×wide
+ * viewports (≥1280px × ≥900px). Consumed by `featured-project-panel.tsx` since
+ * `748c17e` (className interpolated `${FEATURED_GAP} ${FEATURED_GAP_LG}`) on
+ * `.panel-content`, whose children are the optional heading block and the
+ * text/image grid.
+ *
+ * NOT to be confused with the gap between the text and image COLUMNS inside
+ * that grid, which is a local value in the panel (`gap-6 md:gap-12`, with the
+ * metric and tag rows adding `xl:mb-2`), not part of this contract.
  *
  * PAGE_SPACER_CLASSES — wrapper class per inter-section pair (6 pairs),
  * resolved by orientation regime (single source of the orientation contract).

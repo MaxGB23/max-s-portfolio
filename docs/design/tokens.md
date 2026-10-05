@@ -167,7 +167,7 @@ El ritmo vertical es un contrato de codigo con fuente unica en
 |---|---|---|
 | `SECTION_GAP` | `h-24 md:h-32` (96 / 128px) | Separacion entre secciones top-level (altura del spacer de pagina) |
 | `SECTION_GAP_Y` | `py-12 md:py-16` (48 / 64px) | Padding vertical DENTRO del contenedor interno de `#contacto` (`#contact-content`, excepcion unica, ver nota) |
-| `FEATURED_GAP` | `gap-12` (48px) | Titulo <-> card dentro del stack destacado |
+| `FEATURED_GAP` | `gap-12` (48px) | Gap vertical entre los bloques apilados de un panel destacado (heading opcional <-> grid texto/imagen) |
 | `FEATURED_GAP_LG` | `[@media(min-width:1280px)_and_(min-height:900px)]:gap-30` (120px) | El mismo gap en pantallas altas y anchas |
 | `PAGE_SPACER_CLASSES` | ver tabla | Clase del wrapper por par de secciones (6 pares) |
 

@@ -59,9 +59,11 @@ Auditoria de separaciones: `scripts/section-spacing.mjs` (9 viewports, toleranci
   entre Pricing<->Contacto y Contacto<->Footer (regla de 2 niveles: shell +
   primer hijo, la misma que usan el aterrizaje del scroll y la auditoria).
 - `FEATURED_GAP` = `gap-12` (48px) y `FEATURED_GAP_LG` =
-  `[@media(min-width:1280px)_and_(min-height:900px)]:gap-30` (120px):
-  gap titulo<->card dentro del stack featured, consumido por
-  `featured-project-panel.tsx` desde `748c17e`.
+  `[@media(min-width:1280px)_and_(min-height:900px)]:gap-30` (120px): gap
+  vertical entre los bloques apilados de un panel featured (bloque de heading
+  opcional <-> grid texto/imagen), consumido por `featured-project-panel.tsx`
+  desde `748c17e`. NO es el gap entre las COLUMNAS texto e imagen de esa grid:
+  ese es un valor local del panel (`gap-6 md:gap-12`).
 - `PAGE_SPACER_CLASSES` (contrato de orientacion, verbatim desde `lib/rhythm.ts`;
   6 pares):
 
@@ -191,8 +193,8 @@ en otro archivo.
 - Cue "Deslizar": indicador de scroll. Es el ULTIMO hijo de flujo de la
   `section`, o sea su BORDE INFERIOR, no un remate colgando debajo del
   contenido: el sobrante de `min-h-[85dvh]` se acumula por encima del indicador
-  (dentro de la seccion) porque el bloque l2 lleva `flex-1`. Decisional, ver
-  `docs/ideas-features/hero-design.md`.
+  (dentro de la seccion) porque el bloque l2 lleva `flex-1`. Decisional, ya
+  asimilado en este canon.
 
 ### 4.3 Sobre-mi (`about-section.tsx`)
 
@@ -228,19 +230,30 @@ en otro archivo.
   `portrait:lg:mb-24` / `landscape:...mb-24` / `last:mb-0` que el canon anterior
   listaba aqui NO EXISTEN en el repo, y por eso el par `featured-card-card`
   esta sin asertar en `scripts/rhythm-contract.mjs` (ver nota de medicion).
-  El heading mobile del panel usa `mb-12 md:mb-16`.
+  El bloque de heading del panel (`children`, envuelto en un div con
+  `mb-12 md:mb-16`) usa los mismos valores.
 - Panel: `article px-6 md:px-8 lg:px-12`; `panel-content w-full max-w-7xl
   mx-auto flex flex-col` + `FEATURED_GAP`/`FEATURED_GAP_LG` interpolados
   (`gap-12 [@media(min-width:1280px)_and_(min-height:900px)]:gap-30`) +
   `pb-12 lg:pb-20` (omitido en el ultimo panel, el spacer de pagina cierra).
-- Grid interno `grid-cols-1 lg:grid-cols-2 gap-12` (texto `order-2 lg:order-1`,
-  imagen `order-1 lg:order-2`): el `gap-12` es la separacion horizontal real
-  entre texto e imagen y se mantiene en TODOS los anchos >=1024. Antes era
-  `gap-12 lg:gap-0`, que anulaba el gap justo en el breakpoint donde las
-  columnas son mas estrechas (464px a 1024). Medido: sin el, el
-  `max-w-[50ch]` de la descripcion NO ata por debajo de ~1280 y el texto
-  llegaba al borde de la imagen; con el, la columna de texto es mas estrecha
-  que el limite de medida en todo el rango. El titulo nunca lleva `max-w`.
+- Grid interno `grid-cols-1 lg:grid-cols-2 gap-6 md:gap-12` (texto
+  `order-2 lg:order-1`, imagen `order-1 lg:order-2`): `gap-6` en mobile y
+  `md:gap-12` desde md. En una sola columna el gap vertical de la grid NO es
+  separacion real entre texto e imagen (estan apilados), asi que bajarlo
+  hace que el ritmo mobile se lea como un bloque coherente en vez de heredar
+  el gap de escritorio; `md:gap-12` conserva la separacion horizontal entre
+  columnas a partir de lg. Antes era `gap-12 lg:gap-0`, que anulaba el gap
+  justo en el breakpoint donde las columnas son mas estrechas (464px a 1024).
+  Medido: sin el, el `max-w-[50ch]` de la descripcion NO ata por debajo de
+  ~1280 y el texto llegaba al borde de la imagen. El titulo nunca lleva `max-w`.
+- Columna de texto `flex flex-col gap-6`: los hijos (indice+categoria, h3,
+  descripcion, metrica, tags) se separan con el gap del contenedor, no con
+  margenes inferiores por hijo. La metrica y la fila de tags anaden `xl:mb-2`
+  para que en escritorio los iconos no queden pegados al texto.
+- Descripcion `max-w-[50ch] md:max-w-[60ch] lg:max-w-[53ch]`: 50ch en mobile,
+  60ch en md (donde la columna es de una sola medida) y 53ch en lg (donde la
+  columna se estrecha al 50% del grid y hay que recortar para no rebasar el
+  limite de medida).
 - Imagen mockup: `aspect-4/3 rounded-2xl shadow-2xl ring-1 ring-black/5`;
   badge flotante `-bottom-4 -right-4 w-14 h-14 rounded-full shadow-lg`;
   chips de stack con `shadow-sm` y rings.
@@ -347,7 +360,14 @@ en otro archivo.
   seleccionan al mover. NO adoptar `components/ui/tabs.tsx` (shadcn): cambia el
   DOM y obliga a reestilizar. `Home`/`End` fuera a proposito — con dos vistas las
   flechas ya recorren el grupo.
-- Visual principal: `max-w-5xl aspect-video rounded-3xl` con glow suave.
+- Bloques de arriba abajo con `mb-12 md:mb-16` (metrics, links) y `mb-6 md:mb-16`
+  (visual principal): el ancho ya no carga el margen de desktop, asi que cada
+  bloque lo declara y mobile va mas cerrado. El visual principal baja a `mb-6`
+  porque su banda es visualmente autosuficiente; los de metrics y links
+  mantienen `mb-12` porque separan bloques de lectura.
+- Visual principal: `max-w-5xl aspect-video rounded-3xl` con glow suave. La
+  imagen sale de `detail.visual?.src ?? project.image` — `visual` es la portada
+  propia del detail y es opcional; sin ella cae a la imagen de la card.
 - Links: `variant="inverted"` tamaños `lg` (excepcion al tamano default md).
 - Editorial: `max-w-3xl` con `text-base 2xl:text-lg` (`2xl:text-lg` por
   pantallas ultra-anchas), `leading-relaxed`, hoja de ruta en codigo.
@@ -417,8 +437,9 @@ en otro archivo.
   `forcedTheme="dark"` y `disableTransitionOnChange` (layout.tsx): el sitio
   es dark-first y el tema light NO se ofrece en la UI.
 - `DarkModeToggle` esta DESMONTADO (import comentado en navbar.tsx): reintroducirlo
-  requiere plan de tema completo; no descomentar a ciegas. Ver
-  `docs/ideas-features/dark-mode-guide.md`.
+  requiere plan de tema completo; no descomentar a ciegas. El modo light existe
+  solo como derivado de tokens (ver seccion 7 y `tokens.md`), sin UI para
+  alternar.
 
 ## 8. Infraestructura de scroll
 
@@ -511,3 +532,9 @@ en otro archivo.
 - 13.5 La nota "Vercel Preview Deployment activado para la rama
   feat/fluid-typo" del canon anterior se ELIMINO del canon vivo (informacion
   de rama agotada; el snapshot `2026-09-21-pre-designmd` la conserva).
+- 13.6 `docs/ideas-features/` se elimino (2026-10-05): eran ideas sin estado
+  (ni completo/pendiente ni decision fechada), que es exactamente el problema
+  que `docs/rfcs/` y `odd/tasks/` resuelven con su propio ciclo de vida. Las
+  decisiones que si importaban ya estaban asimiladas en este canon; las dos
+  referencias que quedaban (hero cue, dark mode) se reescribieron aqui en vez
+  de dejar punteros muertos.

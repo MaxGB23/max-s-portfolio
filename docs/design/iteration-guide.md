@@ -176,8 +176,7 @@ prescripcion:
 - 10.1 Hero badge historico: el badge del hero hardcodea `#5865F2` (Discord
   blurple) + ola blanca, contradiciendo "un solo acento y sin hardcodear":
   se documenta como excepcion historica del hero, NO como patron; decidir su
-  reemplazo por tokens con la proxima iteracion de hero
-  (`docs/ideas-features/hero-design.md`).
+  reemplazo por tokens con la proxima iteracion de hero.
 - 10.2 La nota stale "Vercel Preview Deployment activado para la rama
   feat/fluid-typo" (canon anterior) se ELIMINO deliberadamente del canon
   vivo: es informacion de rama agotada y el snapshot la conserva.
