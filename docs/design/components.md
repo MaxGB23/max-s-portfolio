@@ -107,8 +107,10 @@ en otro archivo.
 
 - `fixed h-16`; nav interior `max-w-7xl px-6`; links: Inicio `/`, Sobre mi
   `#sobre-mi`, Proyectos `#proyectos`, Precios `#precios`.
-- Con scroll (umbral 8px): `bg-nav backdrop-blur-none md:backdrop-blur-md
-  border-b border-border shadow-sm`.
+- Con scroll (umbral 20px, `setScrolled(currentY > 20)`): `bg-nav
+  backdrop-blur-none md:backdrop-blur-md border-b border-border shadow-sm`.
+  OJO: `SCROLL_THRESHOLD = 8` NO es este umbral — alimenta el auto-hide/show del
+  menu mobile, que es otra regla.
 - Scroll-spy de seccion activa (`hooks/use-active-section.ts`,
   `useActiveSection(spySections)`): IntersectionObserver con
   `rootMargin "-40% 0px -40% 0px"` (banda central del 20%), sin dependencias y
@@ -149,8 +151,9 @@ en otro archivo.
   codigo ISO (`ES`/`EN`) — el icono da la affordance de control de idioma y
   el codigo el estado actual. `size="sm"` en `sm:+` y `size="compact"` en
   `<sm` (fila mobile ajustada); `gap-1.5` (el gap base 2 ensancharia la fila).
-  WCAG 2.5.3 Label in Name: `aria-label` = `"{code} — {switchTo}"`, contiene
-  el label visible. `hover:border-purple-accent/15 border-transparent`.
+  WCAG 2.5.3 Label in Name: `aria-label` = `"{code} — {switchTo}"` (raya em,
+  U+2014), contiene el label visible.
+  `hover:border-purple-accent/15 border-transparent`.
 - `useScrollToAnchor(64)` (ancla con offset de navbar) y `useScrollToTop`.
 
 ### 4.2 Hero (`hero-section.tsx`)
