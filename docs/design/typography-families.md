@@ -46,7 +46,7 @@ Escala editorial fluida:
 | `text-fluid-display` | 2.5rem (40) | 5rem (80) | h1 del hero |
 | `text-fluid-section` | 2rem (32) | 3.25rem (52) | h2 de secciones |
 | `text-fluid-detail` | 2.25rem (36) | 3.375rem (54) | h1 del detalle de proyecto |
-| `text-fluid-featured` | 1.75rem (28) | 2.75rem (44) | h2 de panel destacado (cap: `lg:[@media(max-height:800px)]:text-4xl`) |
+| `text-fluid-featured` | 1.75rem (28) | 2.75rem (44) | h3 de panel destacado (cap: `lg:[@media(max-height:800px)]:text-4xl`) |
 | `text-fluid-price` | 2rem (32) | 2.625rem (42) | Precio (dominante sobre label, debajo del titulo) |
 | `text-fluid-subheading` | 1.5rem (24) | 2.25rem (36) | Subtitulos |
 | `text-fluid-metric` | 1.125rem (18) | 1.5rem (24) | Cifra de metrica (rol display, token dedicado) |
@@ -102,6 +102,32 @@ Notas del sistema:
   y de uppercase que ensancha: nunca ambos con tracking-tighter).
 - `font-black` es la voz del titular (con `uppercase` y `tracking-tighter`);
   nunca usar `font-bold` en titulares de seccion.
+- **Recorte de line-box (crop) en la escala display**: el titular ocupa un
+  line-box mas alto que su texto, y ese aire invisible CRECE con el
+  font-size. Tabla completa y razon mas abajo.
+
+Crop de la escala display - con el MISMO `gap-*` de columna, un titular de
+54px deja mas hueco por debajo que uno de 44px aunque la columna declare la
+misma separacion; se compensa con un margen inferior NEGATIVO:
+
+| Titular | Token / rango | leading | Crop declarado |
+|---|---|---|---|
+| h1 detalle (`components/project-detail.tsx`) | `text-fluid-detail` (36-54) | `leading-[1.05]` | `-mb-2 md:mb-0`, se anula desde `md` |
+| h3 panel destacado (`components/featured-project-panel.tsx`) | `text-fluid-featured` (28-44) | `leading-[1.05]` | `-mb-2 md:mb-0`, se anula desde `md` |
+
+El crop es un valor LOCAL escrito a mano en cada componente: no es token, no
+es utilidad. No existen `crop-bottom`, `text-box-trim` ni `leading-trim` en
+Tailwind 4.2.0 (la version fijada aqui), asi que cualquier nombre de
+utilidad en este canon estaria inventado. Si se recalibra un titular hay que
+recalibrar el otro: los dos miden el mismo defecto.
+
+Los DOS titulares comparten hoy el mismo crop declarado (`-mb-2 md:mb-0`) y
+el mismo `leading-[1.05]`. La divergencia que existio (detalle sin `md:mb-0`)
+quedo CERRADA: el criterio es el font-size de la escala display, no si el
+titular es de seccion o de card - los dos son hijos de una columna que
+entrega el ritmo con UN solo `gap-*` y sin margenes en los hijos. Lo que queda
+abierto ya no es la divergencia entre ambos, sino la matriz de calibrado
+(ver 9.3).
 
 ## 5. Jerarquia global (quien usa que)
 
@@ -109,8 +135,8 @@ Notas del sistema:
 |---|---|---|---|---|
 | L0 | h1 hero | `text-fluid-display` | serif black uppercase tracking-tighter | con palabra final acento |
 | L1 | h2 seccion | `text-fluid-section` | serif black uppercase tracking-tighter | `leading-[0.9]`, palabra acento brightness |
-| L1b | h1 detalle | `text-fluid-detail` | serif black uppercase tracking-tighter | con header meta mono |
-| L2 | titulo panel featured | `text-fluid-featured` | serif black uppercase tracking-tighter | cap de altura en featured |
+| L1b | h1 detalle | `text-fluid-detail` | serif black uppercase tracking-tighter | `leading-[1.05]` + crop `-mb-2 md:mb-0`, con header meta mono |
+| L2 | titulo panel destacado (h3) | `text-fluid-featured` | serif black uppercase tracking-tighter | `leading-[1.05]` + crop `-mb-2 md:mb-0`, cap de altura en featured |
 | L2b | subtitulos | `text-fluid-subheading` | serif black | pocas instancias |
 | L3 | titulo card | `text-fluid-card-title` / `text-fluid-card` | sans semibold | grid cappado vs card libre |
 | L3b | precio | `text-fluid-price` | sans font-black | dominante sobre label |
@@ -169,6 +195,19 @@ El contraste de lectura:
 > El footer dejo de ser un navegador (sin nav, sin reloj en vivo) y se
 > volvio una firma: marca + bio + redes + copyright.
 
+> [!NOTE] 2026-10-06 - Compensacion de recorte en la escala display
+> Los titulares de la escala display compensan el aire invisible de su
+> line-box con un margen inferior negativo (`-mb-2 md:mb-0`), porque ese aire
+> crece con el font-size. El detalle normalizo su `leading-[1.02]` a
+> `leading-[1.05]` y adopto el mismo breakpoint de anulacion que featured
+> (`md`): ambos titulares declaran hoy EXACTAMENTE el mismo leading y el
+> mismo crop, asi que la divergencia previa quedo cerrada. En paralelo, la
+> columna de texto paso a entregar TODO el ritmo con un unico `gap-*` (los
+> hijos no declaran margen vertical). El `-mb-2 md:mb-0` sigue siendo un
+> literal por componente, no un token: la deuda que queda es la matriz de
+> calibrado por breakpoint (ver 9.3), no la divergencia entre los dos
+> titulares.
+
 ## 8. Gotchas
 
 - Turbopack NO recarga en caliente los cambios de tokens fluidos: reiniciar
@@ -189,3 +228,19 @@ El contraste de lectura:
 - 9.2 El par `card` vs `card-title` convive con roles superpuestos:
   `card` (18-24, libre) solo se usa fuera del grid cappado. Si queda un solo
   uso, unificar en `card-title` en una futura limpieza de codigo.
+- 9.3 La compensacion de recorte esta UNIFICADA en forma pero NO calibrada:
+  h1 detalle y h3 destacado declaran ambos `-mb-2 md:mb-0` y `leading-[1.05]`
+  (la divergencia previa -detalle sin `md:mb-0`- quedo cerrada al adoptar el
+  mismo breakpoint). Lo que sigue sin resolverse es si UN `-mb-2` fijo es la
+  magnitud correcta en todo el rango: el aire crece con el font-size, asi que
+  un literal de 8px reparte la compensacion por igual entre un titular de
+  28px y uno de 54px. El caso mas filoso es el cap
+  `lg:[@media(max-height:800px)]:text-4xl` del destacado (44px -> 36px en
+  pantallas bajas), donde el mismo `-mb-2` sobrecorrepara. Medir a
+  390 / 768 / 1280 / 1920, incluida landscape. Si algun breakpoint queda corto
+  de aire, el arreglo correcto es un token unico por escala (idealmente en
+  `em`, que sigue al `clamp()`), NO mas literales por componente. Y cuando
+  exista CSS nativo (`text-box: trim-b` con `text-box-edge`), el margen
+  negativo entero desaparece y el problema deja de ser local; hasta ese dia
+  solo existe como CSS crudo bajo `@supports`, porque Tailwind 4.2.0 no trae
+  ninguna utilidad `text-box-trim` / `text-box-edge`.

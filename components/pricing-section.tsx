@@ -311,7 +311,7 @@ export function PricingSection() {
         </div>
 
         {/* Footer note */}
-      <p className="mt-10 text-center text-fluid-body max-w-lg mx-auto lg:max-w-none text-content">
+      <p className="mt-6 lg:mt-10 text-center text-fluid-body max-w-lg mx-auto lg:max-w-none text-content">
         {t("section.pricing.footer")} {t("common.responseTime24h")}
       </p>
     </Section>

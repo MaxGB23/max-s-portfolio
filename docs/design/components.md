@@ -255,10 +255,20 @@ en otro archivo.
   justo en el breakpoint donde las columnas son mas estrechas (464px a 1024).
   Medido: sin el, el `max-w-[50ch]` de la descripcion NO ata por debajo de
   ~1280 y el texto llegaba al borde de la imagen. El titulo nunca lleva `max-w`.
-- Columna de texto `flex flex-col gap-6`: los hijos (indice+categoria, h3,
-  descripcion, metrica, tags) se separan con el gap del contenedor, no con
-  margenes inferiores por hijo. La metrica y la fila de tags anaden `xl:mb-2`
-  para que en escritorio los iconos no queden pegados al texto.
+- Columna de texto `flex flex-col gap-6`: la columna entrega TODO el ritmo con
+  UN solo `gap-*`; los hijos (indice+categoria, h3, descripcion, metrica,
+  tags, CTA) no se separan con margenes inferiores, sino con el gap del
+  contenedor. Dos margenes sobreviven a esa regla y conviene no confundirlos:
+(1) el crop del h3 (`-mb-2 md:mb-0`), que cancela su propio aire de line-box
+   y NO separa bloques — el h1 del detalle declara el mismo valor (ver
+   `typography-families.md` secciones 4 y 9.3);
+   (2) `xl:mb-2` en la metrica y en la fila de tags, preexistente y solo desde
+   `xl`, para que en escritorio los iconos no queden pegados al texto. El
+   detalle adopto el mismo patron de aflojo en `xl` (headline y header de
+   metrics), asi que `xl:mb-2` ya es una convencion del sitio y no un caso
+   aislado del panel.
+- Fila indice+categoria `gap-2 md:gap-3` (era `gap-4` plano): el `01` y la
+  etiqueta se leen como un par, no como dos zonas separadas.
 - Descripcion `max-w-[50ch] md:max-w-[60ch] lg:max-w-[53ch]`: 50ch en mobile,
   60ch en md (donde la columna es de una sola medida) y 53ch en lg (donde la
   columna se estrecha al 50% del grid y hay que recortar para no rebasar el
@@ -270,6 +280,7 @@ en otro archivo.
   `text-purple-accent + brightness-125` (patron E9). Es `h3` — hijo logico del
   `h2` de la seccion `#proyectos` (cambio de `h2` a `h3` en `3f8191b`); el
   estilo viene de clases explicitas, no del selector de etiqueta.
+  `leading-[1.05]` + crop `-mb-2 md:mb-0` (ver la columna de texto).
 - Stacking por pin GSAP con `matchMedia(FEATURED_STACK_GATE)`; comentario en
   el codigo advierte: NO agregar `overflow-y-auto` al panel (rompe el pin y
   crea scrollbars fantasma).
@@ -354,13 +365,21 @@ en otro archivo.
 - Volver: `fixed` arriba-izquierda, pill primary md con `className="back-btn
   pointer-events-auto hover:bg-foreground/80 transition-colors"` (excepcion:
   hover de fondo, NUNCA transition-opacity - GSAP lo controla).
-- Hero detalle: `px-6 md:px-12 lg:px-20 pt-20 md:pt-24 pb-12 md:pb-16 max-w-5xl`;
-  h1 `text-fluid-detail` serif black, con `mb-4 md:mb-5`; headline
-  `max-w-2xl` SIN margen propio (lo aporta el h1: una sola margen declarada en
-  vez de dos hermanos que colapsan); meta header: circulo con numero
-  (`text-foreground/70`, etiqueta degradada) + eyebrow mono. El bottom del hero
-  es la excepcion a la regla de mas abajo: AFLOJA en desktop (48 -> 64px)
-  mientras todo lo demas aprieta mobile.
+- Hero detalle: `px-6 md:px-12 lg:px-20 pt-20 md:pt-24 pb-12 md:pb-16 max-w-5xl`.
+  La columna interna es `flex flex-col gap-6` y entrega TODO el ritmo del hero
+  con ese UNICO `gap-*`: el wrapper del badge perdio `mb-6` y el wrapper de
+  `StackChips` perdio `mt-8`, asi que los hermanos del bloque NO declaran
+margen vertical. h1 `text-fluid-detail` serif black `leading-[1.05]`, con
+   crop `-mb-2 md:mb-0` — el MISMO declarado que el h3 del panel destacado
+   (ver `typography-families.md` secciones 4 y 9.3); headline `max-w-2xl` con
+   `xl:mb-2`, que AFLOJA en escritorio siguiendo el mismo patron que la metrica
+   y los tags del panel featured (no es crop: no cancela aire de line-box,
+   separa bloques); meta header: circulo con numero (`text-foreground/70`,
+   etiqueta degradada) + eyebrow mono. El header de metrics lleva
+   `gap-4 mb-6 xl:mb-8`: aprieta en mobile y recupera el margen original en
+   `xl`, un tercer patron (aflojo en ancho) que no debe confundirse con el
+   crop. El bottom del hero es la excepcion a la regla de mas abajo: AFLOJA en
+   desktop (48 -> 64px) mientras todo lo demas aprieta mobile.
 - Categorias: chips con badges `bg-purple-accent text-white` (regla de blanco
   sobre acento).
 - Metrica: `text-fluid-metric` con cifra en acento (section token dedicado,
@@ -384,6 +403,11 @@ en otro archivo.
   `mb-5` plano). Los `.detail-section` dejaron de llevar `mb-16` plano al
   adoptarla — la regla ya existia para metrics y links, el codigo de lectura
   era el que se habia quedado atras.
+- Fila de cabecera de metrics: `flex flex-col md:flex-row md:items-end
+  justify-between gap-4 mb-6` (era `gap-6 mb-8`). El `mb-6` sigue PLANO, sin
+  par mobile/desktop: la escalera de la regla de arriba aplica a los bloques
+  `.detail-section`, no a las filas dentro de una cabecera. Aprieta en la misma
+  linea que el hero.
 - Estos valores son LOCALES a `project-detail.tsx`, NO salen de `lib/rhythm.ts`:
   el contrato de ritmo se scopea al espaciado entre secciones de primer nivel y
   excluye explicito los gaps intra-componente (mismo caso que `gap-6 md:gap-12`

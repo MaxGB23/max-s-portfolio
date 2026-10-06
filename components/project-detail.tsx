@@ -582,23 +582,21 @@ export function ProjectDetail({ project }: { project: Project }) {
 
       {/* Hero - typographic, image-led proof lives lower in the primary visual. */}
       <section className="debug-l1 detail-hero px-6 md:px-12 lg:px-20 pt-20 md:pt-24 pb-12 md:pb-16">
-        <div className="debug-l2 max-w-5xl mx-auto">
-          <div className="mb-6">
+        <div className="debug-l2 max-w-5xl mx-auto flex flex-col gap-6">
+          <div>
             <span className="px-3.5 py-1.5 rounded-full text-xs 2xl:text-sm font-semibold tracking-wide bg-purple-accent text-white">
               {project.category}
             </span>
           </div>
-          <h1 className="mb-4 md:mb-5 font-serif font-black text-fluid-detail text-foreground leading-[1.02] tracking-tight text-balance">
+          <h1 className="-mb-2 md:mb-0 font-serif font-black text-fluid-detail text-foreground leading-[1.05] tracking-tight text-balance">
             {mainTitle && <span>{mainTitle} </span>}
             <span className="text-purple-accent brightness-110">{lastWord}</span>
           </h1>
-          <p className="text-fluid-body text-content max-w-2xl leading-relaxed">
+          <p className="text-fluid-body text-content xl:mb-2 max-w-2xl leading-relaxed">
             {detail.headline}
           </p>
           {tags.length > 0 && (
-            <div className="mt-8">
-              <StackChips tags={tags} />
-            </div>
+            <StackChips tags={tags} />
           )}
         </div>
       </section>
@@ -610,7 +608,7 @@ export function ProjectDetail({ project }: { project: Project }) {
           {detail.metrics.length > 0 && (
             <section className="debug-l3 detail-section mb-12 md:mb-16" aria-label={t("section.projects.metricsSectionAria")}>
               {/* Header con Tag, Titular, Subtítulo y Switch de Vistas */}
-              <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+              <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6 xl:mb-8">
                 <div>
 
                   <h2 className="font-serif font-bold text-fluid-subheading text-foreground">

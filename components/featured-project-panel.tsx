@@ -60,7 +60,7 @@ export function FeaturedProjectPanel({ project, children, isLast = false }: Feat
             {/* Left - Text */}
             <div className="debug-l4 flex flex-col gap-6 order-2 lg:order-1">
               {/* Index + Category */}
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2 md:gap-3">
                 <span className="text-sm 2xl:text-lg font-mono text-muted-foreground tabular-nums font-bold">
                   {String(project.index).padStart(2, "0")}
                 </span>
@@ -78,7 +78,7 @@ export function FeaturedProjectPanel({ project, children, isLast = false }: Feat
                   de la etiqueta, así que el render no cambia. */}
               <h3
                 id={`featured-title-${project.id}`}
-                className="font-serif font-black text-fluid-featured text-foreground leading-[1.05] tracking-tight text-balance lg:[@media(max-height:800px)]:text-4xl"
+                className="-mb-2 md:mb-0 font-serif font-black text-fluid-featured text-foreground leading-[1.05] tracking-tight text-balance lg:[@media(max-height:800px)]:text-4xl"
               >
                 {mainTitle && <span>{mainTitle} </span>}
                 <span className="text-purple-accent brightness-125">{lastWord}</span>

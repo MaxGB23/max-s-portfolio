@@ -27,6 +27,16 @@
  * that grid, which is a local value in the panel (`gap-6 md:gap-12`, with the
  * metric and tag rows adding `xl:mb-2`), not part of this contract.
  *
+ * The display-heading line-box CROP is local too: a negative bottom margin
+ * (`-mb-2 md:mb-0`, hand-written per component, NOT a token or a shared
+ * utility) that cancels the invisible padding a heading's line box adds as
+ * its font-size grows. Both display headings (detail `h1`, featured `h3`)
+ * declare the same value and the same `leading-[1.05]`. It belongs to the
+ * component's own vertical rhythm and is explicitly outside this contract:
+ * do not lift it into `lib/rhythm.ts` and do not assert it in
+ * `scripts/rhythm-contract.mjs`. Rule and remaining calibration debt:
+ * `docs/design/typography-families.md` section 4 and section 9.3.
+ *
  * PAGE_SPACER_CLASSES — wrapper class per inter-section pair (6 pairs),
  * resolved by orientation regime (single source of the orientation contract).
  * Consumed by `components/page-spacing.tsx`; QA mirror in
