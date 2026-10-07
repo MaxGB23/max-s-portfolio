@@ -47,7 +47,11 @@ se anima como un solo bloque con `y: 24, 0.55s, power2.out`.
 Featured usa `FadeIn delayEnter` (Framer Motion) para el heading y CSS
 `transition-all` para los panels. Es intencional: la seccion tiene un
 one-slide rule documentado en `featured-projects.tsx` que requiere control
-finamente granular de la visibilidad de cada panel.
+finamente granular de la visibilidad de cada panel. En viewports muy altos
+(iPad portrait, zoom-out) el avance exige ademas que el titulo haya empezado
+a pasar el tope (hook `.featured-heading`) y los paneles 1..n solo enganchan
+tras la salida de la entrada: sin saltos ni dobles al entrar por ancla, sin
+cambios en viewports normales.
 
 ### AllProjects: Framer Motion
 

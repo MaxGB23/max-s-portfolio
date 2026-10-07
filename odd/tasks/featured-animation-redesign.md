@@ -122,6 +122,12 @@ Reported by owner after testing on `:3001`:
 - [x] `pnpm exec tsc --noEmit` OK, `pnpm build` OK
 - [ ] Owner QA: title+card0 scroll off toward About (no mid-screen fade), exit exactly on the advance to card 2, entry animation intact, RM ON still animates everything, rhythm audit `RHYTHM OK`, ES/EN
 
+### Task 8i: Title-gated advance for tall viewports (owner decision)
+- [x] Anchor entry (`navbar -> Proyectos`) on very tall viewports (iPad Pro 13 portrait 1032x1376, 80% zoom on 1440p) landed with panel 1 already past the 60% line -> entry slide skipped or doubled; normal scroll was fine (the rule was right, the landing geometry was not)
+- [x] `advanced` now also requires the title started past the viewport top (`headingTop <= 0` via the new `.featured-heading` hook; `!heading` falls back to previous behavior); panels 1..n engage only after the entry exited (`if (!advanced) return false`) — while the title owns the viewport there is never a double
+- [x] Provably no-op on normal viewports: the entry block is taller than the 60% line there, so both conditions already hold at the crossing; behavior changes only in the previously broken regime; +1 `getBoundingClientRect` per frame shares the same layout flush (no extra reflow, no extra renders — structural bail-out intact)
+- [x] `pnpm exec tsc --noEmit` OK; owner QA on device (iPad) + 80% zoom + desktop/mobile regression
+
 ### Task 9: Verify rhythm compliance (PENDING - manual QA)
 - [ ] Visual diff: no overlap About↔title on desktop; section gaps match `lib/rhythm.ts` tokens at 320px, 768px, 1024px, 1440px, 1920px
 - [ ] Rhythm audit: dev server on `:3001` → `node scripts/section-spacing.mjs` → **RHYTHM OK**
