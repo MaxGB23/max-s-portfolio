@@ -55,8 +55,8 @@ function SectionHeading() {
 //
 // PANEL 0 + HEADING = the section's entry slide (owner decision):
 // - Panel 0 becomes visible once it has crossed the line (sticky) and only
-//   disappears when panel 1 advances past the line — never by its own top
-//   crossing. Scrolling up toward About therefore scrolls title + card 0 off
+//   disappears when panel 1 advances past the line once the title started
+//   past the viewport top — never by its own top crossing. Scrolling up toward About therefore scrolls title + card 0 off
 //   naturally, like any other section, instead of fading them mid-screen (the
 //   tall-viewport artifact: the 60% line scales with vh, title height does not).
 // - The heading enters early (FadeIn delayEnter, coherent with every other
@@ -84,18 +84,32 @@ export function FeaturedProjects() {
       document.querySelectorAll<HTMLElement>("#proyectos .featured-panel"),
     );
     if (panels.length === 0) return;
+    const heading = document.querySelector<HTMLElement>(
+      "#proyectos .featured-heading",
+    );
 
     let raf = 0;
     const evaluate = () => {
       raf = 0;
       const line = window.innerHeight * 0.6; // reveal line: top crossing 60%
       const tops = panels.map((panel) => panel.getBoundingClientRect().top);
+      // The entry slide (and every panel) waits for the title: its top
+      // starts past the viewport top before panel 0's does.
+      const headingGone =
+        !heading || heading.getBoundingClientRect().top <= 0;
       setSlide((prev) => {
-        // Advance signal: panel 1 crossed the line → the entry slide exits.
-        const advanced = tops.length > 1 && tops[1] <= line;
+        // Advance signal: panel 1 crossed the line AND the title started
+        // past the viewport top → the entry slide exits.
+        // On normal viewports the title is long past at the crossing and
+        // nothing changes; on very tall viewports this retains slide 1 while
+        // the title is still visible.
+        const advanced = tops.length > 1 && tops[1] <= line && headingGone;
         const entered0 = prev.entered0 || tops[0] <= line;
         const visible = tops.map((top, i) => {
           if (i === 0) return entered0 && !advanced;
+          // Panels engage only after the entry slide exited: while the title
+          // owns the viewport there is never a double.
+          if (!advanced) return false;
           const nextTop = i + 1 < tops.length ? tops[i + 1] : null;
           return top <= line && (nextTop === null || nextTop > line);
         });
@@ -137,7 +151,7 @@ export function FeaturedProjects() {
         innerClassName="flex flex-col items-center text-center"
       >
         <div
-          className={`transition-opacity duration-500 ease-out ${
+          className={`featured-heading transition-opacity duration-500 ease-out ${
             slide.headingHidden ? "opacity-0" : ""
           }`}
         >
