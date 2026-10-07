@@ -267,8 +267,18 @@ en otro archivo.
    detalle adopto el mismo patron de aflojo en `xl` (headline y header de
    metrics), asi que `xl:mb-2` ya es una convencion del sitio y no un caso
    aislado del panel.
+- **REGLA DEL BADGE**: el badge se dimensiona para que su ALTO mas su crop
+  iguale el `gap` de la columna (24px), nunca para igualar a otro badge. Dos
+  caminos: (a) cabe exacto y NO lleva crop, o (b) excede y lo compensa con un
+  negativo proporcional al exceso. El panel aplica (b): `text-xs` + `py-1.5` =
+  28px, excede en 4px, de ahi el `-mb-1` de la fila indice+categoria (se anula
+  desde `md`). El hero detalle aplica (a), ver 4.10. Si cambia un `py-*` o un
+  `text-*` del badge, recalcular su alto contra el gap de la columna: los dos
+  badges miden distinto a proposito (escala por rol), lo que no puede variar
+  es su separacion visual.
 - Fila indice+categoria `gap-2 md:gap-3` (era `gap-4` plano): el `01` y la
-  etiqueta se leen como un par, no como dos zonas separadas.
+  etiqueta se leen como un par, no como dos zonas separadas. Su `-mb-1` es
+  crop de badge por la regla anterior, no un margen de ritmo.
 - Descripcion `max-w-[50ch] md:max-w-[60ch] lg:max-w-[53ch]`: 50ch en mobile,
   60ch en md (donde la columna es de una sola medida) y 53ch en lg (donde la
   columna se estrecha al 50% del grid y hay que recortar para no rebasar el
@@ -369,17 +379,23 @@ en otro archivo.
   La columna interna es `flex flex-col gap-6` y entrega TODO el ritmo del hero
   con ese UNICO `gap-*`: el wrapper del badge perdio `mb-6` y el wrapper de
   `StackChips` perdio `mt-8`, asi que los hermanos del bloque NO declaran
-margen vertical. h1 `text-fluid-detail` serif black `leading-[1.05]`, con
-   crop `-mb-2 md:mb-0` — el MISMO declarado que el h3 del panel destacado
-   (ver `typography-families.md` secciones 4 y 9.3); headline `max-w-2xl` con
-   `xl:mb-2`, que AFLOJA en escritorio siguiendo el mismo patron que la metrica
-   y los tags del panel featured (no es crop: no cancela aire de line-box,
-   separa bloques); meta header: circulo con numero (`text-foreground/70`,
-   etiqueta degradada) + eyebrow mono. El header de metrics lleva
-   `gap-4 mb-6 xl:mb-8`: aprieta en mobile y recupera el margen original en
-   `xl`, un tercer patron (aflojo en ancho) que no debe confundirse con el
-   crop. El bottom del hero es la excepcion a la regla de mas abajo: AFLOJA en
-   desktop (48 -> 64px) mientras todo lo demas aprieta mobile.
+margen vertical. Badge `px-3.5 py-1 text-xs 2xl:text-sm`: el `py-1` es
+  deliberado y hace que mida EXACTAMENTE el `gap-6` (12px + 8px = 24px), por
+  lo que NO lleva crop - camino (a) de la REGLA DEL BADGE en 4.4. OJO: es un
+  `<span>` inline y los margenes verticales NO aplican a inline, asi que un
+  `-mb-*` ahi seria codigo muerto. Su tamano (un escalon bajo el del panel) es
+  jerarquico: metadata de una linea sobre un h1 de 54px. En `2xl` crece a
+  `text-sm` (26px), +2px sin compensar, asumido.
+  h1 `text-fluid-detail` serif black `leading-[1.05]`, con crop `-mb-2 md:mb-0`
+  - el MISMO declarado que el h3 del panel destacado (ver
+  `typography-families.md` secciones 4 y 9.3); headline `max-w-2xl` con
+  `xl:mb-2`, que AFLOJA en escritorio como la metrica y los tags del panel (no
+  es crop: no cancela aire de line-box, separa bloques); meta header: circulo con
+  numero (`text-foreground/70`, etiqueta degradada) + eyebrow mono. El header de
+  metrics lleva `gap-4 mb-6 xl:mb-8`: aprieta en mobile y recupera el margen
+  original en `xl`, un tercer patron (aflojo en ancho) que no debe confundirse
+  con el crop. El bottom del hero es la excepcion a la regla de mas abajo:
+  AFLOJA en desktop (48 -> 64px) mientras todo lo demas aprieta mobile.
 - Categorias: chips con badges `bg-purple-accent text-white` (regla de blanco
   sobre acento).
 - Metrica: `text-fluid-metric` con cifra en acento (section token dedicado,

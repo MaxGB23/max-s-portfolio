@@ -584,7 +584,7 @@ export function ProjectDetail({ project }: { project: Project }) {
       <section className="debug-l1 detail-hero px-6 md:px-12 lg:px-20 pt-20 md:pt-24 pb-12 md:pb-16">
         <div className="debug-l2 max-w-5xl mx-auto flex flex-col gap-6">
           <div>
-            <span className="px-3.5 py-1.5 rounded-full text-xs 2xl:text-sm font-semibold tracking-wide bg-purple-accent text-white">
+            <span className="px-3.5 py-1 rounded-full text-xs 2xl:text-sm font-semibold tracking-wide bg-purple-accent text-white">
               {project.category}
             </span>
           </div>

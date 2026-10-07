@@ -60,7 +60,7 @@ export function FeaturedProjectPanel({ project, children, isLast = false }: Feat
             {/* Left - Text */}
             <div className="debug-l4 flex flex-col gap-6 order-2 lg:order-1">
               {/* Index + Category */}
-              <div className="flex items-center gap-2 md:gap-3">
+              <div className="flex items-center gap-2 -mb-1 md:mb-0 md:gap-3">
                 <span className="text-sm 2xl:text-lg font-mono text-muted-foreground tabular-nums font-bold">
                   {String(project.index).padStart(2, "0")}
                 </span>
