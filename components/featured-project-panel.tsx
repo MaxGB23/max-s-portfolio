@@ -138,7 +138,7 @@ export function FeaturedProjectPanel({ project, children, isLast = false }: Feat
                     fill
                     className="object-cover"
                     sizes="(max-width: 1024px) 100vw, 50vw"
-                    priority={project.index === 1}
+                    priority
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-purple-accent/10 to-transparent">
