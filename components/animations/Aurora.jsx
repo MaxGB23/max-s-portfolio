@@ -177,8 +177,14 @@ export default function Aurora(props) {
     ctn.appendChild(gl.canvas);
 
     let animateId = 0;
+    let paused = false;
     const update = t => {
-      animateId = requestAnimationFrame(update);
+      // EXPERIMENT: fully stop the loop offscreen (zero GPU cost, but uTime
+      // is wall-clock based so it jumps by the absence on return — that snap
+      // is what this experiment measures).
+      if (paused) { animateId = 0; return; }
+      // Frozen: paint a single frame, never reschedule.
+      if (!propsRef.current.frozen) animateId = requestAnimationFrame(update);
       const { time = t * 0.01, speed = 1.0 } = propsRef.current;
       program.uniforms.uTime.value = time * speed * 0.1;
       program.uniforms.uAmplitude.value = propsRef.current.amplitude ?? 1.0;
@@ -190,12 +196,31 @@ export default function Aurora(props) {
       });
       renderer.render({ scene: mesh });
     };
+    resize();
+
+    // Frozen renders on the next frame so layout is settled; update() will
+    // not reschedule when frozen.
     animateId = requestAnimationFrame(update);
 
-    resize();
+    // EXPERIMENT: pause while the hero is offscreen, resume on re-entry.
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        paused = !entry.isIntersecting;
+        if (
+          entry.isIntersecting &&
+          animateId === 0 &&
+          !propsRef.current.frozen
+        ) {
+          animateId = requestAnimationFrame(update);
+        }
+      },
+      { threshold: 0 },
+    );
+    io.observe(ctn);
 
     return () => {
       cancelAnimationFrame(animateId);
+      io.disconnect();
       window.removeEventListener('resize', resize);
       resizeObserver.disconnect();
       if (ctn && gl.canvas.parentNode === ctn) {
