@@ -81,7 +81,7 @@ export const projects: Project[] = [
     title: "Sistema de Gestión Clínica",
     category: "Full Stack / SaaS",
     hook: "Plataforma web full-stack en producción para la gestión integral de citas, pacientes y control de pagos en centros de salud.",
-    metric: "+8 meses en producción sin caídas",
+    metric: "+10 meses en producción sin caídas",
     tags: [
       "Next.js",
       "React",
@@ -122,25 +122,21 @@ export const projects: Project[] = [
     detail: {
       headline: "Gestión Clínica Inteligente y Escalable",
       summary:
-        "Plataforma web full-stack construida desde cero que reemplaza el uso de Excel y agendas manuales en un centro real de fisioterapia y rehabilitación. En uso diario por el staff médico con más de **8 meses en producción sin una sola caída**, incluso durante major releases con cambios críticos en la base de datos.",
+        "Plataforma web full-stack construida desde cero que reemplaza el uso de Excel y agendas manuales en un centro real de fisioterapia y rehabilitación. En uso diario por el staff médico con más de **10 meses en producción sin una sola caída**, incluso durante major releases con cambios críticos en la base de datos.",
       metrics: [
         {
-          value: "+8 meses",
+          value: "+10 meses",
           label: "en producción sin caídas, incluyendo major releases",
         },
-        { value: "100%", label: "uptime (Vercel + NeonDB)" },
+        { value: "100%", label: "uptime: el cliente nunca ha reportado una caída" },
         {
           value: "-40%",
           label:
-            "latencia de recuperación de registros de pacientes (índices + caching server-side)",
+            "latencia de recuperación de registros de pacientes (estimada sobre el salto a índice + cache())",
         },
         {
-          value: "0",
-          label: "incidentes en migraciones con breaking changes de BD",
-        },
-        {
-          value: "Diario",
-          label: "uso del staff médico (administrativo y fisioterapeutas)",
+          value: "En uso diario",
+          label: "por staff real en clínica en producción (admin + fisios)",
         },
       ],
       problem:
@@ -148,15 +144,17 @@ export const projects: Project[] = [
       role: [
         "Diseñé un sistema modular por features usando Next.js, TypeScript y Prisma para mejorar mantenibilidad y acelerar la entrega de funcionalidades.",
         "Implementé control de acceso por roles (RBAC) para flujos multi-usuario entre personal administrativo y fisioterapeutas.",
-        "Reduje un 40% la latencia de recuperación de registros introduciendo índices en PostgreSQL y estrategias de caching server-side.",
-        "Desplegué y mantuve la plataforma en Vercel con NeonDB (PostgreSQL), logrando 100% de uptime en producción, incluyendo major releases con migraciones críticas de base de datos sin incidentes.",
+        "Reduje un 40% la latencia de recuperación de registros con un índice en `sessionDate` y caching server-side con `cache()` de React. La cifra es una estimación conservadora del salto de seq scan a index scan, no una medición en producción.",
+        "Migré los nombres y precios que vivían hardcodeados en un combobox a una UI de paquetes CRUD que los actualiza, con migraciones de Prisma sobre datos existentes. El cliente necesitaba subir precios por la inflación del país y los valores hardcodeados lo impedían. Las migraciones se aplicaron en producción sin un solo incidente de datos: ningún paquete legacy se rompió.",
+        "En paralelo descarté una branch completa que no cumplía los estándares del proyecto, antes de que llegara a producción.",
+        "Desplegué y mantengo la plataforma en Vercel con NeonDB (PostgreSQL) hace más de 10 meses, sin que el cliente haya reportado una sola caída.",
         "Desarrollé la landing page pública integrada con el sistema interno; estable en uptime y generando contactos de nuevos pacientes.",
       ],
       solution: [
         "**Agenda inteligente:** calendario interactivo con prevención automática de conflictos y control de sesiones (pendiente, asistida, cancelada).",
         "**Expediente electrónico:** alta y búsqueda rápida de pacientes, historial de sesiones y pagos, seguimiento individual.",
-        "**Módulo financiero:** venta de paquetes de sesiones, balance por paciente y registro de ingresos.",
-        "**Panel de control (dashboard):** analíticas de ingresos mensuales, pacientes activos, ganancias y métricas operativas, con filtros por periodo (30 días, 3 meses, 1 año) y tarjetas + gráficos.",
+        "**Módulo financiero:** venta de paquetes de sesiones, balance por paciente y registro de ingresos. Los paquetes se administran desde una UI CRUD en lugar de valores hardcodeados, lo que permite actualizar precios sin desplegar — necesario para responder a la inflación del mercado.",
+        "**Panel de control (dashboard):** analíticas de ingresos mensuales, pacientes activos, ganancias y métricas operativas, con filtros por periodo (30 días, 3 meses, 1 año e histórico), cache con refresh manual y tarjetas + gráficos. El histórico usa cache extendido por costo.",
         "**Landing page pública:** optimizada para SEO, enfocada a captación de nuevos pacientes e integrada con el sistema interno.",
         "**Seguridad y roles:** accesos por tipo de usuario y manejo seguro de sesiones.",
         "**Cuenta de usuario autocontrolada (perfil):** edición de nombre y contraseña desde el propio perfil, con vista de tipo red social (foto de perfil y portada). El correo queda bloqueado para el usuario (input deshabilitado) y su cambio se solicita a un administrador, preservando la trazabilidad de la cuenta.",
