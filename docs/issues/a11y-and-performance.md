@@ -106,17 +106,20 @@ del detail.
 
 | # | Hallazgo | Ubicación | Acción | Riesgo visual |
 |---|---|---|---|---|
-| P1 | `Aurora` corre un bucle WebGL con `requestAnimationFrame` que nunca se pausa: sin `IntersectionObserver`, sin check de `document.hidden` | `Aurora.jsx:179-193` | **No se toca** (decisión del owner) | — |
+| P1 | `Aurora` corría un bucle WebGL con `requestAnimationFrame` que nunca se pausaba | `Aurora.jsx` (pausa offscreen + prop `frozen`) | **Hecho**: se pausa con `IntersectionObserver` (`threshold: 0`) al salir el hero y se reanuda al entrar; reanudar es barato (contexto/shaders siguen montados), el salto de `uTime` es cosmético | — |
 | P5 | `images.unoptimized: true` **desactiva la optimización de imágenes**. El componente sigue dando layout y `priority`, pero se pierde el re-dimensionado, la re-codificación y — lo más importante aquí — **el prop `sizes` deja de hacer nada**, así que una pantalla de 390px descarga la captura de 2560px. El trabajo de `sizes` ya escrito en `hero-section`, `featured-project-panel` y la galería está anulado | `next.config.mjs:6-8` | Quitar el flag | **Este sí.** El contenido es el mismo pero la imagen re-codificada y dimensionada puede diferir sutilmente del original. Exige comparación visual lado a lado |
 | P2 | Cuatro consumidores del scroll: Lenis, navbar, `featured-projects`, `ScrollTrigger` de los botones back | ver los 4 archivos | **No hacer.** Consolidar cambiaría el orden en que los tres reaccionan al mismo scroll, y ese orden es comportamiento visible | Alto |
 | P3 | `featured-projects` lee `getBoundingClientRect()` en todos los paneles por frame | `featured-projects.tsx:89-112` | **No hacer.** Ver la corrección de abajo: el coste real es despreciable | — |
 | P4 | Code-splitting inconsistente: `scroll-progress.tsx:16-17` usa `await import("gsap")`, `project-detail.tsx:14-15` importa GSAP estático | ambos | **No hacer.** La dirección correcta (cargar GSAP con `dynamic`) retrasaría las animaciones de entrada → flash visible. La inconsistencia es inocua | Alto |
 | P6 | Cuatro sistemas de animación conviviendo: Lenis (RAF), GSAP+ScrollTrigger, Framer Motion, y transiciones CSS | global | **No hacer.** No aporta nada perceptible y el riesgo de regresión visual es alto | Alto |
 
-**P1 — hallazgo vigente, decisión de no actuar.** El bucle de Aurora sigue sin
-pausarse: eso es un hecho del código, no una opinión, y la decisión no lo
-borra. Owner: **no se toca**. Por eso sale de "fuera de alcance" y queda acá —
-el hallazgo sigue siendo cierto, pero nadie debería volver a proponerlo.
+**P1 — resuelto (decisión del owner revertida tras QA en gama baja).** El bucle
+ahora se pausa con `IntersectionObserver` (`threshold: 0`) cuando el hero sale
+del viewport y se reanuda al entrar: el contexto y los shaders siguen montados,
+así que reanudar no recompila nada. El `uTime` (reloj de pared) salta por la
+ausencia — cosmético. Prop `frozen` conservada (un solo frame, sin loop) pero
+sin uso. Sin parpadeo observado: el hero mide 85dvh, el estado queda fijo fuera
+de él.
 
 **Corrección de un análisis previo (P3):** lo presenté como una lectura de
 layout forzada por frame. Medido en frío, no lo es: todas las lecturas van
@@ -136,8 +139,9 @@ funcionaba sin sincronizar con Lenis. Es falso: la sincronización existe en
 bucle RAF en 34-39 y `lagSmoothing(0)` en 42. Punto descartado, no actuar.
 
 **Imágenes:** bien. `priority` está donde debe (`hero-section.tsx:163` para el
-LCP, `project-detail.tsx:542` para la portada) y solo el primer panel destacado
-lo usa.
+LCP, `project-detail.tsx:542` para la portada) y los tres paneles de Featured
+usan `priority` (antes solo el primero: fix del tirón card 3→card 2 al volver
+a la sección tras visitar otras).
 
 ---
 
@@ -217,7 +221,7 @@ vuelva a proponer ni se re-audite desde cero.
 | **P5** | Quitar `images.unoptimized` | Se mantiene la optimización apagada a propósito. Costo real: un móvil descarga la captura a resolución completa. Aceptado |
 | **Reduced motion** | — | Decisión ya auditada en `docs/issues/reduced-motion.md`. No es un hallazgo |
 | **SEO** | Metadata + OpenGraph; idioma en URL | Ver "Más adelante" arriba. No urgente: el link se comparte directo, no se busca |
-| **P1** | Pausar el bucle de Aurora | No se toca |
+| **P1** | Pausar el bucle de Aurora | **Hecho** (pausa offscreen con reanudación barata; ver sección 3) |
 | **P2, P3, P4, P6** | Consolidar scroll, IntersectionObserver, code-splitting, unificar motores de animación | Tacan o arriesgan el comportamiento visual aprobado; P2/P3/P4 sin beneficio demostrable. Correcciones registradas en la sección 3 |
 | **Lint** | Instalar ESLint | Fuera del alcance original de esta auditoría (a11y / archivos / rendimiento). Ver nota abajo |
 

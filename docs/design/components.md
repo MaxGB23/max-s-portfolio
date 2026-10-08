@@ -495,6 +495,10 @@ margen vertical. Badge `px-3.5 py-1 text-xs 2xl:text-sm`: el `py-1` es
   sobre la clase del `<html>`): es un canvas de ogl/GLSL que renderiza
   particulas/aurora. No replicarlo fuera del hero (costoso); no portarlo a
   otros componentes.
+- El loop se pausa con `IntersectionObserver` (`threshold: 0`) cuando el hero
+  sale del viewport y se reanuda al entrar (barato: contexto y shaders siguen
+  montados; el `uTime` salta por la ausencia, cosmético). Prop `frozen`
+  opcional: pinta un solo frame sin loop (sin uso actualmente).
 
 ## 7. Tema y dark mode
 

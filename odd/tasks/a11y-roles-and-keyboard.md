@@ -45,7 +45,7 @@ cosas que un usuario de teclado o de lector de pantalla no puede sortear.
 - **S1 + A1** (reestructurar `<main>` + skip-link) — **el único con riesgo visual real**: el navbar hereda `text-foreground` de `<main className="... text-foreground ...">` y perdería el color al salir. Requiere mover las clases al lugar correcto y verificar píxeles.
 - **2.1** dividir `project-detail.tsx` — riesgo de regresión silenciosa: `gsap.context` resuelve `.detail-hero > *`, `.detail-section`, `.back-btn` y `.detail-gallery-item` por jerarquía DOM, no por árbol de React. Si un componente sale del `rootRef`, los selectores dejan de matchear y las animaciones **dejan de reproducirse sin error**. Valor cero para quien ve el sitio.
 - **P5** quitar `images.unoptimized` — re-codifica imágenes; exige comparación visual lado a lado.
-- **P1** Aurora — decisión del owner: no se toca.
+- **P1** Aurora — revertido tras QA en gama baja: pausa offscreen con `IntersectionObserver` + reanudación barata (ver auditoría `a11y-and-performance.md`).
 - **Reduced motion** — decisión auditada en `docs/issues/reduced-motion.md`, con su propio gatillo de reevaluación.
 - **SEO** — ver la sección correspondiente de la auditoría.
 
