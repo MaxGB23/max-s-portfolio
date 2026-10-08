@@ -272,37 +272,42 @@ export const projects: Project[] = [
     detail: {
       headline: "Digitalización, Transparencia y Eficiencia Gubernamental",
       summary:
-        "Plataforma full-stack escalable construida para la Presidencia Municipal de Acámbaro, desarrollada durante una estadía profesional (enero – abril 2025). Lideré su creación para automatizar el ciclo completo de los apoyos sociales: digitalización total de los flujos de aprobación, mejora de los tiempos de respuesta y paneles analíticos en tiempo real para la toma de decisiones institucionales.",
+        "Plataforma full-stack escalable construida para la Presidencia Municipal de Acámbaro, desarrollada durante una estadía profesional (enero – abril 2025). Lideré su creación para automatizar el ciclo completo de los apoyos sociales: digitalización total de los flujos de aprobación y paneles analíticos en tiempo real para la toma de decisiones institucionales.",
       metrics: [
         {
           value: "100%",
           label: "digitalización del flujo de solicitudes de apoyo social",
         },
-        { value: "0", label: "uso de papel en el proceso administrativo" },
         {
-          value: "Tiempo real",
-          label: "paneles estadísticos para la toma de decisiones",
+          value: "4 meses",
+          label: "de cero a producción en gobierno (estadía ene-abr 2025)",
         },
         {
-          value: "PDF + firma",
-          label: "documentos legales generados automáticamente",
+          value: "Trazable",
+          label: "cada solicitud registra quién la modificó",
+        },
+        {
+          value: "PDF legal",
+          label:
+            "auto-generado del expediente y listo para imprimir; sin Word manual, solo faltan las firmas",
         },
       ],
       problem:
         "El gobierno municipal dependía de procesos manuales intensivos en papel para gestionar las solicitudes ciudadanas. Esto ocasionaba tiempos de respuesta lentos, pérdida de trazabilidad administrativa y una carencia total de reportes o métricas para evaluar la asignación de recursos y el rendimiento institucional.",
       role: [
         "Lideré el desarrollo de la plataforma completa: arquitectura, planificación, implementación y despliegue.",
-        "Coordiné la entrega del proyecto y la ejecución del equipo bajo Scrum y Jira.",
+        "Trabajé en un equipo de 2 personas bajo Scrum y Jira, a cargo del desarrollo del software durante la estadía universitaria.",
         "Diseñé y desarrollé la aplicación full-stack con Next.js, TypeScript, PostgreSQL y Prisma.",
         "Implementé autenticación y control de acceso por roles (RBAC) por departamento.",
-        "Construí dashboards interactivos con Recharts y la generación dinámica de PDFs legales con firma electrónica y datos autocompletados.",
+        "Construí dashboards interactivos con Recharts y la generación dinámica de PDFs legales con datos autocompletados y espacios de firma para el ciudadano y la autoridad encargada.",
       ],
       solution: [
         "**Dashboard estadístico:** visualización interactiva con Recharts para monitorear tendencias, volumen de solicitudes y KPIs institucionales.",
-        "**Gestión avanzada de solicitudes:** seguimiento de extremo a extremo con filtros complejos (estado, prioridad, área) y asignación controlada a departamentos.",
-        "**Módulo de documentos legales:** generación automatizada de PDFs con validez legal, firma electrónica y datos dinámicos pre-cargados del expediente del ciudadano.",
-        "**Seguridad y control de acceso (RBAC):** segmentación de opciones y vistas según roles (administradores, coordinadores departamentales).",
-        "**Gestión dinámica institucional:** ajuste flexible de autoridades, logotipos y plantillas sin intervenir el código base, pensado para los cambios de administración.",
+        "**Gestión avanzada de solicitudes:** seguimiento de extremo a extremo con filtros (estado, departamento, categoría del apoyo) y asignación controlada a departamentos. Cada solicitud concentra los datos del ciudadano y la subcategoría del apoyo, y la categoría orienta qué departamento debe gestionarla.",
+        "**Módulo de documentos legales:** generación automatizada de PDFs con validez legal y datos dinámicos pre-cargados del expediente del ciudadano, con espacios de firma para el ciudadano y la autoridad encargada.",
+        "**Seguridad y control de acceso (RBAC):** segmentación de opciones y vistas según roles (administradores, coordinadores departamentales), con validación en frontend, server actions y middleware.",
+        "**Administración de usuarios:** CRUD de usuarios con roles y departamentos, reservado al rol admin.",
+        "**Gestión dinámica institucional:** los datos precargados del PDF (logotipo, presidente municipal y cargos clave) se editan desde un CRUD para futuros documentos, sin intervenir el código base, pensado para los cambios de administración.",
       ],
       stack: [
         "Framework: Next.js, React",
@@ -346,25 +351,25 @@ export const projects: Project[] = [
         {
           name: "Gestión avanzada de solicitudes",
           description:
-            "Seguimiento de extremo a extremo con filtros complejos (estado, prioridad, área) y asignación controlada a departamentos.",
+            "Seguimiento de extremo a extremo con filtros (estado, departamento, categoría del apoyo) y asignación controlada a departamentos.",
           children: [
-            { name: "Filtros por estado, prioridad y departamento" },
+            { name: "Filtros por estado, departamento y categoría del apoyo" },
             { name: "Asignación controlada a departamentos" },
           ],
         },
         {
           name: "Módulo de documentos legales",
           description:
-            "Generación automatizada de PDFs con validez legal, firma electrónica y datos dinámicos pre-cargados del expediente del ciudadano.",
+            "Generación automatizada de PDFs con validez legal y datos dinámicos pre-cargados del expediente del ciudadano, con espacios de firma para el ciudadano y la autoridad encargada.",
           children: [
-            { name: "Firma electrónica" },
+            { name: "Espacios de firma (ciudadano y autoridad encargada)" },
             { name: "Datos autocompletados del expediente" },
           ],
         },
         {
           name: "Seguridad y control de acceso (RBAC)",
           description:
-            "Segmentación de opciones y vistas según roles (administradores, coordinadores departamentales).",
+            "Segmentación de opciones y vistas según roles (administradores, coordinadores departamentales), con validación en frontend, server actions y middleware.",
         },
         {
           name: "Administración de usuarios",
@@ -374,7 +379,7 @@ export const projects: Project[] = [
         {
           name: "Gestión dinámica institucional",
           description:
-            "Ajuste flexible de autoridades, logotipos y plantillas sin intervenir el código base, pensado para los cambios de administración.",
+            "Los datos precargados del PDF (logotipo, presidente municipal y cargos clave) se editan desde un CRUD para futuros documentos, sin intervenir el código base, pensado para los cambios de administración.",
         },
       ],
     },
