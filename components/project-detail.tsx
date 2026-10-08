@@ -189,7 +189,7 @@ const FOCUSABLE_IN_LIGHTBOX =
 export function ProjectDetail({ project }: { project: Project }) {
   const rootRef = useRef<HTMLDivElement>(null);
   const { t } = useLanguage();
-  
+
   const router = useRouter();
 
   useLayoutEffect(() => {
@@ -955,4 +955,3 @@ export function ProjectDetail({ project }: { project: Project }) {
     </div>
   );
 }
-
