@@ -1,7 +1,7 @@
 # funky-theme — Tema semántico original para VS Code (Consolidado)
 
 > Fuente única de contenido para el portfolio. Editar aquí; luego se refleja en `data/projects.ts`.
-> Última actualización: 2026-09-29
+> Última actualización: 2026-10-08
 
 ---
 
@@ -12,10 +12,10 @@
 | `id` | `funky-theme` |
 | `title` | funky-theme |
 | `category` | Dev Tools / VS Code |
-| `hook` | Tema oscuro semántico original para VS Code: 5 variantes derivadas de una paleta jerárquica definida en un único config (SSOT). |
-| `metric` | 5 variantes · 1 paleta SSOT · Verified Open VSX Publisher · 2k desc/semana · 84% funnel VS Code Marketplace · Zed + TUI en desarrollo |
-| `tags` | VS Code · Theme · pnpm · Token Colors |
-| `image` | TBD — ⚠️ captura real del editor con las variantes del tema |
+| `hook` | Tema oscuro semántico original compatible en cualquier VSCode-based editor y Terminales: 5 variantes derivadas de una paleta jerárquica definida en un único config (SSOT). |
+| `metric` | 3.2k descargas Open VSX · funnel 97.45% VS Code · Zed con instalación manual |
+| `tags` | VS Code · Theme · Token Colors |
+| `image` | `/images/projects/funky-theme/perifericos.webp` |
 | `imageAlt` | Editor de VS Code mostrando las variantes de funky-theme |
 | `links` | Repo: [funky-theme](https://github.com/MaxGB23/funky-theme) (público) · Markets: [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=MaxGB23.funky-theme-vscode) · [Open VSX](https://open-vsx.org/extension/MaxGB23/funky-theme-vscode) |
 
@@ -29,23 +29,18 @@
 
 ### Summary
 
-Tema oscuro semántico original para VS Code, publicado bajo MIT. Cinco variantes derivadas de una paleta jerárquica definida en un solo archivo de configuración (SSOT): se toca un valor y todo el tema se mantiene coherente, sin colores duplicados entre cientos de archivos. Lanzado como estable en v3.0.0 (21/09/2026) tras 6 release candidates, publicado en VS Code Marketplace y Open VSX. **Verified Open VSX Publisher (namespace MaxGB23)**. Tracción: **2k descargas/semana en Open VSX**, **128 adquisiciones/30 días en VS Code Marketplace** con **funnel de conversión 84.21%** (page views → installs). Soporte **Zed** en mantenimiento activo. Release blindado tras hotfix real: guardias automáticas (changelog empaquetado + vsix vs allowlist). Expansión en curso: **funky-theme-tui** (mismo SSOT para terminales IA: Claude Code, OpenCode, Pi) en desarrollo.
+Tema oscuro semántico original bajo MIT, operado como producto multi-marketplace: cinco variantes desde una paleta jerárquica en un solo config (SSOT) para editores. Estable v3.0.0 en VS Code Marketplace y Open VSX con tracción real, Zed recién lanzado y expansión a terminales IA en beta. Instalación en un clic desde cada marketplace y variantes a medida para el usuario; SSOT, CI y SemVer estricto para el mantenimiento.
 
 ### Metrics
 
 | Value | Label |
 | --- | --- |
+| 3.2k | descargas acumuladas en Open VSX (medido el 8 oct 2026) |
+| 191/30d | adquisiciones VS Code Marketplace |
+| 97.45% | funnel de conversión (page views → installs) |
 | 5 | variantes del tema |
-| 1 | fuente de verdad: paleta jerárquica en un único config |
-| MIT | tema original, sin créditos a terceros |
-| 2 | marketplaces: VS Code Marketplace + Open VSX |
-| **Verified** | Open VSX Publisher (namespace MaxGB23) |
-| **2k/sem** | descargas Open VSX (ritmo sostenido) |
-| **128/30d** | adquisiciones VS Code Marketplace |
-| **84.21%** | funnel de conversión (page views → installs) |
-| **Zed** | soporte en mantenimiento activo |
-| 2 | guardias automáticas del release: changelog empaquetado + vsix vs allowlist |
-| 1 | repo TUI: funky-theme-tui (terminales IA) en desarrollo |
+| Verified | Open VSX Publisher (namespace MaxGB23) |
+| Beta | integración con 3 agentes IA (Claude Code, OpenCode, Pi) |
 
 ### Problem
 
@@ -54,24 +49,22 @@ La mayoría de los temas de editor duplican valores de color en cientos de archi
 ### Role
 
 - Diseñé un tema original para VS Code publicado bajo licencia MIT.
-- Definí la paleta jerárquica como única fuente de verdad (un solo archivo de configuración).
+- Definí la paleta jerárquica como única fuente de verdad para editores (un solo archivo de configuración).
 - Derivé las 5 variantes del tema desde esa paleta.
-- Gestioné el ciclo completo de release: 6 release candidates (rc.1 → rc.6) hasta el estable v3.0.0, con pipeline propio de build + empaquetado + GitHub Release (SemVer estricto, convención RC → estable).
+- Gestioné el ciclo completo de release: 6 release candidates (rc.1 → rc.6, solo instalación manual desde el repo) hasta el estable v3.0.0, primera publicación en markets, con pipeline propio de build + empaquetado + GitHub Release (SemVer estricto, convención RC → estable).
 - Publiqué y operé la extensión en VS Code Marketplace y Open VSX (empaquetado de vsix, keywords optimizados al límite documentado de 30, changelog append-only).
 - Blindé el pipeline de release tras un hotfix de packaging: guardias automáticas (changelog empaquetado verificado + vsix coincidente con su allowlist) y el error real documentado como regla dura en la skill de release.
 
 ### Solution
 
 - **Paleta semántica SSOT:** colores definidos por rol semántico (UI, sintaxis, estados), no arbitrarios, en un solo config.
-- **Variantes separadas por familias visuales:** el feedback de devs en foros y comunidades (Discord, etc.) guía qué se aplica en cada variante — italics, bold, etc. solo donde es deseado; para quien no los quiere, hay una variante a su medida.
-- **5 variantes coherentes:** todas se mantienen en sincronía porque comparten la misma fuente.
-- **Tema original:** propio, sin copia de otros temas, publicado bajo MIT.
+- **Variantes separadas por familias visuales:** el feedback de devs en foros y comunidades (Discord, etc.) guía qué se aplica en cada variante — italics, bold, etc. solo donde es deseado; para quien no los quiere, hay una variante a su medida. Las 5 se mantienen en sincronía porque comparten la misma fuente.
 - **Publicación en markets:** release estable en VS Code Marketplace y Open VSX, con keywords optimizados al límite documentado (30) para descubribilidad multiplataforma (VS Code, VSCodium, Google Antigravity, Cursor, Windsurf, Theia).
-- **CI / control de calidad:** workflow de build-check con pnpm que valida las 5 variantes (existencia y parseo de los JSON) en cada push y PR; releases SemVer estrictas y trazables.
+- **CI / control de calidad:** workflow de build-check con pnpm que valida las 5 variantes (existencia y parseo de los JSON) en cada push y PR; el mismo CI empaqueta el artefacto de Zed y prepara su PR al marketplace; releases SemVer estrictas y trazables.
 - **Release blindado tras aprendizaje de errores:** el changelog se finaliza antes de empaquetar (el vsix lleva la sección de la versión) y una guardia verifica que el vsix coincida exactamente con su `.vscodeignore` (sin fugas ni assets faltantes) — un hotfix de packaging real dejó el proceso más robusto y documentado en la skill de release.
-- **Tracción validada:** **Verified Open VSX Publisher**; **2k descargas/semana** en Open VSX; **128 adquisiciones/30d** en VS Code Marketplace con **funnel 84.21%** (page views → installs) — posicionamiento SEO orgánico demostrado.
-- **Cross-editor:** soporte **Zed** en mantenimiento activo (misma paleta SSOT).
-- **Expansión terminal:** **funky-theme-tui** — misma filosofía SSOT para agentes de código en terminal (Claude Code, OpenCode, Pi); repo público, pre-estable.
+- **Tracción validada:** **Verified Open VSX Publisher**; **3.2k descargas acumuladas** en Open VSX; **191 adquisiciones/30d** en VS Code Marketplace con **funnel 97.45%** (page views → installs) — posicionamiento SEO orgánico demostrado.
+- **Cross-editor:** soporte **Zed** lanzado hoy con instalación manual mientras se acepta el PR al marketplace (misma paleta de editores).
+- **Expansión terminal:** **funky-theme-tui** — variaciones mínimas para terminales con agentes de código (Claude Code, OpenCode, Pi), en repo aparte y en beta.
 
 ### Stack
 
@@ -85,17 +78,17 @@ Paso de *tooling* en la curva profesional: PHP/Laravel/Vue → tooling VS Code �
 
 ### Gallery
 
-1. Editor mostrando las variantes del tema
-2. Estructura de la paleta SSOT (opcional)
-
-> ⚠️ Capturas reales pendientes.
+1. Editor mostrando las variantes del tema (`IDE-completo.webp`)
+2. Variante Dark en TSX (`funky-dark-tsx.webp`)
+3. Variante Darker en TypeScript (`funky-darker-typescript.webp`)
+4. Tema en terminal OpenCode (`funky-tui-opencode.webp`)
 
 ### Próximos pasos / Seguimiento
 
 - **Métricas de instalaciones:** consolidar evolución de descargas/instalaciones y rating en ambos markets; funnel de conversión como KPI principal.
 - **Reviews:** dar seguimiento a valoraciones y reseñas en VS Code Marketplace y Open VSX.
 - **Issues / PRs:** atender, triage y resolver issues y pull requests de la comunidad.
-- **Zed:** completar soporte al 100% y publicar en Zed extensions.
+- **Zed:** conseguir aceptación del PR en el marketplace (soporte ya lanzado con instalación manual).
 - **funky-theme-tui:** llevar a estable; publicar en repositorios de cada agente (Claude Code, OpenCode, Pi) y documentar la SSOT compartida.
 - **Oportunidades:** con funnel 84% y 2k/sem, escalar descubribilidad (icono/readme, versión web) y evaluar CI como gate de release.
 

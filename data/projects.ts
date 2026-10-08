@@ -1133,7 +1133,7 @@ export const projects: Project[] = [
     title: "Funky Theme",
     category: "Dev Tools / VS Code",
     hook: "Tema oscuro semántico original compatible en cualquier VSCode-based editor y Terminales: 5 variantes derivadas de una paleta jerárquica definida en un único config (SSOT).",
-    metric: "~2,700 descargas en Open VSX",
+    metric: "3.2k descargas en Open VSX",
     tags: ["VS Code", "Verified", "Open VSX", "Zed", "Token Colors", "Terminal UI"],
     image: "/images/projects/funky-theme/funky-theme-demo.webp",
     imageAlt: "Editor de VS Code mostrando funky-theme",
@@ -1168,29 +1168,23 @@ export const projects: Project[] = [
       headline:
         "Un tema original, con la paleta gobernada por una única fuente de verdad",
       summary:
-        "Tema oscuro semántico original para VS Code, publicado bajo MIT. Cinco variantes derivadas de una paleta jerárquica definida en un solo archivo de configuración (SSOT): se toca un valor y todo el tema se mantiene coherente, sin colores duplicados entre cientos de archivos. Lanzado como estable en v3.0.0 (21/09/2026) tras 6 release candidates, publicado en VS Code Marketplace y Open VSX. **Verified Open VSX Publisher (namespace MaxGB23)**. Tracción: **2,686 descargas acumuladas en Open VSX** (medido el 3 oct 2026), de las cuales **2.000+ en la primera semana** de lanzamiento; **128 adquisiciones/30 días en VS Code Marketplace** con **funnel de conversión 84.21%** (page views → installs) y **valoración media 5.0** (3 reseñas). Soporte **Zed** en mantenimiento activo. Release blindado tras hotfix real: guardias automáticas (changelog empaquetado + vsix vs allowlist). Expansión en curso: **funky-theme-tui** (mismo SSOT para terminales IA: Claude Code, OpenCode, Pi) en desarrollo.",
+        "Tema oscuro semántico original bajo MIT, operado como producto multi-marketplace: cinco variantes desde una paleta jerárquica en un solo config (SSOT) para editores. Estable v3.0.0 en VS Code Marketplace y Open VSX con tracción real, Zed recién lanzado y expansión a terminales IA en beta. Instalación en un clic desde cada marketplace y variantes a medida para el usuario; SSOT, CI y SemVer estricto para el mantenimiento.",
       metrics: [
         {
-          value: "2,686",
-          label: "descargas acumuladas en Open VSX desde el estable v3.0.0 (medido el 3 oct 2026)",
+          value: "3.2k",
+          label: "descargas acumuladas en Open VSX (medido el 8 oct 2026)",
         },
-        {
-          value: "2.000+",
-          label: "descargas en la primera semana de lanzamiento",
-        },
-        { value: "5.0", label: "valoración media en Open VSX (3 reseñas)" },
+        { value: "191/30d", label: "adquisiciones VS Code Marketplace" },
+        { value: "97.45%", label: "funnel de conversión (page views → installs)" },
+        { value: "5", label: "variantes del tema" },
         {
           value: "Verified",
           label: "Open VSX Publisher (namespace MaxGB23)",
         },
-        { value: "128/30d", label: "adquisiciones VS Code Marketplace" },
-        { value: "84.21%", label: "funnel de conversión (page views → installs)" },
-        { value: "5", label: "variantes del tema" },
-        { value: "1", label: "fuente de verdad: paleta jerárquica en un único config" },
-        { value: "MIT", label: "tema original, sin créditos a terceros" },
-        { value: "Zed", label: "soporte en mantenimiento activo" },
-        { value: "2", label: "guardias automáticas del release: changelog + vsix vs allowlist" },
-        { value: "1", label: "repo TUI: funky-theme-tui (terminales IA) en desarrollo" },
+        {
+          value: "Beta",
+          label: "integración con 3 agentes IA (Claude Code, OpenCode, Pi)",
+        },
       ],
       visual: {
         src: "/images/projects/funky-theme/perifericos.webp",
@@ -1200,31 +1194,29 @@ export const projects: Project[] = [
         "La mayoría de los temas de editor duplican valores de color en cientos de archivos: cualquier cambio exige editar todo a mano y los colores terminan desincronizados. Una paleta única como SSOT elimina el drift — el diseño del tema queda gobernado por un solo archivo.",
       role: [
         "Diseñé un tema original para VS Code publicado bajo licencia MIT.",
-        "Definí la paleta jerárquica como única fuente de verdad (un solo archivo de configuración).",
+        "Definí la paleta jerárquica como única fuente de verdad para editores (un solo archivo de configuración).",
         "Derivé las 5 variantes del tema desde esa paleta.",
-        "Gestioné el ciclo completo de release: 6 release candidates (rc.1 → rc.6) hasta el estable v3.0.0, con pipeline propio de build + empaquetado + GitHub Release (SemVer estricto, convención RC → estable).",
+        "Gestioné el ciclo completo de release: 6 release candidates (rc.1 → rc.6, solo instalación manual desde el repo) hasta el estable v3.0.0, primera publicación en markets, con pipeline propio de build + empaquetado + GitHub Release (SemVer estricto, convención RC → estable).",
         "Publiqué y operé la extensión en VS Code Marketplace y Open VSX (empaquetado de vsix, keywords optimizados al límite documentado de 30, changelog append-only).",
         "Blindé el pipeline de release tras un hotfix de packaging: guardias automáticas (changelog empaquetado verificado + vsix coincidente con su allowlist) y el error real documentado como regla dura en la skill de release.",
       ],
       solution: [
         "**Paleta semántica SSOT:** colores definidos por rol semántico (UI, sintaxis, estados), no arbitrarios, en un solo config.",
-        "**Variantes separadas por familias visuales:** el feedback de devs en foros y comunidades (Discord, etc.) guía qué se aplica en cada variante — italics, bold, etc. solo donde es deseado; para quien no los quiere, hay una variante a su medida.",
-        "**5 variantes coherentes:** todas se mantienen en sincronía porque comparten la misma fuente.",
-        "**Tema original:** propio, sin copia de otros temas, publicado bajo MIT.",
+        "**Variantes separadas por familias visuales:** el feedback de devs en foros y comunidades (Discord, etc.) guía qué se aplica en cada variante — italics, bold, etc. solo donde es deseado; para quien no los quiere, hay una variante a su medida. Las 5 se mantienen en sincronía porque comparten la misma fuente.",
         "**Publicación en markets:** release estable en VS Code Marketplace y Open VSX, con keywords optimizados al límite documentado (30) para descubribilidad multiplataforma (VS Code, VSCodium, Google Antigravity, Cursor, Windsurf, Theia).",
-        "**CI / control de calidad:** workflow de build-check con pnpm que valida las 5 variantes (existencia y parseo de los JSON) en cada push y PR; releases SemVer estrictas y trazables.",
+        "**CI / control de calidad:** workflow de build-check con pnpm que valida las 5 variantes (existencia y parseo de los JSON) en cada push y PR; el mismo CI empaqueta el artefacto de Zed y prepara su PR al marketplace; releases SemVer estrictas y trazables.",
         "**Release blindado tras aprendizaje de errores:** el changelog se finaliza antes de empaquetar (el vsix lleva la sección de la versión) y una guardia verifica que el vsix coincida exactamente con su `.vscodeignore` (sin fugas ni assets faltantes) — un hotfix de packaging real dejó el proceso más robusto y documentado en la skill de release.",
-        "**Tracción validada:** **Verified Open VSX Publisher**; **2k descargas/semana** en Open VSX; **128 adquisiciones/30d** en VS Code Marketplace con **funnel 84.21%** (page views → installs) — posicionamiento SEO orgánico demostrado.",
-        "**Cross-editor:** soporte **Zed** en mantenimiento activo (misma paleta SSOT).",
-        "**Expansión terminal:** **funky-theme-tui** — misma filosofía SSOT para agentes de código en terminal (Claude Code, OpenCode, Pi); repo público, pre-estable.",
+        "**Tracción validada:** **Verified Open VSX Publisher**; **3.2k descargas acumuladas** en Open VSX; **191 adquisiciones/30d** en VS Code Marketplace con **funnel 97.45%** (page views → installs) — posicionamiento SEO orgánico demostrado.",
+        "**Cross-editor:** soporte **Zed** lanzado hoy con instalación manual mientras se acepta el PR al marketplace (misma paleta de editores).",
+        "**Expansión terminal:** **funky-theme-tui** — variaciones mínimas para terminales con agentes de código (Claude Code, OpenCode, Pi), en repo aparte y en beta.",
       ],
       stack: [
         "Formato: VS Code theme (token colors)",
         "Package manager: pnpm",
         "Licencia: MIT (original)",
-        "Editores: VS Code, VSCodium, Cursor, Windsurf, Zed (en mantenimiento), Theia",
+        "Editores: VS Code, VSCodium, Cursor, Windsurf, Zed (instalación manual, PR pendiente), Theia",
         "Distribución: VS Code Marketplace, Open VSX, .vsix store-agnostic",
-        "Terminal IA: funky-theme-tui (Claude Code, OpenCode, Pi) — mismo SSOT, pre-estable",
+        "Terminal IA: funky-theme-tui (Claude Code, OpenCode, Pi) — variaciones de terminal en repo aparte, beta",
       ],
       gallery: [
         {
@@ -1249,12 +1241,12 @@ export const projects: Project[] = [
     architecture: {
       name: "funky-theme",
       description:
-        "Tema oscuro semántico original para VS Code (MIT): 5 variantes derivadas de una paleta jerárquica en un único config (SSOT) — se toca un valor y todo el tema se mantiene coherente. Expansión cross-editor (Zed) y terminal IA (funky-theme-tui) reutilizando la misma SSOT.",
+        "Tema oscuro semántico original para VS Code (MIT): 5 variantes derivadas de una paleta jerárquica en un único config (SSOT) para editores — se toca un valor y todo el tema se mantiene coherente. Expansión cross-editor (Zed, instalación manual) y terminal IA (funky-theme-tui, con variaciones propias) desde la misma base.",
       children: [
         {
           name: "Paleta semántica SSOT",
           description:
-            "Colores definidos por rol semántico (UI, sintaxis, estados), no arbitrarios, en un solo config. Única fuente de verdad para todos los targets.",
+            "Colores definidos por rol semántico (UI, sintaxis, estados), no arbitrarios, en un solo config. Única fuente de verdad para los editores.",
         },
         {
           name: "5 variantes por familias visuales",
