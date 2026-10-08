@@ -14,6 +14,9 @@ Cuando respondas en español, usa siempre español neutro. Evita el voseo y los 
 - Antes de operaciones destructivas de git (`git checkout --`, `git reset --hard`, force-push): ejecuta `git status` y revisa el diff. Si el archivo tiene cambios no commiteados, confirma explícitamente qué se pierde antes de revertir.
 - PowerShell no es seguro con UTF-8 en PS 5.1: no escribir archivos fuente con `Set-Content`/`Out-File` (corrompe acentos y em dash), y no leerlos con `Get-Content` para COMPARAR (lee UTF-8 como Windows-1252: una raya `—` U+2014 se ve como guion). Para editar, las herramientas del asistente; para inspeccionar caracteres, `[System.IO.File]::ReadAllText($p, [System.Text.Encoding]::UTF8)` y `[int]$c`.
 
+### Delegaciones (subagentes)
+- Delega SOLO con `gentle-ai-worker` o el subagente `general`. Por ahora los demas fallan (ej: `explore`).
+
 ### Dependencias
 - Siempre usar pnpm.
 - Nunca pushear a main con errores de lint o build.
