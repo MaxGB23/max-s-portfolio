@@ -11,7 +11,7 @@
 | --- | --- |
 | `id` | `caf` |
 | `title` | Sistema de Gestión Clínica |
-| `category` | Full Stack / SaaS |
+| `category` | Full Stack / HealthTech |
 | `hook` | Plataforma web full-stack en producción para la gestión integral de citas, pacientes y control de pagos en centros de salud. |
 | `metric` | +10 meses en producción sin caídas |
 | `tags` | Next.js · React · TypeScript · PostgreSQL · Prisma · Tailwind CSS |
@@ -46,8 +46,12 @@ Las clínicas pequeñas y medianas dependen de herramientas genéricas, procesos
 ### Role
 
 - Arquitecté un sistema modular por features usando Next.js, TypeScript y Prisma para mejorar mantenibilidad y acelerar la entrega de funcionalidades.
-- Implementé control de acceso por roles (RBAC) para flujos multi-usuario entre personal administrativo y fisioterapeutas.
+- Implementé control de acceso por roles (Admin, Editor, Viewer) con doble perímetro: layouts de servidor exigen sesión y rol antes de renderizar y cada Server Action valida con guards; sin registro público (el admin crea las cuentas y el rol no se fija desde el cliente) y sin middleware deliberado, porque el Edge no puede validar sesiones de base de datos.
 - Reduje un 40% la latencia de recuperación de registros con un índice en `sessionDate` y caching server-side con `cache()` de React. La cifra es una estimación conservadora del salto de seq scan a index scan, no una medición en producción.
+- Validé cada mutación con Zod en el servidor antes de cualquier I/O, con resultado tipado y errores centralizados en español; los conflictos de agenda responden advertencia confirmable en dos pasos, y el frontend solo muestra mensajes amigables, nunca errores crudos del backend.
+- Apliqué cero confianza en el input: cupo del paquete, pendiente única y choques de horario se verifican en el servidor, y hasta el ID para revalidar se lee de la base de datos, nunca del cliente.
+- Usé SQL crudo solo con jaula: valores siempre como parámetros y fragmentos construidos desde una unión cerrada, sin camino del input al query.
+- Blindé la UX ante fallos: los boundaries traducen errores de auth a pantallas accionables y los 404 contextuales devuelven al dashboard, nunca una pantalla en blanco.
 - Migré los nombres y precios que vivían hardcodeados en un combobox a una UI de paquetes CRUD que los actualiza, con migraciones de Prisma sobre datos existentes. El cliente necesitaba subir precios por la inflación del país y los valores hardcodeados lo impedían. Las migraciones se aplicaron en producción sin un solo incidente de datos: ningún paquete legacy se rompió.
 - En paralelo descarté una branch completa que no cumplía los estándares del proyecto, antes de que llegara a producción.
 - Desplegué y mantengo la plataforma en Vercel con NeonDB (PostgreSQL) hace más de 10 meses, sin que el cliente haya reportado una sola caída.
@@ -60,7 +64,7 @@ Las clínicas pequeñas y medianas dependen de herramientas genéricas, procesos
 - **Módulo financiero:** venta de paquetes de sesiones, balance por paciente y registro de ingresos. Los paquetes se administran desde una UI CRUD (`src/modules/package-definitions/`) en lugar de valores hardcodeados, lo que permite actualizar precios sin desplegar — necesario para responder a la inflación del mercado.
 - **Panel de control (dashboard):** analíticas de ingresos mensuales, pacientes activos, ganancias y métricas operativas, con filtros por periodo (30 días, 3 meses, 1 año e histórico), cache con refresh manual y tarjetas + gráficos. El histórico usa cache extendido por costo.
 - **Landing page pública:** optimizada para SEO, enfocada a captación de nuevos pacientes e integrada con el sistema interno.
-- **Seguridad y roles:** accesos por tipo de usuario y manejo seguro de sesiones.
+- **Seguridad y roles:** doble perímetro con layouts y guards por rol (Admin, Editor, Viewer), loop cerrado sin registro público y autorización siempre en el servidor; el cliente solo presenta, nunca autoriza.
 - **Cuenta de usuario autocontrolada (perfil):** el propio usuario edita su **nombre** y **contraseña** desde su perfil, con una vista de tipo red social (foto de perfil y portada). El **correo queda bloqueado para el usuario**: tiene el input deshabilitado con un mensaje que indica solicitar el cambio a un administrador.
 
 ### Decisiones de diseño
