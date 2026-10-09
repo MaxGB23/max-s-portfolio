@@ -1,81 +1,47 @@
 // Single source of truth for portfolio projects.
 // Extracted from docs/projects/candidatos/*.md. Fields without real content
 // stay as empty string or undefined — never invent data.
+//
+// Los tipos viven en ./projects/types.ts (shape bilingue `L` + el legacy `*Es`).
+// Este archivo sigue siendo el modulo publico: reexporta los tipos, asi que
+// ningun consumidor cambia su linea de import durante la migracion ficha por
+// ficha. Las 9 fichas siguen en `ProjectEs` hasta que cada una migre a `ProjectL`.
 
-export interface ProjectLink {
-  label: string;
-  /** Categoría del enlace para elegir icono: "code" | "demo" | "site" | "landing" | "app" | ... */
-  kind?: string;
-  url: string;
-  external?: boolean;
-}
+import type { ProjectEs } from "./projects/types";
 
-export interface ProjectMetric {
-  value: string;
-  label: string;
-}
+export type {
+  ProjectEs,
+  ProjectDetailEs,
+  ProjectMetricEs,
+  ProjectImageEs,
+  ArchitectureNodeEs,
+  ProjectLinkEs,
+  ProjectL,
+  ProjectEntry,
+  MetricL,
+  NodeL,
+  LinkL,
+  ProjectImageL,
+  L,
+  Localized,
+} from "./projects/types";
 
-export interface ProjectImage {
-  src: string;
-  alt: string;
-}
+export { localizeProject } from "./projects/types";
 
-export interface ArchitectureNode {
-  /** Nombre del nodo/capa, extraído de la documentación real. */
-  name: string;
-  /** Descripción breve solo si las fuentes la respaldan. */
-  description?: string;
-  children?: ArchitectureNode[];
-}
+// Alias de compatibilidad hacia los nombres sin sufijo. Sobreviven al renombre
+// `*Es` para que ningun consumidor tenga que editar su import durante la
+// migracion (p.ej. `components/project-architecture.tsx` importa `ArchitectureNode`).
+// Mueren con `ProjectEs` en T12.
+export type {
+  ProjectEs as Project,
+  ProjectDetailEs as ProjectDetail,
+  ProjectMetricEs as ProjectMetric,
+  ProjectImageEs as ProjectImage,
+  ArchitectureNodeEs as ArchitectureNode,
+  ProjectLinkEs as ProjectLink,
+} from "./projects/types";
 
-export interface ProjectDetail {
-  headline: string;
-  summary: string;
-  /**
-   * Imagen introductoria del detail (portada grande, independente de la card).
-   * Si falta, el detail cae a `project.image` — los proyectos sin `visual`
-   * siguen mostrando la misma imagen de la card.
-   */
-  visual?: ProjectImage;
-  /**
-   * Métricas clave del detail.
-   * CONVENCIÓN DE ORDEN: `metrics[0]` es la métrica RAÍZ / principal — se
-   * renderiza como nodo raíz (columna izquierda) en la topología del detail;
-   * el resto son nodos hijos (columna derecha). Mantener la más importante
-   * primero, siempre.
-   */
-  metrics: ProjectMetric[];
-  problem?: string;
-  role?: string[];
-  solution: string[];
-  stack: string[];
-  gallery: ProjectImage[];
-  cta: string;
-}
-
-export interface Project {
-  id: string;
-  title: string;
-  category: string;
-  hook: string;
-  metric: string;
-  tags: string[];
-  image: string;
-  imageAlt: string;
-  links: ProjectLink[];
-  featured?: boolean;
-  detail: ProjectDetail;
-  /**
-   * Árbol de arquitectura real por proyecto (extraído de docs/projects).
-   * Vive en `Project` (no en `ProjectDetail`) porque la vista "Grafo Arquitectura"
-   * lee `project.architecture` naturalmente y la topología describe el proyecto
-   * completo, no su vista detallada. Sin él, la vista muestra un estado vacío
-   * honesto — nunca se inventa topología.
-   */
-  architecture?: ArchitectureNode;
-}
-
-export const projects: Project[] = [
+export const projects: ProjectEs[] = [
   {
     id: "caf",
     title: "Sistema de Gestión Clínica",
@@ -1379,10 +1345,10 @@ export const projects: Project[] = [
   },
 ];
 
-export function getProjectById(id: string): Project | undefined {
+export function getProjectById(id: string): ProjectEs | undefined {
   return projects.find((project) => project.id === id);
 }
 
-export function getFeaturedProjects(): Project[] {
+export function getFeaturedProjects(): ProjectEs[] {
   return projects.filter((project) => project.featured);
 }

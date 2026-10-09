@@ -3,33 +3,37 @@
 import { ProjectCard, type Project } from "@/components/project-card";
 import { FadeIn, FadeInStagger, FadeInItem } from "@/components/motion-primitives";
 import { Section } from "@/components/section";
-import { projects } from "@/data/projects";
+import { projects, localizeProject } from "@/data/projects";
 import { useLanguage } from "@/contexts/language-context";
 
 // ---------------------------------------------------------------------------
+// AllProjects - "Todos los Proyectos" heading + responsive grid
+//
 // Data - single source of truth: data/projects.ts
 // ---------------------------------------------------------------------------
-
-const allProjects: Project[] = projects
-  .filter((project) => !project.featured)
-  .map((project) => ({
-    id: project.id,
-    title: project.title,
-    description: project.hook,
-    metric: project.metric,
-    image: project.image,
-    imageAlt: project.imageAlt,
-    category: project.category,
-    tags: project.tags,
-    links: project.links,
-    featured: project.featured,
-  }));
-
-// ---------------------------------------------------------------------------
-// AllProjects - "Todos los Proyectos" heading + responsive grid
-// ---------------------------------------------------------------------------
 export function AllProjects() {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+
+  // El mapeo se resuelve aqui y no a module scope porque depende de `lang`: el
+  // toggle tiene que cambiar el CONTENIDO, no solo el chrome. El server render
+  // con el lang del provider inicial, asi que no hay mismatch de hidratacion.
+  const allProjects: Project[] = projects
+    .filter((project) => !project.featured)
+    .map((project) => {
+      const localized = localizeProject(project, lang);
+      return {
+        id: localized.id,
+        title: localized.title,
+        description: localized.hook,
+        metric: localized.metric,
+        image: localized.image,
+        imageAlt: localized.imageAlt,
+        category: localized.category,
+        tags: localized.tags,
+        links: localized.links,
+        featured: localized.featured,
+      };
+    });
   return (
     <>
       {/* Section heading — previously the transition bridge after the featured

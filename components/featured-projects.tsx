@@ -3,27 +3,9 @@
 import { useEffect, useState } from "react";
 import { FeaturedProjectPanel, type FeaturedProject } from "@/components/featured-project-panel";
 import { FadeIn } from "@/components/motion-primitives";
-import { getFeaturedProjects } from "@/data/projects";
+import { getFeaturedProjects, localizeProject } from "@/data/projects";
 import { Section } from "@/components/section";
 import { useLanguage } from "@/contexts/language-context";
-
-// ---------------------------------------------------------------------------
-// Data - single source of truth: data/projects.ts
-// ---------------------------------------------------------------------------
-
-const featuredProjects: FeaturedProject[] = getFeaturedProjects()
-  .map((project, index) => ({
-    id: project.id,
-    index: index + 1,
-    title: project.title,
-    description: project.hook,
-    metric: project.metric,
-    tags: project.tags,
-    image: project.image,
-    imageAlt: project.imageAlt,
-    category: project.category,
-    bgColor: "var(--background)",
-  }));
 
 // ---------------------------------------------------------------------------
 // SectionHeading - "Proyectos Destacados" block (same in-flow FadeIn pattern
@@ -71,6 +53,30 @@ function SectionHeading() {
 // mismatches (ReactHydrationError).
 // ---------------------------------------------------------------------------
 export function FeaturedProjects() {
+  const { lang } = useLanguage();
+
+  // Data - single source of truth: data/projects.ts. El mapeo se resuelve aqui y
+  // no a module scope porque depende de `lang`: el toggle tiene que cambiar el
+  // CONTENIDO, no solo el chrome. El orden (y por tanto `index`) no depende del
+  // locale, asi que la geometria del one-slide rule queda intacta.
+  const featuredProjects: FeaturedProject[] = getFeaturedProjects().map(
+    (project, index) => {
+      const localized = localizeProject(project, lang);
+      return {
+        id: localized.id,
+        index: index + 1,
+        title: localized.title,
+        description: localized.hook,
+        metric: localized.metric,
+        tags: localized.tags,
+        image: localized.image,
+        imageAlt: localized.imageAlt,
+        category: localized.category,
+        bgColor: "var(--background)",
+      };
+    },
+  );
+
   // visible[i] — per-panel visibility; headingHidden — heading exit gate;
   // entered0 — sticky "panel 0 has crossed the line at least once".
   const [slide, setSlide] = useState(() => ({

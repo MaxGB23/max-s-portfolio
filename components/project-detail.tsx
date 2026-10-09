@@ -20,6 +20,7 @@ import { StackIcon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { takeHomeScroll, useLenis } from "@/hooks/use-lenis";
 import type { Project, ProjectImage, ProjectLink, ProjectMetric } from "@/data/projects";
+import { localizeProject } from "@/data/projects";
 import { ArchitectureEmptyState, ProjectArchitecture } from "@/components/project-architecture";
 import { useLanguage } from "@/contexts/language-context";
 
@@ -188,7 +189,13 @@ const FOCUSABLE_IN_LIGHTBOX =
 
 export function ProjectDetail({ project }: { project: Project }) {
   const rootRef = useRef<HTMLDivElement>(null);
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+
+  // Todo el copy de la ficha pasa por `localized`: mismas claves y mismos tipos
+  // que `project`, solo con las hojas `{es,en}` resueltas a `lang`. Se resuelve
+  // una vez y TODAS las lecturas de abajo leen de aqui — el render en ES es
+  // identico porque las fichas siguen en `ProjectEs` (ninguna hoja es `L`).
+  const localized = localizeProject(project, lang);
 
   const router = useRouter();
 
@@ -307,7 +314,7 @@ export function ProjectDetail({ project }: { project: Project }) {
     return () => ctx.revert();
   }, []);
 
-  const { title, tags, detail } = project;
+  const { title, tags, detail } = localized;
   const words = title.trim().split(/\s+/);
   const lastWord = words.pop();
   const mainTitle = words.join(" ");
@@ -316,8 +323,8 @@ export function ProjectDetail({ project }: { project: Project }) {
   // Nunca usar un retrato/genérico como si fuera captura del producto (dato falso).
   // `detail.visual` es la portada propia del detail (opcional); sin ella cae a
   // `project.image` (la misma de la card) — comportamiento actual.
-  const visualImage = detail.visual?.src ?? project.image;
-  const visualAlt = detail.visual?.alt ?? project.imageAlt;
+  const visualImage = detail.visual?.src ?? localized.image;
+  const visualAlt = detail.visual?.alt ?? localized.imageAlt;
 
   // Gallery items - real captures when wired, else declared placeholders.
   // El placeholder se resuelve en el render con un fondo temático + texto, no
@@ -585,7 +592,7 @@ export function ProjectDetail({ project }: { project: Project }) {
         <div className="debug-l2 max-w-5xl mx-auto flex flex-col gap-6">
           <div>
             <span className="px-3.5 py-1 rounded-full text-xs 2xl:text-sm font-semibold tracking-wide bg-purple-accent text-white">
-              {project.category}
+              {localized.category}
             </span>
           </div>
           <h1 className="-mb-2 md:mb-0 font-serif font-black text-fluid-detail text-foreground leading-[1.05] tracking-tight text-balance">
@@ -685,8 +692,8 @@ export function ProjectDetail({ project }: { project: Project }) {
               >
                 {/* Vista 1: Grafo de Arquitectura Real (árbol extraído de docs/projects) */}
                 {viewMode === "topology" &&
-                  (project.architecture ? (
-                    <ProjectArchitecture tree={project.architecture} />
+                  (localized.architecture ? (
+                    <ProjectArchitecture tree={localized.architecture} />
                   ) : (
                     <ArchitectureEmptyState />
                   ))}
@@ -715,10 +722,10 @@ export function ProjectDetail({ project }: { project: Project }) {
         </div>
 
         {/* Project links - acciones tras la prueba visual */}
-        {project.links.length > 0 && (
+        {localized.links.length > 0 && (
           <div className="max-w-5xl mx-auto mb-12 md:mb-16">
             <div className="flex flex-wrap gap-3 justify-center">
-              {project.links.map((link, index) => {
+              {localized.links.map((link, index) => {
                 const Icon = linkIcon(link.kind);
                 return (
                   <Button key={index} asChild variant="inverted" size="lg">
