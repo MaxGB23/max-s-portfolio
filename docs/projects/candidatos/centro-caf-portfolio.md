@@ -65,7 +65,45 @@ Las clínicas pequeñas y medianas dependen de herramientas genéricas, procesos
 - **Panel de control (dashboard):** analíticas de ingresos mensuales, pacientes activos, ganancias y métricas operativas, con filtros por periodo (30 días, 3 meses, 1 año e histórico), cache con refresh manual y tarjetas + gráficos. El histórico usa cache extendido por costo.
 - **Landing page pública:** optimizada para SEO, enfocada a captación de nuevos pacientes e integrada con el sistema interno.
 - **Seguridad y roles:** doble perímetro con layouts y guards por rol (Admin, Editor, Viewer), loop cerrado sin registro público y autorización siempre en el servidor; el cliente solo presenta, nunca autoriza.
-- **Cuenta de usuario autocontrolada (perfil):** el propio usuario edita su **nombre** y **contraseña** desde su perfil, con una vista de tipo red social (foto de perfil y portada). El **correo queda bloqueado para el usuario**: tiene el input deshabilitado con un mensaje que indica solicitar el cambio a un administrador.
+- **Perfil del usuario:** el propio usuario edita su **nombre** y **contraseña** desde su perfil, con una vista de tipo red social (foto de perfil y portada). El **correo queda bloqueado para el usuario**: tiene el input deshabilitado con un mensaje que indica solicitar el cambio a un administrador.
+
+### Arquitectura (grafo del detalle)
+
+Espejo de `detail.architecture` en `data/projects.ts`, que renderiza la vista "Grafo Arquitectura". **Si editas la sección Solution, edita también este bloque y el `.ts` en la misma work unit**: son la misma información en dos superficies y ya se desincronizaron una vez.
+
+- **Raíz — Sistema de Gestión Clínica:** Plataforma de gestión clínica en producción con arquitectura modular por features: módulos verticales por dominio (agenda, clientes, paquetes, pagos, sesiones, usuarios) sobre un núcleo transversal de autenticación, base de datos y errores.
+  - **Agenda inteligente:** Calendario interactivo con prevención automática de conflictos y control de sesiones (pendiente, asistida, cancelada).
+    - Prevención automática de conflictos
+    - Control de sesiones
+  - **Expediente electrónico:** Alta y búsqueda rápida de pacientes, historial de sesiones y pagos, seguimiento individual.
+  - **Módulo financiero:** Venta de paquetes de sesiones, balance por paciente y registro de ingresos. Los paquetes y sus precios se administran desde una UI CRUD, así que subirlos no exige desplegar código.
+    - Paquetes de sesiones
+    - Balance por paciente
+    - Registro de ingresos
+    - Paquetes y precios editables sin deploy
+  - **Panel de control (dashboard):** Analíticas de ingresos mensuales, pacientes activos, ganancias y métricas operativas, con tarjetas y gráficos.
+    - Analíticas mensuales
+    - Filtros por periodo (30 días, 3 meses, 1 año e histórico)
+    - Cache con refresh manual
+  - **Seguridad y roles:** Doble perímetro con layouts de servidor y guards por rol: la autorización se resuelve siempre en el servidor y el cliente solo presenta, nunca autoriza.
+    - Roles: Admin, Editor y Viewer
+    - Layouts de servidor exigen sesión y rol antes de renderizar
+    - Guards en cada Server Action y query sensible
+    - Sin registro público: el admin crea las cuentas y el rol no se fija desde el cliente
+  - **Endurecimiento por capas:** Validación y fallo seguro en cada mutación: nada se confía desde el cliente y ningún error crudo llega al usuario.
+    - Zod con safeParse antes de cualquier I/O
+    - Cupo, cita pendiente y choques de horario verificados en el servidor
+    - SQL solo con parámetros y fragmentos de una unión cerrada
+    - Errores de auth y 404 contextuales con salida accionable
+  - **Estructura modular por capas:** Routing, dominio y transversalidad separados, para que una regla clínica se cambie en un solo lugar.
+    - app: solo routing, layouts y páginas, sin lógica de negocio
+    - modules: vertical por dominio (actions, schemas, queries, componentes)
+    - core: transversal (auth, db, errores, proveedores, UI)
+    - shared: utilidades usadas por dos o más módulos
+  - **Perfil del usuario:** El usuario edita su nombre y contraseña desde su perfil, con vista de foto de perfil y portada. El correo queda bloqueado y su cambio se solicita a un administrador.
+  - **Landing page pública:** Optimizada para SEO, enfocada a captación de nuevos pacientes e integrada con el sistema interno.
+
+Fuente de la verificación técnica: `docs/projects/caf-seguridad/security-flow.md` (documentado contra `2c8207c`).
 
 ### Decisiones de diseño
 
@@ -96,7 +134,9 @@ Estos puntos son **hechos verificados**. No reintroducirlos sin volver a comprob
 
 ### Escalabilidad
 
-Arquitectura modular diseñada para escalar a múltiples especialidades (fisioterapia, psicología, nutrición, odontología) y funcionar como base tipo SaaS.
+Arquitectura modular diseñada para crecer hacia más especialidades (fisioterapia, psicología, nutrición, odontología).
+
+> **No reintroducir "base tipo SaaS" ni "multi-tenant".** `security-flow.md:368` lo prohíbe explícitamente: el modelo es single-tenant por diseño, no existe `userId` en las entidades de dominio y cualquier usuario autenticado ve todos los pacientes de la clínica.
 
 ### Gallery
 
