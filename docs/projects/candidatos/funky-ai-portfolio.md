@@ -12,12 +12,12 @@
 | `id` | `funky-ai` |
 | `title` | funky-ai |
 | `category` | Dev Tools / AI Engineering |
-| `hook` | Framework CLI para desarrollo de software asistido por IA: pipeline SDD con contexto just-in-time, memoria persistente y planificación de proyectos en un solo comando. |
-| `metric` | Harness agéntico medido: 27 reglas ≈ 11.5k tokens |
+| `hook` | CLI modular `funky` con 10 comandos para planificar, construir y endurecer proyectos con proceso repetible. |
+| `metric` | 10 comandos · 443 tests · 27 reglas |
 | `tags` | Node.js · TypeScript · CLI · pnpm · Vitest · GitHub Actions |
 | `image` | TBD — ⚠️ capturas reales de terminal/CLI en acción |
 | `imageAlt` | Terminal del CLI de funky-ai mostrando el pipeline SDD |
-| `links` | Repo: [funky-ai](https://github.com/MaxGB23/funky-ai) (público) · npm: no publicado |
+| `links` | Repo: [funky-ai](https://github.com/MaxGB23/funky-ai) (público) · npm: no publicado · install: clonar + symlink con pnpm (pnpm-first) |
 
 ---
 
@@ -25,23 +25,24 @@
 
 ### Headline
 
-**Un framework CLI para desarrollo de software asistido por IA**
+**De idea a release con proceso, en un solo CLI**
 
 ### Summary
 
-funky-ai unifica reglas agénticas, plantillas spec-driven y herramientas de planificación en un único CLI de Node.js (pnpm), sin superficie GUI. Orquesta el desarrollo como un pipeline determinista — proposal → specs → design → tasks → apply → verify → archive — cargando contexto just-in-time para proteger la ventana de tokens, con memoria persistente basada en archivos Markdown y endurecimiento de dependencias para proyectos pnpm. Las cifras combinan estimaciones propias y mediciones reales del repositorio (inventario de reglas del propio framework).
+funky-ai es un solo CLI con 10 comandos independientes para planificar, construir y endurecer proyectos sin imponer memoria ni interfaz gráfica; se instala por clonar + symlink con pnpm (npm no publicado, pnpm-first). Deja una base mínima para arrancar, solo inyecta OpenSpec cuando se pide con `funky sdd install`, y Forge ayuda a aprender a planificar y a saber cómo cobrar con asesoría de IA. Secure es asistido y honesto: diagnostica y recomienda sin bloquear por defecto. SDD se conserva como metodología vigente; ODD no está implementado, se plantea como línea futura: cada fase SDD equivaldría a una tarea ODD con su work-unit commit.
 
 ### Metrics
 
 | Value | Label |
 | --- | --- |
-| -40% | consumo de tokens vs. contexto always-loaded (SDD just-in-time) |
-| 30–50% | menor costo de recall de memoria (funkygram vs. recargar contexto monolítico) |
-| ~50% | más rápido de idea difusa a arquitectura costeada (funky-forge) |
-| ~30% | menos riesgo de supply chain (funky secure) |
-| ≈11.5k | tokens del harness completo: 27 reglas agénticas (inventario medido) |
+| 10 | comandos en un solo CLI para planificar, construir y asegurar |
+| 47+7 | plantillas base para arrancar cualquier proyecto en minutos |
+| 27 | reglas de IA que ordenan el trabajo entre agente y humano |
+| 443 | pruebas automatizadas con Vitest en verde que cuidan cada cambio en 36 archivos |
+| 3 | acciones de CI fijadas por SHA |
+| Asistido | revisión de dependencias que avisa antes de instalar algo riesgoso |
 
-> Las 4 primeras métricas son **estimaciones del autor** basadas en uso propio; la última es una **medición real** del repositorio (inventario de las 27 reglas en `comparativas-tokens/`), no un benchmark externo.
+> Sin porcentajes como hechos: los 4 valores estimados previos (tokens, recall, velocidad idea-arquitectura, riesgo) pasan a solution como **objetivos de diseño**, no mediciones.
 
 ### Problem
 
@@ -52,38 +53,41 @@ Las tareas grandes de IA asistida que arrancan de un único prompt masivo fallan
 - Diseñé el ecosistema CLI completo: pipeline SDD con contexto just-in-time y separación orquestador/sub-agentes.
 - Construí funkygram (memoria persistente), funky-forge (planificación) y funky secure (hardening de dependencias).
 - Apliqué TDD con Vitest y workflow issue-first desde el inicio: cada cambio rastreado a un issue triado.
-- Mantuve CI/CD con GitHub Actions (toolchain pineado a SHAs) y documentación viva verificada contra el CLI real.
+- Mantuve CI/CD con GitHub Actions (SHA fijados por seguridad) y documentación viva verificada contra el CLI real.
 
 ### Solution
 
-- **SDD framework** — pipeline determinista de fases con artefactos Markdown, 3 tiers que escalan el esfuerzo al impacto (T1 Flash: fixes de 1–2 archivos sin docs; T2 Standard: sub-agentes por fase; T3 Insano: rediseños arquitectónicos con sub-agentes aislados), 3 modos de ejecución (Interactive, Auto, Handoff) y puertas humanas antes de operaciones destructivas y Git.
-- **funkygram** — memoria persistente en archivos Markdown dentro del repo: 7 categorías con shards O(1), esquema fijo (What/Why/Where/Learned), índice central auto-actualizado y recall deliberadamente low-tech y barato.
-- **funky-forge** — de idea difusa a arquitectura costeada: `init` (canvases de proyecto e infra), `assess` (revisión de arquitectura con registro de decisiones), `estimate` (guía de costos con buffers y TCO), `pipeline` (estado compartido entre fases). La CLI prepara material, no juzga.
-- **funky secure** — endurecimiento de dependencias pnpm: `doctor` (diagnóstico read-only), `init` (política idempotente), `check` (gate CI fail-closed). Incluye cuarentena de versiones frescas (72h) contra campañas tipo ChainDrop/Shai-Hulud y detección de secretos commitheados.
-- **Capa de contratos agénticos** — Prompt-based SDD harness para Antigravity — 27 reglas que tipan la delegación (7 contratos T2 por fase, 9 workflows T3, contratos de exploración y memoria) con carga just-in-time; introspección documentada del host (model tiers, permisos, hooks) en vez de reinventar el runtime.
-- **Prácticas** — issue-first (no hay código sin issue), CI en GitHub Actions con SHAs pineados, releases estructurados (bump, notas, tag) y docs vivas sincronizadas con el binario real; y comandos de doble audiencia: la misma ruta sirve a un humano en TTY (pregunta y ofrece sobrescritura) y a un agente en CI (nunca pregunta, falla con exit code documentado) — idempotentes por comparación exacta de bytes y con default fail-safe: si no puede comprobar el estado, trata como conflicto en vez de sobrescribir.
+- **Scaffold base mínima para arrancar** — deja lo justo para empezar un proyecto en minutos, con estructura interoperable. No impone metodología; funciona con la memoria que ya tengas.
+- **funkygram, memoria persistente opcional** — guarda el conocimiento del proyecto en archivos Markdown dentro del repo, organizado por temas con índice central. Es opcional: si ya tienes otra memoria, la respeta; las sesiones dejan de reaprender desde cero.
+- **Framework SDD propio con prompt based harnesses** — pipeline por fases (proposal, specs, design, tasks, apply, verify, archive) con 27 reglas que ordenan la delegación entre orquestador y sub-agentes, cargando contexto solo cuando se necesita. Es la base de mi experiencia creando harnesses a medida y adaptándome a cada modelo y plataforma. SDD sigue vigente; ODD no está implementado, se plantea como línea futura.
+- **OpenSpec solo cuando se pide** — solo un comando instala OpenSpec; el resto del CLI no lo impone ni lo mezcla con la base inicial.
+- **Forge para aprender a planificar y saber cómo cobrar** — prepara material de planificación, revisión de arquitectura y estimación de costos con asesoría de IA. La herramienta ordena las ideas, no decide por ti.
+- **Secure asistido honesto** — diagnostica dependencias y recomienda buenas prácticas. La cuarentena y la revisión de secretos funcionan como guía asistida, no como bloqueo automático.
+- **Prácticas** — sin código sin issue previo, pruebas con Vitest, integración continua con SHA fijados, versiones ordenadas con notas de cambio y documentación verificada contra el CLI real. El mismo flujo sirve a personas y a agentes: en terminal pregunta antes de sobrescribir, en CI falla de forma documentada; si no puede comprobar el estado, no sobrescribe. Objetivos de diseño, no medidos: menos tokens con contexto justo a tiempo, menos costo de recordar, más rápido de idea difusa a arquitectura costeada y menos riesgo en dependencias.
+
+> Objetivos de diseño (no medidos): menos tokens con just-in-time, menos costo de recall de memoria, más rápido de idea difusa a arquitectura costeada y menos riesgo de supply chain.
 
 ### Stack
 
 - **Lenguaje / Runtime:** Node.js, TypeScript
 - **Package manager:** pnpm
-- **CLI:** Node.js CLI (sin GUI)
+- **CLI:** sin interfaz gráfica
 - **Testing:** Vitest (TDD, Red → Green → Refactor)
-- **CI/CD:** GitHub Actions (toolchain pineado a SHAs)
-- **Memoria:** archivos Markdown (shards + índice central)
-- **Pipeline:** plantillas SDD en Markdown, contexto just-in-time
-- **Capa agéntica:** 27 reglas/contratos (delegación, memoria, exploración, workflow) + introspección de plataforma
+- **CI/CD:** GitHub Actions (SHA fijados por seguridad)
+- **Memoria:** archivos Markdown por temas + índice central
+- **Pipeline:** plantillas SDD en Markdown, contexto justo a tiempo
+- **Capa agéntica:** 27 reglas de trabajo entre agente y humano + formato fijo de lecciones
 
 ### Escalabilidad
 
-Tres tiers de orquestación escalan el proceso a la magnitud del cambio: el camino barato es realmente barato (T1 sin artefactos generados) y el camino profundo es realmente profundo (T3 con diseño y validación de NFRs en sub-agentes aislados). El principio just-in-time aplica a todo el sistema: contexto, reglas y memoria solo se cargan cuando se necesitan.
+El proceso se adapta al tamaño del cambio: lo simple avanza sin papeleo y lo complejo pasa por diseño y revisión con ayuda de IA. El contexto, las reglas y la memoria solo se cargan cuando se necesitan.
 
 ### Gallery
 
-1. Terminal mostrando el pipeline SDD (fase + artefacto generado)
-2. Shards de funkygram + índice central
-3. `funky secure check` corriendo como gate en CI
-4. `funky estimate` / pricing guide (opcional)
+1. Pipeline Funky Forge (init-assess-estimate-pipeline)
+2. Vista general de Funky Secure (diagnóstico asistido en consola)
+3. Interfaz de terminal de Funkygram (memoria persistente opcional)
+4. Ejecución del pipeline SDD de funky-ai (`funky sdd install` solo cuando se pide)
 
 > ⚠️ Capturas reales pendientes — son herramientas de terminal, cualquier screenshot debe mostrar el CLI en acción, no mockups.
 
