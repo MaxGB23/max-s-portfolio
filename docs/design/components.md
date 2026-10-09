@@ -476,6 +476,31 @@ margen vertical. Badge `px-3.5 py-1 text-xs 2xl:text-sm`: el `py-1` es
   `"top top"` a `"bottom bottom"` del documento. Se monta por pagina
   (home y detalle). `aria-hidden`.
 
+### 4.13 Grafo de arquitectura (`project-architecture.tsx`)
+
+- Grid de hijos: `grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4` con
+  `sm:pt-8` (deja sitio al bus horizontal, que es absoluto y solo `sm+`).
+  En `lg` cada card es de ~1/3 de ancho: por eso los titulos de nodo deben
+  ser CORROS (~17-25 caracteres). Un titulo largo es legal y se parte, pero
+  eleva la fila, porque el grid estira las cards a la mas alta.
+- Cabecera de card con SANGRIA FRANCESA: `relative pl-7 mb-2`, numero en
+  `absolute left-0 top-0`, y el `h4` a ancho completo. Asi los renglones de
+  continuacion alinean bajo la primera letra del titulo, no debajo del numero.
+- PROHIBIDO `flex-wrap` en esa cabecera (defecto corregido): el `h4` es un
+  solo nodo de texto, asi que en cuanto el conjunto no cabe entero el
+  navegador lo baja a una linea flex nueva y el numero queda huerfano solo
+  arriba. Con `flex-wrap` + `items-center` el defecto se agrava: al partirse
+  el titulo, `items-center` centraba el numero en medio del bloque. Por eso
+  la cabecera no es flex.
+- Lo que obliga a los titulos cortos y a la sangria francesa es el MISMO
+  contrato: `detail.solution[]` y `detail.architecture{}` repiten el mismo
+  contenido, y los 9 nodos del grafo deben repetir textualmente la etiqueta de
+  su bullet en Solucion. Si divergen, el lector ve dos versiones del mismo
+  modulo en la misma pagina.
+- Verificado visualmente por el dueno tras el cambio, con un titulo corto y
+  uno largo en la misma fila del grid: el numero queda alineado con la primera
+  letra del titulo y la continuacion alinea debajo, sin numero huerfano.
+
 ## 5. Motion primitives
 
 `components/motion-primitives.tsx` (framer-motion):
