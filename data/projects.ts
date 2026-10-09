@@ -587,39 +587,40 @@ export const projects: Project[] = [
     ],
     detail: {
       headline:
-        "Un kart 3D donde el rival aprende a conducir con Reinforcement Learning",
+        "Lideré un kart 3D en equipo de 4 y le enseñé al rival a conducir solo",
       summary:
-        "Grinchmas Kart (3D, sep – dic 2023) es un kart racing end-to-end desarrollado por ABMODEL Games — equipo universitario de 4 integrantes — con el autor a cargo de ~80% del proyecto: código, gameplay, integración de ML-Agents, flujo de niveles, dirección e integración, y modelos 3D propios en Blender. El objetivo fue superar el 'juego de muestra' oficial (Karting Microgame 5.0.1): físicas arcade creíbles y un rival que aprendiera a conducir con Reinforcement Learning.",
+        "Grinchmas Kart (3D, sep – dic 2023) es un kart racing end-to-end de ABMODEL Games, equipo universitario de 4 integrantes. Lideré ~80% del proyecto: código, gameplay, IA, flujo de niveles, dirección y modelos 3D propios en Blender. El objetivo fue superar el juego de muestra oficial (Karting Microgame 5.0.1) con físicas arcade creíbles y un rival que aprende a conducir con Reinforcement Learning.",
       metrics: [
         {
           value: "RL",
-          label: "IA rival entrenada con Reinforcement Learning (ML-Agents)",
+          label: "IA rival con reinforcement learning en un nivel de carrera",
         },
         {
           value: "5",
-          label: "niveles encadenados dentro de una misma partida",
+          label: "niveles encadenados en la misma partida hasta los créditos",
         },
         {
           value: "~80%",
           label:
-            "del proyecto: código, gameplay, IA, flujo, dirección + modelos 3D",
+            "del proyecto liderado en equipo de 4: código, IA, flujo y 3D",
         },
         {
-          value: "Blender",
-          label: "modelos 3D propios: cart, trineo, motonieve, monte, pista",
+          value: "8",
+          label:
+            "modelos 3D propios en blender: kart, pista, personajes y escenarios",
         },
       ],
       problem:
-        "El template oficial (Karting Microgame 5.0.1) no traía IA: había que diseñar desde cero un rival que aprendiera a conducir. Construir un kart racing creíble exige físicas arcade bien parametrizadas y un loop de partida completo — no un demo técnico.",
+        "Un kart racing creíble exige físicas arcade bien parametrizadas, una IA rival que compita de verdad y un loop de partida completo, no un demo técnico. Partimos de la base oficial de Unity y la convertimos en juego propio: integramos la IA rival con Reinforcement Learning y la hicimos funcionar en un nivel de carrera; en el resto, los rivales replican los movimientos del jugador principal, con 5 niveles encadenados hasta los créditos.",
       role: [
         "Lideré el proyecto (~80%): código, gameplay, integración de ML-Agents, flujo de niveles, dirección e integración.",
-        "Programé la IA rival con Reinforcement Learning: misma interfaz `IInput` que el jugador, observaciones por raycasts + velocidad local + dirección al checkpoint, recompensas por progreso y penalizaciones por choque, modos Training/Inferencing.",
-        "Modelé en Blender: `grinchcar`, `Trineo2`, `motonieve`, `Patineta`, `Mono`, `Pista`, `SantaFinal`, `Montaña Grinch`; HUD navideño, trailer y créditos en video y audio propios.",
+        "Integré la IA rival con Reinforcement Learning y la hice funcionar en un nivel de carrera: comparte la entrada del jugador, observa con sensores de distancia, velocidad y dirección al punto de control, con recompensas por progreso y penalizaciones por choque, en modos entrenamiento e inferencia. En el resto de niveles, los rivales replican los movimientos del jugador principal.",
+        "Modelé en Blender los assets propios: vehículos y personajes (kart del Grinch con su conductor, trineo de Santa con su conductor, motonieve, patineta), muñeco de nieve, pista completa, Santa final y montaña; HUD navideño, trailer y créditos en video y audio propios.",
         "Diseñé el flujo de partida encadenando 5 niveles hasta los créditos (modifiqué `GameFlowManager`).",
       ],
       solution: [
         "**Arquitectura en capas** con `asmdefs` bien definidos (KartGame, KartGame.Editor, KartGame.AI, KartGame.AI.Editor).",
-        "**IA con RL (lo más destacado):** el rival comparte la misma interfaz de input que el jugador — el `ArcadeKart` recibe un `InputData` sin distinguir quién lo conduce. Observaciones por raycasts (detección de colisiones), velocidad local y dirección al siguiente checkpoint en capa exclusiva; recompensa por acercarse/pasar el checkpoint y por velocidad, penalización por choque. Checkpoints + raycasts en vez de NavMesh: es una carrera (seguir la línea evitando choques), no una búsqueda de camino — la elección estándar para racing con RL.",
+        "**IA rival que aprende a conducir:** integramos el módulo de Reinforcement Learning en nuestro proyecto y lo hicimos funcionar en un nivel de carrera. Usa la misma entrada que el jugador, así el kart no distingue quién lo maneja. Detecta la pista con sensores de distancia, mide su velocidad y apunta al siguiente punto de control; gana puntos por avanzar rápido y los pierde por chocar. En el resto de niveles, los rivales replican los movimientos del jugador principal.",
         "**Física arcade:** Rigidbody + 4 WheelColliders, suspensión parametrizada (tunable sin código), derrape con VFX, power-ups extensibles (`struct Stats`), `KartBounce` y reorientación aérea al caer.",
         "**Flujo de partida:** 5 niveles encadenados dentro de una misma partida, victoria/derrota y pantalla de créditos con video.",
         "**Modelos 3D y dirección:** assets originales en Blender, arte navideño y trailer/créditos en video y audio propios.",
