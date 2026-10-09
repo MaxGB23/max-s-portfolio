@@ -45,7 +45,7 @@ Descartado: espejo `projects-en.ts` con tipos opcionales (permite drift silencio
 - [x] T4: convertir `caf` (peor caso: 11 `role[]`, árbol de 9 nodos) a `data/projects/caf.ts` con EN.
 - [x] T5: convertir `presidencia`
 - [x] T6: convertir `one-click-ti`
-- [ ] T7: convertir `autoshop`
+- [x] T7: convertir `autoshop`
 - [ ] T8: convertir `color-highlight-v2`
 - [x] T9: convertir `funky-ai`
 - [x] T10: convertir `cumyxel`
@@ -93,3 +93,6 @@ Descartado: espejo `projects-en.ts` con tipos opcionales (permite drift silencio
   - `cumyxel` `role`: "Escribí todo el gameplay". El mismo documento editorial acredita a **cuatro** personas en Cumyxel (tres en modelado 3D, cinemáticas y un nivel), así que el claim solo se sostiene con la lectura de que los pares modelaron pero nadie más programó. La nota de licencias del doc sí respalda el claim más estrecho ("el diseño de escenarios, las animaciones y todo el gameplay").
   - Repetir la verificación que ya está pendiente en `grinchmas-kart` (`5 niveles`, `8 modelos 3D`, `~80%`) contra el repo público. El conteo `8 modelos 3D` no aparece en ningún `docs/`: los docs enumeran las categorías (kart, pista, personajes, escenario) pero nunca una cifra.
   - Inconsistencia ES preexistente que NO se tocó: `data/` dice "Mono de Nieve" donde el draft dice "Muñeco de nieve".
+  - `one-click-ti` `metric` + `metrics[0]`: "5 módulos CRUD" aparece en cuatro sitios (metric, metrics[0], role[1], solution[2]). Coherente, pero es un claim repetido, no un dato medido en un punto verificable.
+  - `autoshop` `summary`: "prácticas profesionales" es el único sostén del claim de que el sitio estuvo en producción.
+  - `autoshop` `role[3]`: "Acompañé al equipo administrativo para estructurar el contenido..." es la afirmación más débil de la ficha.
