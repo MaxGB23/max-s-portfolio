@@ -81,7 +81,8 @@ Paso de *tooling* en la curva profesional: PHP/Laravel/Vue → tooling VS Code �
 | `demo-vscode.webp` | **Imagen de la card:** captura real de VS Code con los colores resaltados en `globals.css` del propio portfolio |
 | `main.webp` | Mockup de presentación de la extensión |
 
-> Solo existen 2 capturas del proyecto. La captura real va como imagen de card porque demuestra que la extensión funciona; el mockup queda en la galería. Antes estaba al revés y además el `imageAlt` de la card era genérico.
+> Solo existen 2 capturas del proyecto, y **ambas están en la galería**. La captura real es también la imagen de la card; repetirla es correcto porque la card no tiene galería dedicada con zoom. Con una sola imagen la galería se veía vacía.
+> Antes la imagen de la card era `main.webp` (el mockup) con `imageAlt` genérico. Ahora la card es la captura real, que demuestra que la extensión funciona.
 
 ### CTA
 

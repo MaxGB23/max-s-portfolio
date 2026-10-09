@@ -207,7 +207,7 @@ export const projects: Project[] = [
           ],
         },
         {
-          name: "Expediente electrónico",
+          name: "TITULO DE PRUEBA deliberadamente largo para verificar que el numero de card no queda huerfano arriba y que la continuacion se alinea bajo la primera letra del titulo",
           description:
             "Alta y búsqueda rápida de pacientes, historial de sesiones y pagos, seguimiento individual.",
         },
@@ -666,6 +666,10 @@ export const projects: Project[] = [
       ],
       gallery: [
         {
+          src: "/images/projects/grinchmas-kart/inicio.webp",
+          alt: "Pantalla de inicio de Grinchmas Kart",
+        },
+        {
           src: "/images/projects/grinchmas-kart/nivel1.webp",
           alt: "Gameplay del nivel 1 de Grinchmas Kart",
         },
@@ -822,6 +826,10 @@ export const projects: Project[] = [
       ],
       gallery: [
         {
+          src: "/images/projects/cumyxel/nivel1.webp",
+          alt: "Nivel 1 de Cumyxel",
+        },
+        {
           src: "/images/projects/cumyxel/bossfight.webp",
           alt: "Combate contra el jefe en Cumyxel",
         },
@@ -958,6 +966,10 @@ export const projects: Project[] = [
           alt: "Portada de la landing pública de One Click Ti",
         },
         {
+          src: "/images/projects/oneclickti/proyectos.webp",
+          alt: "Catálogo de servicios publicado en la landing, con precio y categoría",
+        },
+        {
           src: "/images/projects/oneclickti/contacto.webp",
           alt: "Formulario público de contacto, origen de los leads",
         },
@@ -1014,7 +1026,7 @@ export const projects: Project[] = [
     metric: "3 módulos de gestión propios, en PHP sin framework",
     tags: ["PHP", "MySQL", "JavaScript", "Bootstrap", "HTML5"],
     image: "/images/projects/autoshop/main.webp",
-    imageAlt: "Panel de administración de AutoShop",
+    imageAlt: "Hero de la landing de AutoShop Taller: logo, eslogan y navegación principal",
     links: [],
     detail: {
       headline:
@@ -1073,6 +1085,10 @@ export const projects: Project[] = [
         {
           src: "/images/projects/autoshop/crud.webp",
           alt: "Panel de administración de AutoShop: gestión de servicios y promociones",
+        },
+        {
+          src: "/images/projects/autoshop/main.webp",
+          alt: "Hero de la landing de AutoShop Taller con el logo del taller",
         },
       ],
       cta: "¿Tu negocio actualiza sus servicios o promociones con un desarrollador? Hablemos.",
@@ -1170,6 +1186,10 @@ hook: "Fork modernizado de la extensión que resalta colores en el editor: rende
         "Licencia: GPL-3.0 (fork de `vscode-ext-color-highlight`)",
       ],
       gallery: [
+        {
+          src: "/images/projects/color-highlight-v2/demo-vscode.webp",
+          alt: "VS Code con los colores resaltados en un archivo CSS real",
+        },
         {
           src: "/images/projects/color-highlight-v2/main.webp",
           alt: "Color Highlight v2: presentación de la extensión",

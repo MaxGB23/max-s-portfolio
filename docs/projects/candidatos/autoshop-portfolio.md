@@ -17,7 +17,7 @@
 | `metric` | 3 módulos de gestión propios, en PHP sin framework |
 | `tags` | PHP · MySQL · JavaScript · Bootstrap · HTML5 |
 | `image` | `/images/projects/autoshop/main.webp` |
-| `imageAlt` | Panel de administración de AutoShop |
+| `imageAlt` | Hero de la landing de AutoShop Taller: logo, eslogan y navegación principal |
 | `links` | — (sin repo publicado, sin URL live) |
 
 > Nota: `CSS3` se quitó de los tags por redundante con Bootstrap, pero sigue declarando en Stack.
@@ -82,8 +82,10 @@ Primer proyecto en un entorno real, sobre fundamentos puros: PHP, SQL, sesiones 
 | `HomeCensured.webp` | Portada de la landing pública |
 | `ServiciosCensured.webp` | Catálogo de servicios del taller en la landing |
 | `crud.webp` | Panel de administración: gestión de servicios y promociones |
+| `main.webp` | Hero de la landing con el logo del taller |
 
-> `main.webp` se quitó de la galería porque ya es la imagen de la card: mostrarla dos veces en la misma vista era repetición.
+> `main.webp` es también la imagen de la card. Se mantiene en la galería a propósito: la card no tiene galería dedicada con zoom, así que repetirla no genera hueco y completa la secuencia de pantallas.
+> ~~`main.webp` se quitó de la galería~~ — se restauró: dejar la galería en 3 items se veía como un hueco.
 >
 > ⚠️ Los nombres `*Censured.webp` se conservaron porque las capturas tienen datos del cliente tapados. Renombrarlos es opcional.
 
@@ -100,7 +102,8 @@ _"¿Tu negocio actualiza sus servicios o promociones con un desarrollador? Hable
 - **"Sin framework" ×6 → ×4** — desaparecieron de hook, summary, solution, architecture y CTA, que es donde se volvía dogma. Queda solo donde cumple función: `metric` de la card, la métrica del detail, `role` (qué construí) y `stack` (el stack).
 - **"Promociones por calendario" subido a primer plano** — es el feature más específico del proyecto (resuelve un problema real del taller) y estaba enterrado en un bullet genérico.
 - **Borrado** — "Tecnología honesta" y "fundamentos al desnudo" (poesía de marketing, no dicen nada verificable).
-- **Gallery** — `main.webp` duplicado eliminado; el `alt` duplicado literal entre `crud.webp` y `main.webp` corregido (era bug de accesibilidad).
+- **Gallery** — se restauraron las 4 imágenes. El `alt` duplicado literal entre `crud.webp` y `main.webp` se corrigió (era bug de accesibilidad), pero la repetición de `main.webp` se mantiene: repetir la imagen de la card es correcto aquí porque no hay galería dedicada con zoom.
+- **`imageAlt` de la card corregido** — decía "Panel de administración de AutoShop", pero `main.webp` es el **hero de la landing** (logo, eslogan y navegación), no el panel. Verificado al ver la imagen.
 - **Título** — el espejo decía "AutoShop" y `projects.ts` decía "AutoShop Taller". Unificado.
 - **Summary** — deja de abrir con "prácticas profesionales" y de repetir "sin framework" dos veces; primero el problema, luego el outcome, al final el encuadre honesto.
 - **CTA** — de curiosidad técnica a valor de cliente.
