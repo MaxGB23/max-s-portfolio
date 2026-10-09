@@ -161,7 +161,7 @@ export const projects: Project[] = [
         "**Panel de control (dashboard):** analíticas de ingresos mensuales, pacientes activos, ganancias y métricas operativas, con filtros por periodo (30 días, 3 meses, 1 año e histórico), cache con refresh manual y tarjetas + gráficos. El histórico usa cache extendido por costo.",
         "**Landing page pública:** optimizada para SEO, enfocada a captación de nuevos pacientes e integrada con el sistema interno.",
         "**Seguridad y roles:** doble perímetro con layouts y guards por rol (Admin, Editor, Viewer), loop cerrado sin registro público y autorización siempre en el servidor; el cliente solo presenta, nunca autoriza.",
-        "**Cuenta de usuario autocontrolada (perfil):** edición de nombre y contraseña desde el propio perfil, con vista de tipo red social (foto de perfil y portada). El correo queda bloqueado para el usuario (input deshabilitado) y su cambio se solicita a un administrador, preservando la trazabilidad de la cuenta.",
+        "**Perfil del usuario:** edición de nombre y contraseña desde el propio perfil, con vista de tipo red social (foto de perfil y portada). El correo queda bloqueado para el usuario (input deshabilitado) y su cambio se solicita a un administrador, preservando la trazabilidad de la cuenta.",
       ],
       stack: [
         "Framework: Next.js, React",
@@ -195,7 +195,7 @@ export const projects: Project[] = [
     architecture: {
       name: "Sistema de Gestión Clínica",
       description:
-        "Arquitectura modular por features diseñada para escalar a múltiples especialidades (fisioterapia, psicología, nutrición, odontología) y funcionar como base tipo SaaS.",
+        "Plataforma de gestión clínica en producción con arquitectura modular por features: módulos verticales por dominio (agenda, clientes, paquetes, pagos, sesiones, usuarios) sobre un núcleo transversal de autenticación, base de datos y errores.",
       children: [
         {
           name: "Agenda inteligente",
@@ -214,35 +214,68 @@ export const projects: Project[] = [
         {
           name: "Módulo financiero",
           description:
-            "Venta de paquetes de sesiones, balance por paciente y registro de ingresos.",
+            "Venta de paquetes de sesiones, balance por paciente y registro de ingresos. Los paquetes y sus precios se administran desde una UI CRUD, así que subirlos no exige desplegar código.",
           children: [
             { name: "Paquetes de sesiones" },
             { name: "Balance por paciente" },
             { name: "Registro de ingresos" },
+            { name: "Paquetes y precios editables sin deploy" },
           ],
         },
         {
           name: "Panel de control (dashboard)",
           description:
-            "Analíticas de ingresos mensuales, pacientes activos, ganancias y métricas operativas, con filtros por periodo y tarjetas + gráficos.",
+            "Analíticas de ingresos mensuales, pacientes activos, ganancias y métricas operativas, con tarjetas y gráficos.",
           children: [
             { name: "Analíticas mensuales" },
-            { name: "Filtros por periodo (30 días, 3 meses, 1 año)" },
+            { name: "Filtros por periodo (30 días, 3 meses, 1 año e histórico)" },
+            { name: "Cache con refresh manual" },
           ],
+        },
+        {
+          name: "Seguridad y roles",
+          description:
+            "Doble perímetro con layouts de servidor y guards por rol: la autorización se resuelve siempre en el servidor y el cliente solo presenta, nunca autoriza.",
+          children: [
+            { name: "Roles: Admin, Editor y Viewer" },
+            { name: "Layouts de servidor exigen sesión y rol antes de renderizar" },
+            { name: "Guards en cada Server Action y query sensible" },
+            {
+              name: "Sin registro público: el admin crea las cuentas y el rol no se fija desde el cliente",
+            },
+          ],
+        },
+        {
+          name: "Endurecimiento por capas",
+          description:
+            "Validación y fallo seguro en cada mutación: nada se confía desde el cliente y ningún error crudo llega al usuario.",
+          children: [
+            { name: "Zod con safeParse antes de cualquier I/O" },
+            { name: "Cupo, cita pendiente y choques de horario verificados en el servidor" },
+            { name: "SQL solo con parámetros y fragmentos de una unión cerrada" },
+            { name: "Errores de auth y 404 contextuales con salida accionable" },
+          ],
+        },
+        {
+          name: "Estructura modular por capas",
+          description:
+            "Routing, dominio y transversalidad separados, para que una regla clínica se cambie en un solo lugar.",
+          children: [
+            { name: "app: solo routing, layouts y páginas, sin lógica de negocio" },
+            { name: "modules: vertical por dominio (actions, schemas, queries, componentes)" },
+            { name: "core: transversal (auth, db, errores, proveedores, UI)" },
+            { name: "shared: utilidades usadas por dos o más módulos" },
+          ],
+        },
+        {
+          name: "Perfil del usuario",
+          description:
+            "El usuario edita su nombre y contraseña desde su perfil, con vista de foto de perfil y portada. El correo queda bloqueado y su cambio se solicita a un administrador.",
         },
         {
           name: "Landing page pública",
           description:
             "Optimizada para SEO, enfocada a captación de nuevos pacientes e integrada con el sistema interno.",
-        },
-        {
-          name: "Seguridad y roles",
-          description: "Accesos por tipo de usuario y manejo seguro de sesiones.",
-        },
-        {
-          name: "Cuenta de usuario",
-          description:
-            "Perfil autocontrolado: el usuario edita nombre y contraseña; el correo queda bloqueado y su cambio se solicita a un administrador.",
         },
       ],
     },
@@ -1075,11 +1108,11 @@ export const projects: Project[] = [
     id: "color-highlight-v2",
     title: "Color Highlight v2",
     category: "Dev Tools / VS Code",
-    hook: "Fork modernizado de la extensión de VS Code que resalta colores en el editor; reconstruido con TypeScript, esbuild y pnpm.",
-    metric: "Render sin lag — debounce de 150ms",
+hook: "Fork modernizado de la extensión que resalta colores en el editor: render sin tocar el historial Git, 38 KB y 2 dependencias.",
+    metric: "38 KB compilados, 2 dependencias en runtime",
     tags: ["TypeScript", "esbuild", "pnpm", "VS Code"],
-    image: "/images/projects/color-highlight-v2/main.webp",
-    imageAlt: "Editor de VS Code con colores resaltados por la extensión",
+    image: "/images/projects/color-highlight-v2/demo-vscode.webp",
+    imageAlt: "VS Code con los colores resaltados en un archivo CSS real",
     links: [
       {
         label: "Ver código",
@@ -1089,74 +1122,89 @@ export const projects: Project[] = [
       },
     ],
     detail: {
-      headline: "Un fork modernizado, con crédito a los autores originales",
+      headline:
+        "Resalta los colores de tu código sin tocar el historial Git, en 38 KB",
       summary:
-        "Fork modernizado de `vscode-ext-color-highlight` (GPL-3.0): la extensión de VS Code que resalta colores en el editor, reconstruida con un stack moderno — TypeScript, esbuild y pnpm — e incorporando mejoras de rendimiento y accesibilidad. Se presenta siempre como fork de un proyecto existente, nunca como creación propia.",
+        "Fork modernizado de `vscode-ext-color-highlight` (GPL-3.0), la extensión que resalta los colores directamente en el editor. Reescribí el núcleo en TypeScript con esbuild y pnpm: el render se inyecta en el DOM del editor mediante un mapa de decoraciones, así que ver los colores no ensucia el historial de Git del archivo. El artefacto compilado pesa 38 KB y depende de 2 paquetes en runtime. Fork bajo GPL-3.0, con crédito explícito a los autores originales.",
       metrics: [
-        { value: "150ms", label: "debounce → render sin lag en el editor" },
-        { value: "WCAG", label: "auto-contraste sobre el color resaltado" },
         {
-          value: ".vsix",
-          label: "distribución agnóstica de la tienda (store-agnostic)",
+          value: "38 KB",
+          label: "del artefacto compilado de la extensión",
         },
         {
-          value: "GPL-3.0",
-          label: "fork con crédito explícito a los autores originales",
+          value: "150 ms",
+          label:
+            "de debounce para no bloquear el editor al teclear (cuello de botella en la compilación de promesas de regex)",
+        },
+        {
+          value: "11",
+          label:
+            "estrategias de detección de color en 6 formatos: SCSS, LESS, CSS vars, Hex/RGB, HSL y HWB",
+        },
+        {
+          value: "2",
+          label: "dependencias en runtime, sin framework",
         },
       ],
       problem:
-        "La extensión original resolvía un problema real — ver los colores del código directamente en el editor — pero su base había envejecido: sin tipado, build lento y dependencias pesadas. Modernizarla la hace mantenible y rápida sin abandonar la licencia ni el crédito a sus autores.",
+        "La extensión original resolvía un problema real — ver los colores del código directamente en el editor — pero su base había envejecido: sin tipado, build lento y dependencias pesadas. Modernizarla la hace mantenible y ligera sin abandonar la licencia ni el crédito de sus autores, y el render se diseñó para no ensuciar el historial de Git.",
       role: [
-        "Modernicé un proyecto open source existente (GPL-3.0) reconstruyéndolo con TypeScript, esbuild y pnpm.",
-        "Apliqué mejoras de rendimiento y accesibilidad: render con debounce de 150ms y auto-contraste WCAG.",
-        "Preparé la distribución `.vsix` agnóstica de la tienda de extensiones.",
-        "Mantuve la licencia GPL-3.0 y el crédito a los autores originales — el proyecto se presenta como fork modernizado, nunca como invención propia.",
+        "Modernicé un proyecto open source existente (GPL-3.0): núcleo, motor de resaltado y lifecycle reescritos en TypeScript, compilados con esbuild y gestionados con pnpm.",
+        "Reescribí el renderizador con un mapa de decoraciones (DecorationMap): los colores se inyectan en el DOM del editor sin ensuciar el historial de Git y sin dejar decoraciones huérfanas en memoria.",
+        "Implementé auto-contraste WCAG: calculo la luminancia relativa (WCAG 2.0 §1.4.3) y elijo blanco o negro según el ratio de contraste.",
+        "Apliqué un debounce de 150 ms para no bloquear el editor al teclear, atacando el cuello de botella de la compilación de promesas de regex.",
+        "Mantuve la licencia GPL-3.0 y el crédito a los autores originales: el proyecto se presenta como fork modernizado, nunca como invención propia.",
       ],
       solution: [
-        "**Stack moderno:** TypeScript (tipado), esbuild (build rápido), pnpm (dependencias modernas y reproducibles).",
-        "**Render sin lag:** debounce de 150ms para no bloquear el editor al teclear.",
-        "**Auto-contraste WCAG:** el color del texto se ajusta para mantener legibilidad sobre cualquier color resaltado.",
-        "**Distribución store-agnostic:** `.vsix` instalable sin depender de una tienda concreta.",
+        "**Render sin tocar Git:** los colores se inyectan en el DOM mediante un mapa de decoraciones, así que verlos no ensucia el historial de Git del archivo.",
+        "**Núcleo en TypeScript:** extension, motor de resaltado, mapa de decoraciones y contraste reescritos con tipado y compilados con esbuild.",
+        "**11 estrategias de detección:** SCSS vars, LESS vars, CSS vars, Hex/RGB, HSL y HWB, integradas en un motor central.",
+        "**Auto-contraste WCAG:** luminancia relativa y ratio de contraste (WCAG 2.0) para elegir texto blanco o negro sobre cualquier color resaltado.",
+        "**Ultraligera:** 38 KB de artefacto y 2 dependencias en runtime.",
       ],
       stack: [
-        "Lenguaje: TypeScript",
+        "Lenguaje: TypeScript (núcleo) + JavaScript (estrategias heredadas)",
         "Build: esbuild",
         "Package manager: pnpm",
-        "Plataforma: API de extensiones de VS Code",
+        "Plataforma: API de extensiones de VS Code (VS Code 1.90+)",
         "Licencia: GPL-3.0 (fork de `vscode-ext-color-highlight`)",
       ],
       gallery: [
         {
-          src: "/images/projects/color-highlight-v2/demo-vscode.webp",
-          alt: "VS Code con los colores resaltados directamente en un archivo CSS real",
+          src: "/images/projects/color-highlight-v2/main.webp",
+          alt: "Color Highlight v2: presentación de la extensión",
         },
       ],
-      cta: "¿Quieres ver cómo modernizo un proyecto open source existente sin romper su licencia? Hablemos.",
+      cta: "¿Quieres que tus colores se vean al instante, sin pesar y sin ensuciar Git? Hablemos.",
     },
     architecture: {
-      name: "color-highlight-v2",
+      name: "Color Highlight v2",
       description:
-        "Fork modernizado de vscode-ext-color-highlight (GPL-3.0) reconstruido con TypeScript, esbuild y pnpm, con mejoras de rendimiento y accesibilidad.",
+        "Fork modernizado de vscode-ext-color-highlight (GPL-3.0): render por mapa de decoraciones que no ensucia Git, 11 estrategias de detección y 38 KB de artefacto.",
       children: [
         {
-          name: "Stack moderno",
+          name: "Render sin tocar Git",
           description:
-            "TypeScript (tipado), esbuild (build rápido), pnpm (dependencias modernas y reproducibles).",
+            "Mapa de decoraciones (DecorationMap): los colores se inyectan en el DOM del editor sin modificar el archivo ni su historial de Git.",
         },
         {
-          name: "Render sin lag",
+          name: "Motor de detección",
           description:
-            "Debounce de 150ms para no bloquear el editor al teclear.",
+            "11 estrategias en 6 formatos: SCSS, LESS, CSS vars, Hex/RGB, HSL y HWB.",
         },
         {
           name: "Auto-contraste WCAG",
           description:
-            "El color del texto se ajusta para mantener legibilidad sobre cualquier color resaltado.",
+            "Luminancia relativa y ratio de contraste (WCAG 2.0) para texto blanco o negro.",
         },
         {
-          name: "Distribución store-agnostic",
+          name: "Ultraligera",
+          description: "38 KB de artefacto y 2 dependencias en runtime.",
+        },
+        {
+          name: "Stack moderno",
           description:
-            "Archivo .vsix instalable sin depender de una tienda concreta.",
+            "Núcleo en TypeScript, compilado con esbuild y gestionado con pnpm.",
         },
       ],
     },
