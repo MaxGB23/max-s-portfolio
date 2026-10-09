@@ -615,7 +615,7 @@ export const projects: Project[] = [
       role: [
         "Lideré el proyecto (~80%): código, gameplay, integración de ML-Agents, flujo de niveles, dirección e integración.",
         "Integré la IA rival con Reinforcement Learning y la hice funcionar en un nivel de carrera: comparte la entrada del jugador, observa con sensores de distancia, velocidad y dirección al punto de control, con recompensas por progreso y penalizaciones por choque, en modos entrenamiento e inferencia. En el resto de niveles, los rivales replican los movimientos del jugador principal.",
-        "Modelé en Blender los assets propios: vehículos y personajes (kart del Grinch con su conductor, trineo de Santa con su conductor, motonieve, patineta), muñeco de nieve, pista completa, Santa final y montaña; HUD navideño, trailer y créditos en video y audio propios.",
+        "Modelé en Blender los assets propios: personajes (Grinch, Santa, Mono de Nieve y Pingüino), sus vehículos, pista y escenarios; HUD navideño, trailer y créditos en video y audio propios.",
         "Diseñé el flujo de partida encadenando 5 niveles hasta los créditos (modifiqué `GameFlowManager`).",
       ],
       solution: [
@@ -711,7 +711,7 @@ export const projects: Project[] = [
         {
           name: "Modelos 3D y dirección",
           description:
-            "Assets originales en Blender (grinchcar, Trineo2, motonieve, Patineta, Mono, Pista, SantaFinal, Montaña Grinch), HUD navideño, trailer y créditos en video y audio propios.",
+            "Assets originales en Blender (Grinch, Santa, Mono de Nieve y Pingüino, con sus vehículos, pista y escenarios), HUD navideño, trailer y créditos en video y audio propios.",
         },
       ],
     },
