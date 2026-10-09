@@ -329,15 +329,15 @@ export const projects: Project[] = [
         },
         {
           src: "/images/projects/presidencia-acambaro/solicitudes.webp",
-          alt: "Panel de métricas del Sistema de Apoyos Sociales (tema oscuro)",
+          alt: "Módulo de solicitudes del Sistema de Apoyos Sociales",
         },
         {
           src: "/images/projects/presidencia-acambaro/estadisticas.webp",
-          alt: "Panel de métricas del Sistema de Apoyos Sociales (tema oscuro)",
+          alt: "Panel de métricas y estadísticas del Sistema de Apoyos Sociales",
         },
         {
           src: "/images/projects/presidencia-acambaro/generacion-pdf.webp",
-          alt: "Panel de métricas del Sistema de Apoyos Sociales (tema oscuro)",
+          alt: "Generación de reportes en PDF del Sistema de Apoyos Sociales",
         },
       ],
       cta: "¿Buscas digitalizar procesos administrativos complejos o requieres software seguro a medida? Hablemos.",
@@ -633,10 +633,6 @@ export const projects: Project[] = [
       ],
       gallery: [
         {
-          src: "/images/projects/grinchmas-kart/inicio.webp",
-          alt: "Pantalla de inicio de Grinchmas Kart",
-        },
-        {
           src: "/images/projects/grinchmas-kart/nivel1.webp",
           alt: "Gameplay del nivel 1 de Grinchmas Kart",
         },
@@ -793,10 +789,6 @@ export const projects: Project[] = [
       ],
       gallery: [
         {
-          src: "/images/projects/cumyxel/nivel1.webp",
-          alt: "Nivel 1 de Cumyxel",
-        },
-        {
           src: "/images/projects/cumyxel/bossfight.webp",
           alt: "Combate contra el jefe en Cumyxel",
         },
@@ -863,11 +855,11 @@ export const projects: Project[] = [
     id: "one-click-ti",
     title: "One Click Ti — PWA",
     category: "Full Stack / PWA",
-    hook: "PWA full-stack para una empresa de TI: landing pública + sistema de gestión interno, instalable en dispositivos.",
-    metric: "PWA instalable (manifest + service worker)",
-    tags: ["Laravel", "Vue 3", "Inertia.js", "MySQL", "Laravel Breeze"],
+    hook: "PWA full-stack por contrato para una empresa de TI: catálogo de servicios con precios, captación de leads y panel de gestión en una app instalable.",
+    metric: "5 módulos CRUD en una PWA instalable",
+    tags: ["Laravel", "Vue 3", "Inertia.js", "MySQL", "PHP"],
     image: "/images/projects/oneclickti/proyectos.webp",
-    imageAlt: "Landing pública y panel de gestión de One Click Ti",
+    imageAlt: "Catálogo de servicios publicado en la landing, con precio y categoría",
     links: [
       {
         label: "Ver código",
@@ -878,88 +870,100 @@ export const projects: Project[] = [
     ],
     detail: {
       headline:
-        "Presencia digital y gestión interna en una sola PWA instalable",
+        "Catálogo de servicios con precios y leads capturados, administrados desde una app instalable",
       summary:
-        "PWA full-stack desarrollada por contrato para One Click Ti (Querétaro, sep – dic 2024). Integra una landing page pública con un sistema de gestión interno en una sola aplicación instalable, con autenticación y control de acceso por roles. Mi primera aproximación profesional a Laravel + Vue con arquitectura PWA.",
+        "PWA full-stack desarrollada por contrato para One Click Ti (Querétaro, sep – dic 2024) y con 4 meses de soporte en producción. Integra una landing pública con un panel de gestión interno donde el equipo publica servicios con precio y categoría, y donde los contactos que deja el formulario público llegan directo a la tabla de leads. El panel separa permisos: solo los administradores editan, el resto del equipo consulta.",
       metrics: [
         {
-          value: "PWA",
+          value: "5",
           label:
-            "completa: manifest + service worker, instalable en dispositivos",
+            "módulos CRUD completos: servicios, categorías, FAQs, contactos y usuarios",
         },
         {
-          value: "2",
-          label:
-            "superficies integradas: landing pública + sistema de gestión interno",
+          value: "4 meses",
+          label: "de soporte al cliente en producción (sep – dic 2024)",
         },
         {
-          value: "Contrato",
-          label: "entregado a cliente real (sep - dic 2024)",
+          value: "17",
+          label:
+            "iconos y splash screens que cubren los tamaños que exigen iOS y Android",
+        },
+        {
+          value: "3",
+          label:
+            "plataformas instalables desde el navegador: Android, iOS y escritorio, sin pasar por una app store",
         },
       ],
       problem:
-        "La empresa necesitaba dos cosas en una: una presencia pública profesional (landing) y herramientas internas de gestión, sin mantener sistemas separados. Una PWA instalable evita pasar por una app store y funciona offline-first como aplicación de escritorio/móvil.",
+        "La empresa necesitaba dos cosas en una: una presencia pública profesional con su catálogo de servicios y una herramienta interna para administrarlo, sin mantener sistemas separados ni depender de un desarrollador para cambiar precios o actualizar el contenido. Los contactos que llegaban por el formulario público quedaban sueltos, sin consolidarse en un solo lugar. Y al ser una web, obligaba al cliente a entrar por un navegador cada vez.",
       role: [
-        "Desarrollé la PWA full-stack completa con Vue 3, MySQL, Laravel e Inertia.js.",
-        "Construí la landing page pública y el sistema de gestión interno.",
-        "Implementé autenticación, control de acceso por roles (RBAC) y las capacidades PWA (manifest + service worker) usando Laravel Breeze.",
+        "Desarrollé la PWA full-stack completa con Laravel 11, Vue 3, Inertia.js y MySQL.",
+        "Construí el catálogo de servicios con precio y categoría, y el panel que lo administra con 5 módulos CRUD.",
+        "Conecté el formulario público de contacto con la tabla de leads, para que cada contacto quede registrado sin intervención manual.",
+        "Implementé la separación de permisos: solo los administradores editan; el resto del equipo consulta.",
+        "Configuré la instalación como PWA: manifest con icono propio y pantalla de inicio propia, y service worker con precache de las secciones públicas.",
       ],
       solution: [
-        "**Landing pública:** cara profesional de la empresa, conectada con el sistema interno.",
-        "**Sistema de gestión interno:** administración de contenido y operación del negocio.",
-        "**Autenticación y roles:** Laravel Breeze con RBAC para separar accesos.",
-        "**PWA instalable:** manifest + service worker, instalable y utilizable como app nativa.",
-        "**Arquitectura unificada:** Laravel (backend) + Vue 3 e Inertia.js (frontend) en un solo proyecto.",
+        "**Catálogo de servicios:** cada servicio se publica con nombre, descripción, precio, imagen y categoría, sin tocar código.",
+        "**Captación de leads:** el formulario público de contacto escribe directo en la tabla de contactos, que el mismo panel administra.",
+        "**Panel de gestión:** 5 módulos CRUD completos —servicios, categorías, FAQs, contactos y usuarios— con filtros y paginación.",
+        "**Permisos por tipo de usuario:** solo los administradores editan; el resto del equipo consulta sin poder modificar datos.",
+        "**Auditoría de cambios:** cada registro guarda quién lo creó y quién lo actualizó, con claves foráneas a la tabla de usuarios.",
+        "**App instalable, no una web más:** se instala desde el navegador como aplicación nativa en móvil y escritorio, con icono propio y pantalla de inicio propia, sin pasar por una app store.",
+        "**Manifest y service worker:** 8 iconos y 9 splash screens que cubren los tamaños que exigen iOS y Android, precache de las 5 secciones públicas y estrategia network-first para los assets de Vite.",
       ],
       stack: [
-        "Backend: Laravel (PHP)",
+        "Backend: Laravel 11 (PHP)",
         "Frontend: Vue 3, Inertia.js",
         "Base de datos: MySQL",
-        "Autenticación: Laravel Breeze",
+        "Despliegue: Heroku (Procfile)",
         "PWA: manifest + service worker",
       ],
       gallery: [
         {
           src: "/images/projects/oneclickti/hero.webp",
-          alt: "Landing pública de One Click Ti",
-        },
-        {
-          src: "/images/projects/oneclickti/proyectos.webp",
-          alt: "Sección de proyectos de la landing de One Click Ti",
+          alt: "Portada de la landing pública de One Click Ti",
         },
         {
           src: "/images/projects/oneclickti/contacto.webp",
-          alt: "Sección de contacto de One Click Ti",
+          alt: "Formulario público de contacto, origen de los leads",
         },
         {
           src: "/images/projects/oneclickti/crud.webp",
-          alt: "Sistema de gestión interno de One Click Ti",
+          alt: "Panel de gestión interna con el CRUD de servicios",
         },
       ],
-      cta: "¿Necesitas una PWA instalable que combine presencia digital y gestión interna? Hablemos.",
+      cta: "¿Necesitas un catálogo de servicios que tu equipo pueda actualizar sin depender de un desarrollador? Hablemos.",
     },
     architecture: {
       name: "One Click Ti — PWA",
       description:
-        "PWA full-stack por contrato: una sola aplicación instalable que integra landing pública y sistema de gestión interno.",
+        "PWA full-stack por contrato: catálogo público, captación de leads y panel de gestión en una sola aplicación instalable.",
       children: [
         {
           name: "Landing pública",
           description:
-            "Cara profesional de la empresa, conectada con el sistema interno.",
+            "Catálogo de servicios por categoría, preguntas frecuentes y formulario de contacto.",
         },
         {
-          name: "Sistema de gestión interno",
-          description: "Administración de contenido y operación del negocio.",
-        },
-        {
-          name: "Autenticación y roles",
-          description: "Laravel Breeze con RBAC para separar accesos.",
-        },
-        {
-          name: "PWA instalable",
+          name: "Panel de gestión interna",
           description:
-            "Manifest + service worker; instalable y utilizable como app nativa.",
+            "5 módulos CRUD: servicios, categorías, FAQs, contactos (leads) y usuarios.",
+        },
+        {
+          name: "Permisos por tipo de usuario",
+          description:
+            "Los administradores editan; el resto del equipo solo consulta.",
+        },
+        {
+          name: "Auditoría de cambios",
+          description:
+            "created_by y updated_by con clave foránea a la tabla de usuarios.",
+        },
+        {
+          name: "App instalable (PWA)",
+          description:
+            "Se instala desde el navegador en móvil y escritorio, con icono y pantalla de inicio propios, sin pasar por una app store.",
         },
         {
           name: "Arquitectura unificada",
@@ -973,45 +977,51 @@ export const projects: Project[] = [
     id: "autoshop",
     title: "AutoShop Taller",
     category: "Full Stack / PHP",
-    hook: "Sitio full-stack para una empresa de servicios automotrices: landing pública + panel admin con CMS propio hecho desde cero en PHP puro.",
-    metric: "De días a minutos en actualización de contenido",
-    tags: ["PHP", "MySQL", "JavaScript", "Bootstrap", "HTML5", "CSS3"],
+    hook: "Sitio y panel de administración para un taller de servicios automotrices: el personal gestiona servicios, promociones por calendario y consultas sin depender de un desarrollador.",
+    metric: "3 módulos de gestión propios, en PHP sin framework",
+    tags: ["PHP", "MySQL", "JavaScript", "Bootstrap", "HTML5"],
     image: "/images/projects/autoshop/main.webp",
-    imageAlt: "Landing pública y panel de administración de AutoShop",
+    imageAlt: "Panel de administración de AutoShop",
     links: [],
     detail: {
       headline:
-        "Presencia digital y gestión de contenido sin depender de un desarrollador",
+        "El taller gestiona sus servicios, promociones y consultas sin depender de un desarrollador",
       summary:
-        "Sitio web full-stack para una empresa de servicios automotrices en Maravatío, Michoacán (prácticas profesionales, may – ago 2023). Incluye landing pública y un panel de administración con CMS desarrollado desde cero en PHP puro — sin framework — con el que el personal no técnico pasó a gestionar servicios, promociones y consultas por sí mismo.",
+        "Sitio web full-stack para un taller de servicios automotrices en Maravatío, Michoacán (prácticas profesionales, may – ago 2023). El taller no tenía presencia digital profesional ni forma de actualizar su propio contenido: cambiar un servicio o publicar una promoción requería abrir un ticket y esperar días. Construí la landing pública y un panel de administración con el que el personal gestiona servicios, promociones por calendario y consultas por sí mismo.",
       metrics: [
         {
-          value: "Días → minutos",
-          label: "actualización de contenido por staff no técnico (CMS propio)",
-        },
-        { value: "0", label: "frameworks: CMS completo en PHP puro + MySQL" },
-        {
-          value: "2",
-          label: "superficies: landing pública + panel de administración",
+          value: "3",
+          label:
+            "módulos de gestión en el panel: servicios, promociones por calendario y consultas",
         },
         {
+          value: "4 meses",
+          label:
+            "de proyecto en producción para un taller real (may – ago 2023)",
+        },
+        {
+          value: "Sin frameworks",
+          label:
+            "PHP, MySQL y JavaScript escritos a mano: SQL, sesiones y enrutado sin abstracciones que oculten el comportamiento",
+        },
+        {
           value: "2",
-          label: "niveles de rol (admin/staff), sin cuentas para clientes",
+          label: "niveles de acceso (admin / staff), sin cuentas para clientes",
         },
       ],
       problem:
-        "La empresa automotriz no tenía presencia digital profesional ni forma de actualizar su propio contenido: cualquier cambio en servicios, promociones o consultas requería intervención técnica y tardaba días en el mejor caso.",
+        "El taller necesitaba dos cosas: una presencia pública profesional que le llamara clientes y una herramienta interna para actualizar su contenido. Antes, cambiar un servicio o publicar una promoción exigía intervención técnica, y el contenido se quedaba congelado entre visitas.",
       role: [
-        "Desarrollé el sitio full-stack completo en PHP puro, sin framework (MySQL, JavaScript, Bootstrap, HTML5, CSS3).",
-        "Construí un CMS a medida que permite al personal no técnico auto-gestionar listados de servicios, promociones por calendario y consultas de contacto.",
-        "Implementé gestión de usuarios por roles (admin/staff), sin cuentas de acceso para clientes.",
-        "Colaboré con el equipo administrativo para optimizar la estructura de contenido y la presentación de servicios.",
+        "Desarrollé el sitio full-stack completo en PHP, MySQL, JavaScript, Bootstrap y HTML5, sin framework.",
+        "Construí el panel de administración que permite al personal no técnico gestionar servicios, promociones por calendario y consultas sin tocar código.",
+        "Implementé dos niveles de acceso (admin / staff), sin cuentas de acceso para clientes.",
+        "Acompañé al equipo administrativo para estructurar el contenido y la presentación de los servicios.",
       ],
       solution: [
         "**Landing pública:** cara profesional del taller, orientada a captar clientes.",
-        "**Panel de administración + CMS a medida:** el staff gestiona servicios, promociones calendario y consultas sin tocar código.",
-        "**Control de acceso por roles:** niveles admin/staff para el equipo del taller.",
-        "**Tecnología honesta:** PHP puro, MySQL, JavaScript y Bootstrap — sin framework, fundamentos al desnudo.",
+        "**Panel de administración:** el personal gestiona servicios, promociones y consultas sin depender de un desarrollador.",
+        "**Promociones por calendario:** el taller programa y publica promociones por fecha, sin que nadie tenga que editar código.",
+        "**Control de acceso:** dos niveles (admin / staff); los clientes no necesitan cuenta para ver el catálogo.",
       ],
       stack: [
         "Backend: PHP puro (sin framework)",
@@ -1021,41 +1031,42 @@ export const projects: Project[] = [
       gallery: [
         {
           src: "/images/projects/autoshop/HomeCensured.webp",
-          alt: "Landing pública de AutoShop",
+          alt: "Portada de la landing pública de AutoShop",
         },
         {
           src: "/images/projects/autoshop/ServiciosCensured.webp",
-          alt: "Sección de servicios de AutoShop",
+          alt: "Catálogo de servicios del taller en la landing pública",
         },
         {
           src: "/images/projects/autoshop/crud.webp",
-          alt: "Panel de administración (CMS) de AutoShop",
-        },
-        {
-          src: "/images/projects/autoshop/main.webp",
-          alt: "Panel de administración (CMS) de AutoShop",
+          alt: "Panel de administración de AutoShop: gestión de servicios y promociones",
         },
       ],
-      cta: "¿Te interesa ver cómo se construye un CMS a medida partiendo de cero, sin framework? Hablemos.",
+      cta: "¿Tu negocio actualiza sus servicios o promociones con un desarrollador? Hablemos.",
     },
     architecture: {
       name: "AutoShop Taller",
       description:
-        "Sitio full-stack para una empresa de servicios automotrices: landing pública + panel admin con CMS propio en PHP puro, sin framework.",
+        "Sitio full-stack para un taller de servicios automotrices: landing pública y panel de administración con gestión de servicios, promociones y consultas.",
       children: [
         {
           name: "Landing pública",
           description: "Cara profesional del taller, orientada a captar clientes.",
         },
         {
-          name: "Panel de administración + CMS a medida",
+          name: "Panel de administración",
           description:
-            "El staff gestiona servicios, promociones por calendario y consultas sin tocar código.",
+            "3 módulos de gestión: servicios, promociones por calendario y consultas.",
         },
         {
-          name: "Control de acceso por roles",
+          name: "Promociones por calendario",
           description:
-            "Niveles admin/staff para el equipo del taller, sin cuentas para clientes.",
+            "El taller programa promociones por fecha sin intervención técnica.",
+        },
+        {
+          name: "Control de acceso",
+          description:
+            "Dos niveles (admin / staff), sin cuentas de acceso para clientes.",
         },
       ],
     },
@@ -1117,11 +1128,7 @@ export const projects: Project[] = [
       gallery: [
         {
           src: "/images/projects/color-highlight-v2/demo-vscode.webp",
-          alt: "Color Highlight v2 en VS Code",
-        },
-        {
-          src: "/images/projects/color-highlight-v2/main.webp",
-          alt: "Color Highlight v2 en VS Code",
+          alt: "VS Code con los colores resaltados directamente en un archivo CSS real",
         },
       ],
       cta: "¿Quieres ver cómo modernizo un proyecto open source existente sin romper su licencia? Hablemos.",
@@ -1159,10 +1166,10 @@ export const projects: Project[] = [
     title: "Funky Theme",
     category: "Dev Tools / VS Code",
     hook: "Tema oscuro semántico original compatible en cualquier VSCode-based editor y Terminales: 5 variantes derivadas de una paleta jerárquica definida en un único config (SSOT).",
-    metric: "3.2k descargas en Open VSX",
+    metric: "3.3k descargas en Open VSX",
     tags: ["VS Code", "Verified", "Open VSX", "Zed", "Token Colors", "Terminal UI"],
     image: "/images/projects/funky-theme/funky-theme-demo.webp",
-    imageAlt: "Editor de VS Code mostrando funky-theme",
+    imageAlt: "Captura de VS Code con el tema funky-theme aplicado a un editor",
     featured: true,
     links: [
       {
@@ -1194,11 +1201,12 @@ export const projects: Project[] = [
       headline:
         "Un tema original, con la paleta gobernada por una única fuente de verdad",
       summary:
-        "Tema oscuro semántico original bajo MIT, operado como producto multi-marketplace: cinco variantes desde una paleta jerárquica en un solo config (SSOT) para editores. Estable v3.0.0 en VS Code Marketplace y Open VSX con tracción real, Zed recién lanzado y expansión a terminales IA en beta. Instalación en un clic desde cada marketplace y variantes a medida para el usuario; SSOT, CI y SemVer estricto para el mantenimiento.",
+        "Tema oscuro semántico original bajo MIT, operado como producto multi-marketplace: cinco variantes desde una paleta jerárquica en un solo config (SSOT) para editores. Estable v3.2.2 en VS Code Marketplace y Open VSX con tracción real, Zed recién lanzado y expansión a terminales IA en beta. Instalación en un clic desde cada marketplace y variantes a medida para el usuario; SSOT, CI y SemVer estricto para el mantenimiento.",
       metrics: [
         {
-          value: "3.2k",
-          label: "descargas acumuladas en Open VSX (medido el 8 oct 2026)",
+          value: "3.3k",
+          label:
+            "descargas acumuladas en Open VSX (3,296 medidas el 8 oct 2026)",
         },
         { value: "191/30d", label: "adquisiciones VS Code Marketplace" },
         { value: "97.45%", label: "funnel de conversión (page views → installs)" },
@@ -1232,7 +1240,7 @@ export const projects: Project[] = [
         "**Publicación en markets:** release estable en VS Code Marketplace y Open VSX, con keywords optimizados al límite documentado (30) para descubribilidad multiplataforma (VS Code, VSCodium, Google Antigravity, Cursor, Windsurf, Theia).",
         "**CI / control de calidad:** workflow de build-check con pnpm que valida las 5 variantes (existencia y parseo de los JSON) en cada push y PR; el mismo CI empaqueta el artefacto de Zed y prepara su PR al marketplace; releases SemVer estrictas y trazables.",
         "**Release blindado tras aprendizaje de errores:** el changelog se finaliza antes de empaquetar (el vsix lleva la sección de la versión) y una guardia verifica que el vsix coincida exactamente con su `.vscodeignore` (sin fugas ni assets faltantes) — un hotfix de packaging real dejó el proceso más robusto y documentado en la skill de release.",
-        "**Tracción validada:** **Verified Open VSX Publisher**; **3.2k descargas acumuladas** en Open VSX; **191 adquisiciones/30d** en VS Code Marketplace con **funnel 97.45%** (page views → installs) — posicionamiento SEO orgánico demostrado.",
+        "**Tracción validada:** **Verified Open VSX Publisher**; **3.3k descargas acumuladas** en Open VSX (3,296 medidas el 8 oct 2026); **191 adquisiciones/30d** en VS Code Marketplace con **funnel 97.45%** (page views → installs) — posicionamiento SEO orgánico demostrado.",
         "**Cross-editor:** soporte **Zed** lanzado hoy con instalación manual mientras se acepta el PR al marketplace (misma paleta de editores).",
         "**Expansión terminal:** **funky-theme-tui** — variaciones mínimas para terminales con agentes de código (Claude Code, OpenCode, Pi), en repo aparte y en beta.",
       ],

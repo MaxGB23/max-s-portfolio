@@ -1,7 +1,8 @@
-# AutoShop — Sitio + CMS a medida en PHP puro (Consolidado)
+# AutoShop Taller — Sitio + panel de administración en PHP puro (Consolidado)
 
 > Fuente única de contenido para el portfolio. Editar aquí; luego se refleja en `data/projects.ts`.
-> Última actualización: 2026-08-28
+> Última actualización: 2026-10-08
+> ⚠️ **Sin repo publicado.** No existe repositorio público de este proyecto. Las métricas son afirmaciones propias, no datos verificables en código. Si se publica código sanitizado, se pueden extraer números reales como en one-click-ti.
 
 ---
 
@@ -10,14 +11,16 @@
 | Campo | Valor |
 | --- | --- |
 | `id` | `autoshop` |
-| `title` | AutoShop |
+| `title` | AutoShop Taller |
 | `category` | Full Stack / PHP |
-| `hook` | Sitio full-stack para una empresa de servicios automotrices: landing pública + panel admin con CMS propio hecho desde cero en PHP puro. |
-| `metric` | De días a minutos en actualización de contenido |
-| `tags` | PHP · MySQL · JavaScript · Bootstrap · HTML5 · CSS3 |
-| `image` | TBD — ⚠️ captura real de la landing o del panel admin |
-| `imageAlt` | Landing pública y panel de administración de AutoShop |
-| `links` | Live: TBD (¿sigue en línea?) · Repo: no publicado en git |
+| `hook` | Sitio y panel de administración para un taller de servicios automotrices: el personal gestiona servicios, promociones por calendario y consultas sin depender de un desarrollador. |
+| `metric` | 3 módulos de gestión propios, en PHP sin framework |
+| `tags` | PHP · MySQL · JavaScript · Bootstrap · HTML5 |
+| `image` | `/images/projects/autoshop/main.webp` |
+| `imageAlt` | Panel de administración de AutoShop |
+| `links` | — (sin repo publicado, sin URL live) |
+
+> Nota: `CSS3` se quitó de los tags por redundante con Bootstrap, pero sigue declarando en Stack.
 
 ---
 
@@ -25,38 +28,42 @@
 
 ### Headline
 
-**Presencia digital y gestión de contenido sin depender de un desarrollador**
+**El taller gestiona sus servicios, promociones y consultas sin depender de un desarrollador**
 
 ### Summary
 
-Sitio web full-stack para una empresa de servicios automotrices en Maravatío, Michoacán (prácticas profesionales, may – ago 2023). Incluye landing pública y un panel de administración con CMS desarrollado desde cero en PHP puro — sin framework — con el que el personal no técnico pasó a gestionar servicios, promociones y consultas por sí mismo.
+Sitio web full-stack para un taller de servicios automotrices en Maravatío, Michoacán (prácticas profesionales, may – ago 2023). El taller no tenía presencia digital profesional ni forma de actualizar su propio contenido: cambiar un servicio o publicar una promoción requería abrir un ticket y esperar días. Construí la landing pública y un panel de administración con el que el personal gestiona servicios, promociones por calendario y consultas por sí mismo.
 
 ### Metrics
 
 | Value | Label |
 | --- | --- |
-| Días → minutos | actualización de contenido por staff no técnico (CMS propio) |
-| 0 | frameworks: CMS completo en PHP puro + MySQL |
-| 2 | superficies: landing pública + panel de administración |
-| 2 | niveles de rol (admin/staff), sin cuentas para clientes |
+| 3 | módulos de gestión en el panel: servicios, promociones por calendario y consultas |
+| 4 meses | de proyecto en producción para un taller real (may – ago 2023) |
+| Sin frameworks | PHP, MySQL y JavaScript escritos a mano: SQL, sesiones y enrutado sin abstracciones que oculten el comportamiento |
+| 2 | niveles de acceso (admin / staff), sin cuentas para clientes |
+
+> Regla: el conteo de métricas debe ser par, porque `KpiGrid` usa 2 columnas (`sm:grid-cols-2` en `components/project-detail.tsx`). Con 3 métricas la tercera queda huérfana en la segunda fila.
+>
+> "Sin frameworks" va como texto, no como `0`. Un `0` en un KPI se lee como ausencia, no como virtud.
 
 ### Problem
 
-La empresa automotriz no tenía presencia digital profesional ni forma de actualizar su propio contenido: cualquier cambio en servicios, promociones o consultas requería intervención técnica y tardaba días en el mejor caso.
+El taller necesitaba dos cosas: una presencia pública profesional que le llamara clientes y una herramienta interna para actualizar su contenido. Antes, cambiar un servicio o publicar una promoción exigía intervención técnica, y el contenido se quedaba congelado entre visitas.
 
 ### Role
 
-- Desarrollé el sitio full-stack completo en PHP puro, sin framework (MySQL, JavaScript, Bootstrap, HTML5, CSS3).
-- Construí un CMS a medida que permite al personal no técnico auto-gestionar listados de servicios, promociones por calendario y consultas de contacto.
-- Implementé gestión de usuarios por roles (admin/staff), sin cuentas de acceso para clientes.
-- Colaboré con el equipo administrativo para optimizar la estructura de contenido y la presentación de servicios.
+- Desarrollé el sitio full-stack completo en PHP, MySQL, JavaScript, Bootstrap y HTML5, sin framework.
+- Construí el panel de administración que permite al personal no técnico gestionar servicios, promociones por calendario y consultas sin tocar código.
+- Implementé dos niveles de acceso (admin / staff), sin cuentas de acceso para clientes.
+- Acompañé al equipo administrativo para estructurar el contenido y la presentación de los servicios.
 
 ### Solution
 
 - **Landing pública:** cara profesional del taller, orientada a captar clientes.
-- **Panel de administración + CMS a medida:** el staff gestiona servicios, promociones calendario y consultas sin tocar código.
-- **Control de acceso por roles:** niveles admin/staff para el equipo del taller.
-- **Tecnología honesta:** PHP puro, MySQL, JavaScript y Bootstrap — sin framework, fundamentos al desnudo.
+- **Panel de administración:** el personal gestiona servicios, promociones y consultas sin depender de un desarrollador.
+- **Promociones por calendario:** el taller programa y publica promociones por fecha, sin que nadie tenga que editar código.
+- **Control de acceso:** dos niveles (admin / staff); los clientes no necesitan cuenta para ver el catálogo.
 
 ### Stack
 
@@ -66,16 +73,34 @@ La empresa automotriz no tenía presencia digital profesional ni forma de actual
 
 ### Contexto de carrera
 
-Mi primera experiencia profesional en un entorno real con fundamentos puros, sin framework. De los proyectos PHP de prácticas, este es el que se promueve al portfolio porque cuenta historia completa: cliente real, CMS desde cero y métrica de impacto. Es el cimiento honesto de la curva hacia Laravel/Vue y luego Next.js/TypeScript.
+Primer proyecto en un entorno real, sobre fundamentos puros: PHP, SQL, sesiones y enrutado escritos a mano. Es el cimiento honesto de la curva que después pasa por Laravel/Vue y llega a Next.js/TypeScript.
 
 ### Gallery
 
-1. Landing pública
-2. Panel de administración (CMS)
-3. Gestión de promociones por calendario (opcional)
+| Archivo | Qué muestra |
+| --- | --- |
+| `HomeCensured.webp` | Portada de la landing pública |
+| `ServiciosCensured.webp` | Catálogo de servicios del taller en la landing |
+| `crud.webp` | Panel de administración: gestión de servicios y promociones |
 
-> ⚠️ Capturas reales pendientes.
+> `main.webp` se quitó de la galería porque ya es la imagen de la card: mostrarla dos veces en la misma vista era repetición.
+>
+> ⚠️ Los nombres `*Censured.webp` se conservaron porque las capturas tienen datos del cliente tapados. Renombrarlos es opcional.
 
 ### CTA
 
-_"¿Te interesa ver cómo se construye un CMS a medida partiendo de cero, sin framework? Hablemos."_
+_"¿Tu negocio actualiza sus servicios o promociones con un desarrollador? Hablemos."_
+
+---
+
+## 3. Cambios aplicados (2026-10-08)
+
+- **Métricas** — se eliminó `Días → minutos` (promesa sin baseline ni fuente) y `0 frameworks` (un `0` se lee como falha). Se agregaron `3` módulos, `4 meses` y `Sin frameworks`. Ahora las 4 son afirmaciones defendibles y el conteo es par.
+- **Tags** — de 6 a 5, quitando `CSS3` por redundante con Bootstrap.
+- **"Sin framework" ×6 → ×4** — desaparecieron de hook, summary, solution, architecture y CTA, que es donde se volvía dogma. Queda solo donde cumple función: `metric` de la card, la métrica del detail, `role` (qué construí) y `stack` (el stack).
+- **"Promociones por calendario" subido a primer plano** — es el feature más específico del proyecto (resuelve un problema real del taller) y estaba enterrado en un bullet genérico.
+- **Borrado** — "Tecnología honesta" y "fundamentos al desnudo" (poesía de marketing, no dicen nada verificable).
+- **Gallery** — `main.webp` duplicado eliminado; el `alt` duplicado literal entre `crud.webp` y `main.webp` corregido (era bug de accesibilidad).
+- **Título** — el espejo decía "AutoShop" y `projects.ts` decía "AutoShop Taller". Unificado.
+- **Summary** — deja de abrir con "prácticas profesionales" y de repetir "sin framework" dos veces; primero el problema, luego el outcome, al final el encuadre honesto.
+- **CTA** — de curiosidad técnica a valor de cliente.
