@@ -17,7 +17,7 @@
 | `title` | Grinchmas Kart |
 | `category` | Game Dev / Unity |
 | `hook` | Kart racing 3D end-to-end (ABMODEL Games) con IA rival entrenada con Reinforcement Learning (ML-Agents), físicas arcade y modelos 3D propios en Blender. |
-| `metric` | IA rival con Reinforcement Learning (ML-Agents) |
+| `metric` | IA rival entrenada con Reinforcement Learning |
 | `tags` | Unity · C# · Blender · ML-Agents |
 | `image` | `/images/projects/grinchmas-kart/inicio.webp` |
 | `imageAlt` | Gameplay de Grinchmas Kart: kart 3D en pista navideña con IA rival |

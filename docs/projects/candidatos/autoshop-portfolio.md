@@ -13,8 +13,8 @@
 | `id` | `autoshop` |
 | `title` | AutoShop Taller |
 | `category` | Full Stack / PHP |
-| `hook` | Sitio y panel de administración para un taller de servicios automotrices: el personal gestiona servicios, promociones por calendario y consultas sin depender de un desarrollador. |
-| `metric` | 3 módulos de gestión propios, en PHP sin framework |
+| `hook` | Sitio web y panel de administración para un taller de servicios automotrices: el personal gestiona servicios, promociones por calendario y consultas sin depender de un desarrollador. |
+| `metric` | CMS de gestión por módulos, sin código |
 | `tags` | PHP · MySQL · JavaScript · Bootstrap · HTML5 |
 | `image` | `/images/projects/autoshop/main.webp` |
 | `imageAlt` | Hero de la landing de AutoShop Taller: logo, eslogan y navegación principal |

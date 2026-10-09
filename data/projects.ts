@@ -599,7 +599,7 @@ export const projects: Project[] = [
     title: "Grinchmas Kart",
     category: "Game Dev / Unity",
     hook: "Kart racing 3D end-to-end (ABMODEL Games) con IA rival entrenada con Reinforcement Learning (ML-Agents), físicas arcade y modelos 3D propios en Blender.",
-    metric: "IA rival con Reinforcement Learning (ML-Agents)",
+    metric: "IA rival entrenada con Reinforcement Learning",
     tags: ["Unity", "C#", "Blender", "ML-Agents"],
     image: "/images/projects/grinchmas-kart/inicio.webp",
     imageAlt:
@@ -1022,8 +1022,8 @@ export const projects: Project[] = [
     id: "autoshop",
     title: "AutoShop Taller",
     category: "Full Stack / PHP",
-    hook: "Sitio y panel de administración para un taller de servicios automotrices: el personal gestiona servicios, promociones por calendario y consultas sin depender de un desarrollador.",
-    metric: "3 módulos de gestión propios, en PHP sin framework",
+    hook: "Sitio web y panel de administración para un taller de servicios automotrices: el personal gestiona servicios, promociones por calendario y consultas sin depender de un desarrollador.",
+    metric: "CMS de gestión por módulos, sin código",
     tags: ["PHP", "MySQL", "JavaScript", "Bootstrap", "HTML5"],
     image: "/images/projects/autoshop/main.webp",
     imageAlt: "Hero de la landing de AutoShop Taller: logo, eslogan y navegación principal",
@@ -1096,7 +1096,7 @@ export const projects: Project[] = [
     architecture: {
       name: "AutoShop Taller",
       description:
-        "Sitio full-stack para un taller de servicios automotrices: landing pública y panel de administración con gestión de servicios, promociones y consultas.",
+        "Sitio web full-stack para un taller de servicios automotrices: landing pública y panel de administración con gestión de servicios, promociones y consultas.",
       children: [
         {
           name: "Landing pública",
