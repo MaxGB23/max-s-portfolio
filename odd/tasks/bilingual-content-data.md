@@ -42,14 +42,14 @@ Descartado: espejo `projects-en.ts` con tipos opcionales (permite drift silencio
 - [x] T2: cableado de los 6 consumidores client + metadata en `[id]/page.tsx`: `const { t, lang } = useLanguage()` y `localizeProject(...)`. Con las 9 fichas aún en `ProjectEs`, el render es idéntico.
 - [x] T3: verificación WU1: `tsc --noEmit` + `pnpm build` limpios (cero cambio visual).
 - [x] T4: convertir `caf` (peor caso: 11 `role[]`, árbol de 9 nodos) a `data/projects/caf.ts` con EN.
-- [ ] T5: convertir `presidencia`
-- [ ] T6: convertir `one-click-ti`
+- [x] T5: convertir `presidencia`
+- [x] T6: convertir `one-click-ti`
 - [ ] T7: convertir `autoshop`
 - [ ] T8: convertir `color-highlight-v2`
-- [ ] T9: convertir `funky-ai`
+- [x] T9: convertir `funky-ai`
 - [ ] T10: convertir `cumyxel`
 - [ ] T11: convertir `grinchmas-kart`
-- [ ] T12: convertir la ficha restante (la 9) y borrar `ProjectEs` del tipo transitorio
+- [ ] T12: borrar `ProjectEs`, los aliases de compatibilidad y la aserción de invariancia (las 9 fichas quedan en `ProjectL`)
 - [ ] T13: `tiers` fuera de `pricing-section.tsx` → `data/pricing.ts` con EN + cableado
 - [ ] T14: `products[]` fuera de `products-section.tsx` → `data/products.ts` con EN + cableado
 - [ ] T15: labels de enlace por `ProjectLink.kind` → chrome keys en `translations.ts` (elimina "Ver código" repetido en 9 fichas)
@@ -85,3 +85,8 @@ Descartado: espejo `projects-en.ts` con tipos opcionales (permite drift silencio
 
 ## Next steps
 - Merge a la rama principal y push son decisiones del usuario.
+- **Work unit de veracidad (NO de traducción), pendiente de autorización del usuario.** El writer bilingüe NÃO tocó claims, por diseño, pero señaló tres que Translated tal cual y que parecen orquestados:
+  - `presidencia` `metric` + `metrics[0]`: "100% digitalización del flujo de solicitudes". Un 100% absoluto sin medición de proceso real se lee como aspiracional presentado como hecho medido.
+  - `presidencia` `solution[2]` + `architecture`: "PDFs con validez legal". Un PDF autogenerado no esValidity legal por sí mismo en la mayoría de jurisdicciones (suele exigir notaría, hash o registro).
+  - `presidencia` `summary`: "escalable", afirmado sobre un proyecto estudiantil de 4 meses sin evidencia de carga.
+  - Repetir la verificación que ya está pendiente en `grinchmas-kart` (`5 niveles`, `8 modelos 3D`, `~80%`) contra el repo público.
