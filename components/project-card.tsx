@@ -29,7 +29,6 @@ export function ProjectCard({ project }: ProjectCardProps) {
   const { t } = useLanguage();
   const externalLink = project.links?.find((link) => link.external);
   return (
-    
     <article
       className={`project-card group relative flex flex-col h-full bg-card border rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 ease-out hover:-translate-y-1.5 hover:shadow-lg hover:shadow-black/8 ${
         project.featured ? "border-purple-accent/40 ring-1 ring-purple-accent/20" : "border-border"
@@ -70,7 +69,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
         <h3
           id={`project-title-${project.id}`}
           className="font-serif font-bold text-fluid-card-title text-foreground mb-2 text-balance group-hover:text-foreground transition-colors"
-        > 
+        >
           {project.title}
         </h3>
         <p className="text-fluid-card-desc leading-relaxed text-content flex-1 mb-4 line-clamp-3 max-h-[4.875em]">
