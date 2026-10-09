@@ -2,8 +2,7 @@
 //
 // Copy ES VERBATIM: es el copy editorial ya auditado contra el repo real
 // (docs/projects/candidatos/unity-games-portfolio.md). No se reescribe ni se
-// "mejora": la migracion solo agrega la hoja `en` al lado, nunca al texto de
-// origen.
+// "mejora": la hoja `en` va al lado, nunca dentro del texto de origen.
 //
 // Repos: github.com/MaxGB23/Grinchmas-Kart
 //

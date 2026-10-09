@@ -2,7 +2,7 @@
 //
 // Copy ES VERBATIM: es el copy editorial ya auditado contra el repo real
 // (docs/projects/candidatos/funky-ai.md). No se reescribe ni se "mejora": la
-// migracion solo agrega la hoja `en` al lado, nunca al texto de origen.
+// hoja `en` va al lado, nunca dentro del texto de origen.
 //
 // CONTRATO DE ORDEN (ver ProjectL.detail.metrics): `metrics[0]` es la metrica
 // raiz del detail, y el orden de `metrics`, `role`, `solution` y `gallery` es

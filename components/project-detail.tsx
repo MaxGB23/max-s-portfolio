@@ -19,7 +19,7 @@ import { ArrowLeft, ArrowUpRight, BarChart3, ChevronLeft, ChevronRight, Github, 
 import { StackIcon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { takeHomeScroll, useLenis } from "@/hooks/use-lenis";
-import type { ProjectEntry, ProjectImage, ProjectLink, ProjectMetric } from "@/data/projects";
+import type { ProjectImage, ProjectMetric, ProjectL } from "@/data/projects";
 import { localizeProject } from "@/data/projects";
 import { ArchitectureEmptyState, ProjectArchitecture } from "@/components/project-architecture";
 import { useLanguage } from "@/contexts/language-context";
@@ -187,14 +187,14 @@ function KpiGrid({ metrics }: { metrics: ProjectMetric[] }) {
 const FOCUSABLE_IN_LIGHTBOX =
   'button:not([disabled]), [href], input:not([disabled]), select, textarea, [tabindex]:not([tabindex="-1"])';
 
-export function ProjectDetail({ project }: { project: ProjectEntry }) {
+export function ProjectDetail({ project }: { project: ProjectL }) {
   const rootRef = useRef<HTMLDivElement>(null);
   const { t, lang } = useLanguage();
 
   // Todo el copy de la ficha pasa por `localized`: mismas claves y mismos tipos
   // que `project`, solo con las hojas `{es,en}` resueltas a `lang`. Se resuelve
-  // una vez y TODAS las lecturas de abajo leen de aqui — el render en ES es
-  // identico porque las fichas siguen en `ProjectEs` (ninguna hoja es `L`).
+  // una vez y TODAS las lecturas de abajo leen de aqui — cambiar `lang` cambia
+  // el texto sin tocar una sola lectura.
   const localized = localizeProject(project, lang);
 
   const router = useRouter();

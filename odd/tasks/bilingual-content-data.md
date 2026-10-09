@@ -50,7 +50,7 @@ Descartado: espejo `projects-en.ts` con tipos opcionales (permite drift silencio
 - [x] T9: convertir `funky-ai`
 - [x] T10: convertir `cumyxel`
 - [x] T11: convertir `grinchmas-kart`
-- [ ] T12: borrar `ProjectEs`, los aliases de compatibilidad y la aserción de invariancia (las 9 fichas quedan en `ProjectL`)
+- [x] T12: borrar `ProjectEs`, los aliases de compatibilidad y la aserción de invariancia (las 9 fichas quedan en `ProjectL`)
 - [ ] T13: `tiers` fuera de `pricing-section.tsx` → `data/pricing.ts` con EN + cableado
 - [ ] T14: `products[]` fuera de `products-section.tsx` → `data/products.ts` con EN + cableado
 - [ ] T15: labels de enlace por `ProjectLink.kind` → chrome keys en `translations.ts` (elimina "Ver código" repetido en 9 fichas)
@@ -87,7 +87,9 @@ Descartado: espejo `projects-en.ts` con tipos opcionales (permite drift silencio
 - WU4 (`grinchmas-kart`, `cumyxel`): ES 60 y 57 literales, hashes idénticos, `coberturaSinEn=0`. **La verificación por hash de ruta pagaba: atrapó una regresión real de ES** (`derrape con VFX` → `Derrape con VFX`) que `tsc` y `pnpm build` reportaban como limpios.
 - WU5 (`one-click-ti`, `autoshop`): ES 53 y 42 literales, hashes idénticos.
 - WU6 (`color-highlight-v2`, `funky-theme`): ES 57 y 90 literales, hashes idénticos. Sin reintroducir los claims que se habían retirado en la depuración upstream. `funky-theme` `solution[5]` tiene 10 pares `**` en ambos idiomas.
-- **Corrección al doc:** la aserción `_ProjectEsIsUnchangedByLocalize` NO falló al migrar la novena ficha, porque es una propiedad de la *definición* de `ProjectEs`, no de los datos que describe. Fallará cuando T12 edite o borre `ProjectEs`, que es exactamente cuando debe borrarse.
+- **Corrección al doc:** la aserción `_ProjectEsIsUnchangedByLocalize` NO falló al migrar la novena ficha, porque es una propiedad de la *definición* de `ProjectEs`, no de los datos que describe. Era `true` por construcción y jamás iba a fallar: el comentario "debe FALLAR en T12" era un error de razonamiento disfrazado de señal de control. Se borró con su comentario en T12 en vez de buscar un rojo inexistente.
+- T12 (limpieza transitoria): `tsc` EXIT=0, `build` EXIT=0, `Select-String` de los 9 nombres retirados sobre 105 archivos `.ts`/`.tsx` → **0 coincidencias**. `git diff` sin ninguna hoja `L` tocada. Los 4 alias sin sufijo que sobreviven apuntan ahora a tipos **ya localizados** (`LocalizedProjectImage`, `LocalizedMetric`, `LocalizedLink`, `LocalizedNode`), porque `project-architecture.tsx` y `project-card.tsx` reciben datos resueltos. `Project` y `ProjectDetail` se borraron por muerto: cero consumidores (`all-projects.tsx` importa `type Project` desde el propio `project-card.tsx`, no desde el data layer).
+- Comentarios transitorios de las 9 cabeceras de `data/projects/*.ts` limpiados por el padre: la frase "la migracion solo agrega la hoja `en` al lado" describía un evento futuro que ya no existe. La regla editorial que sí sobrevive ("no reescribas el copy ES") queda explícita.
 
 ## Next steps
 - Merge a la rama principal y push son decisiones del usuario.

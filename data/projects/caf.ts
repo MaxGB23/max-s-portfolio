@@ -1,8 +1,8 @@
 // Ficha `caf` (Clinical Management System) en el shape bilingue `ProjectL`.
 //
 // Copy ES VERBATIM: es el copy editorial ya auditado contra el repo real
-// (docs/projects/candidatos/caf.md). No se reescribe ni se "mejora": la
-// migracion solo agrega la hoja `en` al lado, nunca al texto de origen.
+// (docs/projects/candidatos/caf.md). No se reescribe ni se "mejora": la hoja
+// `en` va al lado, nunca dentro del texto de origen.
 //
 // Fuente editorial ES: docs/projects/candidatos/caf.md
 // Repos: github.com/MaxGB23/centro-caf, github.com/MaxGB23/centro-caf-landing-page

@@ -1,5 +1,5 @@
-// Tipos del data layer de proyectos: el shape bilingue (`L`) y el shape legacy
-// espanol-plano (`*Es`) que migra ficha por ficha.
+// Tipos del data layer de proyectos: el shape bilingue (`L`), una hoja por
+// idioma, y su resolucion a `string` por locale.
 //
 // La regla del repo "tocar data obliga a actualizar ambos idiomas" vive en el
 // COMPILADOR, no en la convencion: `L` NO es opcional, asi que falta `en` y
@@ -101,87 +101,6 @@ export interface ProjectL {
 }
 
 // ---------------------------------------------------------------------------
-// Shape legacy espanol-plano (`*Es`) - las fichas que aun NO migraron.
-//
-// Mismo shape que antes de la feature, con las hojas en `string`. Se borran al
-// convertir la ficha 9 (T12), momento en que `ProjectEntry` deja de incluirlas.
-// ---------------------------------------------------------------------------
-
-export interface ProjectLinkEs {
-  label: string;
-  /** Categoría del enlace para elegir icono: "code" | "demo" | "site" | "landing" | "app" | ... */
-  kind?: string;
-  url: string;
-  external?: boolean;
-}
-
-export interface ProjectMetricEs {
-  value: string;
-  label: string;
-}
-
-export interface ProjectImageEs {
-  src: string;
-  alt: string;
-}
-
-export interface ArchitectureNodeEs {
-  /** Nombre del nodo/capa, extraído de la documentación real. */
-  name: string;
-  /** Descripción breve solo si las fuentes la respaldan. */
-  description?: string;
-  children?: ArchitectureNodeEs[];
-}
-
-export interface ProjectDetailEs {
-  headline: string;
-  summary: string;
-  /**
-   * Imagen introductoria del detail (portada grande, independiente de la card).
-   * Si falta, el detail cae a `project.image` — los proyectos sin `visual`
-   * siguen mostrando la misma imagen de la card.
-   */
-  visual?: ProjectImageEs;
-  /**
-   * Métricas clave del detail.
-   * CONVENCIÓN DE ORDEN: `metrics[0]` es la métrica RAÍZ / principal — se
-   * renderiza como nodo raíz (columna izquierda) en la topología del detail;
-   * el resto son nodos hijos (columna derecha). Mantener la más importante
-   * primero, siempre.
-   */
-  metrics: ProjectMetricEs[];
-  problem?: string;
-  role?: string[];
-  solution: string[];
-  stack: string[];
-  gallery: ProjectImageEs[];
-  cta: string;
-}
-
-export interface ProjectEs {
-  id: string;
-  title: string;
-  category: string;
-  hook: string;
-  metric: string;
-  tags: string[];
-  image: string;
-  imageAlt: string;
-  links: ProjectLinkEs[];
-  featured?: boolean;
-  detail: ProjectDetailEs;
-  /** Ver nota de `ProjectL.architecture`: mismo arbol, mismo criterio. */
-  architecture?: ArchitectureNodeEs;
-}
-
-/**
- * Tipo TRANSITORIO: permite migrar proyecto por proyecto sin romper `tsc`.
- * `ProjectL | ProjectEs` — cada `localizeProject` acepta las dos, asi que un
- * work unit es reversible por separado. Desaparece en T12.
- */
-export type ProjectEntry = ProjectL | ProjectEs;
-
-// ---------------------------------------------------------------------------
 // Resolucion de locale
 // ---------------------------------------------------------------------------
 
@@ -214,8 +133,8 @@ function isLocalizedLeaf(value: unknown): value is L {
 
 /**
  * Deep-walk puramente ESTRUCTURAL (sin lista de campos): cualquier hoja `{es,en}`
- * se resuelve, tanto en las fichas de hoy como en las que se migren despues.
- * Array -> mapea; objeto -> mapea sus claves; primitivo -> intacto.
+ * se resuelve, este o cualquier nodo del arbol. Array -> mapea; objeto -> mapea
+ * sus claves; primitivo -> intacto.
  */
 function localizeValue(value: unknown, lang: Lang): unknown {
   if (isLocalizedLeaf(value)) return value[lang];
@@ -234,15 +153,15 @@ function localizeValue(value: unknown, lang: Lang): unknown {
 /**
  * Localiza una ficha para `lang`.
  *
- * Con las fichas todavia en `ProjectEs` (ninguna hoja es `L`) esto es IDENTIDAD
- * en ES: los strings pasan intactos y el render no puede cambiar. Al migrar cada
- * ficha a `ProjectL`, el mismo consumidor empieza a devolver el copy del locale
- * sin tocar una sola lectura.
+ * Resuelve CADA hoja `{es,en}` al copy del locale activo y deja intacto lo que
+ * no se traduce (rutas de imagen, `tags`, `kind`). Es el unico punto donde una
+ * hoja se resuelve: el consumidor lee `project.hook` como string sin saber si el
+ * valor venia de `es` o de `en`, y cambiar de idioma no le cambia ni una linea.
  *
  * El deep-walk es por eso puramente estructural: agregar `en` a una hoja nueva
  * no requiere tocar ni el localize ni ningun consumidor.
  */
-export function localizeProject<T extends ProjectEntry>(
+export function localizeProject<T extends ProjectL>(
   entry: T,
   lang: Lang,
 ): Localized<T> {
@@ -250,24 +169,15 @@ export function localizeProject<T extends ProjectEntry>(
 }
 
 // ---------------------------------------------------------------------------
-// Invariante de la migracion (aserción de compilacion)
+// La ficha YA RESUELTA
+//
+// Un componente de render nunca recibe la ficha CRUD sino la que ya paso por
+// `localizeProject`: hojas en `string`. Estos alias son el nombre legible de
+// "el tipo que renderiza", y son los que `@/data/projects` reexporta sin sufijo
+// (`ProjectImage`, `ProjectMetric`, `ProjectLink`, `ArchitectureNode`).
 // ---------------------------------------------------------------------------
 
-/** Falla al compilar si `T` no es `true`. */
-type ExpectTrue<T extends true> = T;
-
-/**
- * Con las 9 fichas en `ProjectEs` ninguna hoja es `L`, asi que `Localized<ProjectEs>`
- * es estructuralmente identico a `ProjectEs`: ES el proxy determinista de que el
- * render ES no cambia. Los consumidores lo demuestran solos — si un `Localized`
- * devolviera otra cosa, `StackChips tags={...}`, `KpiGrid metrics={...}` y
- * `ProjectArchitecture tree={...}` dejarian de compilar.
- *
- * Esta asercion lo fija de forma explicita. Cuando la ultima ficha migre a
- * `ProjectL` (T12) debe FALLAR: es la señal de borrar esto junto con `ProjectEs`.
- */
-type _ProjectEsIsUnchangedByLocalize = ExpectTrue<
-  [ProjectEs, Localized<ProjectEs>] extends [Localized<ProjectEs>, ProjectEs]
-    ? true
-    : false
->;
+export type LocalizedProjectImage = Localized<ProjectImageL>;
+export type LocalizedMetric = Localized<MetricL>;
+export type LocalizedLink = Localized<LinkL>;
+export type LocalizedNode = Localized<NodeL>;

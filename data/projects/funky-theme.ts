@@ -1,7 +1,7 @@
 // Ficha `funky-theme` (Funky Theme) en el shape bilingue `ProjectL`.
 //
 // Copy ES VERBATIM: es el copy editorial ya auditado contra el repo real. No se
-// reescribe ni se "mejora": la migracion solo agrega la hoja `en` al lado.
+// reescribe ni se "mejora": la hoja `en` va al lado, nunca dentro del ES.
 //
 // TAGS APROBADOS POR EL USUARIO (6): `VS Code`, `Verified`, `Open VSX`, `Zed`,
 // `Token Colors`, `Terminal UI`. No se tocan — son texto de badge/buscador, no
