@@ -8,69 +8,11 @@ import { useScrollToAnchor } from "@/hooks/use-lenis";
 import { Button } from "@/components/ui/button";
 import { Section } from "@/components/section";
 import { useLanguage } from "@/contexts/language-context";
+import { localizePricingTier, pricingTiers, type LocalizedPricingTier } from "@/data/pricing";
 
-interface PricingTier {
-  name: string;
-  price: string;
-  period: string;
-  description: string;
-  features: string[];
-  cta: string;
-  highlighted: boolean;
-  proof?: string;
-}
-
-const tiers: PricingTier[] = [
-  {
-    name: "Landing Page",
-    price: "$6,000",
-    period: "MXN · por proyecto",
-    description: "Página única que presenta tu negocio y convierte visitas en contactos.",
-    features: [
-      "Diseño responsivo a medida",
-      "SEO básico y velocidad optimizada",
-      "Formulario de contacto funcional",
-      "Despliegue incluido",
-      "Entrega en 1-2 semanas",
-    ],
-    cta: "Solicitar cotización",
-    highlighted: false,
-    proof: "Respaldado por: landings de AutoShop, One Click Ti y CAF.",
-  },
-  {
-    name: "Sistema Web a Medida",
-    price: "$20,000",
-    period: "MXN · por proyecto",
-    description: "Plataforma con panel de administración, usuarios y base de datos. Mi especialidad.",
-    features: [
-      "Panel de administración + PostgreSQL",
-      "Autenticación y roles de usuario",
-      "Dashboards y reportes",
-      "Stack Next.js + TypeScript",
-      "Soporte post-entrega incluido",
-    ],
-    cta: "Cotizar mi proyecto",
-    highlighted: true,
-    proof: "Respaldado por: CAF en producción y plataforma de Presidencia Municipal.",
-  },
-  {
-    name: "Automatización con IA",
-    price: "$25,000",
-    period: "MXN · por proyecto",
-    description: "Un flujo de tu negocio automatizado con IA, acotado y medible. Sin humo.",
-    features: [
-      "Piloto acotado: un proceso, un objetivo",
-      "Chatbot o integración LLM sobre tus datos",
-      "Estimación de costos de tokens incluida",
-      "Documentación del piloto entregada",
-    ],
-    cta: "Agendar llamada",
-    highlighted: false,
-    proof: "Respaldado por: framework funky-ai (SDD, agentes).",
-  },
-];
-
-function PricingCard({ tier }: { tier: PricingTier }) {
+// El tier llega YA resuelto desde PricingSection: el data layer es el unico
+// lugar donde una hoja {es,en} se decide, y el card solo renderiza strings.
+function PricingCard({ tier }: { tier: LocalizedPricingTier }) {
   const cardRef = useRef<HTMLElement>(null);
   const scrollToAnchor = useScrollToAnchor(64);
   const { t } = useLanguage();
@@ -219,7 +161,7 @@ function PricingCard({ tier }: { tier: PricingTier }) {
 
 export function PricingSection() {
   // ScrollTrigger: stagger cards. Pro card gets a slight extra delay for emphasis.
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const sectionRef = useGsapAnimation<HTMLElement>((gsap, ScrollTrigger) => {
     gsap.fromTo(
       ".pricing-header",
@@ -303,9 +245,13 @@ export function PricingSection() {
 
         {/* Cards grid */}
         <div className="debug-l3 pricing-grid grid grid-cols-1 lg:grid-cols-3 gap-6 items-start max-w-md lg:max-w-none mx-auto">
-          {tiers.map((tier) => (
-            <div key={tier.name} className={tier.highlighted ? "pricing-highlighted" : ""}>
-              <PricingCard tier={tier} />
+          {pricingTiers.map((tier) => (
+            // La hoja se resuelve aqui, no dentro de PricingCard: el toggle de
+            // idioma tiene que cambiar el CONTENIDO, no solo el chrome, y el card
+            // recibe el tier ya localizado. `key` sigue siendo el `name` ES para
+            // que cambiar de locale no remonte las cards (ni su estado GSAP).
+            <div key={tier.name.es} className={tier.highlighted ? "pricing-highlighted" : ""}>
+              <PricingCard tier={localizePricingTier(tier, lang)} />
             </div>
           ))}
         </div>
