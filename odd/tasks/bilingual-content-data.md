@@ -46,7 +46,7 @@ Descartado: espejo `projects-en.ts` con tipos opcionales (permite drift silencio
 - [x] T5: convertir `presidencia`
 - [x] T6: convertir `one-click-ti`
 - [x] T7: convertir `autoshop`
-- [ ] T8: convertir `color-highlight-v2`
+- [x] T8: convertir `color-highlight-v2`
 - [x] T9: convertir `funky-ai`
 - [x] T10: convertir `cumyxel`
 - [x] T11: convertir `grinchmas-kart`
@@ -83,6 +83,11 @@ Descartado: espejo `projects-en.ts` con tipos opcionales (permite drift silencio
 - WU1: `pnpm exec tsc --noEmit` EXIT=0; `pnpm build` EXIT=0 (13/13). Invariancia probada **por mutación** (cambiar `ProjectEs.title` de `string` a `L` produjo TS2344 + 9× TS2322): la aserción no es vacía. Spot check del padre: `all-projects.tsx` mapea campos ya localizados al prop plano de la card.
 - WU2: `pnpm exec tsc --noEmit` EXIT=0; `pnpm build` EXIT=0 (13/13). RED observado: quitar el `en` de `title` → `TS2741: Property 'en' is missing ... but required in type 'L'`. 5 de 90 hojas con `en` idéntico a `es`, cada una justificada (2 cifras puras, 2 etiquetas de stack ya en inglés, 1 término de sector). Pase editorial del padre sobre hook/summary/role: EN profesional, sin inflación, metáforas del ES conservadas ("only inside a cage").
 - **La aserción de invariancia está diseñada para FALLAR en T12.** Quien encuentre ese error debe borrar la aserción junto con `ProjectEs` y los aliases de compatibilidad, no "arreglarla".
+- WU3 (`presidencia`, `funky-ai`): ES 72 y 97 literales, hashes idénticos. `presidencia` ES=6/EN=6 pares `**`; `funky-ai` ES=7/EN=7.
+- WU4 (`grinchmas-kart`, `cumyxel`): ES 60 y 57 literales, hashes idénticos, `coberturaSinEn=0`. **La verificación por hash de ruta pagaba: atrapó una regresión real de ES** (`derrape con VFX` → `Derrape con VFX`) que `tsc` y `pnpm build` reportaban como limpios.
+- WU5 (`one-click-ti`, `autoshop`): ES 53 y 42 literales, hashes idénticos.
+- WU6 (`color-highlight-v2`, `funky-theme`): ES 57 y 90 literales, hashes idénticos. Sin reintroducir los claims que se habían retirado en la depuración upstream. `funky-theme` `solution[5]` tiene 10 pares `**` en ambos idiomas.
+- **Corrección al doc:** la aserción `_ProjectEsIsUnchangedByLocalize` NO falló al migrar la novena ficha, porque es una propiedad de la *definición* de `ProjectEs`, no de los datos que describe. Fallará cuando T12 edite o borre `ProjectEs`, que es exactamente cuando debe borrarse.
 
 ## Next steps
 - Merge a la rama principal y push son decisiones del usuario.
@@ -96,3 +101,9 @@ Descartado: espejo `projects-en.ts` con tipos opcionales (permite drift silencio
   - `one-click-ti` `metric` + `metrics[0]`: "5 módulos CRUD" aparece en cuatro sitios (metric, metrics[0], role[1], solution[2]). Coherente, pero es un claim repetido, no un dato medido en un punto verificable.
   - `autoshop` `summary`: "prácticas profesionales" es el único sostén del claim de que el sitio estuvo en producción.
   - `autoshop` `role[3]`: "Acompañé al equipo administrativo para estructurar el contenido..." es la afirmación más débil de la ficha.
+  - `funky-theme` `solution[6]`: "soporte **Zed** lanzado **hoy**". Ancla temporal relativa en data congelada: envejece mal y ya está desalineada con `summary` ("Zed recién lanzado").
+  - `funky-theme` `metrics[2]` + `solution[5]`: "funnel de conversión 97.45% (page views → installs)". Esa tasa en un theme de marketplace solo se sostiene con un funnel de un visitante. Es la cifra más frágil de todo el portfolio.
+  - `funky-theme` `solution[5]`: "posicionamiento SEO orgánico **demostrado**". Claim fuerte sostenido en un solo funnel.
+  - `funky-theme` `role[3]`: "6 release candidates (rc.1 → rc.6…)" antes del estable. Seis RC se leen como churn de proceso, no como logro.
+  - `color-highlight-v2` `summary` + `role[2]`: "migré el núcleo a TypeScript" como migración total, aunque `stack[0]` admite `JavaScript (estrategias heredadas)`. El matiz se conservó.
+  - `color-highlight-v2` `role[3]`: "corrigiendo las fugas de memoria de decoraciones", sin evidencia enlazada.
