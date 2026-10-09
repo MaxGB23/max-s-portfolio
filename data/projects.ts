@@ -1124,7 +1124,7 @@ export const projects: Project[] = [
     id: "color-highlight-v2",
     title: "Color Highlight v2",
     category: "Dev Tools / VS Code",
-hook: "Fork modernizado de la extensión que resalta colores en el editor: render sin tocar el historial Git, 38 KB y 2 dependencias.",
+    hook: "Fork modernizado de la extensión que resalta colores en el editor: debounce de 150 ms, build con esbuild, 38 KB y 2 dependencias.",
     metric: "38 KB compilados, 2 dependencias en runtime",
     tags: ["TypeScript", "esbuild", "pnpm", "VS Code"],
     image: "/images/projects/color-highlight-v2/main.webp",
@@ -1139,9 +1139,9 @@ hook: "Fork modernizado de la extensión que resalta colores en el editor: rende
     ],
     detail: {
       headline:
-        "Resalta los colores de tu código sin tocar el historial Git, en 38 KB",
+        "Escaneo con debounce de 150 ms y build con esbuild: 38 KB y 2 dependencias",
       summary:
-        "Fork modernizado de `vscode-ext-color-highlight` (GPL-3.0), la extensión que resalta los colores directamente en el editor. Reescribí el núcleo en TypeScript con esbuild y pnpm: el render se inyecta en el DOM del editor mediante un mapa de decoraciones, así que ver los colores no ensucia el historial de Git del archivo. El artefacto compilado pesa 38 KB y depende de 2 paquetes en runtime. Fork bajo GPL-3.0, con crédito explícito a los autores originales.",
+        "Fork modernizado de `vscode-ext-color-highlight` (GPL-3.0), la extensión que resalta los colores directamente en el editor. El original relanzaba un escaneo completo en cada tecla: añadí un debounce de 150 ms que elimina ese cuello de botella. También sustituí su cadena de build (webpack + babel + npm) por esbuild + pnpm, dejando el artefacto en 38 KB y las dependencias en runtime de 4 a 2, y migré el núcleo a TypeScript. Fork bajo GPL-3.0, con crédito explícito a los autores originales.",
       metrics: [
         {
           value: "38 KB",
@@ -1150,37 +1150,36 @@ hook: "Fork modernizado de la extensión que resalta colores en el editor: rende
         {
           value: "150 ms",
           label:
-            "de debounce para no bloquear el editor al teclear (cuello de botella en la compilación de promesas de regex)",
+            "de debounce añadido: el original relanzaba el escaneo completo en cada tecla",
+        },
+        {
+          value: "2",
+          label: "dependencias en runtime, de 4 en el original a 2 en el fork",
         },
         {
           value: "11",
           label:
             "estrategias de detección de color en 6 formatos: SCSS, LESS, CSS vars, Hex/RGB, HSL y HWB",
         },
-        {
-          value: "2",
-          label: "dependencias en runtime, sin framework",
-        },
       ],
       problem:
-        "La extensión original resolvía un problema real — ver los colores del código directamente en el editor — pero su base había envejecido: sin tipado, build lento y dependencias pesadas. Modernizarla la hace mantenible y ligera sin abandonar la licencia ni el crédito de sus autores, y el render se diseñó para no ensuciar el historial de Git.",
+        "La extensión original resolvía un problema real — ver los colores del código directamente en el editor — pero su base había envejecido: relanzaba un escaneo completo en cada tecla, su build pasaba por webpack y babel con cuatro dependencias en runtime, y el núcleo no estaba tipado. Modernizarla la hace mantenible y ligera sin abandonar la licencia ni el crédito de sus autores.",
       role: [
-        "Modernicé un proyecto open source existente (GPL-3.0): núcleo, motor de resaltado y lifecycle reescritos en TypeScript, compilados con esbuild y gestionados con pnpm.",
-        "Reescribí el renderizador con un mapa de decoraciones (DecorationMap): los colores se inyectan en el DOM del editor sin ensuciar el historial de Git y sin dejar decoraciones huérfanas en memoria.",
-        "Implementé auto-contraste WCAG: calculo la luminancia relativa (WCAG 2.0 §1.4.3) y elijo blanco o negro según el ratio de contraste.",
-        "Apliqué un debounce de 150 ms para no bloquear el editor al teclear, atacando el cuello de botella de la compilación de promesas de regex.",
+        "Sustituí la cadena de build (webpack + babel + npm) por esbuild + pnpm: el artefacto compilado quedó en 38 KB y las dependencias en runtime bajaron de 4 a 2.",
+        "Añadí un debounce de 150 ms al motor de resaltado, que antes relanzaba el escaneo completo con cada tecla; el motivo está documentado en el código.",
+        "Migré el núcleo a TypeScript (motor de resaltado, mapa de decoraciones, contraste e importer de Sass) y añadí un script `check-types` al pipeline.",
+        "Reescribí el mapa de decoraciones con ciclo de vida y liberación explícita, corrigiendo las fugas de memoria de decoraciones.",
         "Mantuve la licencia GPL-3.0 y el crédito a los autores originales: el proyecto se presenta como fork modernizado, nunca como invención propia.",
       ],
       solution: [
-        "**Render sin tocar Git:** los colores se inyectan en el DOM mediante un mapa de decoraciones, así que verlos no ensucia el historial de Git del archivo.",
-        "**Núcleo en TypeScript:** extension, motor de resaltado, mapa de decoraciones y contraste reescritos con tipado y compilados con esbuild.",
-        "**11 estrategias de detección:** SCSS vars, LESS vars, CSS vars, Hex/RGB, HSL y HWB, integradas en un motor central.",
-        "**Auto-contraste WCAG:** luminancia relativa y ratio de contraste (WCAG 2.0) para elegir texto blanco o negro sobre cualquier color resaltado.",
-        "**Ultraligera:** 38 KB de artefacto y 2 dependencias en runtime.",
+        "**Debounce de 150 ms:** el motor deja de relanzar el escaneo completo en cada tecla, que es de donde venía el atasco al escribir.",
+        "**Build con esbuild:** sustituye a webpack + babel, sin transpilación intermedia ni esa cadena de toolchain.",
+        "**38 KB y 2 dependencias:** el paquete se empaqueta con `--no-dependencies`, así que instala en VS Code, Cursor, Windsurf, VSCodium y Antigravity sin arrastrar nada.",
+        "**Núcleo en TypeScript:** motor, mapa de decoraciones, contraste e importer de Sass con tipado, verificados en cada build con `check-types`.",
       ],
       stack: [
         "Lenguaje: TypeScript (núcleo) + JavaScript (estrategias heredadas)",
-        "Build: esbuild",
+        "Build: esbuild (antes webpack + babel)",
         "Package manager: pnpm",
         "Plataforma: API de extensiones de VS Code (VS Code 1.90+)",
         "Licencia: GPL-3.0 (fork de `vscode-ext-color-highlight`)",
@@ -1195,36 +1194,37 @@ hook: "Fork modernizado de la extensión que resalta colores en el editor: rende
           alt: "Mockup de Color Highlight v2 con el logo y el eslogan de la extensión",
         },
       ],
-      cta: "¿Quieres que tus colores se vean al instante, sin pesar y sin ensuciar Git? Hablemos.",
+      cta: "¿Tu editor se atasca al escribir y quieres una extensión que no pese? Hablemos.",
     },
     architecture: {
       name: "Color Highlight v2",
       description:
-        "Fork modernizado de vscode-ext-color-highlight (GPL-3.0): render por mapa de decoraciones que no ensucia Git, 11 estrategias de detección y 38 KB de artefacto.",
+        "Fork modernizado de vscode-ext-color-highlight (GPL-3.0): debounce añadido al motor, build con esbuild y 38 KB de artefacto.",
       children: [
         {
-          name: "Render sin tocar Git",
+          name: "Debounce de 150 ms",
           description:
-            "Mapa de decoraciones (DecorationMap): los colores se inyectan en el DOM del editor sin modificar el archivo ni su historial de Git.",
+            "El motor deja de relanzar el escaneo completo en cada tecla, que era el atasco al escribir.",
         },
         {
-          name: "Motor de detección",
+          name: "Build con esbuild",
           description:
-            "11 estrategias en 6 formatos: SCSS, LESS, CSS vars, Hex/RGB, HSL y HWB.",
+            "Sustituye a webpack + babel + npm; sin transpilación intermedia.",
         },
         {
-          name: "Auto-contraste WCAG",
+          name: "Dependencias reducidas",
           description:
-            "Luminancia relativa y ratio de contraste (WCAG 2.0) para texto blanco o negro.",
+            "De 4 a 2 en runtime: color y color-name, sin @babel/runtime ni file-importer.",
         },
         {
-          name: "Ultraligera",
-          description: "38 KB de artefacto y 2 dependencias en runtime.",
+          name: "Núcleo en TypeScript",
+          description:
+            "Motor, mapa de decoraciones, contraste e importer de Sass, con check-types en cada build.",
         },
         {
-          name: "Stack moderno",
+          name: "Mapa de decoraciones",
           description:
-            "Núcleo en TypeScript, compilado con esbuild y gestionado con pnpm.",
+            "Ciclo de vida y dispose explícitos: corrige las fugas de memoria de decoraciones.",
         },
       ],
     },

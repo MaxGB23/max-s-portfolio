@@ -14,7 +14,7 @@
 | `id` | `color-highlight-v2` |
 | `title` | Color Highlight v2 |
 | `category` | Dev Tools / VS Code |
-| `hook` | Fork modernizado de la extensión que resalta colores en el editor: render sin tocar el historial Git, 38 KB y 2 dependencias. |
+| `hook` | Fork modernizado de la extensión que resalta colores en el editor: debounce de 150 ms, build con esbuild, 38 KB y 2 dependencias. |
 | `metric` | 38 KB compilados, 2 dependencias en runtime |
 | `tags` | TypeScript · esbuild · pnpm · VS Code |
 | `image` | `/images/projects/color-highlight-v2/main.webp` |
@@ -27,40 +27,41 @@
 
 ### Headline
 
-**Resalta los colores de tu código sin tocar el historial Git, en 38 KB**
+**Escaneo con debounce de 150 ms y build con esbuild: 38 KB y 2 dependencias**
 
 ### Summary
 
-Fork modernizado de `vscode-ext-color-highlight` (GPL-3.0), la extensión que resalta los colores directamente en el editor. Reescribí el núcleo en TypeScript con esbuild y pnpm: el render se inyecta en el DOM del editor mediante un mapa de decoraciones, así que ver los colores no ensucia el historial de Git del archivo. El artefacto compilado pesa 38 KB y depende de 2 paquetes en runtime. Fork bajo GPL-3.0, con crédito explícito a los autores originales.
+Fork modernizado de `vscode-ext-color-highlight` (GPL-3.0), la extensión que resalta los colores directamente en el editor. El original relanzaba un escaneo completo en cada tecla: añadí un debounce de 150 ms que elimina ese cuello de botella. También sustituí su cadena de build (webpack + babel + npm) por esbuild + pnpm, dejando el artefacto en 38 KB y las dependencias en runtime de 4 a 2, y migré el núcleo a TypeScript. Fork bajo GPL-3.0, con crédito explícito a los autores originales.
 
 ### Metrics
 
 | Value | Label |
 | --- | --- |
 | 38 KB | del artefacto compilado de la extensión |
-| 150 ms | de debounce para no bloquear el editor al teclear (cuello de botella en la compilación de promesas de regex) |
+| 150 ms | de debounce añadido: el original relanzaba el escaneo completo en cada tecla |
+| 2 | dependencias en runtime, de 4 en el original a 2 en el fork |
 | 11 | estrategias de detección de color en 6 formatos: SCSS, LESS, CSS vars, Hex/RGB, HSL y HWB |
-| 2 | dependencias en runtime, sin framework |
+
+> La métrica `11 estrategias` describe una propiedad de la extensión, no un aporte del fork: el upstream ya traía esas 11 estrategias en `src/strategies/`. Ver la comparación completa abajo.
 
 ### Problem
 
-La extensión original resolvía un problema real — ver los colores del código directamente en el editor — pero su base había envejecido: sin tipado, build lento y dependencias pesadas. Modernizarla la hace mantenible y ligera sin abandonar la licencia ni el crédito de sus autores, y el render se diseñó para no ensuciar el historial de Git.
+La extensión original resolvía un problema real — ver los colores del código directamente en el editor — pero su base había envejecido: relanzaba un escaneo completo en cada tecla, su build pasaba por webpack y babel con cuatro dependencias en runtime, y el núcleo no estaba tipado. Modernizarla la hace mantenible y ligera sin abandonar la licencia ni el crédito de sus autores.
 
 ### Role
 
-- Modernicé un proyecto open source existente (GPL-3.0): núcleo, motor de resaltado y lifecycle reescritos en TypeScript, compilados con esbuild y gestionados con pnpm.
-- Reescribí el renderizador con un mapa de decoraciones (DecorationMap): los colores se inyectan en el DOM del editor sin ensuciar el historial de Git y sin dejar decoraciones huérfanas en memoria.
-- Implementé auto-contraste WCAG: calculo la luminancia relativa (WCAG 2.0 §1.4.3) y elijo blanco o negro según el ratio de contraste.
-- Apliqué un debounce de 150 ms para no bloquear el editor al teclear, atacando el cuello de botella de la compilación de promesas de regex.
+- Sustituí la cadena de build (webpack + babel + npm) por esbuild + pnpm: el artefacto compilado quedó en 38 KB y las dependencias en runtime bajaron de 4 a 2.
+- Añadí un debounce de 150 ms al motor de resaltado, que antes relanzaba el escaneo completo con cada tecla; el motivo está documentado en el código.
+- Migré el núcleo a TypeScript (motor de resaltado, mapa de decoraciones, contraste e importer de Sass) y añadí un script `check-types` al pipeline.
+- Reescribí el mapa de decoraciones con ciclo de vida y liberación explícita, corrigiendo las fugas de memoria de decoraciones.
 - Mantuve la licencia GPL-3.0 y el crédito a los autores originales: el proyecto se presenta como fork modernizado, nunca como invención propia.
 
 ### Solution
 
-- **Render sin tocar Git:** los colores se inyectan en el DOM mediante un mapa de decoraciones, así que verlos no ensucia el historial de Git del archivo.
-- **Núcleo en TypeScript:** extension, motor de resaltado, mapa de decoraciones y contraste reescritos con tipado y compilados con esbuild.
-- **11 estrategias de detección:** SCSS vars, LESS vars, CSS vars, Hex/RGB, HSL y HWB, integradas en un motor central.
-- **Auto-contraste WCAG:** luminancia relativa y ratio de contraste (WCAG 2.0) para elegir texto blanco o negro sobre cualquier color resaltado.
-- **Ultraligera:** 38 KB de artefacto y 2 dependencias en runtime.
+- **Debounce de 150 ms:** el motor deja de relanzar el escaneo completo en cada tecla, que es de donde venía el atasco al escribir.
+- **Build con esbuild:** sustituye a webpack + babel, sin transpilación intermedia ni esa cadena de toolchain.
+- **38 KB y 2 dependencias:** el paquete se empaqueta con `--no-dependencies`, así que instala en VS Code, Cursor, Windsurf, VSCodium y Antigravity sin arrastrar nada.
+- **Núcleo en TypeScript:** motor, mapa de decoraciones, contraste e importer de Sass con tipado, verificados en cada build con `check-types`.
 
 ### Stack
 
@@ -90,28 +91,42 @@ _"¿Quieres que tus colores se vean al instante, sin pesar y sin ensuciar Git? H
 
 ---
 
-## 3. Evidencia verificada en el repo (2026-10-08)
+## 3. Comparación verificada contra el upstream (2026-10-08)
 
-Todo lo afirmado arriba sale del código, no de estimaciones:
+Todo lo afirmado arriba sale del código. La comparación se hizo clonando **ambos** repositorios: `MaxGB23/color-highlight-v2` y `naumovs/vscode-ext-color-highlight`.
 
-- **38 KB** — `ORCHESTRATOR-STATE.md`: *"Artifact (.js) de extensión compila a 38KB"*.
-- **2 dependencias en runtime** — `package.json`: `dependencies: { color: 5.0.3, color-name: 2.1.0 }`. Cero framework.
-- **150 ms con razón medida** — `src/document-highlight.ts:128`, con el comentario *"Se usa un intervalo de 150ms para evitar cuellos de botella en la compilación de promesas de regex"*.
-- **WCAG real** — `src/lib/dynamic-contrast.ts` implementa `relativeLuminance` (WCAG 2.0 §1.4.3) y `contrastRatio`, citando la spec.
-- **11 estrategias** — 11 archivos en `src/strategies/`: css-vars, functions, hex, hsla, hslWithoutFunction, hwb, less-vars, rgbWithoutFunction, scss-vars, styl-vars, words.
-- **Clean Render** — patrón `DecorationMap` en `src/lib/decoration-map.ts`; resuelve también fugas de memoria de decoraciones ("zombies").
-- **store-agnostic** — script `package: vsce package --no-dependencies`: el `.vsix` no arrastra dependencias, por eso instala en VS Code, Cursor, Windsurf, VSCodium y Antigravity.
-- **Toolchain** — esbuild 0.20.2, TypeScript 5.4.5, `@types/vscode`, `engines.vscode ^1.90.0`, script `check-types`.
+| | Original (upstream) | v2 (fork) | ¿Aporte del fork? |
+| --- | --- | --- | --- |
+| Debounce al escribir | **ninguno** | 150 ms | ✅ **sí** |
+| Cadena de build | webpack + babel + npm | esbuild + pnpm | ✅ **sí** |
+| Deps en runtime | 4 (`@babel/runtime`, `color`, `color-name`, `file-importer`) | **2** (`color`, `color-name`) | ✅ **sí** |
+| Núcleo en TypeScript | JS sin tipar | TS + `check-types` | ✅ **sí** |
+| `decoration-map` | 2,343 bytes | 7,892 bytes (lifecycle + `dispose`) | ✅ **sí** |
+| Artefacto compilado | — | 38 KB | ✅ **sí** |
+| Render sin tocar Git | ya usaba `setDecorations` (`color-highlight.js:172`) | igual | ❌ **heredado** |
+| Mapa de decoraciones | ya existía `decoration-map.js` | reescrito | ❌ heredado |
+| Auto-contraste WCAG | ya existía, mismo `relativeLuminance`/`contrastRatio` citando WCAG 2.0 | igual | ❌ **heredado** |
+| 11 estrategias de detección | ya estaban en `src/strategies/` | igual | ❌ heredado |
+| Tests | **10 archivos con fixtures** (mocha) | **0** | ⚠️ **regresión** |
 
-### Limitaciones honestas (no son defecto de copy, son del proyecto)
+### Corrección aplicada
 
+Una versión anterior de esta ficha ponía **"Render sin tocar Git" como headline** y listaba el **auto-contraste WCAG** como logro del fork. Ambas cosas **ya existían en el upstream**: el original usaba `setDecorations` (`color-highlight.js:172`) y traía un `dynamic-contrast.js` con la misma implementación de WCAG 2.0. Presentarlas como局局长 del fork era una afirmación falsa de autoría.
+
+El headline y las secciones de `Role`/`Solution` ahora citan solo lo que sí aporta el fork. `Clean Render` y el auto-contraste se conservan como descripción honesta de lo que hace la extensión, sin reclamarlos como propia.
+
+**Regla para futuros forks: verificar contra el upstream, no solo contra el repo propio.** Un repo propio demuestra qué hace el código, no qué cambió.
+
+### Limitaciones honestas
+
+- **Regresión de tests:** el upstream traía 10 archivos de test con fixtures; el fork los eliminó y no los repuso. La "modernización" quitó cobertura existente. Es la deuda más seria del proyecto.
 - **Sin distribución:** no está en VS Code Marketplace ni Open VSX. Solo `.vsix` desde GitHub Releases (`v1.0.0`). Por eso la ficha **no presenta ninguna métrica de adopción** — no hay ninguna que sea cierta.
 - **1 estrella** en GitHub.
-- **Sin CI ni tests:** no existe `.github/` y `package.json` no tiene script `test`. Es lo que `ORCHESTRATOR-STATE.md` llama Backlog: *"las pruebas e2e y mejoras opcionales se movieron al Backlog"*.
-- **Migración a TypeScript parcial:** 5 archivos TS (núcleo) y 11 JS (estrategias heredadas). Por eso el Stack dice "TypeScript (núcleo) + JavaScript (estrategias heredadas)" en vez de "reconstruido con TypeScript".
-- **Alcance:** `createdAt` == `pushedAt` == 2026-08-09. Un día de trabajo, un release. Es velocidad, pero conviene saber la escala antes de presentarlo como proyecto grande.
+- **Sin CI:** no existe `.github/`; `check-types` existe como script pero no corre en ningún pipeline.
+- **Migración a TypeScript parcial:** 5 archivos TS (núcleo) y 11 JS (estrategias heredadas). El Stack lo declara así en vez de decir "reconstruido con TypeScript".
+- **Alcance:** `createdAt` == `pushedAt` == 2026-08-09. Un día de trabajo, un release. Es velocidad, pero conviene saber la escala.
 - **Decisión pendiente:** `ORCHESTRATOR-STATE.md` está en la **raíz** del repo y es visible al abrirlo. Para un portfolio de AI-engineer es neutral o favorable; sin limpiar, se ve como andamiaje.
 
 ### Deuda declarada
 
-El único proyecto del portfolio sin métrica de adopción. La mejora real es publicar en un marketplace, no reescribir la ficha.
+Único proyecto del portfolio sin métrica de adopción y el único con una regresión de tests conocida. La mejora real es publicar en un marketplace y recuperar los tests, no reescribir la ficha.
