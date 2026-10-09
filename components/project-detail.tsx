@@ -19,7 +19,7 @@ import { ArrowLeft, ArrowUpRight, BarChart3, ChevronLeft, ChevronRight, Github, 
 import { StackIcon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { takeHomeScroll, useLenis } from "@/hooks/use-lenis";
-import type { Project, ProjectImage, ProjectLink, ProjectMetric } from "@/data/projects";
+import type { ProjectEntry, ProjectImage, ProjectLink, ProjectMetric } from "@/data/projects";
 import { localizeProject } from "@/data/projects";
 import { ArchitectureEmptyState, ProjectArchitecture } from "@/components/project-architecture";
 import { useLanguage } from "@/contexts/language-context";
@@ -187,7 +187,7 @@ function KpiGrid({ metrics }: { metrics: ProjectMetric[] }) {
 const FOCUSABLE_IN_LIGHTBOX =
   'button:not([disabled]), [href], input:not([disabled]), select, textarea, [tabindex]:not([tabindex="-1"])';
 
-export function ProjectDetail({ project }: { project: Project }) {
+export function ProjectDetail({ project }: { project: ProjectEntry }) {
   const rootRef = useRef<HTMLDivElement>(null);
   const { t, lang } = useLanguage();
 

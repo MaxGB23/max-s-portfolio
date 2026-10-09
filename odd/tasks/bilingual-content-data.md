@@ -38,10 +38,10 @@ Descartado: espejo `projects-en.ts` con tipos opcionales (permite drift silencio
 - El usuario NO levanta dev servers. Verificación visual es suya.
 
 ## Tasks
-- [ ] T1: `data/projects/types.ts` — `L`, `ProjectEs`, `ProjectL` y derivados, `Localized<T>`, `Localize<T>`, `localizeProject`, `ProjectEntry`. `data/projects.ts` re-exporta los tipos. Cero cambio visual.
-- [ ] T2: cableado de los 6 consumidores client + metadata en `[id]/page.tsx`: `const { t, lang } = useLanguage()` y `localizeProject(...)`. Con las 9 fichas aún en `ProjectEs`, el render es idéntico.
-- [ ] T3: verificación WU1: `tsc --noEmit` + `pnpm build` limpios (cero cambio visual).
-- [ ] T4: convertir `caf` (peor caso: 11 `role[]`, árbol de 9 nodos) a `data/projects/caf.ts` con EN.
+- [x] T1: `data/projects/types.ts` — `L`, `ProjectEs`, `ProjectL` y derivados, `Localized<T>`, `Localize<T>`, `localizeProject`, `ProjectEntry`. `data/projects.ts` re-exporta los tipos. Cero cambio visual.
+- [x] T2: cableado de los 6 consumidores client + metadata en `[id]/page.tsx`: `const { t, lang } = useLanguage()` y `localizeProject(...)`. Con las 9 fichas aún en `ProjectEs`, el render es idéntico.
+- [x] T3: verificación WU1: `tsc --noEmit` + `pnpm build` limpios (cero cambio visual).
+- [x] T4: convertir `caf` (peor caso: 11 `role[]`, árbol de 9 nodos) a `data/projects/caf.ts` con EN.
 - [ ] T5: convertir `presidencia`
 - [ ] T6: convertir `one-click-ti`
 - [ ] T7: convertir `autoshop`
@@ -68,9 +68,20 @@ Descartado: espejo `projects-en.ts` con tipos opcionales (permite drift silencio
 
 ## Progress
 - (2026-10-08) Feature doc creado. Decisión de arquitectura tomada con el usuario: `L` inline no-opcional. RDD **off** (global) → sin ciclo de review; verificación por `tsc` + `build` + audit script + spot check del padre.
+- **WU1 — commit `d238d2f`** (7 archivos, 463+/124-). `data/projects/types.ts` nuevo con `L`, shapes `*Es`, `ProjectL`, union transitoria `ProjectEntry`, `Localized<T>`, `localizeProject` (deep-walk puramente estructural) y una aserción de invariancia compilable. `data/projects.ts` re-exporta todo para que ningún consumidor cambie su línea de import. Cableados 4 consumidores; `project-card` y `featured-project-panel` **no** se tocaron (reciben props ya localizadas desde su productor) y `project-architecture` tampoco (recibe `tree` ya resuelto).
+- **WU2 — commit pendiente.** `caf` migrada a `data/projects/caf.ts` (525 líneas, 90 hojas `L`, 85 con EN propio). El copy ES quedó **byte-idéntico**: 110 literales, mismo orden, mismo SHA256 contra `git show HEAD`. Pares `**` intactos (2+2 en las 8 hojas con markdown).
+
+## Decisiones tomadas en la sesión
+- **Opción A** para el ensanchamiento del prop: `ProjectDetail` recibe `ProjectEntry`, no un cast a `ProjectEs`. Descartadas B (cambia en silencio el significado del tipo público `Project`) y C (mentira de tipos con `as`).
+- **Canon de inglés: US English.** Sin evidencia de UK en `translations.ts`; un portafolio orientado a reclutadores necesita el inglés de mayor alcance. Aplicado: centre→center, enquiries→inquiries, cancelled→canceled.
+- **`detail.role[3]` de `caf`**: el EN dice "centralized error messages kept in Spanish" en vez de silenciarlo, porque el producto clínico sí muestra errores en español y callarlo sería un claim falso.
+- **Sin barrel `data/projects/index.ts`**: `data/projects.ts` importa y reensambla cada ficha, para no colisionar con la resolución de `@/data/projects`.
+- **Los espejos `docs/projects/candidatos/*.md` se quedan en español**: son la fuente editorial; el EN se deriva del data layer, no al revés.
 
 ## Verification evidence
-- (pendiente)
+- WU1: `pnpm exec tsc --noEmit` EXIT=0; `pnpm build` EXIT=0 (13/13). Invariancia probada **por mutación** (cambiar `ProjectEs.title` de `string` a `L` produjo TS2344 + 9× TS2322): la aserción no es vacía. Spot check del padre: `all-projects.tsx` mapea campos ya localizados al prop plano de la card.
+- WU2: `pnpm exec tsc --noEmit` EXIT=0; `pnpm build` EXIT=0 (13/13). RED observado: quitar el `en` de `title` → `TS2741: Property 'en' is missing ... but required in type 'L'`. 5 de 90 hojas con `en` idéntico a `es`, cada una justificada (2 cifras puras, 2 etiquetas de stack ya en inglés, 1 término de sector). Pase editorial del padre sobre hook/summary/role: EN profesional, sin inflación, metáforas del ES conservadas ("only inside a cage").
+- **La aserción de invariancia está diseñada para FALLAR en T12.** Quien encuentre ese error debe borrar la aserción junto con `ProjectEs` y los aliases de compatibilidad, no "arreglarla".
 
 ## Next steps
 - Merge a la rama principal y push son decisiones del usuario.

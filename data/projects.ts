@@ -5,9 +5,12 @@
 // Los tipos viven en ./projects/types.ts (shape bilingue `L` + el legacy `*Es`).
 // Este archivo sigue siendo el modulo publico: reexporta los tipos, asi que
 // ningun consumidor cambia su linea de import durante la migracion ficha por
-// ficha. Las 9 fichas siguen en `ProjectEs` hasta que cada una migre a `ProjectL`.
+// ficha. Las fichas ya migradas viven en ./projects/<id>.ts como `ProjectL` y se
+// reensamblan aqui en el MISMO orden (el orden es contrato de layout); las que
+// quedan siguen en `ProjectEs` hasta que cada una migre a `ProjectL`.
 
-import type { ProjectEs } from "./projects/types";
+import type { ProjectEs, ProjectEntry } from "./projects/types";
+import { caf } from "./projects/caf";
 
 export type {
   ProjectEs,
@@ -41,211 +44,8 @@ export type {
   ProjectLinkEs as ProjectLink,
 } from "./projects/types";
 
-export const projects: ProjectEs[] = [
-  {
-    id: "caf",
-    title: "Sistema de Gestión Clínica",
-    category: "Full Stack / HealthTech",
-    hook: "Plataforma web full-stack en producción para la gestión integral de citas, pacientes y control de pagos en centros de salud.",
-    metric: "+10 meses en producción sin caídas",
-    tags: [
-      "Next.js",
-      "React",
-      "TypeScript",
-      "PostgreSQL",
-      "Prisma",
-      "Tailwind CSS",
-    ],
-    image: "/images/projects/caf/caf-demo.webp",
-    imageAlt: "Dashboard principal y agenda del Sistema de Gestión Clínica",
-    featured: true,
-    links: [
-      {
-        label: "Ver código",
-        kind: "code",
-        url: "https://github.com/MaxGB23/centro-caf",
-        external: true,
-      },
-      {
-        label: "Ver código de la landing",
-        kind: "code",
-        url: "https://github.com/MaxGB23/centro-caf-landing-page",
-        external: true,
-      },
-      {
-        label: "Ver landing",
-        kind: "landing",
-        url: "https://centrocafacambaro.vercel.app",
-        external: true,
-      },
-      {
-        label: "Probar la app",
-        kind: "app",
-        url: "https://caf-usage-test.vercel.app/dashboard",
-        external: true,
-      },
-    ],
-    detail: {
-      headline: "Gestión Clínica Inteligente y Escalable",
-      summary:
-        "Plataforma web full-stack construida desde cero que reemplaza el uso de Excel y agendas manuales en un centro real de fisioterapia y rehabilitación. En uso diario por el staff médico con más de **10 meses en producción sin una sola caída**, incluso durante major releases con cambios críticos en la base de datos.",
-      metrics: [
-        {
-          value: "+10 meses",
-          label: "en producción sin caídas, incluyendo major releases",
-        },
-        { value: "100%", label: "uptime: el cliente nunca ha reportado una caída" },
-        {
-          value: "-40%",
-          label:
-            "latencia de recuperación de registros de pacientes (estimada sobre el salto a índice + cache())",
-        },
-        {
-          value: "En uso diario",
-          label: "por staff real en clínica en producción (admin + fisios)",
-        },
-      ],
-      problem:
-        "Las clínicas pequeñas y medianas dependen de herramientas genéricas, procesos manuales en papel o múltiples aplicaciones desconectadas para agendar, llevar historiales médicos y cobrar. Esto genera pérdidas de tiempo, dobles reservas y descontrol financiero. No existía una solución a medida accesible para centros que trabajan por sesiones o paquetes.",
-      role: [
-        "Diseñé un sistema modular por features usando Next.js, TypeScript y Prisma para mejorar mantenibilidad y acelerar la entrega de funcionalidades.",
-        "Implementé control de acceso por roles (Admin, Editor, Viewer) con doble perímetro: layouts de servidor exigen sesión y rol antes de renderizar y cada Server Action valida con guards; sin registro público (el admin crea las cuentas y el rol no se fija desde el cliente) y sin middleware deliberado, porque el Edge no puede validar sesiones de base de datos.",
-        "Reduje un 40% la latencia de recuperación de registros con un índice en `sessionDate` y caching server-side con `cache()` de React. La cifra es una estimación conservadora del salto de seq scan a index scan, no una medición en producción.",
-        "Validé cada mutación con Zod en el servidor antes de cualquier I/O, con resultado tipado y errores centralizados en español; los conflictos de agenda responden advertencia confirmable en dos pasos, y el frontend solo muestra mensajes amigables, nunca errores crudos del backend.",
-        "Apliqué cero confianza en el input: cupo del paquete, pendiente única y choques de horario se verifican en el servidor, y hasta el ID para revalidar se lee de la base de datos, nunca del cliente.",
-        "Usé SQL crudo solo con jaula: valores siempre como parámetros y fragmentos construidos desde una unión cerrada, sin camino del input al query.",
-        "Blindé la UX ante fallos: los boundaries traducen errores de auth a pantallas accionables y los 404 contextuales devuelven al dashboard, nunca una pantalla en blanco.",
-        "Migré los nombres y precios que vivían hardcodeados en un combobox a una UI de paquetes CRUD que los actualiza, con migraciones de Prisma sobre datos existentes. El cliente necesitaba subir precios por la inflación del país y los valores hardcodeados lo impedían. Las migraciones se aplicaron en producción sin un solo incidente de datos: ningún paquete legacy se rompió.",
-        "En paralelo descarté una branch completa que no cumplía los estándares del proyecto, antes de que llegara a producción.",
-        "Desplegué y mantengo la plataforma en Vercel con NeonDB (PostgreSQL) hace más de 10 meses, sin que el cliente haya reportado una sola caída.",
-        "Desarrollé la landing page pública integrada con el sistema interno; estable en uptime y generando contactos de nuevos pacientes.",
-      ],
-      solution: [
-        "**Agenda inteligente:** calendario interactivo con prevención automática de conflictos y control de sesiones (pendiente, asistida, cancelada).",
-        "**Expediente electrónico:** alta y búsqueda rápida de pacientes, historial de sesiones y pagos, seguimiento individual.",
-        "**Módulo financiero:** venta de paquetes de sesiones, balance por paciente y registro de ingresos. Los paquetes se administran desde una UI CRUD en lugar de valores hardcodeados, lo que permite actualizar precios sin desplegar — necesario para responder a la inflación del mercado.",
-        "**Panel de control (dashboard):** analíticas de ingresos mensuales, pacientes activos, ganancias y métricas operativas, con filtros por periodo (30 días, 3 meses, 1 año e histórico), cache con refresh manual y tarjetas + gráficos. El histórico usa cache extendido por costo.",
-        "**Landing page pública:** optimizada para SEO, enfocada a captación de nuevos pacientes e integrada con el sistema interno.",
-        "**Seguridad y roles:** doble perímetro con layouts y guards por rol (Admin, Editor, Viewer), loop cerrado sin registro público y autorización siempre en el servidor; el cliente solo presenta, nunca autoriza.",
-        "**Perfil del usuario:** edición de nombre y contraseña desde el propio perfil, con vista de tipo red social (foto de perfil y portada). El correo queda bloqueado para el usuario (input deshabilitado) y su cambio se solicita a un administrador, preservando la trazabilidad de la cuenta.",
-      ],
-      stack: [
-        "Framework: Next.js, React",
-        "Lenguaje: TypeScript",
-        "Base de datos: PostgreSQL (NeonDB)",
-        "ORM: Prisma",
-        "Estilos: Tailwind CSS",
-        "Despliegue: Vercel",
-      ],
-      gallery: [
-        {
-          src: "/images/projects/caf/editar_profile.webp",
-          alt: "Edición de perfil de usuario",
-        },
-        {
-          src: "/images/projects/caf/dashboard-light.webp",
-          alt: "Dashboard Principal",
-        },
-
-        {
-          src: "/images/projects/caf/agenda-light.webp",
-          alt: "Agenda de citas del Sistema de Gestión Clínica",
-        },
-        {
-          src: "/images/projects/caf/analiticas-caf.webp",
-          alt: "Panel de analíticas adicional del Sistema de Gestión Clínica",
-        },
-      ],
-      cta: "¿Buscas modernizar tu clínica o necesitas un sistema a medida? Hablemos.",
-    },
-    architecture: {
-      name: "Sistema de Gestión Clínica",
-      description:
-        "Plataforma de gestión clínica en producción con arquitectura modular por features: módulos verticales por dominio (agenda, clientes, paquetes, pagos, sesiones, usuarios) sobre un núcleo transversal de autenticación, base de datos y errores.",
-      children: [
-        {
-          name: "Agenda inteligente",
-          description:
-            "Calendario interactivo con prevención automática de conflictos y control de sesiones (pendiente, asistida, cancelada).",
-          children: [
-            { name: "Prevención automática de conflictos" },
-            { name: "Control de sesiones" },
-          ],
-        },
-        {
-          name: "Expediente electrónico",
-          description:
-            "Alta y búsqueda rápida de pacientes, historial de sesiones y pagos, seguimiento individual.",
-        },
-        {
-          name: "Módulo financiero",
-          description:
-            "Venta de paquetes de sesiones, balance por paciente y registro de ingresos. Los paquetes y sus precios se administran desde una UI CRUD, así que subirlos no exige desplegar código.",
-          children: [
-            { name: "Paquetes de sesiones" },
-            { name: "Balance por paciente" },
-            { name: "Registro de ingresos" },
-            { name: "Paquetes y precios editables sin deploy" },
-          ],
-        },
-        {
-          name: "Panel de control (dashboard)",
-          description:
-            "Analíticas de ingresos mensuales, pacientes activos, ganancias y métricas operativas, con tarjetas y gráficos.",
-          children: [
-            { name: "Analíticas mensuales" },
-            { name: "Filtros por periodo (30 días, 3 meses, 1 año e histórico)" },
-            { name: "Cache con refresh manual" },
-          ],
-        },
-        {
-          name: "Seguridad y roles",
-          description:
-            "Doble perímetro con layouts de servidor y guards por rol: la autorización se resuelve siempre en el servidor y el cliente solo presenta, nunca autoriza.",
-          children: [
-            { name: "Roles: Admin, Editor y Viewer" },
-            { name: "Layouts de servidor exigen sesión y rol antes de renderizar" },
-            { name: "Guards en cada Server Action y query sensible" },
-            {
-              name: "Sin registro público: el admin crea las cuentas y el rol no se fija desde el cliente",
-            },
-          ],
-        },
-        {
-          name: "Endurecimiento por capas",
-          description:
-            "Validación y fallo seguro en cada mutación: nada se confía desde el cliente y ningún error crudo llega al usuario.",
-          children: [
-            { name: "Zod con safeParse antes de cualquier I/O" },
-            { name: "Cupo, cita pendiente y choques de horario verificados en el servidor" },
-            { name: "SQL solo con parámetros y fragmentos de una unión cerrada" },
-            { name: "Errores de auth y 404 contextuales con salida accionable" },
-          ],
-        },
-        {
-          name: "Estructura modular por capas",
-          description:
-            "Routing, dominio y transversalidad separados, para que una regla clínica se cambie en un solo lugar.",
-          children: [
-            { name: "app: solo routing, layouts y páginas, sin lógica de negocio" },
-            { name: "modules: vertical por dominio (actions, schemas, queries, componentes)" },
-            { name: "core: transversal (auth, db, errores, proveedores, UI)" },
-            { name: "shared: utilidades usadas por dos o más módulos" },
-          ],
-        },
-        {
-          name: "Perfil del usuario",
-          description:
-            "El usuario edita su nombre y contraseña desde su perfil, con vista de foto de perfil y portada. El correo queda bloqueado y su cambio se solicita a un administrador.",
-        },
-        {
-          name: "Landing page pública",
-          description:
-            "Optimizada para SEO, enfocada a captación de nuevos pacientes e integrada con el sistema interno.",
-        },
-      ],
-    },
-  },
+export const projects: ProjectEntry[] = [
+  caf,
   {
     id: "presidencia",
     title: "Gestión de Apoyos Sociales",
@@ -1345,10 +1145,10 @@ export const projects: ProjectEs[] = [
   },
 ];
 
-export function getProjectById(id: string): ProjectEs | undefined {
+export function getProjectById(id: string): ProjectEntry | undefined {
   return projects.find((project) => project.id === id);
 }
 
-export function getFeaturedProjects(): ProjectEs[] {
+export function getFeaturedProjects(): ProjectEntry[] {
   return projects.filter((project) => project.featured);
 }
