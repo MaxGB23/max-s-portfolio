@@ -1127,8 +1127,8 @@ export const projects: Project[] = [
 hook: "Fork modernizado de la extensión que resalta colores en el editor: render sin tocar el historial Git, 38 KB y 2 dependencias.",
     metric: "38 KB compilados, 2 dependencias en runtime",
     tags: ["TypeScript", "esbuild", "pnpm", "VS Code"],
-    image: "/images/projects/color-highlight-v2/demo-vscode.webp",
-    imageAlt: "VS Code con los colores resaltados en un archivo CSS real",
+    image: "/images/projects/color-highlight-v2/main.webp",
+    imageAlt: "Mockup de Color Highlight v2: logo, eslogan y una ventana de VS Code resaltando colores en CSS y SCSS",
     links: [
       {
         label: "Ver código",
@@ -1192,7 +1192,7 @@ hook: "Fork modernizado de la extensión que resalta colores en el editor: rende
         },
         {
           src: "/images/projects/color-highlight-v2/main.webp",
-          alt: "Color Highlight v2: presentación de la extensión",
+          alt: "Mockup de Color Highlight v2 con el logo y el eslogan de la extensión",
         },
       ],
       cta: "¿Quieres que tus colores se vean al instante, sin pesar y sin ensuciar Git? Hablemos.",

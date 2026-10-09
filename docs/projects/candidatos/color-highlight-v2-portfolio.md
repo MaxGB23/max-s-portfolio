@@ -17,8 +17,8 @@
 | `hook` | Fork modernizado de la extensión que resalta colores en el editor: render sin tocar el historial Git, 38 KB y 2 dependencias. |
 | `metric` | 38 KB compilados, 2 dependencias en runtime |
 | `tags` | TypeScript · esbuild · pnpm · VS Code |
-| `image` | `/images/projects/color-highlight-v2/demo-vscode.webp` |
-| `imageAlt` | VS Code con los colores resaltados en un archivo CSS real |
+| `image` | `/images/projects/color-highlight-v2/main.webp` |
+| `imageAlt` | Mockup de Color Highlight v2: logo, eslogan y una ventana de VS Code resaltando colores en CSS y SCSS |
 | `links` | Repo: [color-highlight-v2](https://github.com/MaxGB23/color-highlight-v2) (público) · Release: `v1.0.0` vía `.vsix` (no está en Marketplace) |
 
 ---
@@ -78,11 +78,11 @@ Paso de *tooling* en la curva profesional: PHP/Laravel/Vue → tooling VS Code �
 
 | Archivo | Qué muestra |
 | --- | --- |
-| `demo-vscode.webp` | **Imagen de la card:** captura real de VS Code con los colores resaltados en `globals.css` del propio portfolio |
-| `main.webp` | Mockup de presentación de la extensión |
+| `demo-vscode.webp` | Captura real de VS Code con los colores resaltados en `globals.css` del propio portfolio |
+| `main.webp` | **Imagen de la card:** mockup con el logo, el eslogan y una ventana de VS Code con colores en CSS y SCSS |
 
-> Solo existen 2 capturas del proyecto, y **ambas están en la galería**. La captura real es también la imagen de la card; repetirla es correcto porque la card no tiene galería dedicada con zoom. Con una sola imagen la galería se veía vacía.
-> Antes la imagen de la card era `main.webp` (el mockup) con `imageAlt` genérico. Ahora la card es la captura real, que demuestra que la extensión funciona.
+> Solo existen 2 capturas del proyecto, y **ambas están en la galería**. `main.webp` es también la imagen de la card: repetirla es correcto porque la card no tiene galería dedicada con zoom.
+> La card usa el mockup porque se lee mejor en miniatura (logo y título identifican la extensión de un vistazo); la captura real queda en la galería, donde se aprecia que la extensión funciona sobre código real.
 
 ### CTA
 
