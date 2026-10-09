@@ -207,7 +207,7 @@ export const projects: Project[] = [
           ],
         },
         {
-          name: "TITULO DE PRUEBA deliberadamente largo para verificar que el numero de card no queda huerfano arriba y que la continuacion se alinea bajo la primera letra del titulo",
+          name: "Expediente electrónico",
           description:
             "Alta y búsqueda rápida de pacientes, historial de sesiones y pagos, seguimiento individual.",
         },
