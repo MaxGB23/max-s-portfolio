@@ -10,12 +10,12 @@
 | Campo | Valor |
 | --- | --- |
 | `id` | `funky-ai` |
-| `title` | funky-ai |
+| `title` | Funky AI |
 | `category` | Dev Tools / AI Engineering |
 | `hook` | CLI modular `funky` con 10 comandos para planificar, construir y endurecer proyectos con proceso repetible. |
 | `metric` | 10 comandos · 443 tests · 27 reglas |
 | `tags` | Node.js · TypeScript · CLI · pnpm · Vitest · GitHub Actions |
-| `image` | TBD — ⚠️ capturas reales de terminal/CLI en acción |
+| `image` | `/images/projects/funky-ai/funky-ai-main.webp` |
 | `imageAlt` | Terminal del CLI de funky-ai mostrando el pipeline SDD |
 | `links` | Repo: [funky-ai](https://github.com/MaxGB23/funky-ai) (público) · npm: no publicado · install: clonar + symlink con pnpm (pnpm-first) |
 

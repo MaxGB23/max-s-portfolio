@@ -10,7 +10,7 @@
 | Campo | Valor |
 | --- | --- |
 | `id` | `funky-theme` |
-| `title` | funky-theme |
+| `title` | Funky Theme |
 | `category` | Dev Tools / VS Code |
 | `hook` | Tema oscuro semántico original compatible en cualquier VSCode-based editor y Terminales: 5 variantes derivadas de una paleta jerárquica definida en un único config (SSOT). |
 | `metric` | 3.3k descargas en Open VSX |
