@@ -107,7 +107,7 @@ Todo lo afirmado arriba sale del código. La comparación se hizo clonando **amb
 | Mapa de decoraciones | ya existía `decoration-map.js` | reescrito | ❌ heredado |
 | Auto-contraste WCAG | ya existía, mismo `relativeLuminance`/`contrastRatio` citando WCAG 2.0 | igual | ❌ **heredado** |
 | 11 estrategias de detección | ya estaban en `src/strategies/` | igual | ❌ heredado |
-| Tests | **10 archivos con fixtures** (mocha) | **0** | ⚠️ **regresión** |
+| Tests | scaffolding de `yo code`, sin cobertura real | 0 (scaffolding eliminado) | ❌ ninguno; el upstream tampoco probaba |
 
 ### Corrección aplicada
 
@@ -119,7 +119,7 @@ El headline y las secciones de `Role`/`Solution` ahora citan solo lo que sí apo
 
 ### Limitaciones honestas
 
-- **Regresión de tests:** el upstream traía 10 archivos de test con fixtures; el fork los eliminó y no los repuso. La "modernización" quitó cobertura existente. Es la deuda más seria del proyecto.
+- **Sin tests reales, y es deuda heredada:** el upstream tampoco los tenía. Sus "10 archivos de test" eran el template de `yo code`: la única aserción del proyecto era `equal(-1, [1, 2, 3].indexOf(5))`, que comprueba `Array.prototype.indexOf` y no toca la extensión; los fixtures eran muestras de color para revisión manual y uno estaba vacío. El fork eliminó ese boilerplate, lo cual es correcto, pero el proyecto sigue **sin cobertura automática ni CI**. Es la deuda más seria, y es heredada, no introducida por el fork.
 - **Sin distribución:** no está en VS Code Marketplace ni Open VSX. Solo `.vsix` desde GitHub Releases (`v1.0.0`). Por eso la ficha **no presenta ninguna métrica de adopción** — no hay ninguna que sea cierta.
 - **1 estrella** en GitHub.
 - **Sin CI:** no existe `.github/`; `check-types` existe como script pero no corre en ningún pipeline.
@@ -129,4 +129,4 @@ El headline y las secciones de `Role`/`Solution` ahora citan solo lo que sí apo
 
 ### Deuda declarada
 
-Único proyecto del portfolio sin métrica de adopción y el único con una regresión de tests conocida. La mejora real es publicar en un marketplace y recuperar los tests, no reescribir la ficha.
+Único proyecto del portfolio sin métrica de adopción. La mejora real es publicar en un marketplace y escribir tests que sí prueben el resaltado de color, no reescribir la ficha.
