@@ -19,13 +19,14 @@ Descartado: espejo `projects-en.ts` con tipos opcionales (permite drift silencio
 - Tipos explícitos (`ProjectL`, `MetricL`, `NodeL`, `LinkL`, `ProjectImageL`), no un mapped type genérico: un mapped type no sabe que `image.src`/`url`/`tags` no se traducen. **El tipo es el checklist.**
 - `Localize<T>` resuelve `L → string`, `string → string`, arrays y objetos recursivamente. Efecto: los consumidores siguen leyendo `project.hook` — no cambia el acceso a campos.
 - Tipo transitorio `ProjectEntry = ProjectL | ProjectEs` para que cada work unit compile y sea revertible por separado. `ProjectEs` desaparece al convertir la ficha 9.
-- Granularidad: un archivo por proyecto en `data/projects/<id>.ts`, barrel `data/projects/index.ts` que preserva la API pública (`projects`, `getProjectById`). Replica la convención por proyecto de `docs/projects/candidatos/*.md`.
+- Granularidad: un archivo por proyecto en `data/projects/<id>.ts`, reensamblados por `data/projects.ts` (que sigue siendo el módulo público: `projects`, `getProjectById`, `getFeaturedProjects`). **Sin barrel `data/projects/index.ts`**: colisionaría con `data/projects.ts` en la resolución de `@/data/projects`. Replica la convención por proyecto de `docs/projects/candidatos/*.md`.
 - Localizar en el RENDER CLIENTE (el toggle es state de cliente; un proyecto localizado en el server queda stale). El server solo lo usa para metadata, donde `cookies()` ya resuelve lang.
+- El prop de `ProjectDetail` se ensancha a `ProjectEntry` en la primera ficha migrada: un prop declarado con el shape legacy no puede recibir una entrada bilingüe.
 
 > **Supersede** lo acordado el 2026-09-21 en `odd/tasks/language-switcher.md:71` y posiblemente en `docs/ideas-features/language.md` (modelo "mirror `data/projects-en.ts` + `getProjects(lang)`"). Revisar y actualizar esas referencias en WU13.
 
 ## Scope
-- **Nuevos:** `data/projects/types.ts`, `data/projects/index.ts`, `data/projects/<id>.ts` × 9, `data/pricing.ts`, `data/products.ts`, `scripts/audit-i18n-content.mjs`
+- **Nuevos:** `data/projects/types.ts`, `data/projects/<id>.ts` × 9, `data/pricing.ts`, `data/products.ts`, `scripts/audit-i18n-content.mjs`
 - **Modificados:** los 6 consumidores client (`project-card`, `project-detail`, `project-architecture`, `all-projects`, `featured-projects`, `featured-project-panel`), `pricing-section`, `products-section`, `app/proyectos/[id]/page.tsx`, `data/translations.ts` (labels de enlace por `kind`), `docs/i18n.md`, `docs/ideas-features/language.md`
 - **NO incluye:** traducir los espejos `docs/projects/candidatos/*.md` (siguen siendo la fuente editorial ES; el EN se deriva del data layer, no al revés)
 
@@ -47,8 +48,8 @@ Descartado: espejo `projects-en.ts` con tipos opcionales (permite drift silencio
 - [ ] T7: convertir `autoshop`
 - [ ] T8: convertir `color-highlight-v2`
 - [x] T9: convertir `funky-ai`
-- [ ] T10: convertir `cumyxel`
-- [ ] T11: convertir `grinchmas-kart`
+- [x] T10: convertir `cumyxel`
+- [x] T11: convertir `grinchmas-kart`
 - [ ] T12: borrar `ProjectEs`, los aliases de compatibilidad y la aserción de invariancia (las 9 fichas quedan en `ProjectL`)
 - [ ] T13: `tiers` fuera de `pricing-section.tsx` → `data/pricing.ts` con EN + cableado
 - [ ] T14: `products[]` fuera de `products-section.tsx` → `data/products.ts` con EN + cableado
@@ -89,4 +90,6 @@ Descartado: espejo `projects-en.ts` con tipos opcionales (permite drift silencio
   - `presidencia` `metric` + `metrics[0]`: "100% digitalización del flujo de solicitudes". Un 100% absoluto sin medición de proceso real se lee como aspiracional presentado como hecho medido.
   - `presidencia` `solution[2]` + `architecture`: "PDFs con validez legal". Un PDF autogenerado no esValidity legal por sí mismo en la mayoría de jurisdicciones (suele exigir notaría, hash o registro).
   - `presidencia` `summary`: "escalable", afirmado sobre un proyecto estudiantil de 4 meses sin evidencia de carga.
-  - Repetir la verificación que ya está pendiente en `grinchmas-kart` (`5 niveles`, `8 modelos 3D`, `~80%`) contra el repo público.
+  - `cumyxel` `role`: "Escribí todo el gameplay". El mismo documento editorial acredita a **cuatro** personas en Cumyxel (tres en modelado 3D, cinemáticas y un nivel), así que el claim solo se sostiene con la lectura de que los pares modelaron pero nadie más programó. La nota de licencias del doc sí respalda el claim más estrecho ("el diseño de escenarios, las animaciones y todo el gameplay").
+  - Repetir la verificación que ya está pendiente en `grinchmas-kart` (`5 niveles`, `8 modelos 3D`, `~80%`) contra el repo público. El conteo `8 modelos 3D` no aparece en ningún `docs/`: los docs enumeran las categorías (kart, pista, personajes, escenario) pero nunca una cifra.
+  - Inconsistencia ES preexistente que NO se tocó: `data/` dice "Mono de Nieve" donde el draft dice "Muñeco de nieve".
