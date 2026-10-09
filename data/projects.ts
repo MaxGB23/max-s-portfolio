@@ -720,12 +720,12 @@ export const projects: Project[] = [
     id: "cumyxel",
     title: "Cumyxel 2D",
     category: "Game Dev / Unity",
-    hook: "Plataformero 2D pixel-art con programación de gameplay 100% propia: salto variable, enemigos con FSM y efecto ripple de agua en la cámara.",
-    metric: "1,055 LOC de gameplay (11 scripts) + pixel-art a mano",
+    hook: "Juego de plataformas 2D pixel-art con todo el gameplay escrito desde cero y escenarios y animaciones hechos a mano: salto variable, combate con disparo y enemigos con máquina de estados.",
+    metric: "Mejor Videojuego — Expo Proyectos, Universidad Tecnológica de León",
     tags: ["Unity", "C#", "Blender"],
     image: "/images/projects/cumyxel/nivel1.webp",
     imageAlt:
-      "Gameplay de Cumyxel: plataformero 2D pixel-art con enemigos y salto variable",
+      "Gameplay de Cumyxel: juego de plataformas 2D pixel-art con enemigos y salto variable",
     links: [
       {
         label: "Cumyxel (MIT)",
@@ -742,48 +742,54 @@ export const projects: Project[] = [
     ],
     detail: {
       headline:
-        "Game-feel 2D: salto variable, enemigos con comportamiento real y pixel-art cuidado",
+        "Un juego de plataformas 2D hecho de la física al pixel-art, reconocido como Mejor Videojuego",
       summary:
-        "Cumyxel (2D, ene – abr 2024) es un plataformero 2D pixel-art desarrollado por ABMODEL Games — equipo universitario de 4 integrantes — del que el autor escribió el 100% de la programación de gameplay. El foco fue el *game-feel*: salto variable en dos fases, enemigos con comportamiento real (FSM), plataformas one-way y una cámara con efecto ripple de agua.",
+        "Cumyxel (2D, ene – abr 2024) es un juego de plataformas 2D pixel-art de ABMODEL Games, equipo universitario de 4 integrantes. Escribí todo el gameplay y armé a mano los escenarios (tilesets) y las animaciones, usando sprites de licencia permisiva. El foco fue el game-feel: salto variable, combate con disparo como mecánica principal y enemigos que persiguen y atacan de verdad. Recibió el reconocimiento a Mejor Videojuego en la Expo Proyectos de la Universidad Tecnológica de León (abr 2024).",
       metrics: [
         {
-          value: "1,055",
-          label: "LOC de gameplay (11 scripts) + pixel-art a mano",
+          value: "Mejor Videojuego",
+          label:
+            "Expo Proyectos · Universidad Tecnológica de León (abr 2024)",
         },
-        { value: "100%", label: "de la programación de gameplay" },
         {
           value: "FSM",
-          label: "enemigos con máquina de estados: idle → chase → ataque",
+          label: "enemigos con máquina de estados: idle → persecución → ataque",
+        },
+        {
+          value: "A mano",
+          label: "escenarios y animaciones: sprites, sprite sheets, tilesets y tilemap",
         },
         {
           value: "MIT",
-          label: "repo Cumyxel-code: solo código de gameplay, reusable",
+          label: "repo Cumyxel-code: el código de gameplay, separado y reusable",
         },
       ],
       visual: {
         src: "/images/projects/cumyxel/logo.webp",
-        alt: "Nivel 1 de Cumyxel",
+        alt: "Logotipo de Cumyxel",
       },
       problem:
-        "El objetivo fue superar un 'juego de muestra' con *game-feel* real: un plataformero cuyo salto tuviera dos fases, cuyos enemigos persiguieran y atacaran con un comportamiento de máquina de estados (no sprites decorativos), y una cámara con efectos visuales (ripple de agua) que machasen la sensación de calidad.",
+        "Un juego de plataformas 2D no se sostiene con sprites decorativos: el juego exige game-feel real. El salto debía sentirse bien en dos fases, hacía falta un combate con disparo como mecánica principal, y los enemigos tenían que perseguir y atacar con lógica propia en vez de moverse en línea recta. La meta fue convertir un prototipo en un juego jugable de principio a fin.",
       role: [
-        "Escribí el 100% de la programación de gameplay: salto variable en dos fases, plataformas one-way, enemigos con FSM y la cámara con efecto ripple de agua.",
-        "Implementé el ground-check con `OverlapCircle` + gizmos de depuración.",
+        "Escribí todo el gameplay: salto variable en dos fases, plataformas one-way, enemigos con FSM, combate de disparo y pisotón, y un dash con onda de agua que impulsa al personaje por el mapa.",
+        "Construí los escenarios a mano: armé tilesets y los compuse en tilemap con sprites de licencia permisiva, e integré en el motor sus colisiones, plataformas y zonas de golpe.",
+        "Animé a mano a los personajes en Unity (Timeline), frame a frame, para ataque, movimiento y salto; prototipé animaciones en Blender.",
         "Publiqué y documenté: repo de contenido y un repo MIT con solo el código de gameplay (Cumyxel-code), separando código del contenido.",
       ],
       solution: [
-        "**Salto variable** con corrección de gravedad en dos fases (subida sin tecla / caída) — física 2D cuidada, *game-feel*.",
-        "**Enemigos con FSM** por anillos de distancia: idle → chase → ataque (esqueleto arquero y murciélago), proyectiles por corrutinas.",
-        "**Plataformas one-way** con `Physics2D.IgnoreCollision` y par trigger/collider.",
-        "**Cámara ortográfica** con efecto ripple de agua (post-proceso: shader + `Graphics.Blit`).",
-        "**Ground-check** con `OverlapCircle` + gizmos; Tilemap, Mecanim; escenarios pixel-art dibujados a mano.",
-        "**Cumyxel-code:** repo público MIT con solo el código de gameplay — separa código del contenido y muestra mentalidad open-source.",
+        "**Salto variable** que se siente bien: corrección de gravedad en dos fases (subida sin tecla / caída) — física 2D cuidada, game-feel.",
+        "**Combate con disparo** como mecánica principal: disparar elimina enemigos; además se les baja la vida saltando encima de ellos (pisotón).",
+        "**Enemigos con FSM** que persiguen y atacan de verdad: por anillos de distancia idle → persecución → ataque (esqueleto arquero y murciélago).",
+        "**Dash con onda de agua:** animación que impulsa al personaje como un boost y le permite moverse rápido por el escenario, con su efecto visual de onda de agua.",
+        "**Escenarios a mano:** tilesets armados y compuestos en tilemap a partir de sprites de licencia permisiva, con colisiones, plataformas one-way y zonas de golpe integradas en el motor.",
+        "**Animación a mano:** personajes animados frame a frame en Unity (Timeline) para ataque, movimiento y salto, con prototipos en Blender.",
+        "**Cumyxel-code:** repo público MIT con solo el código de gameplay, separado del contenido — mentalidad open-source.",
       ],
       stack: [
         "Unity 2022.3.19f1 LTS (Built-in RP, lineal)",
-        "C# · uGUI + TextMeshPro · Mecanim · Tilemap · Physics2D",
+        "C# · uGUI + TextMeshPro · Mecanim · Timeline · Tilemap · Physics2D",
         "~1,055 LOC en 11 scripts de gameplay",
-        "Pixel-art a mano + assets libres",
+        "Escenarios (tilesets) a mano con sprites de licencia permisiva · Blender para prototipos de animación",
       ],
       gallery: [
         {
@@ -792,23 +798,23 @@ export const projects: Project[] = [
         },
         {
           src: "/images/projects/cumyxel/bossfight.webp",
-          alt: "Boss fight de Cumyxel",
+          alt: "Combate contra el jefe en Cumyxel",
         },
         {
           src: "/images/projects/cumyxel/npc-interaction.webp",
-          alt: "Interacción con NPC en Cumyxel",
+          alt: "Interacción con un NPC en Cumyxel",
         },
         {
           src: "/images/projects/cumyxel/tutorial.webp",
-          alt: "Combate del jugador contra enemigos en Cumyxel",
+          alt: "Tutorial de Cumyxel",
         },
       ],
-      cta: "¿Quieres ver cómo se construye un plataformero 2D con game-feel real, FSM y pixel-art a mano? Hablemos.",
+      cta: "¿Quieres ver un juego de plataformas 2D completo, de la física al pixel-art, con todo el gameplay escrito desde cero? Hablemos.",
     },
     architecture: {
       name: "Cumyxel 2D",
       description:
-        "Plataformero 2D pixel-art con game-feel real: salto variable, enemigos con FSM y cámara con efecto ripple de agua; el autor escribió el 100% de la programación de gameplay.",
+        "Plataformero 2D pixel-art con game-feel real: salto variable, combate con disparo como mecánica principal y enemigos con FSM; escribí todo el gameplay y armé a mano escenarios y animaciones.",
       children: [
         {
           name: "Salto variable",
@@ -816,9 +822,14 @@ export const projects: Project[] = [
             "Corrección de gravedad en dos fases (subida sin tecla / caída) — física 2D cuidada.",
         },
         {
+          name: "Combate con disparo",
+          description:
+            "Mecánica principal del juego: disparar elimina enemigos; además se les baja la vida con un pisotón saltando encima.",
+        },
+        {
           name: "Enemigos con FSM",
           description:
-            "Por anillos de distancia: idle → chase → ataque (esqueleto arquero y murciélago), proyectiles por corrutinas.",
+            "Por anillos de distancia: idle → persecución → ataque (esqueleto arquero y murciélago), proyectiles por corrutinas.",
         },
         {
           name: "Plataformas one-way",
@@ -826,13 +837,19 @@ export const projects: Project[] = [
             "Implementadas con Physics2D.IgnoreCollision y par trigger/collider.",
         },
         {
-          name: "Cámara ortográfica con ripple de agua",
-          description: "Efecto post-proceso con shader + Graphics.Blit.",
+          name: "Dash con onda de agua",
+          description:
+            "Animación que impulsa al personaje como un boost para moverse rápido por el escenario, con su efecto visual de onda de agua.",
         },
         {
-          name: "Ground-check",
+          name: "Escenarios y tilesets a mano",
           description:
-            "Detección de suelo con OverlapCircle + gizmos de depuración.",
+            "Niveles armados a mano con tilesets y tilemap a partir de sprites de licencia permisiva; colisiones, plataformas y zonas de golpe integradas en el motor.",
+        },
+        {
+          name: "Animación a mano",
+          description:
+            "Personajes animados frame a frame en Unity (Timeline) para ataque, movimiento y salto; prototipos en Blender.",
         },
         {
           name: "Cumyxel-code",
