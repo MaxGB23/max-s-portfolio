@@ -69,6 +69,7 @@ El portfolio es 100% español hardcodeado. Un switch de idioma clásico (detecci
 
 ## Next steps (work units posteriores)
 - **[PENDIENTE — data bilingüe]** Traducir el contenido de `data/projects.ts` (~330 strings: descriptions, metrics, problem/role/solution con markdown, gallery alts, architecture). Decisión del usuario (2026-09-21): la data aún no es final; se traduce cuando se congele. Enfoque acordado: **modelo bilingüe** (`data/projects-en.ts` mirror + selector `getProjects(lang)` vía cookie server-side / `useLanguage()` cliente), NO claves planas — separa contenido de chrome, evita monolito en translations.ts y permite traducir una sola vez.
+> **SUPERSEDED 2026-10-10 (bilingual-content-data T1–T17):** el modelo mirror (`data/projects-en.ts` + `getProjects(lang)`) se descartó a favor de hojas `L = {es, en}` inline no-opcionales con invariante de compilador; ver `odd/tasks/bilingual-content-data.md` (Decisión de arquitectura). Los labels de enlace usan constantes `L` compartidas en `data/projects/types.ts` (variante B de T15), no claves de chrome. (`docs/ideas-features/language.md`, el plan original, ya no existe en el árbol: la supersesión queda registrada aquí y en `docs/i18n.md`.)
 - `data/index.ts` es código muerto (0 imports) — candidato a borrar en work unit aparte si el usuario lo aprueba.
 - Sync `docs/design/` si el cambio afecta componentes/tokens (en aprobación de work unit).
 - Actualizar `docs/ideas-features/language.md` estado a implementado al cerrar.
