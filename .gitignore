@@ -16,6 +16,9 @@ node_modules/
 # Still resolved via the tsconfig `include` array, so type-checking is unaffected.
 next-env.d.ts
 
+# CodeGraph index
+.codegraph/
+
 # Scratch css in components/
 components/a.css
 
