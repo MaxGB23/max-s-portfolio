@@ -375,7 +375,9 @@ en otro archivo.
 - Volver: `fixed` arriba-izquierda, pill primary md con `className="back-btn
   pointer-events-auto hover:bg-foreground/80 transition-colors"` (excepcion:
   hover de fondo, NUNCA transition-opacity - GSAP lo controla).
-- Hero detalle: `px-6 md:px-12 lg:px-20 pt-20 md:pt-24 pb-12 md:pb-16 max-w-5xl`.
+- Hero detalle: `px-6 md:px-12 lg:px-20 pt-22 md:pt-24 2xl:pt-26 pb-12 md:pb-16 max-w-5xl`.
+  El `pt` superior iguala el espaciado entre el boton Volver flotante y el badge
+  de categoria (88 / 96 / 104px).
   La columna interna es `flex flex-col gap-6` y entrega TODO el ritmo del hero
   con ese UNICO `gap-*`: el wrapper del badge perdio `mb-6` y el wrapper de
   `StackChips` perdio `mt-8`, asi que los hermanos del bloque NO declaran
