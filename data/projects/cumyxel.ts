@@ -12,8 +12,8 @@
 // reordenar al anadir el `en`.
 //
 // NOMBRE DE LA INSTITUCION: el ES dice "Universidad Tecnologica de Leon". El EN
-// usa "Leon Technological University" (la ciudad como nombre propio delante,
-// orden natural en ingles) y "Expo Proyectos" -> "Projects Expo". Es una
+// usa "Technological University of Leon" (se conserva el `of` = `de` para que
+// se lea como universidad en ingles) y "Expo Proyectos" -> "Projects Expo". Es una
 // traduccion de nombre, no una identificacion nueva: no se agregan ni se quitan
 // fechas. Mismo tratamiento en `metric` y en `metrics[0]`.
 
@@ -38,7 +38,7 @@ export const cumyxel: ProjectL = {
   },
   metric: {
     es: "Mejor Videojuego — Expo Proyectos, Universidad Tecnológica de León",
-    en: "Best Video Game — Projects Expo, León Technological University",
+    en: "Best Video Game — Projects Expo, Technological University of León",
   },
   tags: ["Unity", "C#", "Blender"],
   image: "/images/projects/cumyxel/nivel1.webp",
@@ -72,7 +72,7 @@ export const cumyxel: ProjectL = {
     summary: {
       es: "Cumyxel (2D, ene – abr 2024) es un juego de plataformas 2D pixel-art de ABMODEL Games, equipo universitario de 4 integrantes. Escribí todo el gameplay y armé a mano los escenarios (tilesets) y las animaciones, usando sprites de licencia permisiva. El foco fue el game-feel: salto variable, combate con disparo como mecánica principal y enemigos que persiguen y atacan de verdad. Recibió el reconocimiento a Mejor Videojuego en la Expo Proyectos de la Universidad Tecnológica de León (abr 2024).",
       // La copia ES no lleva pares `**`: el EN tampoco los inventa (docs/i18n.md:25).
-      en: "Cumyxel (2D, Jan – Apr 2024) is a 2D pixel-art platformer from ABMODEL Games, a four-person university team. I wrote all the gameplay and hand-built the scenery (tilesets) and the animations, using permissively licensed sprites. The focus was game-feel: variable jump height, shooting combat as the core mechanic and enemies that genuinely chase and attack. It received the Best Video Game award at the Projects Expo of León Technological University (Apr 2024).",
+      en: "Cumyxel (2D, Jan – Apr 2024) is a 2D pixel-art platformer from ABMODEL Games, a four-person university team. I wrote all the gameplay and hand-built the scenery (tilesets) and the animations, using permissively licensed sprites. The focus was game-feel: variable jump height, shooting combat as the core mechanic and enemies that genuinely chase and attack. It received the Best Video Game award at the Projects Expo of Technological University of León (Apr 2024).",
     },
     metrics: [
       {
@@ -83,7 +83,7 @@ export const cumyxel: ProjectL = {
         },
         label: {
           es: "Expo Proyectos · Universidad Tecnológica de León (abr 2024)",
-          en: "Projects Expo · León Technological University (Apr 2024)",
+          en: "Projects Expo · Technological University of León (Apr 2024)",
         },
       },
       {
