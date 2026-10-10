@@ -21,7 +21,7 @@
 // escribe el limite de keywords con coma de miles por error ("30") y con flecha
 // (->) que el EN debe respetar tal cual para no divergir del dato upstream.
 
-import type { ProjectL } from "./types";
+import { linkLabelCode, type ProjectL } from "./types";
 
 export const funkyTheme: ProjectL = {
   id: "funky-theme",
@@ -53,10 +53,7 @@ export const funkyTheme: ProjectL = {
   featured: true,
   links: [
     {
-      label: {
-        es: "Ver código",
-        en: "View code",
-      },
+      label: linkLabelCode,
       kind: "code",
       url: "https://github.com/MaxGB23/funky-theme",
       external: true,

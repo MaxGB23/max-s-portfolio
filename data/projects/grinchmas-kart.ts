@@ -18,7 +18,7 @@
 // traduce por identidad. En `metrics[3].label` el ES escribe "blender" en
 // minuscula; el EN usa "Blender" porque es nombre propio de la herramienta.
 
-import type { ProjectL } from "./types";
+import { linkLabelCode, linkLabelDemo, type ProjectL } from "./types";
 
 export const grinchmasKart: ProjectL = {
   id: "grinchmas-kart",
@@ -49,19 +49,13 @@ export const grinchmasKart: ProjectL = {
   },
   links: [
     {
-      label: {
-        es: "Ver código",
-        en: "View code",
-      },
+      label: linkLabelCode,
       kind: "code",
       url: "https://github.com/MaxGB23/Grinchmas-Kart",
       external: true,
     },
     {
-      label: {
-        es: "Ver demo",
-        en: "View demo",
-      },
+      label: linkLabelDemo,
       kind: "demo",
       url: "https://drive.google.com/drive/folders/1bSRON0fCKFBL4qX8gPyTn4LXYGR9Vv6O?usp=sharing",
       external: true,

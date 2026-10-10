@@ -14,7 +14,7 @@
 // "PDF legal" describen una propiedad del sistema, asi que el EN traduce el
 // significado ("Traceable", "Legal PDF") en vez de traducir la palabra suelta.
 
-import type { ProjectL } from "./types";
+import { linkLabelCode, type ProjectL } from "./types";
 
 export const presidencia: ProjectL = {
   id: "presidencia",
@@ -53,10 +53,7 @@ export const presidencia: ProjectL = {
   featured: true,
   links: [
     {
-      label: {
-        es: "Ver código",
-        en: "View code",
-      },
+      label: linkLabelCode,
       kind: "code",
       url: "https://github.com/MaxGB23/Presidencia-Municipal-Acambaro",
       external: true,

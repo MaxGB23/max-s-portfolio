@@ -17,7 +17,7 @@
 // un solo digito. Los valores de `metrics` son cifras puras salvo el nombre del
 // producto, asi que van por identidad.
 
-import type { ProjectL } from "./types";
+import { linkLabelCode, type ProjectL } from "./types";
 
 export const colorHighlightV2: ProjectL = {
   id: "color-highlight-v2",
@@ -48,10 +48,7 @@ export const colorHighlightV2: ProjectL = {
   },
   links: [
     {
-      label: {
-        es: "Ver código",
-        en: "View code",
-      },
+      label: linkLabelCode,
       kind: "code",
       url: "https://github.com/MaxGB23/color-highlight-v2",
       external: true,

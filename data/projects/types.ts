@@ -43,8 +43,11 @@ export interface NodeL {
   children?: NodeL[];
 }
 
-/** `kind` elige icono y NO se traduce; `label` si, hasta que T15 lo convierta en
-    clave de chrome por `kind` y elimine el "Ver codigo" repetido en 9 fichas. */
+/** `kind` elige icono y NO se traduce; `label` es una hoja `L` normal, pero los
+    4 labels genericos que se repiten en las 9 fichas viven UNA vez como
+    constantes compartidas aqui (T15, variante B) en vez de 11 literales
+    duplicados. Solo un label distinto del generico de su `kind` se escribe
+    inline en la ficha (ej. "Cumyxel (MIT)", "VSCode Marketplace"). */
 export interface LinkL {
   label: L;
   /** Categoria del enlace para elegir icono: "code" | "demo" | "site" | "landing" | "app" | ... */
@@ -52,6 +55,23 @@ export interface LinkL {
   url: string;
   external?: boolean;
 }
+
+/**
+ * Labels genericos de enlace, UNA sola fuente (T15, variante B).
+ *
+ * Por que constantes `L` y NO claves de chrome en `translations.ts`: la regla
+ * del repo es que `L` nunca es opcional — mover estos labels a `t()` obligaba a
+ * volver `label?` opcional y a meter un fallback `undefined` en DOS renders
+ * (`project-detail` y el aria-label de `project-card`), es decir, una clase
+ * entera de `undefined` a cambio de nada: el label YA respondia al locale via
+ * `localizeProject`. La duplicacion real (11 literales identicos) desaparece
+ * igual apuntando a estas 4 constantes, con menor blast radius y sin tocar
+ * ningun componente.
+ */
+export const linkLabelCode: L = { es: "Ver código", en: "View code" };
+export const linkLabelDemo: L = { es: "Ver demo", en: "View demo" };
+export const linkLabelLanding: L = { es: "Ver landing", en: "View landing page" };
+export const linkLabelApp: L = { es: "Probar la app", en: "Try the app" };
 
 export interface ProjectL {
   id: string;

@@ -16,7 +16,7 @@
 // `metrics[5]` es un valor cualitativo ("Asistido"), no una cifra: el EN traduce
 // el significado ("Assisted"), no la palabra suelta.
 
-import type { ProjectL } from "./types";
+import { linkLabelCode, type ProjectL } from "./types";
 
 export const funkyAi: ProjectL = {
   id: "funky-ai",
@@ -47,10 +47,7 @@ export const funkyAi: ProjectL = {
   },
   links: [
     {
-      label: {
-        es: "Ver código",
-        en: "View code",
-      },
+      label: linkLabelCode,
       kind: "code",
       url: "https://github.com/MaxGB23/funky-ai",
       external: true,

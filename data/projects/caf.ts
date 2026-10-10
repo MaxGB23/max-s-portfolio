@@ -12,7 +12,7 @@
 // contrato de layout (KpiGrid de 2 columnas, nodo raiz de la topologia). No
 // reordenar al anadir el `en`.
 
-import type { ProjectL } from "./types";
+import { linkLabelApp, linkLabelCode, linkLabelLanding, type ProjectL } from "./types";
 
 export const caf: ProjectL = {
   id: "caf",
@@ -44,10 +44,7 @@ export const caf: ProjectL = {
   featured: true,
   links: [
     {
-      label: {
-        es: "Ver código",
-        en: "View code",
-      },
+      label: linkLabelCode,
       kind: "code",
       url: "https://github.com/MaxGB23/centro-caf",
       external: true,
@@ -62,19 +59,13 @@ export const caf: ProjectL = {
       external: true,
     },
     {
-      label: {
-        es: "Ver landing",
-        en: "View landing page",
-      },
+      label: linkLabelLanding,
       kind: "landing",
       url: "https://centrocafacambaro.vercel.app",
       external: true,
     },
     {
-      label: {
-        es: "Probar la app",
-        en: "Try the app",
-      },
+      label: linkLabelApp,
       kind: "app",
       url: "https://caf-usage-test.vercel.app/dashboard",
       external: true,

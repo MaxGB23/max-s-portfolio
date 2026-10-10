@@ -17,7 +17,7 @@
 // traduccion de nombre, no una identificacion nueva: no se agregan ni se quitan
 // fechas. Mismo tratamiento en `metric` y en `metrics[0]`.
 
-import type { ProjectL } from "./types";
+import { linkLabelDemo, type ProjectL } from "./types";
 
 export const cumyxel: ProjectL = {
   id: "cumyxel",
@@ -58,10 +58,7 @@ export const cumyxel: ProjectL = {
       external: true,
     },
     {
-      label: {
-        es: "Ver demo",
-        en: "View demo",
-      },
+      label: linkLabelDemo,
       kind: "demo",
       url: "https://drive.google.com/drive/folders/1bSRON0fCKFBL4qX8gPyTn4LXYGR9Vv6O?usp=sharing",
       external: true,

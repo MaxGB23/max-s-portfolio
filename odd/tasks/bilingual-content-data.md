@@ -53,7 +53,7 @@ Descartado: espejo `projects-en.ts` con tipos opcionales (permite drift silencio
 - [x] T12: borrar `ProjectEs`, los aliases de compatibilidad y la aserción de invariancia (las 9 fichas quedan en `ProjectL`)
 - [x] T13: `tiers` fuera de `pricing-section.tsx` → `data/pricing.ts` con EN + cableado
 - [x] T14: `products[]` fuera de `products-section.tsx` → `data/products.ts` con EN + cableado
-- [ ] T15: labels de enlace por `ProjectLink.kind` → chrome keys en `translations.ts` (elimina "Ver código" repetido en 9 fichas)
+- [x] T15: labels de enlace por `ProjectLink.kind` → chrome keys en `translations.ts` (elimina "Ver código" repetido en 9 fichas). VARIANTE B aprobada por el usuario: constantes `L` compartidas en `data/projects/types.ts`, sin tocar chrome ni renders (ver nota en Next steps)
 - [ ] T16: `scripts/audit-i18n-content.mjs` — reporta EN idéntico a ES (traducción no hecha), `**` markdown perdido, y campos sin `en`
 - [ ] T17: sync `docs/i18n.md` (fila 19: data pasa de "pendiente" a bilingüe con `L`) y `docs/ideas-features/language.md` + `odd/tasks/language-switcher.md:71` (supersesión del modelo mirror)
 
@@ -93,6 +93,7 @@ Descartado: espejo `projects-en.ts` con tipos opcionales (permite drift silencio
 
 ## Next steps
 - Merge a la rama principal y push son decisiones del usuario.
+- T15 VARIANTE B (aprobada por el usuario, sustituye el diseno chrome-keys): `linkLabelCode/Demo/Landing/App` como constantes `L` compartidas en `data/projects/types.ts`; los 11 links genericos de 8 fichas apuntan a ellas, los 5 labels de marca quedan inline ("Ver codigo de la landing", "Cumyxel (MIT)", "VSCode Marketplace", "Open VSX", "Terminales (TUI)"). POR QUE B: el diseno chrome-keys obligaba a volver `label?` opcional y a meter un fallback `undefined` en DOS renders (`project-detail` y el aria-label de `project-card`, que recibe links vivos via `all-projects.tsx:33`) — `components/project-card.tsx` estaba fuera de las superficies del writer. B preserva el invariante `L` no-opcional del compilador, cumple la intencion real (dedupe + respuesta al locale via `localizeProject`, que ya existia) y no toca ningun componente. `data/translations.ts` no se toca en T15.
 - T14 (`products[]` → `data/products.ts`): 3 productos reales (UI Kit Pro, Motion Studio, Deploy Blueprint), ES byte-identico al componente revertido, `ProductL` + `localizeProduct` + `LocalizedProduct` segun el patron de pricing, `key` desde el `name` ES. HONEST IDENTITY: el copy ya era US English publicado, asi que los 18 `en` son identicos a proposito (documentado en la cabecera del archivo y cubierto por el allowlist de T16).
 - **Work unit de veracidad (NO de traducción), pendiente de autorización del usuario.** El writer bilingüe NÃO tocó claims, por diseño, pero señaló tres que Translated tal cual y que parecen orquestados:
   - `presidencia` `metric` + `metrics[0]`: "100% digitalización del flujo de solicitudes". Un 100% absoluto sin medición de proceso real se lee como aspiracional presentado como hecho medido.

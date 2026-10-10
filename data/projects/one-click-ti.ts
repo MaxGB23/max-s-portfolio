@@ -14,7 +14,7 @@
 // esos mismos roles con las palabras inglesas del sector (administrators,
 // staff/read-only, client), sin prometer permisos que el ES no promete.
 
-import type { ProjectL } from "./types";
+import { linkLabelCode, type ProjectL } from "./types";
 
 export const oneClickTi: ProjectL = {
   id: "one-click-ti",
@@ -46,10 +46,7 @@ export const oneClickTi: ProjectL = {
   },
   links: [
     {
-      label: {
-        es: "Ver código",
-        en: "View code",
-      },
+      label: linkLabelCode,
       kind: "code",
       url: "https://github.com/MaxGB23/ABMODEL",
       external: true,
