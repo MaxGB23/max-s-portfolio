@@ -5,51 +5,11 @@ import { Check, ArrowUpRight } from "lucide-react";
 import { useGsapAnimation } from "@/hooks/use-gsap-animation";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/language-context";
+import { localizeProduct, products, type LocalizedProduct } from "@/data/products";
 
-interface Product {
-  name: string;
-  description: string;
-  features: string[];
-  tag: string;
-}
-
-const products: Product[] = [
-  {
-    name: "UI Kit Pro",
-    description:
-      "A comprehensive Figma & React component library built for speed - covering every pattern you need to ship a polished product.",
-    features: [
-      "200+ production-ready React components",
-      "Full Figma source files included",
-      "Storybook documentation & live preview",
-    ],
-    tag: "Design System",
-  },
-  {
-    name: "Motion Studio",
-    description:
-      "Plug-and-play Framer Motion presets and animation hooks that bring your interfaces to life without sacrificing performance.",
-    features: [
-      "50+ pre-built animation variants",
-      "Custom React hooks for scroll & hover",
-      "Zero-dependency, tree-shakable bundle",
-    ],
-    tag: "Animation",
-  },
-  {
-    name: "Deploy Blueprint",
-    description:
-      "A Next.js starter template with auth, database, payments, and CI/CD pre-wired so you can go from idea to production in hours.",
-    features: [
-      "Next.js 16 + Tailwind + Supabase auth",
-      "Stripe payments integrated out of the box",
-      "GitHub Actions CI/CD pipeline included",
-    ],
-    tag: "Starter Template",
-  },
-];
-
-function ProductCard({ product }: { product: Product }) {
+// El producto llega YA resuelto desde ProductsSection: el data layer es el unico
+// lugar donde una hoja {es,en} se decide, y el card solo renderiza strings.
+function ProductCard({ product }: { product: LocalizedProduct }) {
   const cardRef = useRef<HTMLElement>(null);
   const { t } = useLanguage();
 
@@ -129,7 +89,7 @@ function ProductCard({ product }: { product: Product }) {
 
 export function ProductsSection() {
   // ScrollTrigger: stagger cards as section enters viewport (80% start).
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const sectionRef = useGsapAnimation<HTMLElement>((gsap, ScrollTrigger) => {
     gsap.from(".product-card", {
       opacity: 0,
@@ -187,7 +147,11 @@ export function ProductsSection() {
         {/* Cards grid */}
         <div className="debug-l3 products-grid grid grid-cols-1 md:grid-cols-3 gap-6">
           {products.map((product) => (
-            <ProductCard key={product.name} product={product} />
+            // La hoja se resuelve aqui, no dentro de ProductCard: el toggle de
+            // idioma tiene que cambiar el CONTENIDO, no solo el chrome, y el card
+            // recibe el producto ya localizado. `key` sigue siendo el `name` ES para
+            // que cambiar de locale no remonte las cards (ni su estado GSAP).
+            <ProductCard key={product.name.es} product={localizeProduct(product, lang)} />
           ))}
         </div>
 
