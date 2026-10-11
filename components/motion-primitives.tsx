@@ -139,3 +139,26 @@ export function FadeInItem({ children, className }: FadeInItemProps) {
     </motion.div>
   );
 }
+
+// ---------------------------------------------------------------------------
+// FadeInItemFade - opacity-only child of FadeInStagger.
+// Same contract as FadeInItem but without the y transform, for dense grids
+// (e.g. AllProjects) where transform on every card competes with image
+// decoding at section entry and causes a hitch. Duration is shorter so the
+// cascade still feels fast.
+// ---------------------------------------------------------------------------
+const fadeItemVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { duration: 0.35, ease: [0.22, 1, 0.36, 1] },
+  },
+};
+
+export function FadeInItemFade({ children, className }: FadeInItemProps) {
+  return (
+    <motion.div variants={fadeItemVariants} className={className}>
+      {children}
+    </motion.div>
+  );
+}
