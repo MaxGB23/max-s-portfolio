@@ -2,16 +2,17 @@
 // (max-w-*) and computed typography (fluid tokens) across viewports.
 //
 // Usage:
-//   node scripts/audit-detail.mjs [--url http://localhost:3001] [--slug caf] [--vp 1440x900 ...]
-// Requires the dev server running (pnpm dev --port 3001).
+//   node scripts/audit-detail.mjs [--url http://localhost:<port>] [--slug caf] [--vp 1440x900 ...]
+// Requires the dev server running (pnpm dev --port 3000).
 import { chromium } from "playwright";
+import { resolveBase } from "./audit-base.mjs";
 
 const args = process.argv.slice(2);
 const pick = (flag, fallback) => {
   const i = args.indexOf(flag);
   return i >= 0 && args[i + 1] ? args[i + 1] : fallback;
 };
-const url = pick("--url", process.env.BASE_URL || "http://localhost:3001");
+const url = await resolveBase("audit-detail");
 const slug = pick("--slug", "caf");
 const viewports = args.includes("--vp")
   ? args

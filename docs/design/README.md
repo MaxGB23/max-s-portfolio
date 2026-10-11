@@ -24,7 +24,8 @@ derivado de tokens, sin UI para alternar. Detalle completo:
 | `typography-families.md` | Familias, 13 tokens fluidos, jerarquia, medida, historia | Tipografia: que token para que texto |
 | `components.md` | Shell Section, contrato de ritmo, gates, geometria por componente, motion, scroll | Layout verificada de cada seccion |
 | `buttons.md` | API de Button, variantes, hovers, inventario por seccion, historia v1->v3 | Que boton usar donde |
-| `pointer-gestures.md` | Reglas de pointer/drag/select + lightbox (detalle) | Interaccion con el puntero y lightbox |
+| `pointer-gestures.md` | Reglas de pointer/teclado/foco + lightbox (detalle) | Interaccion con el puntero, trap de foco y el lightbox como caso canonico (7 rondas de bugs QA) |
+| `section-animations.md` | Patron unificado de animacion de titulos, excepciones, familias | Como se anima cada seccion y por que |
 | `iteration-guide.md` | Reglas de decision, E9/E15, flujo serif/sans/mono, gotchas | Como iterar sin romper el sistema |
 | `../../app/globals.css` | Fuente de verdad del tema (no es doc, es codigo) | Leerlo primero si dudas de valores |
 
@@ -58,5 +59,5 @@ fuentes. Regla del canon: cada tema lista la suya, una sola vez.
 | Por que el featured se apila en ciertas pantallas? | `components.md` 3 (`FEATURED_STACK_GATE`) |
 | Que variante de Button para el CTA de pricing? | `buttons.md` 8 |
 | Puedo usar text-white? | `iteration-guide.md` 5 |
-| Como se activa el debug de layout? | `components.md` 10 (o skill `layout-debug`) |
+| Como se activa el debug de layout? | `components.md` 10 (o skill `layout-debug-canon`) |
 | De donde se extrae el espejo del tema? | `app/globals.css` -> `tailwind-v4-theme.css` |

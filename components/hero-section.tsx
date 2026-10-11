@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowDown, Download } from "lucide-react";
+import { cvHref } from "@/data/cv";
 import { motion } from "framer-motion";
 import { useGsapAnimation } from "@/hooks/use-gsap-animation";
 import { useScrollToAnchor } from "@/hooks/use-lenis";
@@ -20,7 +21,7 @@ const HERO_NAME = {
 };
 
 export function HeroSection() {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const [mounted, setMounted] = useState(false);
   const [isDark, setIsDark] = useState(false);
   const scrollToAnchor = useScrollToAnchor(64);
@@ -108,7 +109,7 @@ export function HeroSection() {
       id="inicio"
       ref={containerRef}
       aria-label={t("hero.aria.intro")}
-      className="debug-l1 relative min-h-[85dvh] flex flex-col items-center justify-center pt-22 sm:pt-24 lg:[@media(min-height:700px)]:pt-34 2xl:pt-40 px-6 md:px-8 lg:px-12"
+      className="debug-l1 relative min-h-[85dvh] flex flex-col items-center pt-20 sm:pt-24 lg:[@media(min-height:700px)]:pt-34 px-6 md:px-8 lg:px-12"
     >
       {/* Background Aurora */}
       <div
@@ -127,9 +128,10 @@ export function HeroSection() {
           />
         )}
       </div>
-      {/* Main hero layout */}
-      <div className="debug-l2 relative z-10 flex flex-col items-center w-full gap-10 2xl:gap-14">
-        <div className="debug-l3 relative flex flex-col md:flex-row items-center justify-center w-full max-w-5xl mx-auto gap-8 md:gap-12 lg:gap-20">
+      {/* Main hero layout. flex-1 absorbs the leftover that min-h-[85dvh] leaves,
+          so the scroll indicator below always lands flush on the section edge. */}
+      <div className="debug-l2 relative z-10 flex-1 flex flex-col items-center justify-center w-full gap-10 2xl:gap-14">
+        <div className="debug-l3 relative flex flex-col md:flex-row items-center justify-center w-full max-w-5xl mx-auto gap-2 md:gap-12 lg:gap-20">
 
           {/* Left Column: Info */}
           <div className="hero-info flex flex-col items-center md:items-start text-center md:text-left z-10 ">
@@ -137,13 +139,13 @@ export function HeroSection() {
             <p className="brightness-110 hero-label text-muted-foreground uppercase tracking-widest font-medium mb-4 text-fluid-eyebrow" style={{ opacity: 0, visibility: 'hidden' }}>
               {t("hero.role")}
             </p>
-            <h1 ref={titleRef} className="hero-title font-serif grid grid-cols-1 gap-3 font-black uppercase text-fluid-display leading-[0.9] tracking-tighter text-foreground mb-6" style={{ opacity: 0, visibility: 'hidden' }}>
+            <h1 ref={titleRef} className="hero-title font-serif grid grid-cols-1 gap-3 font-black uppercase text-fluid-display leading-[0.9] tracking-tighter text-foreground mb-4 md:mb-6" style={{ opacity: 0, visibility: 'hidden' }}>
               <span>{HERO_NAME.first}</span>
               <span className="text-purple-accent  sm:tracking-[0.01em]">{HERO_NAME.last}</span>
             </h1>
 
             <div className="hero-description debug-l4 px-4 sm:px-16 md:px-0 text-fluid-body leading-relaxed text-content max-w-full" style={{ opacity: 0, visibility: 'hidden', maxWidth: titleWidth ? `min(${titleWidth}px, 60ch)` : undefined }}>
-              <div className="debug-l1">
+              <div className="debug-test">
                 <p >{t("hero.description")}</p>
               </div>
             </div>
@@ -156,7 +158,7 @@ export function HeroSection() {
           >
             <div className="w-full h-full rounded-4xl overflow-hidden relative">
               <Image
-                src="/images/max-gb-pfp.png"
+                src="/images/max-gb-pfp.webp"
                 alt="Maximiliano González Ballesteros Full Stack Developer Profile Picture"
                 fill
                 priority
@@ -176,8 +178,6 @@ export function HeroSection() {
             >
               <motion.span
                 className="text-4xl md:text-5xl text-white origin-bottom-right"
-                role="img"
-                aria-label="wave"
                 animate={{ rotate: [0, 20, -10, 20, -10, 0] }}
                 transition={{ repeat: Infinity, duration: 2, repeatDelay: 1, ease: "easeInOut" }}
               >
@@ -204,7 +204,7 @@ export function HeroSection() {
           </Button>
           <Button asChild variant="outline" shape="pill" size="md" glow>
             <a
-              href="/documents/Maximiliano_Gonzalez_AI_Engineer_Resume.pdf"
+              href={cvHref(lang)}
               download
             >
               {t("hero.cta.cv")}
@@ -227,18 +227,20 @@ export function HeroSection() {
           </div>
         </div>
 
-        {/* Scroll indicator */}
-        <div className="hero-scroll flex flex-col items-center gap-2 text-muted-foreground" style={{ opacity: 0, visibility: 'hidden' }}>
-          <span className="text-xs 2xl:text-base tracking-widest uppercase">{t("hero.scroll")}</span>
-          <motion.div
-            className="w-px h-8 bg-border brightness-150"
-            animate={{ scaleY: [1, 0.4, 1] }}
-            transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
-            style={{ originY: 0 }}
-            aria-hidden="true"
-          />
-        </div>
+      </div>
 
+      {/* Scroll indicator — last flow child of the section, so it always sits
+          flush on the bottom edge (the section boundary). mt-* ports the gap it
+          lost when it left the l2 stack. */}
+      <div className="hero-scroll relative z-10 shrink-0 flex flex-col items-center gap-2 mt-10 2xl:mt-14 text-muted-foreground" style={{ opacity: 0, visibility: 'hidden' }}>
+        <span className="text-xs 2xl:text-base tracking-widest uppercase">{t("hero.scroll")}</span>
+        <motion.div
+          className="w-px h-8 bg-border brightness-150"
+          animate={{ scaleY: [1, 0.4, 1] }}
+          transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+          style={{ originY: 0 }}
+          aria-hidden="true"
+        />
       </div>
     </section >
   );

@@ -19,7 +19,8 @@ import { ArrowLeft, ArrowUpRight, BarChart3, ChevronLeft, ChevronRight, Github, 
 import { StackIcon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { takeHomeScroll, useLenis } from "@/hooks/use-lenis";
-import type { Project, ProjectImage, ProjectLink, ProjectMetric } from "@/data/projects";
+import type { ProjectImage, ProjectMetric, ProjectL } from "@/data/projects";
+import { localizeProject } from "@/data/projects";
 import { ArchitectureEmptyState, ProjectArchitecture } from "@/components/project-architecture";
 import { useLanguage } from "@/contexts/language-context";
 
@@ -55,7 +56,7 @@ function renderInline(text: string) {
 
 function SectionTitle({ children }: { children: ReactNode }) {
   return (
-    <h2 className="font-serif font-bold text-fluid-subheading text-foreground mb-5">
+    <h2 className="font-serif font-bold text-fluid-subheading text-foreground mb-3 md:mb-3.5">
       {children}
     </h2>
   );
@@ -180,10 +181,22 @@ function KpiGrid({ metrics }: { metrics: ProjectMetric[] }) {
   );
 }
 
-export function ProjectDetail({ project }: { project: Project }) {
+/** Focables dentro del lightbox. El filtro de `getClientRects()` en el handler
+    descarta los ocultos: las flechas ◀ ▶ son `hidden` bajo `nav` (830px), así
+    que en móvil no son alcanzables con Tab y no pueden contar como destino. */
+const FOCUSABLE_IN_LIGHTBOX =
+  'button:not([disabled]), [href], input:not([disabled]), select, textarea, [tabindex]:not([tabindex="-1"])';
+
+export function ProjectDetail({ project }: { project: ProjectL }) {
   const rootRef = useRef<HTMLDivElement>(null);
-  const { t } = useLanguage();
-  
+  const { t, lang } = useLanguage();
+
+  // Todo el copy de la ficha pasa por `localized`: mismas claves y mismos tipos
+  // que `project`, solo con las hojas `{es,en}` resueltas a `lang`. Se resuelve
+  // una vez y TODAS las lecturas de abajo leen de aqui — cambiar `lang` cambia
+  // el texto sin tocar una sola lectura.
+  const localized = localizeProject(project, lang);
+
   const router = useRouter();
 
   useLayoutEffect(() => {
@@ -200,7 +213,10 @@ export function ProjectDetail({ project }: { project: Project }) {
       });
 
       // Per-section scroll reveal for each content section below the hero.
-      const sections = gsap.utils.toArray<HTMLElement>(".detail-section");
+      // `.detail-gallery` is excluded on purpose: it carries `detail-section` too,
+      // and fading the wrapper while its items un-curtain stacks two gestures on
+      // one block. The curtain below is the stronger, more specific gesture.
+      const sections = gsap.utils.toArray<HTMLElement>(".detail-section:not(.detail-gallery)");
       sections.forEach((section) => {
         gsap.from(section, {
           opacity: 0,
@@ -214,6 +230,24 @@ export function ProjectDetail({ project }: { project: Project }) {
           },
         });
       });
+
+      // Primary visual - same curtain wipe as the gallery items, so every image on
+      // the page is revealed the same way: text fades up, images un-curtain.
+      // Shorter than the gallery's 0.8s: this band is ~1280px wide against ~400px
+      // thumbnails, and the same duration reads slower on a surface that large.
+      const primaryVisual = gsap.utils.toArray<HTMLElement>(".detail-primary-visual");
+      if (primaryVisual.length > 0) {
+        gsap.from(primaryVisual, {
+          clipPath: "inset(100% 0% 0% 0%)",
+          duration: 0.65,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: primaryVisual[0],
+            start: "top 85%",
+            once: true,
+          },
+        });
+      }
 
       // Gallery - vertical curtain wipe clip-path reveal.
       const galleryItems = gsap.utils.toArray<HTMLElement>(".detail-gallery-item");
@@ -280,7 +314,7 @@ export function ProjectDetail({ project }: { project: Project }) {
     return () => ctx.revert();
   }, []);
 
-  const { title, tags, detail } = project;
+  const { title, tags, detail } = localized;
   const words = title.trim().split(/\s+/);
   const lastWord = words.pop();
   const mainTitle = words.join(" ");
@@ -289,8 +323,8 @@ export function ProjectDetail({ project }: { project: Project }) {
   // Nunca usar un retrato/genérico como si fuera captura del producto (dato falso).
   // `detail.visual` es la portada propia del detail (opcional); sin ella cae a
   // `project.image` (la misma de la card) — comportamiento actual.
-  const visualImage = detail.visual?.src ?? project.image;
-  const visualAlt = detail.visual?.alt ?? project.imageAlt;
+  const visualImage = detail.visual?.src ?? localized.image;
+  const visualAlt = detail.visual?.alt ?? localized.imageAlt;
 
   // Gallery items - real captures when wired, else declared placeholders.
   // El placeholder se resuelve en el render con un fondo temático + texto, no
@@ -313,9 +347,31 @@ export function ProjectDetail({ project }: { project: Project }) {
   };
 
   const [viewMode, setViewMode] = useState<"topology" | "kpis">("kpis");
+
+  /** Flechas ←/→ para moverse entre las dos pestañas (patrón ARIA de tabs).
+      Solo intercepta esas dos teclas: ↑/↓ quedan libres y el scroll vertical con
+      Lenis o nativo no se ve afectado. `Home`/`End` se dejan fuera a propósito —
+      son el patrón completo pero agregan superficie sin necesidad con dos vistas.
+      El foco se mueve al elemento nuevo: sin esto el lector de pantalla anuncia
+      la pestaña correcta pero el foco sigue en la anterior. */
+  const onViewTabKeyDown = (
+    event: React.KeyboardEvent<HTMLButtonElement>,
+    current: "topology" | "kpis"
+  ) => {
+    if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+    event.preventDefault();
+    const next = current === "kpis" ? "topology" : "kpis";
+    setViewMode(next);
+    document
+      .getElementById(next === "kpis" ? "detail-tab-kpis" : "detail-tab-topology")
+      ?.focus();
+  };
+
   const realImages = gallery.filter((g): g is ProjectImage => g !== null);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const isLightboxOpen = lightboxIndex !== null;
   const closeLightbox = useCallback(() => setLightboxIndex(null), []);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
   const nextLightbox = useCallback(() => {
     setLightboxIndex((current) => (current === null ? null : (current + 1) % realImages.length));
   }, [realImages.length]);
@@ -332,6 +388,76 @@ export function ProjectDetail({ project }: { project: Project }) {
   // scroll on the next RAF and fight the lock.
   const lenis = useLenis();
 
+  /**
+   * Gestión de foco del lightbox, en dos momentos:
+   *
+   * Al ABRIR, el foco entra al dialog (al botón de cerrar). Si se quedara en el
+   * botón de galería —que está detrás del overlay— el trap no tendría dónde
+   * engancharse y `aria-modal="true"` seguiría prometiendo algo falso.
+   *
+   * Al CERRAR, el foco vuelve al botón que abrió el lightbox. Antes se perdía:
+   * al cerrarse, `document.activeElement` caía a `<body>` y el usuario de teclado
+   * tenía que volver a tabular desde el principio de la página.
+   *
+   * Depende del booleano `isLightboxOpen`, nunca de `lightboxIndex`: con las
+   * flechas de galería el índice cambia en cada pulsación, y si el efecto
+   * dependiera de él se re-ejecutaría capturando como "opener" un control del
+   * propio lightbox.
+   *
+   * `rAF` antes de enfocar: el overlay usa `backdrop-blur`, que fuerza
+   * compositing en el primer frame. Enfocar en el mismo tick haría que el
+   * navegador evaluara `:focus-visible` contra un layout todavía sin asentar.
+   */
+  useEffect(() => {
+    if (!isLightboxOpen) return;
+
+    const opener = document.activeElement;
+    const raf = requestAnimationFrame(() => closeButtonRef.current?.focus());
+
+    return () => {
+      cancelAnimationFrame(raf);
+      // `contains` cubre el desmontaje del componente: si el usuario navegó
+      // mientras el lightbox estaba abierto, el opener ya no está en el DOM.
+      if (opener instanceof HTMLElement && document.contains(opener)) {
+        opener.focus();
+      }
+    };
+  }, [isLightboxOpen]);
+
+  /**
+   * Atrapa el foco dentro del lightbox mientras está abierto.
+   *
+   * El handler va en el `div` del dialog, NO en `window`. En `window` atraparía
+   * el Tab de toda la página mientras el lightbox está abierto, y como el
+   * cleanup del efecto de scroll-lock corre después del re-render, seguiría
+   * atrapándolo en cuanto el overlay se desmontara.
+   *
+   * Solo intercepta cuando el foco está en el último elemento (Tab) o en el
+   * primero (Shift+Tab). En medio del recorrido deja pasar el Tab nativo, así el
+   * orden de tabulación dentro del dialog es el del DOM.
+   */
+  const trapLightboxFocus = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key !== "Tab") return;
+
+    const focusables = Array.from(
+      event.currentTarget.querySelectorAll<HTMLElement>(FOCUSABLE_IN_LIGHTBOX)
+    ).filter((element) => element.getClientRects().length > 0);
+
+    if (focusables.length === 0) return;
+
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
+    const current = document.activeElement;
+
+    if (event.shiftKey && current === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && current === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  };
+
   useLayoutEffect(() => {
     if (lightboxIndex === null) return;
 
@@ -342,7 +468,24 @@ export function ProjectDetail({ project }: { project: Project }) {
     lenis?.stop();
 
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") closeLightbox();
+      if (event.key === "Escape") {
+        closeLightbox();
+        return;
+      }
+      // ←/→ recorren la galería, igual que los botones ◀ ▶. Sin esto el lightbox
+      // solo se navega con mouse: el teclado no tenía forma de cambiar de imagen.
+      // Con una sola imagen no hay destino, así que no se intercepta (los botones
+      // ◀ ▶ tampoco se renderizan en ese caso).
+      if (realImages.length < 2) return;
+      if (event.key === "ArrowRight") {
+        event.preventDefault(); // sin esto la página scrollea en horizontal
+        nextLightbox();
+        return;
+      }
+      if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        prevLightbox();
+      }
     };
     window.addEventListener("keydown", onKeyDown);
 
@@ -352,7 +495,7 @@ export function ProjectDetail({ project }: { project: Project }) {
       lenis?.start();
       window.removeEventListener("keydown", onKeyDown);
     };
-  }, [lightboxIndex, closeLightbox, lenis]);
+  }, [lightboxIndex, closeLightbox, lenis, realImages.length, nextLightbox, prevLightbox]);
 
   // Touch swipe navigation — zero dependencies, plain pointer events. A ~50px
   // deltaX threshold with the horizontal axis dominant (so vertical drags are
@@ -445,24 +588,22 @@ export function ProjectDetail({ project }: { project: Project }) {
       </div>
 
       {/* Hero - typographic, image-led proof lives lower in the primary visual. */}
-      <section className="debug-l1 detail-hero px-6 md:px-12 lg:px-20 pt-20 md:pt-24 pb-12">
-        <div className="debug-l2 max-w-5xl mx-auto">
-          <div className="mb-6">
-            <span className="px-3.5 py-1.5 rounded-full text-xs 2xl:text-sm font-semibold tracking-wide bg-purple-accent text-white">
-              {project.category}
+      <section className="debug-l1 detail-hero px-6 md:px-12 lg:px-20 pt-22 md:pt-24 2xl:pt-26 pb-12 md:pb-16">
+        <div className="debug-l2 max-w-5xl mx-auto flex flex-col gap-6">
+          <div>
+            <span className="px-3.5 py-1 rounded-full text-xs 2xl:text-sm font-semibold tracking-wide bg-purple-accent text-white">
+              {localized.category}
             </span>
           </div>
-          <h1 className="font-serif font-black text-fluid-detail text-foreground leading-[1.02] tracking-tight text-balance">
+          <h1 className="-mb-2 md:mb-0 font-serif font-black text-fluid-detail text-foreground leading-[1.05] tracking-tight text-balance">
             {mainTitle && <span>{mainTitle} </span>}
             <span className="text-purple-accent brightness-110">{lastWord}</span>
           </h1>
-          <p className="mt-6 text-fluid-body text-content max-w-2xl leading-relaxed">
+          <p className="text-fluid-body text-content xl:mb-2 max-w-2xl leading-relaxed">
             {detail.headline}
           </p>
           {tags.length > 0 && (
-            <div className="mt-8">
-              <StackChips tags={tags} />
-            </div>
+            <StackChips tags={tags} />
           )}
         </div>
       </section>
@@ -472,9 +613,9 @@ export function ProjectDetail({ project }: { project: Project }) {
         <div className="debug-l2 max-w-5xl mx-auto">
           {/* Metrics & Architecture Topology */}
           {detail.metrics.length > 0 && (
-            <section className="debug-l3 detail-section mb-16" aria-label={t("section.projects.metricsSectionAria")}>
+            <section className="debug-l3 detail-section mb-12 md:mb-16" aria-label={t("section.projects.metricsSectionAria")}>
               {/* Header con Tag, Titular, Subtítulo y Switch de Vistas */}
-              <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+              <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6 xl:mb-8">
                 <div>
 
                   <h2 className="font-serif font-bold text-fluid-subheading text-foreground">
@@ -486,11 +627,30 @@ export function ProjectDetail({ project }: { project: Project }) {
                 </div>
 
                 {/* Switcher de Vistas — Métricas primero (primaria, default),
-                    Grafo a la derecha (secundario pero igual de visible) */}
-                <div className="flex items-center gap-1.5 p-1 rounded-xl bg-card border border-border shrink-0 self-start md:self-auto">
+                    Grafo a la derecha (secundario pero igual de visible).
+
+                    Patrón ARIA de tabs: el switcher es un conjunto
+                    mutuamente excluyente, no dos botones sueltos. Antes solo se
+                    distinguía la activa por el fondo oscuro, así que un lector de
+                    pantalla no tenía forma de saber qué vista estaba activa.
+
+                    `onClick` intacto y `tabIndex` derivado de `viewMode`: el click
+                    de mouse sigue siendo exactamente el mismo camino, y la
+                    pestaña pulsada queda activa en el re-render siguiente. */}
+                <div
+                  role="tablist"
+                  aria-label={t("section.projects.metricsSectionAria")}
+                  className="flex items-center gap-1.5 p-1 rounded-xl bg-card border border-border shrink-0 self-start md:self-auto"
+                >
                   <button
                     type="button"
+                    role="tab"
+                    id="detail-tab-kpis"
+                    aria-selected={viewMode === "kpis"}
+                    aria-controls="detail-panel-kpis"
+                    tabIndex={viewMode === "kpis" ? 0 : -1}
                     onClick={() => setViewMode("kpis")}
+                    onKeyDown={(event) => onViewTabKeyDown(event, "kpis")}
                     className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-sm 2xl:text-base font-sans font-medium transition-all duration-200 ${
                       viewMode === "kpis"
                         ? "bg-foreground text-background shadow-sm"
@@ -502,7 +662,13 @@ export function ProjectDetail({ project }: { project: Project }) {
                   </button>
                   <button
                     type="button"
+                    role="tab"
+                    id="detail-tab-topology"
+                    aria-selected={viewMode === "topology"}
+                    aria-controls="detail-panel-topology"
+                    tabIndex={viewMode === "topology" ? 0 : -1}
                     onClick={() => setViewMode("topology")}
+                    onKeyDown={(event) => onViewTabKeyDown(event, "topology")}
                     className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-sm 2xl:text-base font-sans font-medium transition-all duration-200 ${
                       viewMode === "topology"
                         ? "bg-foreground text-background shadow-sm"
@@ -515,22 +681,32 @@ export function ProjectDetail({ project }: { project: Project }) {
                 </div>
               </div>
 
-              {/* Vista 1: Grafo de Arquitectura Real (árbol extraído de docs/projects) */}
-              {viewMode === "topology" &&
-                (project.architecture ? (
-                  <ProjectArchitecture tree={project.architecture} />
-                ) : (
-                  <ArchitectureEmptyState />
-                ))}
+              {/* Una sola vista montada a la vez (kpis o topology), envuelta en el
+                  tabpanel que la pestaña activa controla. El wrapper es un div
+                  block dentro de un section block, junto al header block: el
+                  apilado vertical no cambia. */}
+              <div
+                role="tabpanel"
+                id={viewMode === "kpis" ? "detail-panel-kpis" : "detail-panel-topology"}
+                aria-labelledby={viewMode === "kpis" ? "detail-tab-kpis" : "detail-tab-topology"}
+              >
+                {/* Vista 1: Grafo de Arquitectura Real (árbol extraído de docs/projects) */}
+                {viewMode === "topology" &&
+                  (localized.architecture ? (
+                    <ProjectArchitecture tree={localized.architecture} />
+                  ) : (
+                    <ArchitectureEmptyState />
+                  ))}
 
-              {/* Vista 2: Vista de Métricas & KPIs Numéricos (Cards Clásicas con Animación) */}
-              {viewMode === "kpis" && <KpiGrid metrics={detail.metrics} />}
+                {/* Vista 2: Vista de Métricas & KPIs Numéricos (Cards Clásicas con Animación) */}
+                {viewMode === "kpis" && <KpiGrid metrics={detail.metrics} />}
+              </div>
             </section>
           )}
         </div>
 
         {/* Primary Visual - wide proof band, full width */}
-        <div className="debug-l2 max-w-5xl mx-auto mb-12">
+        <div className="debug-l2 max-w-5xl mx-auto mb-6 md:mb-16">
           <div className="detail-primary-visual w-full">
             <figure className="aspect-video rounded-3xl overflow-hidden border border-border relative">
               <Image
@@ -546,10 +722,10 @@ export function ProjectDetail({ project }: { project: Project }) {
         </div>
 
         {/* Project links - acciones tras la prueba visual */}
-        {project.links.length > 0 && (
-          <div className="max-w-5xl mx-auto mb-16">
+        {localized.links.length > 0 && (
+          <div className="max-w-5xl mx-auto mb-12 md:mb-16">
             <div className="flex flex-wrap gap-3 justify-center">
-              {project.links.map((link, index) => {
+              {localized.links.map((link, index) => {
                 const Icon = linkIcon(link.kind);
                 return (
                   <Button key={index} asChild variant="inverted" size="lg">
@@ -570,14 +746,14 @@ export function ProjectDetail({ project }: { project: Project }) {
 
         <div className="debug-l2 max-w-3xl mx-auto">
           {/* Summary */}
-          <section className="detail-section mb-16">
+          <section className="detail-section mb-12 md:mb-16">
             <SectionTitle>{t("section.projects.sectionSummary")}</SectionTitle>
             <p className="text-content text-base 2xl:text-lg leading-relaxed">{renderInline(detail.summary)}</p>
           </section>
 
           {/* Problem */}
           {detail.problem && (
-            <section className="detail-section mb-16">
+            <section className="detail-section mb-12 md:mb-16">
               <SectionTitle>{t("section.projects.sectionProblem")}</SectionTitle>
               <p className="text-content text-base 2xl:text-lg leading-relaxed">
                 {renderInline(detail.problem)}
@@ -587,7 +763,7 @@ export function ProjectDetail({ project }: { project: Project }) {
 
           {/* Role */}
           {detail.role && detail.role.length > 0 && (
-            <section className="detail-section mb-16">
+            <section className="detail-section mb-12 md:mb-16">
               <SectionTitle>{t("section.projects.sectionRole")}</SectionTitle>
               <ul className="space-y-3">
                 {detail.role.map((item, index) => (
@@ -601,7 +777,7 @@ export function ProjectDetail({ project }: { project: Project }) {
           )}
 
           {/* Solution */}
-          <section className="detail-section mb-16">
+          <section className="detail-section mb-12 md:mb-16">
             <SectionTitle>{t("section.projects.sectionSolution")}</SectionTitle>
             <ul className="space-y-3">
               {detail.solution.map((item, index) => (
@@ -614,7 +790,7 @@ export function ProjectDetail({ project }: { project: Project }) {
           </section>
 
           {/* Gallery Spotlight - hover zoom affordance, click opens lightbox */}
-          <section className="detail-section detail-gallery mb-16">
+          <section className="detail-section detail-gallery mb-12 md:mb-16">
             <SectionTitle>{t("section.projects.sectionGallery")}</SectionTitle>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {(() => {
@@ -644,7 +820,7 @@ export function ProjectDetail({ project }: { project: Project }) {
                     <figure
                       key={index}
                       className={`group detail-gallery-item rounded-2xl overflow-hidden border border-border ${
-                        isWide ? "sm:col-span-2 lg:col-span-3" : ""
+                        isWide ? "sm:col-span-2 lg:col-span-3 " : ""
                       }`}
                     >
                       <button
@@ -704,15 +880,17 @@ export function ProjectDetail({ project }: { project: Project }) {
           role="dialog"
           aria-modal="true"
           aria-label={t("section.projects.lightboxViewer")}
+          onKeyDown={trapLightboxFocus}
           onClick={onLightboxBackdropClick}
           onPointerDown={onLightboxPointerDown}
           onPointerUp={onLightboxPointerUp}
         >
           <button
+            ref={closeButtonRef}
             type="button"
             onClick={closeLightbox}
             aria-label={t("section.projects.lightboxClose")}
-            className="absolute top-4 right-4 inline-flex items-center justify-center w-11 h-11 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors duration-200 touch-manipulation"
+            className="absolute top-4 right-4 z-10 inline-flex items-center justify-center w-11 h-11 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors duration-200 touch-manipulation"
           >
             <X size={20} aria-hidden="true" />
           </button>
@@ -723,7 +901,7 @@ export function ProjectDetail({ project }: { project: Project }) {
                 type="button"
                 onClick={(e) => { e.stopPropagation(); prevLightbox(); }}
                 aria-label={t("section.projects.lightboxPrev")}
-                className="absolute left-4 hidden sm:inline-flex items-center justify-center w-11 h-11 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors duration-200 touch-manipulation"
+                className="absolute left-4 z-10 hidden nav:inline-flex items-center justify-center w-11 h-11 rounded-full bg-black/40 xl:bg-white/10 text-white hover:bg-white/20 transition-colors duration-200 touch-manipulation"
               >
                 <ChevronLeft size={20} aria-hidden="true" />
               </button>
@@ -731,15 +909,26 @@ export function ProjectDetail({ project }: { project: Project }) {
                 type="button"
                 onClick={(e) => { e.stopPropagation(); nextLightbox(); }}
                 aria-label={t("section.projects.lightboxNext")}
-                className="absolute right-4 hidden sm:inline-flex items-center justify-center w-11 h-11 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors duration-200 touch-manipulation"
+                className="absolute right-4 z-10 hidden nav:inline-flex items-center justify-center w-11 h-11 rounded-full bg-black/40 xl:bg-white/10 text-white hover:bg-white/20 transition-colors duration-200 touch-manipulation"
               >
                 <ChevronRight size={20} aria-hidden="true" />
               </button>
 
-              {/* Position affordance for touch users (prev/next hidden below sm):
-                  swipe replaces the arrows, "3 / 9" says where you are. */}
+{/* Arrows go `bg-black/40` below `xl` because a white veil vanishes over a light
+                  screenshot (3 of 11 gallery captures are light UI). From `xl` up
+                  they clear the image, so the original white veil returns over the
+                  dark overlay — which also restores a hover that reads. Close button
+                  and counter keep white at every width: neither sits over the image.
+                  No ring anywhere: the disc covers the light capture, the veil
+                  covers the wide one. A ring was tried and read as clutter.
+
+                  `z-10` because the figure is `relative` and comes later in the DOM:
+                  without it the image painted over these controls. Arrows use `nav`
+                  (830px, the project's own mobile/desktop line) rather than `sm`
+                  (640px) — below that sit tablets with swipe, not mouse controls.
+                  Counter is the touch affordance: "3 / 9" says where you are. */}
               <span
-                className="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-white/10 px-3 py-1 text-xs font-medium tabular-nums text-white/80 select-none"
+                className="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-white/10 px-3 py-1 text-xs font-medium tabular-nums text-white select-none"
                 aria-live="polite"
                 onClick={(e) => e.stopPropagation()}
               >
@@ -773,4 +962,3 @@ export function ProjectDetail({ project }: { project: Project }) {
     </div>
   );
 }
-

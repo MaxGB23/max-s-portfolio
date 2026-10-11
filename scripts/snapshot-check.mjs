@@ -2,21 +2,17 @@
 // and computed typography of the pricing section (desktop + mobile).
 //
 // Usage:
-//   node scripts/snapshot-check.mjs [--url http://localhost:3001]
-// Requires the dev server running (pnpm dev --port 3001).
+//   node scripts/snapshot-check.mjs [--url http://localhost:<port>]
+// Requires the dev server running (pnpm dev --port 3000).
 // Uses the system Chrome channel fallback (Playwright's own Chromium is not
 // downloaded here) — same launch pattern as scripts/audit-detail.mjs.
 import { chromium } from "playwright";
 import { mkdirSync, statSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
+import { resolveBase } from "./audit-base.mjs";
 
-const args = process.argv.slice(2);
-const pick = (flag, fallback) => {
-  const i = args.indexOf(flag);
-  return i >= 0 && args[i + 1] ? args[i + 1] : fallback;
-};
-const url = pick("--url", process.env.BASE_URL || "http://localhost:3001");
+const url = await resolveBase("snapshot-check");
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const SHOTS = path.join(scriptDir, "..", "shots");

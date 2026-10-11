@@ -61,9 +61,22 @@ acotada y verificada (22 matches en el codigo):
 - Texto sobre fill morado (`bg-purple-accent`): badges de categoria,
   pricing destacado (`text-white/70` y `/75` en el tier highlight).
 - Texto y controles sobre fotografia / backdrop oscuro: hero badge (sobre
-  la foto), lightbox (`bg-white/10 text-white`, contador `text-white/80`,
-  figcaption).
+  la foto), lightbox (X `text-white`, contador `text-white`, figcaption
+  `text-white/70`).
 - Prohibido sobre canvas o superficie neutra (background/card).
+
+**Velo de overlay: blanco solo si lo que hay debajo tambien es oscuro.** Regla
+del lightbox — el control que puede caer SOBRE la imagen no puede llevar un velo
+blanco, porque una captura clara se lo come. Medido: 3 de 11 capturas de galeria
+tienen interfaz clara (`caf/dashboard-light` 243, `autoshop/crud` 221,
+`caf/editar_profile` 203, luminancia media 0-255).
+- Flechas ◀ ▶: `bg-black/40` bajo `xl`, `xl:bg-white/10` desde `xl`. Bajo `xl`
+  el figure es mas angosto que `max-w-5xl` y las flechas lo pisan; desde `xl`
+  ya no lo tocan y vuelven al velo blanco.
+- X de cerrar y contador: `bg-white/10` en todos los anchos — viven en esquina,
+  nunca sobre la imagen.
+- El hover sigue el mismo canal que el fondo: `hover:bg-white/20` se lee sobre
+  el overlay casi negro; un `black/40 → black/55` no se lee sobre negro.
 
 **Opacidades de texto (excepcion tag-label):**
 - `text-foreground/60` y `text-foreground/70` SOLO en micro labels de tags
@@ -131,13 +144,25 @@ prescripcion:
    y tipografia ANTES de maquetar.
 2. Respeta el contrato de ritmo (`lib/rhythm.ts` + etiquetas de pares);
    corre `scripts/rhythm-contract.mjs` y `scripts/section-spacing.mjs`.
-3. Textos: regla de jerarquia (seccion 4) y de blancos (seccion 5).
-4. Botones: usa `Button` con las variantes del canon; si necesitas un hover
+   OJO CON EL ALCANCE: `rhythm-contract.mjs` es estatico (compara los
+   strings de los tokens). `section-spacing.mjs` necesita server porque mide
+   layout computado, y solo navega la HOME — no toca `/proyectos/[id]`, asi
+   que su "OK" no dice nada sobre el ritmo de una pagina de detail. Para eso
+   esta `audit-detail.mjs --slug <id>`. Cada script declara su alcance en el
+   encabezado; leerlo antes de citarlo como evidencia.
+3. Verificar en orden de costo: estatico (`tsc`, `build`, grep sobre el CSS
+   compilado, `Test-Path` de rutas de imagen) antes que render. Solo el
+   navegador computa layout real, y un server mal consultado cuesta mas que
+   el check que reemplaza.
+4. Textos: regla de jerarquia (seccion 4) y de blancos (seccion 5).
+5. Botones: usa `Button` con las variantes del canon; si necesitas un hover
    nuevo, justificalo en buttons.md.
-5. Motion: `FadeIn`/`FadeInStagger` (framer-motion). NO revertir a
+6. Motion: `FadeIn`/`FadeInStagger` (framer-motion). NO revertir a
    `SlideIn`/`ScaleIn`. GSAP solo donde ya vive (pin featured, detalle,
    pricing, about).
-6. QA: `layout-debug` (data-debug + debug-l1..l4) antes de pedir review.
+7. QA: `layout-debug-canon` (activar solo los canales que interesen y
+   `debug-test` para una caja puntual) antes de pedir review.
+   Ver `components.md` 10.
 
 ## 9. Gotchas de entorno
 
@@ -161,8 +186,7 @@ prescripcion:
 - 10.1 Hero badge historico: el badge del hero hardcodea `#5865F2` (Discord
   blurple) + ola blanca, contradiciendo "un solo acento y sin hardcodear":
   se documenta como excepcion historica del hero, NO como patron; decidir su
-  reemplazo por tokens con la proxima iteracion de hero
-  (`docs/ideas-features/hero-design.md`).
+  reemplazo por tokens con la proxima iteracion de hero.
 - 10.2 La nota stale "Vercel Preview Deployment activado para la rama
   feat/fluid-typo" (canon anterior) se ELIMINO deliberadamente del canon
   vivo: es informacion de rama agotada y el snapshot la conserva.

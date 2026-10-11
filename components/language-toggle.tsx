@@ -1,16 +1,28 @@
 "use client";
 
+import { Globe } from "lucide-react";
 import { useLanguage } from "@/contexts/language-context";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
 /** Language toggle using the system Button everywhere for full consistency.
     - sm:+  outline pill size sm (same rhythm as Contact)
-    - < sm  outline pill size compact (tighter padding for the tight mobile row) */
+    - < sm  outline pill size compact (tighter padding for the tight mobile row)
+    - Globe icon carries the "this is a language control" affordance; the ISO
+      code carries the current state. gap-1.5 keeps the icon from widening the
+      tight mobile row (base Button gap is 2). */
 export function LanguageToggle() {
   const { lang, setLang, t } = useLanguage();
   const isEs = lang === "es";
-  const label = isEs ? t("nav.aria.switchToEn") : t("nav.aria.switchToEs");
+  const code = isEs ? "ES" : "EN";
+  // WCAG 2.5.3 Label in Name: the accessible name must contain the visible label.
+  const label = `${code} — ${isEs ? t("nav.aria.switchToEn") : t("nav.aria.switchToEs")}`;
+
+  const content = (
+    <>
+      <Globe className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+      {code}
+    </>
+  );
 
   return (
     <>
@@ -22,9 +34,10 @@ export function LanguageToggle() {
         size="sm"
         onClick={() => setLang(isEs ? "en" : "es")}
         aria-label={label}
-        className="hidden sm:inline-flex shrink-0 hover:border-purple-accent/15 border-purple-accent/15"
+        title={label}
+        className="hidden sm:inline-flex shrink-0 gap-1.5 hover:border-purple-accent/15 border-transparent"
       >
-        {isEs ? "ES" : "EN"}
+        {content}
       </Button>
       {/* Mobile: same button, compact size */}
       <Button
@@ -34,9 +47,10 @@ export function LanguageToggle() {
         size="compact"
         onClick={() => setLang(isEs ? "en" : "es")}
         aria-label={label}
-        className="inline-flex shrink-0 sm:hidden hover:border-purple-accent/15 border-purple-accent/15"
+        title={label}
+        className="inline-flex shrink-0 sm:hidden gap-1.5 hover:border-purple-accent/15 border-transparent"
       >
-        {isEs ? "ES" : "EN"}
+        {content}
       </Button>
     </>
   );

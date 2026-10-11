@@ -48,7 +48,9 @@ function announceArrival(href: string) {
 }
 
 /**
- * Scroll to a hash target using Lenis, compensating for the fixed navbar height.
+ * Scroll to a hash target using Lenis, compensating for the fixed navbar height
+ * and the target's own padding-top (so its content, not its box, lands under
+ * the navbar).
  * Falls back to native scrollIntoView when Lenis is unavailable.
  * Reflects the target hash on arrival (see reflectHashInUrl).
  */
@@ -63,12 +65,41 @@ export function useScrollToAnchor(navbarHeight = 64) {
       const target = document.getElementById(id);
       if (!target) return false;
 
-      const y = Math.max(target.getBoundingClientRect().top + window.scrollY - navbarHeight, 0);
-      // Announce arrival only when the scroll completes: the CSS cue must fire
-      // at arrival, not at click time (the user is still looking at the
-      // previous section).
+      // Land with the target's CONTENT under the navbar, not its box: sections
+      // that own their vertical spacing would otherwise park their content one
+      // padding below the navbar. The air can live on the section shell or on
+      // its first child (the inner container — #contact-content carries
+      // SECTION_GAP_Y so the arrival ring encloses air), so sum both levels.
+      // 2-level rule: no-op for every other anchor target (#sobre-mi,
+      // #proyectos, #precios have padding-top 0 at both levels).
+      const inner = target.firstElementChild;
+      const padTop =
+        (parseFloat(getComputedStyle(target).paddingTop) || 0) +
+        (inner ? parseFloat(getComputedStyle(inner).paddingTop) || 0 : 0);
+      const y = Math.max(
+        target.getBoundingClientRect().top + window.scrollY - navbarHeight + padTop,
+        0
+      );
+      // The cue must fire at arrival, not at click time (the visitor is still
+      // looking at the previous section).
       if (lenis) {
-        lenis.scrollTo(y, { duration: 1.4, onComplete: () => announceArrival(href) });
+        // onComplete gives the right timing when the tween lands, but it is
+        // SKIPPED when the visitor scrolls during the 1.4s tween — which used to
+        // drop the cue, and the URL hash with it, since both live in
+        // announceArrival. So the cue is unconditional and the backstop
+        // guarantees it; a missed cue is far worse than an arrival announced
+        // for a target the visitor nudged away from. A ring painted off-screen
+        // is invisible and self-cleans after ~2.2s.
+        const token = ++arrivalToken;
+        let fired = false;
+        const fire = () => {
+          if (fired || token !== arrivalToken) return;
+          fired = true;
+          announceArrival(href);
+        };
+
+        lenis.scrollTo(y, { duration: 1.4, onComplete: fire });
+        window.setTimeout(fire, ARRIVAL_FALLBACK_MS);
       } else {
         // Mobile real (sin Lenis): el mismo cálculo de offset que desktop.
         // scrollIntoView({smooth}) es flaky en Chrome Android cuando hay
@@ -112,6 +143,13 @@ export function useScrollToTop() {
 // doesn't overwrite what we just set.
 let savedHomeScroll: number | null = null;
 let pendingRestore: number | null = null;
+// Only one arrival can be pending: a newer anchor click supersedes the previous
+// one, so a stale backstop can never announce the wrong destination.
+let arrivalToken = 0;
+
+/** Backstop delay — just past the 1.4s tween, so it only fires when the tween
+ *  was interrupted and onComplete will never run. */
+const ARRIVAL_FALLBACK_MS = 1600;
 
 /** Called on portfolio card clicks: remember where the grid was. */
 export function saveHomeScroll(y: number) {
@@ -141,6 +179,11 @@ export function takeHomeScroll(): number | null {
 export function ScrollRestorer() {
   const pathname = usePathname();
   const lenis = useLenis();
+  // The effect deps are [pathname, lenis], and the Lenis instance arrives
+  // asynchronously — so it runs more than once per visit. Track the PATHNAME
+  // change instead of a run counter: a run counter treats Lenis's late arrival
+  // as a navigation and forces the top on reload, which is the bug.
+  const lastPathname = useRef<string | null>(null);
 
   // Any pop (Volver pill, browser back) may mean "return to the grid": promote
   // the captured position before the pathname effect consumes it. The pill
@@ -157,6 +200,9 @@ export function ScrollRestorer() {
   }, []);
 
   useEffect(() => {
+    const prevPathname = lastPathname.current;
+    lastPathname.current = pathname;
+
     // Home: restore the captured position.
     if (pathname === "/") {
       const target = pendingRestore;
@@ -176,6 +222,14 @@ export function ScrollRestorer() {
 
     // Entering a detail page: force scroll to top. Next does this natively,
     // but Lenis would clobber it with the home page's stale scroll.
+    //
+    // Only when the ROUTE CHANGED. On the first run of a given pathname (an
+    // initial load or a RELOAD) there is no stale home scroll to clobber, and
+    // the browser has already restored the reload position (~13ms, before
+    // hydration). Forcing top there raced that restore and produced a visible
+    // jump to top and back.
+    if (prevPathname == null || prevPathname === pathname) return;
+
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         if (lenis) lenis.scrollTo(0, { immediate: true });

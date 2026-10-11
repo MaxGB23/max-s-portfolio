@@ -32,16 +32,20 @@ El portfolio es 100% español hardcodeado. Un switch de idioma clásico (detecci
 - [x] T5: `components/navbar.tsx` — toggle desktop (junto a Contacto) + mobile (junto a hamburguesa), navLinks y textos con `t()`
 - [x] T6: `components/hero-section.tsx` — textos visibles con `t()` (role, description, CTA, stack, scroll)
 - [x] T7: verificación: `pnpm build` + `npx tsc --noEmit` limpios
-- [ ] T8: `translations.ts` — claves `section.*` / `common.*` para chrome de secciones (WU2)
-- [ ] T9: about-section — label, title split, párrafos, aria (WU2)
-- [ ] T10: featured-projects + featured-project-panel + all-projects — headings, "Ver caso de estudio" (clave compartida), aria (WU2)
-- [ ] T11: products-section — chrome ES (eyebrow, h2, sub, "Saber más"); data products queda EN (WU2)
-- [ ] T12: pricing-section — chrome (badge, "desde", h2, sub, footer); data tiers queda ES (WU2)
-- [ ] T13: contact-section — badge, h2, sub, CTAs, botón copiar (estado copied/no-copied), aria (WU2)
-- [ ] T14: footer — bio, heading, copyright interpolado (WU2)
-- [ ] T15: project-card + project-detail + project-architecture — labels, tabs, lightbox, placeholders, plural "módulo(s)"; data-driven content queda ES (WU2)
-- [ ] T16: `app/proyectos/[id]/page.tsx` — "Proyecto no encontrado" resuelto server-side vía cookie (WU2)
-- [ ] T17: verificación WU2: `pnpm build` + `pnpm exec tsc --noEmit` limpios
+- [x] T8: `translations.ts` — claves `section.*` / `common.*` para chrome de secciones (WU2)
+- [x] T9: about-section — label, title split, párrafos, aria (WU2)
+- [x] T10: featured-projects + featured-project-panel + all-projects — headings, "Ver caso de estudio" (clave compartida), aria (WU2)
+- [x] T11: products-section — chrome ES (eyebrow, h2, sub, "Saber más"); data products queda EN (WU2)
+- [x] T12: pricing-section — chrome (badge, "desde", h2, sub, footer); data tiers queda ES (WU2)
+- [x] T13: contact-section — badge, h2, sub, CTAs, botón copiar (estado copied/no-copied), aria (WU2)
+- [x] T14: footer — bio, heading, copyright interpolado (WU2)
+- [x] T15: project-card + project-detail + project-architecture — labels, tabs, lightbox, placeholders, plural "módulo(s)"; data-driven content queda ES (WU2)
+- [x] T16: `app/proyectos/[id]/page.tsx` — "Proyecto no encontrado" resuelto server-side vía cookie (WU2)
+- [x] T17: verificación WU2: `pnpm build` + `pnpm exec tsc --noEmit` limpios
+
+> Checkboxes T8–T17 marcados el 2026-09-30 (WU2 estaba hecho y verificado —
+> evidencia en Progress/Verification evidence de este archivo — pero los
+> checkboxes quedaron stale; deuda mecánica de `navbar-active-state` T6).
 
 ## Acceptance criteria
 - `pnpm build` y `npx tsc --noEmit` compilan sin errores.
@@ -65,6 +69,7 @@ El portfolio es 100% español hardcodeado. Un switch de idioma clásico (detecci
 
 ## Next steps (work units posteriores)
 - **[PENDIENTE — data bilingüe]** Traducir el contenido de `data/projects.ts` (~330 strings: descriptions, metrics, problem/role/solution con markdown, gallery alts, architecture). Decisión del usuario (2026-09-21): la data aún no es final; se traduce cuando se congele. Enfoque acordado: **modelo bilingüe** (`data/projects-en.ts` mirror + selector `getProjects(lang)` vía cookie server-side / `useLanguage()` cliente), NO claves planas — separa contenido de chrome, evita monolito en translations.ts y permite traducir una sola vez.
+> **SUPERSEDED 2026-10-10 (bilingual-content-data T1–T17):** el modelo mirror (`data/projects-en.ts` + `getProjects(lang)`) se descartó a favor de hojas `L = {es, en}` inline no-opcionales con invariante de compilador; ver `odd/tasks/bilingual-content-data.md` (Decisión de arquitectura). Los labels de enlace usan constantes `L` compartidas en `data/projects/types.ts` (variante B de T15), no claves de chrome. (`docs/ideas-features/language.md`, el plan original, ya no existe en el árbol: la supersesión queda registrada aquí y en `docs/i18n.md`.)
 - `data/index.ts` es código muerto (0 imports) — candidato a borrar en work unit aparte si el usuario lo aprueba.
 - Sync `docs/design/` si el cambio afecta componentes/tokens (en aprobación de work unit).
 - Actualizar `docs/ideas-features/language.md` estado a implementado al cerrar.

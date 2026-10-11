@@ -158,28 +158,47 @@ Mapa real en el codigo:
 
 No hay tokens de spacing custom: se usa la escala numerica de Tailwind
 (base 0.25rem: `h-24` = 96px, `h-32` = 128px, `gap-12` = 48px, `gap-30` = 120px,
-`pt-22` = 88px, `pt-34` = 136px, `pt-40` = 160px).
+`pt-20` = 80px, `pt-22` = 88px, `pt-26` = 104px, `pt-34` = 136px, `pt-40` = 160px).
 
 El ritmo vertical es un contrato de codigo con fuente unica en
 `lib/rhythm.ts` (espejo QA: `scripts/rhythm-contract.mjs`):
 
 | Token | Valor | Uso |
 |---|---|---|
-| `SECTION_GAP` | `h-24 md:h-32` (96 / 128px) | Separacion entre secciones top-level |
-| `FEATURED_GAP` | `gap-12` (48px) | Titulo <-> card dentro del stack destacado |
+| `SECTION_GAP` | `h-24 md:h-32` (96 / 128px) | Separacion entre secciones top-level (altura del spacer de pagina) |
+| `SECTION_GAP_Y` | `py-12 md:py-16` (48 / 64px) | Padding vertical DENTRO del contenedor interno de `#contacto` (`#contact-content`, excepcion unica, ver nota) |
+| `FEATURED_GAP` | `gap-12` (48px) | Gap vertical entre los bloques apilados de un panel destacado (heading opcional <-> grid texto/imagen) |
 | `FEATURED_GAP_LG` | `[@media(min-width:1280px)_and_(min-height:900px)]:gap-30` (120px) | El mismo gap en pantallas altas y anchas |
-| `PAGE_SPACER_CLASSES` | ver tabla | Clase del wrapper por par de secciones |
+| `PAGE_SPACER_CLASSES` | ver tabla | Clase del wrapper por par de secciones (6 pares) |
+
+Excepcion `SECTION_GAP_Y`: contacto es la unica seccion que escribe padding
+vertical propio, y lo hace en su CONTENEDOR INTERNO (`#contact-content`), no en
+el shell. Motivo: su cue de llegada (ring `box-shadow: inset`) se pinta en ese
+hijo directo, y ahi es donde debe tener aire; pintarlo en el shell haria un
+rectangulo del ancho del viewport, en vez de un panel `max-w-6xl` centrado. Los
+dos spacers de pagina que la rodeaban (`pricing-contact` y `contact-footer`) se
+retiraron. El ritmo visual total sigue siendo 96/128px, pero ya no lo aporta
+solo ese padding: se reparte 50/50 entre el spacer de pagina (`SECTION_GAP_HALF`,
+48/64px) y el padding propio de `#contact-content` (`SECTION_GAP_Y`, 48/64px). La regla de 2 niveles (shell + primer hijo) es la que usan tanto
+`hooks/use-lenis.tsx` (aterrizaje) como `scripts/section-spacing.mjs` (auditoria)
+para recuperar el blanco visual.
 
 `PAGE_SPACER_CLASSES` (contrato de orientacion, verbatim):
 
 | Par | Clase |
 |---|---|
-| `hero-about` | `portrait:md:hidden` |
-| `about-projects` | (sin wrapper condicional) |
+| `hero-about` | `landscape:hidden [@media(orientation:landscape)_and_(max-height:800px)]:block` |
+| `about-projects` | `landscape:hidden [@media(orientation:landscape)_and_(max-height:800px)]:block` |
 | `projects-all-projects` | (sin wrapper condicional) |
 | `all-projects-pricing` | (sin wrapper condicional) |
 | `pricing-contact` | (sin wrapper condicional) |
 | `contact-footer` | (sin wrapper condicional) |
+
+Regimenes de visibilidad: en los dos primeros pares el spacer se VE en portrait
+(cualquier ancho) y en landscape de hasta 800px de alto (umbral
+`max-height:800px`, inclusivo); en landscape por encima de 800px el wrapper
+queda `hidden` y el gap se contrae a 0 — el hero ya ocupa el viewport. Los otros
+cuatro pares son incondicionales.
 
 Las variantes arbitrarias ganan por orden CSS: el ultimo variant ordenado
 resuelve el layout. NO reescribir estos valores a mano: editar `lib/rhythm.ts`
@@ -220,14 +239,15 @@ Vocabulario del sistema (sin inventar):
 - Gates de media en codigo: `FEATURED_STACK_GATE` en `lib/breakpoints.ts`
   (unica fuente, compartida por GSAP y ScrollRestorer):
   `(min-width: 1024px) and (min-height: 768px) and (orientation: landscape)`.
-- **DEUDA (2026-09-21)**: el navbar usa un breakpoint custom nuevo
-  `--breakpoint-nav: 830px` (token Tailwind v4 en `@theme`, clase `nav:`) para
-  decidir desktop vs movil por ancho de contenido. El contenido en espanol del
-  navbar desktop mide ~767px minimos (badge corto tracking-wider + 4 links +
-  switch + Contacto sm + px-6); 830 deja ~63px de colchon real (medido en vivo
-  2026-09-21). Tradeoff: el iPad Air (820px) queda en modo movil; el iPad Pro
-  11" (834px) ve el navbar completo. Documentar como token de layout del
-  sistema al aprobar la work unit 4 (language-switcher).
+- **Token de layout (aprobado 2026-09-21, cerrado 2026-10-05)**: `--breakpoint-nav:
+  830px` (token Tailwind v4 en `@theme` de `app/globals.css`, clase `nav:`)
+  decide desktop vs movil por ancho de CONTENIDO, no de viewport. El navbar en
+  espanol mide ~767px minimos (badge corto tracking-wider + 4 links + switch +
+  Contacto sm + px-6); 830 deja ~63px de colchon real (medido en vivo
+  2026-09-21). Tradeoff asumido: el iPad Air (820px) queda en modo movil; el
+  iPad Pro 11" (834px) ve el navbar completo. La work unit 4 (language-switcher)
+  que debia documentarlo quedo aprovada en `63aff8e`, asi que la deuda estaba
+  cerrada por inercia y no por decision.
 - Escalado de featured a 120px: `>=1280px` de ancho y `>=900px` de alto
   (`FEATURED_GAP_LG`).
 - Hero: `lg:[@media(min-height:700px)]:pt-34` (pad superior alto en pantallas

@@ -45,7 +45,7 @@ export function Footer() {
             {/* Col 2: Social Icons */}
             <div className="space-y-3">
               <h3 className="text-xs font-semibold uppercase tracking-wider text-foreground">{t("section.footer.socialHeading")}</h3>
-              <nav aria-label="Social media links" className="flex items-center gap-3 pt-1">
+              <nav aria-label={t("section.footer.socialHeading")} className="flex items-center gap-3 pt-1">
                 {socialLinks.map(({ label, href, icon: Icon }) => (
                   <motion.div
                     key={label}

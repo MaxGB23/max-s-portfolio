@@ -24,9 +24,9 @@ export function AboutSection() {
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: containerRef.current,
-        start: "top 85%",
+        start: "top 80%",
       },
-      defaults: { ease: "power3.out" },
+      defaults: { ease: "power2.out" },
     });
 
     tl.to(".about-portrait", {
@@ -42,7 +42,7 @@ export function AboutSection() {
       )
       .to(
         ".about-title",
-        { autoAlpha: 1, x: 0, duration: 0.4, startAt: { x: 20 } },
+        { autoAlpha: 1, y: 0, duration: 0.55, startAt: { y: 24 } },
         "-=0.3"
       )
       .to(
@@ -57,15 +57,15 @@ export function AboutSection() {
       id="sobre-mi"
       ref={containerRef}
       aria-label={t("section.about.ariaLabel")}
-      className="relative flex flex-col items-center justify-center"
+      className="relative flex flex-col items-center justify-center min-h-[60dvh] portrait:min-h-[50dvh]"
       insetClassName="px-6 md:px-8 lg:px-12"
-      innerClassName="relative z-10 flex flex-col-reverse md:flex-row items-center justify-center w-full max-w-5xl gap-8 md:gap-12 lg:gap-14 xl:gap-16"
+      innerClassName="relative z-10 flex flex-col-reverse md:flex-row items-center justify-center w-full max-w-5xl gap-6 md:gap-12 lg:gap-14 xl:gap-16"
     >
       {/* Left Column: Portrait */}
-      <div className="about-portrait debug-l4 relative rounded-4xl shadow-xl aspect-11/9 w-full max-w-[400px] sm:max-w-[440px] mx-auto md:mx-0 md:max-w-full md:w-auto md:h-[280px] lg:h-[320px] xl:h-[360px] 2xl:h-[380px] shrink-0 z-0" style={{ opacity: 0, visibility: 'hidden' }}>
+      <div className="about-portrait debug-l3 relative rounded-4xl shadow-xl aspect-11/9 w-full max-w-[400px] sm:max-w-[440px] mx-auto md:mx-0 md:max-w-full md:w-auto md:h-[280px] lg:h-[320px] xl:h-[360px] 2xl:h-[380px] shrink-0 z-0" style={{ opacity: 0, visibility: 'hidden' }}>
         <div className="w-full h-full rounded-4xl overflow-hidden relative">
           <Image
-            src="/images/about-max.png"
+            src="/images/about-max.webp"
             alt={t("section.about.imageAlt")}
             fill
             className="object-cover object-top 2xl:object-right"
@@ -80,13 +80,13 @@ export function AboutSection() {
           {t("section.about.label")}
         </p>
 
-        <h2 className="about-title md:flex md:gap-4 font-serif font-black uppercase text-fluid-section leading-[0.9] tracking-tighter text-foreground mb-6" style={{ opacity: 0, visibility: 'hidden' }}>
+        <h2 className="about-title md:flex md:gap-4 font-serif font-black uppercase text-fluid-section leading-[0.9] tracking-tighter text-foreground mb-4 md:mb-6" style={{ opacity: 0, visibility: 'hidden' }}>
           <span>{t("section.about.title.first")}</span>
           <span className="text-purple-accent"> {t("section.about.title.second")}</span>
         </h2>
 
-        <div className="debug-l4 px-4 sm:px-16 md:px-0 about-description text-fluid-body leading-relaxed text-content max-w-[48ch] space-y-4" style={{ opacity: 0, visibility: 'hidden' }}>
-          <div className="debug-l1">
+        <div className="debug-l3 px-4 sm:px-16 md:px-0 about-description text-fluid-body leading-relaxed text-content max-w-[48ch] space-y-4" style={{ opacity: 0, visibility: 'hidden' }}>
+          <div className="debug-test">
             <p>{t("section.about.paragraph1")}</p>
             <p>{t("section.about.paragraph2")}</p>
           </div>

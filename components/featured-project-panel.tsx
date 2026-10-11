@@ -39,13 +39,13 @@ export function FeaturedProjectPanel({ project, children, isLast = false }: Feat
 
   return (
     <article
-      className="debug-l4 featured-panel relative w-full px-6 md:px-8 lg:px-12"
+      className="debug-l1 featured-panel relative w-full px-6 md:px-8 lg:px-12"
       data-panel-id={project.id}
       style={{ backgroundColor: project.bgColor }}
       aria-labelledby={`featured-title-${project.id}`}
     >
       <div
-        className={`debug-l1 panel-content w-full max-w-7xl mx-auto flex flex-col ${FEATURED_GAP} ${FEATURED_GAP_LG} ${
+        className={`debug-l2 panel-content w-full max-w-7xl mx-auto flex flex-col ${FEATURED_GAP} ${FEATURED_GAP_LG} ${
           isLast ? "" : "pb-12 lg:pb-20"
         }`}
       >
@@ -56,11 +56,11 @@ export function FeaturedProjectPanel({ project, children, isLast = false }: Feat
             </div>
           )}
 
-          <div className="debug-l2 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-0 justify-center items-start">
+          <div className="debug-l3 grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-12 justify-center items-start">
             {/* Left - Text */}
-            <div className="debug-l3 flex flex-col order-2 lg:order-1">
+            <div className="debug-l4 flex flex-col gap-6 order-2 lg:order-1">
               {/* Index + Category */}
-              <div className="flex items-center gap-4 mb-6">
+              <div className="flex items-center gap-2 -mb-1 md:mb-0 md:gap-3">
                 <span className="text-sm 2xl:text-lg font-mono text-muted-foreground tabular-nums font-bold">
                   {String(project.index).padStart(2, "0")}
                 </span>
@@ -71,29 +71,33 @@ export function FeaturedProjectPanel({ project, children, isLast = false }: Feat
                 </span>
               </div>
 
-              {/* Title */}
-              <h2
+              {/* Title — h3: hijo lógico del h2 de la sección (#proyectos).
+                  Las otras tres rejillas ya usan h2 de sección + h3 de tarjeta;
+                  aquí el título del panel era hermano del h2 de sección. Todo el
+                  estilo viene de clases explícitas y ningún selector CSS depende
+                  de la etiqueta, así que el render no cambia. */}
+              <h3
                 id={`featured-title-${project.id}`}
-                className="font-serif font-black text-fluid-featured text-foreground leading-[1.05] tracking-tight text-balance mb-6 lg:[@media(max-height:800px)]:text-4xl"
+                className="-mb-2 md:mb-0 font-serif font-black text-fluid-featured text-foreground leading-[1.05] tracking-tight text-balance lg:[@media(max-height:800px)]:text-4xl"
               >
                 {mainTitle && <span>{mainTitle} </span>}
                 <span className="text-purple-accent brightness-125">{lastWord}</span>
-              </h2>
+              </h3>
 
               {/* Description */}
-              <p className="debug-l4 text-fluid-body leading-relaxed text-content mb-6 mr-6 sm:mr-0 max-w-[50ch]">
+              <p className="debug-l5 text-fluid-body leading-relaxed text-content mr-6 sm:mr-0 max-w-[50ch] md:max-w-[60ch] lg:max-w-[53ch]">
                 {project.description}
               </p>
 
               {/* Key metric */}
-              <div className="inline-flex self-start items-center gap-2 rounded-full border border-purple-accent/30 bg-purple-accent/10 px-4 py-2 mb-8">
+              <div className="inline-flex xl:mb-2 self-start items-center gap-2 rounded-full border border-purple-accent/30 bg-purple-accent/10 px-4 py-2 ">
                 <span className="text-xs sm:text-sm font-semibold text-purple-accent">
                   {project.metric}
                 </span>
               </div>
 
               {/* Tech stack tags */}
-              <div className="flex items-center gap-1.5 mb-10" aria-label={t("common.technologiesUsed")}>
+              <div className="flex items-center gap-1.5 xl:mb-2 " aria-label={t("common.technologiesUsed")}>
                 {project.tags.map((tag, index) => (
                   <div
                     key={index}
@@ -134,7 +138,7 @@ export function FeaturedProjectPanel({ project, children, isLast = false }: Feat
                     fill
                     className="object-cover"
                     sizes="(max-width: 1024px) 100vw, 50vw"
-                    priority={project.index === 1}
+                    priority
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-purple-accent/10 to-transparent">

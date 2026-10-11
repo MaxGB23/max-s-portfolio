@@ -9,12 +9,13 @@ import { ContactSection } from "@/components/contact-section";
 import { Footer } from "@/components/footer";
 import { ScrollProgress } from "@/components/scroll-progress";
 import { PageSpacing } from "@/components/page-spacing";
+import { SECTION_GAP_HALF } from "@/lib/rhythm";
 export default function Home() {
   return (
     <main className="min-h-screen bg-background text-foreground overflow-x-hidden">
       <ScrollProgress />
       <Navbar />
-{/* Espaciado deseado, el hero es la unica seccion que inicia con tamaño de viewport */}
+
       <HeroSection />
       <PageSpacing pair="hero-about" />
 
@@ -28,10 +29,14 @@ export default function Home() {
       <PageSpacing pair="all-projects-pricing" />
 
       <PricingSection />
-      <PageSpacing pair="pricing-contact" />
 
+      {/* El ritmo se parte 50/50 — media altura como
+          spacer de página y media dentro de #contacto (SECTION_GAP_Y), para
+          que el arrival ring encierre la mitad de aire. El espacio negativo total
+          sigue siendo 96/128px. */}
+      <PageSpacing pair="pricing-contact" height={SECTION_GAP_HALF} />
       <ContactSection />
-      <PageSpacing pair="contact-footer" />
+      <PageSpacing pair="contact-footer" height={SECTION_GAP_HALF} />
 
       <Footer />
     </main>

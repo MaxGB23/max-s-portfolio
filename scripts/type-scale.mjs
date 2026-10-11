@@ -1,8 +1,9 @@
 // Type-scale audit: real computed font sizes per typographic role.
-// Usage: node scripts/type-scale.mjs  (dev server must be on :3001)
+// Usage: node scripts/type-scale.mjs [--url http://localhost:<port>]
 import { chromium } from "playwright";
+import { resolveBase } from "./audit-base.mjs";
 
-const BASE = "http://localhost:3001";
+const BASE = await resolveBase("type-scale");
 
 const measures = [
   { label: "hero h1 (display)",                 selector: ".hero-title", token: "--text-fluid-display" },

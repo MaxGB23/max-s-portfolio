@@ -3,7 +3,13 @@ import { useLanguage } from "@/contexts/language-context";
 
 /** Nodo hijo: tarjeta numerada + sub-rail de nietos (indicador de profundidad
     por borde izquierdo, no por iconos falsos). El grid lo pone el padre; aquí
-    solo se renderizan las cards, con la clase de conector de la primera fila. */
+    solo se renderizan las cards, con la clase de conector de la primera fila.
+    Cabecera con SANGRIA FRANCESA: el numero va en `absolute` y el titulo usa
+    `pl-7`, asi un titulo largo se parte en varios renglanes alineados bajo su
+    primera letra y el numero nunca queda huerfano arriba. No usar `flex-wrap`
+    aqui: en un contenedor flex-wrap el `h4` (un solo nodo de texto) salta
+    completo a una linea nueva en cuanto no cabe entero, y el numero se queda
+    solo. Ese fue el defecto corregido; ver docs/design/components.md 4.13. */
 function ArchitectureChildren({ nodes }: { nodes: ArchitectureNode[] }) {
   return (
     <>
@@ -14,8 +20,8 @@ function ArchitectureChildren({ nodes }: { nodes: ArchitectureNode[] }) {
             key={index}
             className="architecture-connector-child relative rounded-2xl border border-border/80 bg-card/80 p-5 hover:border-purple-accent/30 transition-colors duration-200"
           >
-            <div className="flex items-center gap-2.5 mb-2 flex-wrap">
-              <span className="text-sm font-bold tabular-nums text-muted-foreground">
+            <div className="relative pl-7 mb-2">
+              <span className="absolute left-0 top-0 text-sm font-bold tabular-nums text-muted-foreground">
                 {label}
               </span>
               <h4 className="font-semibold text-base text-foreground">

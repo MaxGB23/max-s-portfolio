@@ -1,17 +1,38 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Copy, Github, Linkedin, Mail } from "lucide-react";
-import { FadeIn } from "@/components/motion-primitives";
+import { Check, Copy, Download, Github, Linkedin, Mail } from "lucide-react";
+import { useGsapAnimation } from "@/hooks/use-gsap-animation";
 import { Button } from "@/components/ui/button";
 import { Section } from "@/components/section";
 import { useLanguage } from "@/contexts/language-context";
+import { cvHref } from "@/data/cv";
+import { SECTION_GAP_Y } from "@/lib/rhythm";
 
 const CONTACT_EMAIL = "maxgonzalezballesteros@gmail.com";
 
 export function ContactSection() {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const [copied, setCopied] = useState(false);
+
+  const sectionRef = useGsapAnimation<HTMLElement>((gsap) => {
+    gsap.fromTo(
+      ".contact-header",
+      { opacity: 0, y: 24 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 0.55,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: ".contact-header",
+          start: "top 80%",
+          toggleActions: "play none none none",
+          once: true,
+        },
+      }
+    );
+  });
 
   const copyEmail = async () => {
     try {
@@ -28,13 +49,14 @@ export function ContactSection() {
   return (
     <Section
       id="contacto"
+      ref={sectionRef}
       aria-labelledby="contact-heading"
       insetClassName="px-6"
-      innerClassName="max-w-6xl"
+      innerId="contact-content"
+      innerClassName={`max-w-6xl ${SECTION_GAP_Y}`}
     >
-      <FadeIn>
-        {/* Section header */}
-        <header className="debug-l3 flex flex-col items-center text-center mb-5 md:mb-8">
+      {/* Section header + CTA row */}
+      <header className="debug-l3 contact-header flex flex-col items-center text-center mb-5 md:mb-8">
           <span className="inline-flex items-center rounded-full border border-purple-accent/25 bg-purple-accent/10 px-3 py-2 text-xs sm:text-sm font-semibold text-purple-accent mb-5">
             {t("section.contact.badge")}
           </span>
@@ -47,57 +69,66 @@ export function ContactSection() {
           <p className="text-fluid-body px-4 sm:px-16 md:px-0 text-content max-w-lg mx-auto leading-relaxed">
             {t("section.contact.subtitle")} {t("common.responseTime24h")}
           </p>
-        </header>
 
-        {/* CTA row */}
-        <div className="debug-l3 flex flex-col md:flex-row justify-center items-center gap-3">
-          <Button asChild variant="primary" size="lg">
-            <a
-              href="https://www.linkedin.com/in/maxballesteros"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Linkedin size={16} aria-hidden="true" />
-              {t("section.contact.ctaLinkedin")}
-            </a>
-          </Button>
-
-          <div className="flex items-center gap-3">
-            <Button asChild variant="outline" glow size="lg">
-              <a href={`mailto:${CONTACT_EMAIL}`}>
-                <Mail size={16} aria-hidden="true" />
-                {t("section.contact.ctaEmail")}
+          {/* CTA row */}
+          <div className="debug-l3 flex flex-col md:flex-row justify-center items-center gap-3 mt-5">
+            <Button asChild variant="primary" size="lg">
+              <a
+                href="https://www.linkedin.com/in/maxballesteros"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Linkedin size={16} aria-hidden="true" />
+                {t("section.contact.ctaLinkedin")}
               </a>
             </Button>
-            <Button
-              variant="outline"
-              glow
-              size="lg"
-              type="button"
-              onClick={copyEmail}
-              aria-label={copied ? t("section.contact.copy.ariaCopied") : t("section.contact.copy.ariaCopy")}
-              className={copied ? "border-purple-accent/40  text-purple-accent brightness-110" : ""}
-            >
-              {copied ? <Check size={16} aria-hidden="true" /> : <Copy size={16} aria-hidden="true" />}
-              {copied ? t("section.contact.copy.copied") : <>
-                <span className="hidden sm:block">{t("section.contact.copy.copyEmail")}</span>
-                <span className="sm:hidden">{t("section.contact.copy.emailShort")}</span>
-              </>}
-            </Button>
-          </div>
 
-          <Button asChild variant="outline" glow size="lg">
-            <a
-              href="https://github.com/MaxGB23"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Github size={16} aria-hidden="true" />
-              GitHub
-            </a>
-          </Button>
-        </div>
-      </FadeIn>
+            <div className="flex items-center gap-3">
+              <Button asChild variant="outline" glow size="lg">
+                <a href={`mailto:${CONTACT_EMAIL}`}>
+                  <Mail size={16} aria-hidden="true" />
+                  {t("section.contact.ctaEmail")}
+                </a>
+              </Button>
+              <Button
+                variant="outline"
+                glow
+                size="lg"
+                type="button"
+                onClick={copyEmail}
+                aria-label={copied ? t("section.contact.copy.ariaCopied") : t("section.contact.copy.ariaCopy")}
+                className={copied ? "border-purple-accent/40  text-purple-accent brightness-110" : ""}
+              >
+                {copied ? <Check size={16} aria-hidden="true" /> : <Copy size={16} aria-hidden="true" />}
+                {copied ? t("section.contact.copy.copied") : <>
+                  <span className="hidden sm:block">{t("section.contact.copy.copyEmail")}</span>
+                  <span className="sm:hidden">{t("section.contact.copy.emailShort")}</span>
+                </>}
+              </Button>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <Button asChild variant="outline" glow size="lg">
+                <a href={cvHref(lang)} download>
+                  <Download size={16} aria-hidden="true" />
+                  <span className="hidden sm:block">{t("section.contact.ctaCv")}</span>
+                  <span className="sm:hidden">{t("section.contact.ctaCvShort")}</span>
+                </a>
+              </Button>
+
+              <Button asChild variant="outline" glow size="lg">
+                <a
+                  href="https://github.com/MaxGB23"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Github size={16} aria-hidden="true" />
+                  GitHub
+                </a>
+              </Button>
+            </div>
+          </div>
+        </header>
     </Section>
   );
 }
