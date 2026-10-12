@@ -55,9 +55,12 @@ cambios en viewports normales.
 
 ### AllProjects: Framer Motion
 
-AllProjects usa `FadeIn delayEnter` para el heading y `FadeInStagger
-delayEnter` para el grid de cards. Es la seccion de proyectos no destacados,
-no una seccion principal, por lo que usa la familia Framer en vez de GSAP.
+AllProjects usa `FadeIn delayEnter` para el heading y un unico `FadeIn
+delayEnter` de contenedor para el grid (sin stagger ni items por card).
+Es la seccion de proyectos no destacados, no una seccion principal, por lo
+que usa la familia Framer en vez de GSAP. La entrada dispara un unico tick
+de ~58ms del frameLoop global de framer-motion (costo aceptado, ver
+`docs/issues/all-projects-entry-jank.md`); CLS 0 y decode fuera del main thread.
 
 ### Hero: GSAP timeline on-load
 
