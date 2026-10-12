@@ -56,7 +56,7 @@ export function FeaturedProjectPanel({ project, children, isLast = false }: Feat
             </div>
           )}
 
-          <div className="debug-l3 grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-12 justify-center items-start">
+          <div className="debug-l3 grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-12 justify-center items-stretch">
             {/* Left - Text */}
             <div className="debug-l4 flex flex-col gap-6 order-2 lg:order-1">
               {/* Index + Category */}
@@ -130,7 +130,7 @@ export function FeaturedProjectPanel({ project, children, isLast = false }: Feat
 
             {/* Right - Image mockup */}
             <div className="relative order-1 lg:order-2">
-              <div className="relative w-full aspect-4/3 rounded-2xl overflow-hidden shadow-2xl ring-1 ring-black/5">
+              <div className="relative w-full aspect-4/3 lg:aspect-auto lg:h-full lg:min-h-[25rem] lg:max-h-[28rem] 2xl:min-h-[28rem] 2xl:max-h-[36rem] rounded-2xl overflow-hidden shadow-2xl ring-1 ring-black/5">
                 {project.image ? (
                   <Image
                     src={project.image}

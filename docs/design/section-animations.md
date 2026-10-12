@@ -51,7 +51,10 @@ finamente granular de la visibilidad de cada panel. En viewports muy altos
 (iPad portrait, zoom-out) el avance exige ademas que el titulo haya empezado
 a pasar el tope (hook `.featured-heading`) y los paneles 1..n solo enganchan
 tras la salida de la entrada: sin saltos ni dobles al entrar por ancla, sin
-cambios en viewports normales.
+cambios en viewports normales. Geometric static fallback: if the whole
+`#proyectos` section fits the viewport, all panels + heading render visible
+with no one-slide animation; detection is geometric only (no
+devicePixelRatio/zoom).
 
 ### AllProjects: Framer Motion
 

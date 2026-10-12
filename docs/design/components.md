@@ -245,7 +245,8 @@ en otro archivo.
   mx-auto flex flex-col` + `FEATURED_GAP`/`FEATURED_GAP_LG` interpolados
   (`gap-12 [@media(min-width:1280px)_and_(min-height:900px)]:gap-30`) +
   `pb-12 lg:pb-20` (omitido en el ultimo panel, el spacer de pagina cierra).
-- Grid interno `grid-cols-1 lg:grid-cols-2 gap-6 md:gap-12` (texto
+- Grid interno `grid-cols-1 lg:grid-cols-2 gap-6 md:gap-12` con `items-stretch`
+  para acoplar la imagen a la altura de la columna de texto (texto
   `order-2 lg:order-1`, imagen `order-1 lg:order-2`): `gap-6` en mobile y
   `md:gap-12` desde md. En una sola columna el gap vertical de la grid NO es
   separacion real entre texto e imagen (estan apilados), asi que bajarlo
@@ -283,7 +284,7 @@ en otro archivo.
   60ch en md (donde la columna es de una sola medida) y 53ch en lg (donde la
   columna se estrecha al 50% del grid y hay que recortar para no rebasar el
   limite de medida).
-- Imagen mockup: `aspect-4/3 rounded-2xl shadow-2xl ring-1 ring-black/5`;
+- Imagen mockup: `aspect-4/3` en móvil + `lg:aspect-auto lg:h-full lg:min-h-[25rem] lg:max-h-[28rem] 2xl:min-h-[28rem] 2xl:max-h-[36rem]`, `rounded-2xl shadow-2xl ring-1 ring-black/5`, `object-cover` intacto; el segundo tramo vive en `2xl` porque ahí crecen texto e iconos (`text-sm→2xl:text-lg`, `w-10→2xl:w-12`), mientras `xl` solo añade `xl:mb-2` de espaciado y lo cubre la banda `lg`; empalme sin salto en 28rem; excepción deliberada de featured, no patrón;
   badge flotante `-bottom-4 -right-4 w-14 h-14 rounded-full shadow-lg`;
   chips de stack con `shadow-sm` y rings.
 - h3 `text-fluid-featured` serif black con ultima palabra

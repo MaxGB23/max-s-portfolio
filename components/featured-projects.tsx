@@ -93,10 +93,26 @@ export function FeaturedProjects() {
     const heading = document.querySelector<HTMLElement>(
       "#proyectos .featured-heading",
     );
+    const section = document.querySelector<HTMLElement>("#proyectos");
 
     let raf = 0;
     const evaluate = () => {
       raf = 0;
+      // Static fallback (geometric only): if the whole section fits in the
+      // viewport, show all panels + heading with no one-slide animation.
+      const sectionHeight = section?.getBoundingClientRect().height ?? 0;
+      if (section && sectionHeight > 0 && sectionHeight <= window.innerHeight) {
+        setSlide((prev) => {
+          const visible = panels.map(() => true);
+          const unchanged =
+            prev.headingHidden === false &&
+            prev.entered0 === true &&
+            prev.visible.every((value) => value === true) &&
+            prev.visible.length === visible.length;
+          return unchanged ? prev : { visible, headingHidden: false, entered0: true };
+        });
+        return;
+      }
       const line = window.innerHeight * 0.6; // reveal line: top crossing 60%
       const tops = panels.map((panel) => panel.getBoundingClientRect().top);
       // The entry slide (and every panel) waits for the title: its top
