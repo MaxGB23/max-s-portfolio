@@ -60,6 +60,11 @@ devicePixelRatio/zoom).
 
 AllProjects usa `FadeIn delayEnter` para el heading y un unico `FadeIn
 delayEnter` de contenedor para el grid (sin stagger ni items por card).
+En mobile (<768px) el grid anade `earlyOnMobile`: dispara en la misma
+linea 85% que el heading (`amount: "some"` + `margin -15%`, sin exigir el
+15% del grid completo que en 1 columna mide ~3000px) con +0.15s de delay
+para entrar por detras del titulo. En desktop el trigger y los tiempos
+quedan intactos.
 Es la seccion de proyectos no destacados, no una seccion principal, por lo
 que usa la familia Framer en vez de GSAP. La entrada dispara un unico tick
 de ~58ms del frameLoop global de framer-motion (costo aceptado, ver

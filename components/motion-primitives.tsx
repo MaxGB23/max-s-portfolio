@@ -12,6 +12,7 @@
 
 import { motion, type Variants, type HTMLMotionProps } from "framer-motion";
 import { type ReactNode } from "react";
+import { useIsMobile } from "@/components/ui/use-mobile";
 
 // ---------------------------------------------------------------------------
 // Shared viewport config - trigger once when 15% of the element is visible.
@@ -23,6 +24,19 @@ const VIEWPORT = { once: true, amount: 0.15 } as const;
 // GSAP rhythm of AboutSection ("top 85%"): content only reveals once the user
 // has scrolled INTO it, not the instant it peeks from the bottom edge.
 const VIEWPORT_DELAYED = { once: true, amount: 0.15, margin: "0px 0px -15% 0px" } as const;
+
+// Early trigger for tall single-column grids on mobile: fires when the grid
+// top reaches ~15% above the viewport bottom (same 85% line as the heading),
+// not at the first pixel on the bottom edge and not after 15% of the whole
+// tall element is visible.
+const VIEWPORT_EARLY = { once: true, amount: "some", margin: "0px 0px -15% 0px" } as const;
+
+// Mobile-only ordering delay for early triggers: the early viewport fires at
+// the first pixel while a delayEnter heading still waits for its -15% margin,
+// so without this the grid would win the race and appear before the title.
+// A small transition delay restores title-first ordering on mobile only;
+// desktop timing stays exactly as passed.
+const EARLY_MOBILE_ORDER_DELAY = 0.15;
 
 // Stagger containers can be very tall on mobile (a single-column grid is
 // several thousand px). A %-of-element threshold would force the user to
@@ -54,16 +68,24 @@ interface FadeInProps extends HTMLMotionProps<"div"> {
   as?: keyof typeof motion;
   /** Wait until the element is ~15% of the viewport height into the screen before animating. */
   delayEnter?: boolean;
+  /** On mobile (<768px) trigger at first entry with no negative margin; desktop keeps delayEnter logic. */
+  earlyOnMobile?: boolean;
 }
 
-export function FadeIn({ children, delay = 0, className, delayEnter = false, ...rest }: FadeInProps) {
+export function FadeIn({ children, delay = 0, className, delayEnter = false, earlyOnMobile = false, ...rest }: FadeInProps) {
+  // False on server and first client render, so no hydration mismatch; only
+  // the viewport observer options and transition delay update after mount.
+  const isMobile = useIsMobile();
+  const isEarlyMobile = earlyOnMobile && isMobile;
+  const viewport = isEarlyMobile ? VIEWPORT_EARLY : delayEnter ? VIEWPORT_DELAYED : VIEWPORT;
+  const effectiveDelay = isEarlyMobile ? delay + EARLY_MOBILE_ORDER_DELAY : delay;
   return (
     <motion.div
       variants={fadeInVariants}
       initial="hidden"
       whileInView="visible"
-      viewport={delayEnter ? VIEWPORT_DELAYED : VIEWPORT}
-      transition={{ delay }}
+      viewport={viewport}
+      transition={{ delay: effectiveDelay }}
       className={className}
       {...rest}
     >
