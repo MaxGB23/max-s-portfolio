@@ -217,7 +217,7 @@ codigo real):
 | Retratos hero / sobre-mi | `shadow-xl` | Foto, sombra neutra suave |
 | Hero badge flotante | `shadow-2xl` | Carta flotando sobre foto |
 | Navbar con scroll | `shadow-sm` + `border-b` | Ancla contextural, sutil |
-| Cards (ProjectCard) hover | `hover:-translate-y-1.5 hover:shadow-lg hover:shadow-black/8` | Elevacion en hover, sombra negra al 8% |
+| Cards (ProjectCard) hover | `hover:-translate-y-1.5 hover:shadow-lg` | Elevacion en hover (`shadow-black/8` retirado: codigo muerto en dark mode) |
 | Mockup destacado (featured) | `shadow-2xl ring-1 ring-black/5` | Foto; el ring negro evita halo morado |
 | Chips / tag circles | `shadow-sm` (con `shadow-gray-700` variante) | Micro-elevacion |
 | Pricing destacado | `shadow-2xl` + hover GSAP `0 24px 48px -10px rgba(0,0,0,0.22)` | Tarjeta protagonista, sombra dura |

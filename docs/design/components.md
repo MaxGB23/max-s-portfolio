@@ -311,8 +311,9 @@ en otro archivo.
 ### 4.6 ProjectCard (`project-card.tsx`)
 
 - `article h-full bg-card border rounded-2xl overflow-hidden cursor-pointer`
-  + hover `hover:-translate-y-1.5 hover:shadow-lg hover:shadow-black/8`
-  (`transition-all duration-300 ease-out`). Featured: `border-purple-accent/40
+  + hover `hover:-translate-y-1.5 hover:shadow-lg`
+  (`duration-300 ease-out`; `shadow-black/8` retirado por codigo muerto en
+  dark mode). Featured: `border-purple-accent/40
   ring-1 ring-purple-accent/20` en lugar de `border-border`.
 - Imagen `aspect-16/10 bg-muted` con scale suave en hover.
 - Cuerpo `p-5`: h3 `text-fluid-card-title font-semibold capitalize`; desc

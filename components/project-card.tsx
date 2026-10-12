@@ -30,7 +30,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
   const externalLink = project.links?.find((link) => link.external);
   return (
     <article
-      className={`project-card group relative flex flex-col h-full bg-card border rounded-2xl overflow-hidden cursor-pointer transition-[transform,box-shadow] duration-300 ease-out hover:-translate-y-1.5 hover:shadow-lg hover:shadow-black/8 ${
+      className={`project-card group relative flex flex-col h-full bg-card border rounded-2xl overflow-hidden cursor-pointer duration-300 ease-out hover:-translate-y-1.5 hover:shadow-lg ${
         project.featured ? "border-purple-accent/40 ring-1 ring-purple-accent/20" : "border-border"
       }`}
       aria-labelledby={`project-title-${project.id}`}
@@ -91,7 +91,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
           {project.tags?.map((tag, index) => (
             <div
               key={index}
-              className="flex items-center justify-center w-8 h-8 2xl:w-12 2xl:h-12 rounded-full border border-black bg-card shadow-sm shadow-gray-700 hover:scale-110 transition-all duration-300 cursor-default group"
+              className="flex items-center justify-center w-8 h-8 2xl:w-12 2xl:h-12 rounded-full border border-black bg-card shadow-sm shadow-gray-700 transition-all duration-300 cursor-default group"
               title={tag}
             >
               <StackIcon
