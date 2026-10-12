@@ -87,8 +87,8 @@ primera seccion y se anima on-load.
 3. **Pricing:** trigger `top 85%` -> `top 80%`
 4. **Contact:** Framer `FadeIn` reemplazado por GSAP `fromTo` con el patron
    unificado; CTA movido dentro del `.contact-header`
-5. **About:** `min-h-[60dvh] portrait:min-h-[50dvh]` anadido para dar presencia
-   visual en desktop; en portrait el alto minimo baja a 50% porque el 60%
+5. **About:** `min-h-[60dvh] 2xl:min-h-[70dvh] portrait:min-h-[50dvh]` anadido para dar presencia
+   visual en desktop (70% en 2xl para viewports muy anchos); en portrait el alto minimo baja a 50% porque el 60%
    obligaba a un bloque desproporcionado antes del primer proyecto
 
 ## Deuda unica

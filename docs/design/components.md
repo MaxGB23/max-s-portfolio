@@ -209,10 +209,11 @@ en otro archivo.
 - `Section#sobre-mi` con `insetClassName="px-6 md:px-8 lg:px-12"`, inner
   `max-w-5xl`, `flex-col-reverse md:flex-row`, gaps
   `gap-6 md:gap-12 lg:gap-14 xl:gap-16`.
-- `min-h-[60dvh] portrait:min-h-[50dvh]`: en landscape la seccion nunca baja del
+- `min-h-[60dvh] 2xl:min-h-[70dvh] portrait:min-h-[50dvh]`: en landscape la seccion nunca baja del
   60% del viewport — garantiza que toque la banda centrada del scroll-spy en
   viewports altos (D11, resolucion 2026-10-01; ver `section-animations.md`
-  punto 5). En portrait el alto minimo baja a 50%: en vertical el 60% obligaba
+  punto 5); en 2xl sube a 70% para dar presencia en viewports muy anchos.
+  En portrait el alto minimo baja a 50%: en vertical el 60% obligaba
   a un bloque desproporcionado antes del primer proyecto.
 - Retrato `aspect-11/9 rounded-4xl shadow-xl`, alto escalado por breakpoint:
   `md:h-[280px] lg:h-[320px] xl:h-[360px] 2xl:h-[380px]`, `max-w-[400px]`
