@@ -164,7 +164,7 @@ const en = {
   'section.about.title.first': 'About',
   'section.about.title.second': 'Me',
   'section.about.paragraph1': 'I\'m a software developer with freelance projects in real use and self-built products with thousands of downloads. I focus on clear interfaces, performance and maintainable code.',
-  'section.about.paragraph2': 'I leverage AI tools and automated testing to consistently build, validate, and maintain software.',
+  'section.about.paragraph2': 'I combine AI tooling with automated tests to develop, validate and maintain software consistently across freelance and self-built projects.',
   'section.about.ariaLabel': 'About me',
   'section.about.imageAlt': 'Max González Ballesteros - About Me',
 

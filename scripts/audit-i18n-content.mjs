@@ -94,6 +94,7 @@ const IDENTICAL_OK = new Set([
   "VSCode Marketplace",
   "Open VSX",
   "Open VSX Publisher (namespace MaxGB23)",
+  "Zed",
   "funky-ai",
   "funky-theme",
   "funky-forge",
