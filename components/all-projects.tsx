@@ -1,7 +1,7 @@
 "use client";
 
 import { ProjectCard, type Project } from "@/components/project-card";
-import { FadeIn, FadeInStagger, FadeInItem } from "@/components/motion-primitives";
+import { FadeIn, FadeInStagger, FadeInItemFade } from "@/components/motion-primitives";
 import { Section } from "@/components/section";
 import { projects, localizeProject } from "@/data/projects";
 import { useLanguage } from "@/contexts/language-context";
@@ -60,11 +60,11 @@ export function AllProjects() {
         className="pt-6 md:pt-12 lg:pt-16"
         innerId="all-projects-content"
       >
-        <FadeInStagger delayEnter className="debug-l3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <FadeInStagger delayEnter stagger={0.04} delay={0} className="debug-l3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {allProjects.map((project) => (
-            <FadeInItem key={project.id}>
+            <FadeInItemFade key={project.id}>
               <ProjectCard project={project} />
-            </FadeInItem>
+            </FadeInItemFade>
           ))}
         </FadeInStagger>
       </Section>
