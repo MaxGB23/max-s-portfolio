@@ -17,7 +17,7 @@ const es = {
   // Hero
   'hero.greeting': 'Hola, soy Max',
   'hero.role': 'Full Stack Developer',
-  'hero.description': 'Desarrollo aplicaciones web rápidas y escalables con Next.js y React, cuidando el rendimiento, la experiencia de usuario y calidad del código.',
+  'hero.description': 'Desarrollo aplicaciones web con Next.js y React, activas en producción, con backend bien estructurado y herramientas de IA integradas en mi flujo de trabajo.',
   'hero.cta': 'Ver proyectos',
   'hero.cta.projects': 'Ver Proyectos',
   'hero.cta.cv': 'Descargar CV',
@@ -42,8 +42,8 @@ const es = {
   'section.about.label': 'Conóceme',
   'section.about.title.first': 'Sobre',
   'section.about.title.second': 'Mí',
-  'section.about.paragraph1': 'Soy un desarrollador de software con experiencia creando aplicaciones web escalables y eficientes. Mi enfoque principal es crear interfaces atractivas que brinden la mejor experiencia de usuario.',
-  'section.about.paragraph2': 'Con un perfil full-stack, me adapto a diferentes tecnologías para entregar productos modernos que puedan superar los retos técnicos actuales.',
+  'section.about.paragraph1': 'Soy desarrollador de software, con proyectos freelance en uso real y productos propios con miles de descargas. Me enfoco en interfaces claras, rendimiento y código mantenible.',
+  'section.about.paragraph2': 'Combino herramientas de IA con pruebas automatizadas para desarrollar, validar, mantener y entregar software de forma consistente.',
   'section.about.ariaLabel': 'Sobre mí',
   'section.about.imageAlt': 'Max González Ballesteros - Sobre Mí',
 
@@ -138,7 +138,7 @@ const en = {
 
   'hero.greeting': "Hi, I'm Max",
   'hero.role': 'Full Stack Developer',
-  'hero.description': 'I build fast, scalable web applications with Next.js and React, caring about performance, user experience and code quality.',
+  'hero.description': 'I build web applications with Next.js and React, live in production, with well-structured backend and AI tooling built into my workflow.',
   'hero.cta': 'View projects',
   'hero.cta.projects': 'View Projects',
   'hero.cta.cv': 'Download Resume',
@@ -163,8 +163,8 @@ const en = {
   'section.about.label': 'Get to know me',
   'section.about.title.first': 'About',
   'section.about.title.second': 'Me',
-  'section.about.paragraph1': 'I am a software developer with experience building scalable and efficient web applications. My main focus is crafting attractive interfaces that deliver the best user experience.',
-  'section.about.paragraph2': 'With a full-stack profile, I adapt to different technologies to deliver modern products that can overcome today\'s technical challenges.',
+  'section.about.paragraph1': 'I\'m a software developer with freelance projects in real use and self-built products with thousands of downloads. I focus on clear interfaces, performance and maintainable code.',
+  'section.about.paragraph2': 'I leverage AI tools and automated testing to consistently build, validate, and maintain software.',
   'section.about.ariaLabel': 'About me',
   'section.about.imageAlt': 'Max González Ballesteros - About Me',
 

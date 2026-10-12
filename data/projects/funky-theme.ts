@@ -16,7 +16,7 @@
 // mantiene la misma granularidad — no se abrevia ni se resume ningun nodo, para
 // que la topologia se lea igual en los dos idiomas.
 //
-// CIFRAS INTACTAS: `3.3k`, `3,296`, `8 oct 2026`, `191/30d`, `97.45%`, `5`,
+// CIFRAS INTACTAS: `3.5k`, `3,544`, `12 oct 2026`, `191/30d`, `97.45%`, `5`,
 // `30` (limite de keywords) se traducen sin alterar un solo digito. El ES
 // escribe el limite de keywords con coma de miles por error ("30") y con flecha
 // (->) que el EN debe respetar tal cual para no divergir del dato upstream.
@@ -40,8 +40,8 @@ export const funkyTheme: ProjectL = {
     en: "Original semantic dark theme compatible with any VSCode-based editor and terminal: 5 variants derived from a hierarchical palette defined in a single config (SSOT).",
   },
   metric: {
-    es: "3.3k descargas en Open VSX",
-    en: "3.3k downloads on Open VSX",
+    es: "3.5k descargas en Open VSX",
+    en: "3.5k downloads on Open VSX",
   },
   // Tags APROBADOS por el usuario: no se tocan.
   tags: ["VS Code", "Verified", "Open VSX", "Zed", "Token Colors", "Terminal UI"],
@@ -79,6 +79,16 @@ export const funkyTheme: ProjectL = {
       external: true,
     },
     {
+      // Nombre de marketplace: identidad a proposito.
+      label: {
+        es: "Zed",
+        en: "Zed",
+      },
+      kind: "landing",
+      url: "https://zed.dev/extensions/funky-theme",
+      external: true,
+    },
+    {
       label: {
         es: "Terminales (TUI)",
         en: "Terminals (TUI)",
@@ -94,9 +104,9 @@ export const funkyTheme: ProjectL = {
       en: "An original theme, with the palette governed by a single source of truth",
     },
     summary: {
-      es: "Tema oscuro semántico original bajo MIT, operado como producto multi-marketplace: cinco variantes desde una paleta jerárquica en un solo config (SSOT) para editores. Estable v3.2.2 en VS Code Marketplace y Open VSX con tracción real, Zed recién lanzado y expansión a terminales IA en beta. Instalación en un clic desde cada marketplace y variantes a medida para el usuario; SSOT, CI y SemVer estricto para el mantenimiento.",
+      es: "Tema oscuro semántico original bajo MIT, operado como producto multi-marketplace: cinco variantes desde una paleta jerárquica en un solo config (SSOT) para editores. Estable v3.2.2 en VS Code Marketplace y Open VSX con tracción real, Zed publicado en el registry oficial y expansión a terminales IA en beta. Instalación en un clic desde cada marketplace y variantes a medida para el usuario; SSOT, CI y SemVer estricto para el mantenimiento.",
       // El ES no lleva pares `**`: el EN tampoco los inventa (docs/i18n.md:25).
-      en: "Original semantic dark theme under MIT, operated as a multi-marketplace product: five variants from a hierarchical palette in a single config (SSOT) for editors. Stable v3.2.2 on VS Code Marketplace and Open VSX with real traction, Zed just launched and expansion to AI terminals in beta. One-click install from each marketplace and custom variants for the user; SSOT, CI and strict SemVer for maintenance.",
+      en: "Original semantic dark theme under MIT, operated as a multi-marketplace product: five variants from a hierarchical palette in a single config (SSOT) for editors. Stable v3.2.2 on VS Code Marketplace and Open VSX with real traction, Zed published in the official registry and expansion to AI terminals in beta. One-click install from each marketplace and custom variants for the user; SSOT, CI and strict SemVer for maintenance.",
     },
     metrics: [
       {
@@ -221,8 +231,8 @@ export const funkyTheme: ProjectL = {
         en: "**Publishing on the markets:** stable release on VS Code Marketplace and Open VSX, with keywords optimized to the documented limit (30) for cross-platform discoverability (VS Code, VSCodium, Google Antigravity, Cursor, Windsurf, Theia).",
       },
       {
-        es: "**CI / control de calidad:** workflow de build-check con pnpm que valida las 5 variantes (existencia y parseo de los JSON) en cada push y PR; el mismo CI empaqueta el artefacto de Zed y prepara su PR al marketplace; releases SemVer estrictas y trazables.",
-        en: "**CI / quality control:** pnpm build-check workflow that validates the 5 variants (existence and JSON parsing) on every push and PR; the same CI packages the Zed artifact and prepares its PR to the marketplace; strict, traceable SemVer releases.",
+        es: "**CI / control de calidad:** workflow de build-check con pnpm que valida las 5 variantes (existencia y parseo de los JSON) en cada push y PR; el mismo CI empaqueta el artefacto de Zed y abre PRs de actualización al registry; releases SemVer estrictas y trazables.",
+        en: "**CI / quality control:** pnpm build-check workflow that validates the 5 variants (existence and JSON parsing) on every push and PR; the same CI packages the Zed artifact and opens update PRs to the registry; strict, traceable SemVer releases.",
       },
       {
         es: "**Release blindado tras aprendizaje de errores:** el changelog se finaliza antes de empaquetar (el vsix lleva la sección de la versión) y una guardia verifica que el vsix coincida exactamente con su `.vscodeignore` (sin fugas ni assets faltantes) — un hotfix de packaging real dejó el proceso más robusto y documentado en la skill de release.",
@@ -234,8 +244,8 @@ export const funkyTheme: ProjectL = {
         en: "**Traction validated:** **Verified Open VSX Publisher**; **3.3k cumulative downloads** on Open VSX (3,296 measured on Oct 8, 2026); **191 acquisitions/30d** on VS Code Marketplace with **97.45% funnel** (page views → installs) — organic SEO positioning demonstrated.",
       },
       {
-        es: "**Cross-editor:** soporte **Zed** lanzado hoy con instalación manual mientras se acepta el PR al marketplace (misma paleta de editores).",
-        en: "**Cross-editor:** **Zed** support launched today with manual install while the PR to the marketplace is under review (same editor palette).",
+        es: "**Cross-editor:** soporte **Zed** publicado en el registry oficial (zed.dev/extensions/funky-theme), instalable en un clic (misma paleta de editores).",
+        en: "**Cross-editor:** **Zed** support published in the official registry (zed.dev/extensions/funky-theme), one-click install (same editor palette).",
       },
       {
         es: "**Expansión terminal:** **funky-theme-tui** — variaciones mínimas para terminales con agentes de código (Claude Code, OpenCode, Pi), en repo aparte y en beta.",
@@ -259,8 +269,8 @@ export const funkyTheme: ProjectL = {
         en: "License: MIT (original)",
       },
       {
-        es: "Editores: VS Code, VSCodium, Cursor, Windsurf, Zed (instalación manual, PR pendiente), Theia",
-        en: "Editors: VS Code, VSCodium, Cursor, Windsurf, Zed (manual install, PR pending), Theia",
+        es: "Editores: VS Code, VSCodium, Cursor, Windsurf, Zed (registry oficial), Theia",
+        en: "Editors: VS Code, VSCodium, Cursor, Windsurf, Zed (official registry), Theia",
       },
       {
         es: "Distribución: VS Code Marketplace, Open VSX, .vsix store-agnostic",
@@ -314,8 +324,8 @@ export const funkyTheme: ProjectL = {
       en: "funky-theme",
     },
     description: {
-      es: "Tema oscuro semántico original para VS Code (MIT): 5 variantes derivadas de una paleta jerárquica en un único config (SSOT) para editores — se toca un valor y todo el tema se mantiene coherente. Expansión cross-editor (Zed, instalación manual) y terminal IA (funky-theme-tui, con variaciones propias) desde la misma base.",
-      en: "Original semantic dark theme for VS Code (MIT): 5 variants derived from a hierarchical palette in a single config (SSOT) for editors — you change one value and the whole theme stays coherent. Cross-editor expansion (Zed, manual install) and AI terminal (funky-theme-tui, with its own variations) from the same base.",
+      es: "Tema oscuro semántico original para VS Code (MIT): 5 variantes derivadas de una paleta jerárquica en un único config (SSOT) para editores — se toca un valor y todo el tema se mantiene coherente. Expansión cross-editor (Zed, registry oficial) y terminal IA (funky-theme-tui, con variaciones propias) desde la misma base.",
+      en: "Original semantic dark theme for VS Code (MIT): 5 variants derived from a hierarchical palette in a single config (SSOT) for editors — you change one value and the whole theme stays coherent. Cross-editor expansion (Zed, official registry) and AI terminal (funky-theme-tui, with its own variations) from the same base.",
     },
     children: [
       {

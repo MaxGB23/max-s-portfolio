@@ -27,8 +27,8 @@ export const caf: ProjectL = {
     en: "Full Stack / HealthTech",
   },
   hook: {
-    es: "Plataforma web full-stack en producción para la gestión integral de citas, pacientes y control de pagos en centros de salud.",
-    en: "Production full-stack web platform for end-to-end management of appointments, patients and payments across healthcare centers.",
+    es: "Plataforma web full-stack en producción para la gestión integral de citas, pacientes y control de pagos en clínica de fisioterapia y rehabilitación.",
+    en: "Production full-stack web platform for end-to-end management of appointments, patients and payments in a physiotherapy and rehabilitation clinic.",
   },
   metric: {
     es: "+10 meses en producción sin caídas",

@@ -29,7 +29,7 @@
 
 ### Summary
 
-Tema oscuro semántico original bajo MIT, operado como producto multi-marketplace: cinco variantes desde una paleta jerárquica en un solo config (SSOT) para editores. Estable v3.2.2 en VS Code Marketplace y Open VSX con tracción real, Zed recién lanzado y expansión a terminales IA en beta. Instalación en un clic desde cada marketplace y variantes a medida para el usuario; SSOT, CI y SemVer estricto para el mantenimiento.
+Tema oscuro semántico original bajo MIT, operado como producto multi-marketplace: cinco variantes desde una paleta jerárquica en un solo config (SSOT) para editores. Estable v3.2.2 en VS Code Marketplace y Open VSX con tracción real, Zed publicado en el registry oficial y expansión a terminales IA en beta. Instalación en un clic desde cada marketplace y variantes a medida para el usuario; SSOT, CI y SemVer estricto para el mantenimiento.
 
 ### Metrics
 
@@ -60,10 +60,10 @@ La mayoría de los temas de editor duplican valores de color en cientos de archi
 - **Paleta semántica SSOT:** colores definidos por rol semántico (UI, sintaxis, estados), no arbitrarios, en un solo config.
 - **Variantes separadas por familias visuales:** el feedback de devs en foros y comunidades (Discord, etc.) guía qué se aplica en cada variante — italics, bold, etc. solo donde es deseado; para quien no los quiere, hay una variante a su medida. Las 5 se mantienen en sincronía porque comparten la misma fuente.
 - **Publicación en markets:** release estable en VS Code Marketplace y Open VSX, con keywords optimizados al límite documentado (30) para descubribilidad multiplataforma (VS Code, VSCodium, Google Antigravity, Cursor, Windsurf, Theia).
-- **CI / control de calidad:** workflow de build-check con pnpm que valida las 5 variantes (existencia y parseo de los JSON) en cada push y PR; el mismo CI empaqueta el artefacto de Zed y prepara su PR al marketplace; releases SemVer estrictas y trazables.
+- **CI / control de calidad:** workflow de build-check con pnpm que valida las 5 variantes (existencia y parseo de los JSON) en cada push y PR; el mismo CI empaqueta el artefacto de Zed y abre PRs de actualización al registry; releases SemVer estrictas y trazables.
 - **Release blindado tras aprendizaje de errores:** el changelog se finaliza antes de empaquetar (el vsix lleva la sección de la versión) y una guardia verifica que el vsix coincida exactamente con su `.vscodeignore` (sin fugas ni assets faltantes) — un hotfix de packaging real dejó el proceso más robusto y documentado en la skill de release.
 - **Tracción validada:** **Verified Open VSX Publisher**; **3.3k descargas acumuladas** en Open VSX (3,296 medidas el 8 oct 2026); **191 adquisiciones/30d** en VS Code Marketplace con **funnel 97.45%** (page views → installs) — posicionamiento SEO orgánico demostrado.
-- **Cross-editor:** soporte **Zed** lanzado hoy con instalación manual mientras se acepta el PR al marketplace (misma paleta de editores).
+- **Cross-editor:** soporte **Zed** publicado en el registry oficial (zed.dev/extensions/funky-theme), instalable en un clic (misma paleta de editores).
 - **Expansión terminal:** **funky-theme-tui** — variaciones mínimas para terminales con agentes de código (Claude Code, OpenCode, Pi), en repo aparte y en beta.
 
 ### Stack
@@ -88,7 +88,7 @@ Paso de *tooling* en la curva profesional: PHP/Laravel/Vue → tooling VS Code �
 - **Métricas de instalaciones:** consolidar evolución de descargas/instalaciones y rating en ambos markets; funnel de conversión como KPI principal.
 - **Reviews:** dar seguimiento a valoraciones y reseñas en VS Code Marketplace y Open VSX.
 - **Issues / PRs:** atender, triage y resolver issues y pull requests de la comunidad.
-- **Zed:** conseguir aceptación del PR en el marketplace (soporte ya lanzado con instalación manual).
+- **Zed:** dar seguimiento al PR de update v0.2.0 (#7944), ya con la publicación inicial aprobada y live.
 - **funky-theme-tui:** llevar a estable; publicar en repositorios de cada agente (Claude Code, OpenCode, Pi) y documentar la SSOT compartida.
 - **Oportunidades:** con funnel 84% y 2k/sem, escalar descubribilidad (icono/readme, versión web) y evaluar CI como gate de release.
 
