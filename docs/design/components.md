@@ -413,6 +413,13 @@ margen vertical. Badge `px-3.5 py-1 text-xs 2xl:text-sm`: el `py-1` es
   seleccionan al mover. NO adoptar `components/ui/tabs.tsx` (shadcn): cambia el
   DOM y obliga a reestilizar. `Home`/`End` fuera a proposito — con dos vistas las
   flechas ya recorren el grupo.
+- Tabs legibles por crawlers y LLM (2026-10-13): los dos `tabpanel` van SIEMPRE
+  montados con ids fijos (`detail-panel-kpis`, `detail-panel-topology`, los que
+  las tabs ya referencian en `aria-controls`); el inactivo se oculta con
+  `hidden`, NUNCA se desmonta con `&&`. Asi el HTML inicial/SSR trae metricas +
+  arquitectura sin interaccion: los LLM y scrapers sin JS tambien leen el trabajo
+  tecnico. Excepcion deliberada: `KpiGrid` conserva montaje condicional para que
+  el count-up se repita al volver a su tab.
 - Bloques de arriba abajo con `mb-12 md:mb-16` (metrics, links, y tambien los
   bloques de lectura `.detail-section`: summary, problem, role, solution,
   gallery) y `mb-6 md:mb-16` (visual principal): el ancho ya no carga el margen

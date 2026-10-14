@@ -681,25 +681,33 @@ export function ProjectDetail({ project }: { project: ProjectL }) {
                 </div>
               </div>
 
-              {/* Una sola vista montada a la vez (kpis o topology), envuelta en el
-                  tabpanel que la pestaña activa controla. El wrapper es un div
-                  block dentro de un section block, junto al header block: el
-                  apilado vertical no cambia. */}
+              {/* Dos tabpanels con ids fijos (los que las tabs ya referencian en
+                  `aria-controls`). El inactivo se oculta con `hidden`, no se
+                  desmonta: el HTML inicial trae KPIs (vista por defecto) +
+                  arquitectura para crawlers sin JS y lectores automaticos, sin
+                  cambiar la UX. KpiGrid conserva su montaje condicional para
+                  que el count-up se repita al volver a su tab, como hasta ahora. */}
               <div
                 role="tabpanel"
-                id={viewMode === "kpis" ? "detail-panel-kpis" : "detail-panel-topology"}
-                aria-labelledby={viewMode === "kpis" ? "detail-tab-kpis" : "detail-tab-topology"}
+                id="detail-panel-kpis"
+                aria-labelledby="detail-tab-kpis"
+                hidden={viewMode !== "kpis"}
               >
-                {/* Vista 1: Grafo de Arquitectura Real (árbol extraído de docs/projects) */}
-                {viewMode === "topology" &&
-                  (localized.architecture ? (
-                    <ProjectArchitecture tree={localized.architecture} />
-                  ) : (
-                    <ArchitectureEmptyState />
-                  ))}
-
-                {/* Vista 2: Vista de Métricas & KPIs Numéricos (Cards Clásicas con Animación) */}
+                {/* Vista de Métricas & KPIs Numéricos (Cards Clásicas con Animación) */}
                 {viewMode === "kpis" && <KpiGrid metrics={detail.metrics} />}
+              </div>
+              <div
+                role="tabpanel"
+                id="detail-panel-topology"
+                aria-labelledby="detail-tab-topology"
+                hidden={viewMode !== "topology"}
+              >
+                {/* Grafo de Arquitectura Real (árbol extraído de docs/projects) */}
+                {localized.architecture ? (
+                  <ProjectArchitecture tree={localized.architecture} />
+                ) : (
+                  <ArchitectureEmptyState />
+                )}
               </div>
             </section>
           )}
