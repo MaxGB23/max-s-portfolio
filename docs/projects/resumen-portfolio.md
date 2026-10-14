@@ -32,7 +32,7 @@ Atajo de lectura para no abrir `projects.ts` ni los candidatos. No es canon: el 
 | One Click Ti — PWA | App instalable con catálogo, leads y panel de gestión | Laravel, Vue 3, Inertia.js, MySQL, PHP | 5 módulos CRUD + 4 meses de soporte |
 | AutoShop Taller | Sitio con landing y panel para servicios y promociones | PHP, MySQL, JavaScript, Bootstrap, HTML5 | Panel usable sin desarrollador |
 | Color Highlight v2 | Extensión que resalta colores con build ligero | TypeScript, esbuild, pnpm, VS Code | 38 KB y 2 dependencias |
-| Funky Theme | Tema oscuro semántico con 5 variantes y SSOT | VS Code, Open VSX, Zed, Token Colors, Terminal UI | 3.3k descargas en Open VSX |
+| Funky Theme | Tema oscuro semántico con 5 variantes y SSOT | VS Code, Open VSX, Zed, Token Colors, Terminal UI | 3.6k descargas en Open VSX |
 
 ## Plantilla futuro
 

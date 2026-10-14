@@ -1,7 +1,7 @@
 # funky-theme — Tema semántico original para VS Code (Consolidado)
 
 > Fuente única de contenido para el portfolio. Editar aquí; luego se refleja en `data/projects.ts`.
-> Última actualización: 2026-10-08
+> Última actualización: 2026-10-13
 
 ---
 
@@ -13,7 +13,7 @@
 | `title` | Funky Theme |
 | `category` | Dev Tools / VS Code |
 | `hook` | Tema oscuro semántico original compatible en cualquier VSCode-based editor y Terminales: 5 variantes derivadas de una paleta jerárquica definida en un único config (SSOT). |
-| `metric` | 3.3k descargas en Open VSX |
+| `metric` | 3.6k descargas en Open VSX |
 | `tags` | VS Code · Verified · Open VSX · Zed · Token Colors · Terminal UI |
 | `image` | `/images/projects/funky-theme/funky-theme-demo.webp` |
 | `imageAlt` | Captura de VS Code con el tema funky-theme aplicado a un editor |
@@ -35,7 +35,7 @@ Tema oscuro semántico original bajo MIT, operado como producto multi-marketplac
 
 | Value | Label |
 | --- | --- |
-| 3.3k | descargas acumuladas en Open VSX (3,296 medidas el 8 oct 2026) |
+| 3.6k | descargas acumuladas en Open VSX (3,606 medidas el 13 oct 2026) |
 | 191/30d | adquisiciones VS Code Marketplace |
 | 97.45% | funnel de conversión (page views → installs) |
 | 5 | variantes del tema |
@@ -62,7 +62,7 @@ La mayoría de los temas de editor duplican valores de color en cientos de archi
 - **Publicación en markets:** release estable en VS Code Marketplace y Open VSX, con keywords optimizados al límite documentado (30) para descubribilidad multiplataforma (VS Code, VSCodium, Google Antigravity, Cursor, Windsurf, Theia).
 - **CI / control de calidad:** workflow de build-check con pnpm que valida las 5 variantes (existencia y parseo de los JSON) en cada push y PR; el mismo CI empaqueta el artefacto de Zed y abre PRs de actualización al registry; releases SemVer estrictas y trazables.
 - **Release blindado tras aprendizaje de errores:** el changelog se finaliza antes de empaquetar (el vsix lleva la sección de la versión) y una guardia verifica que el vsix coincida exactamente con su `.vscodeignore` (sin fugas ni assets faltantes) — un hotfix de packaging real dejó el proceso más robusto y documentado en la skill de release.
-- **Tracción validada:** **Verified Open VSX Publisher**; **3.3k descargas acumuladas** en Open VSX (3,296 medidas el 8 oct 2026); **191 adquisiciones/30d** en VS Code Marketplace con **funnel 97.45%** (page views → installs) — posicionamiento SEO orgánico demostrado.
+- **Tracción validada:** **Verified Open VSX Publisher**; **3.6k descargas acumuladas** en Open VSX (3,606 medidas el 13 oct 2026); **191 adquisiciones/30d** en VS Code Marketplace con **funnel 97.45%** (page views → installs) — posicionamiento SEO orgánico demostrado.
 - **Cross-editor:** soporte **Zed** publicado en el registry oficial (zed.dev/extensions/funky-theme), instalable en un clic (misma paleta de editores).
 - **Expansión terminal:** **funky-theme-tui** — variaciones mínimas para terminales con agentes de código (Claude Code, OpenCode, Pi), en repo aparte y en beta.
 

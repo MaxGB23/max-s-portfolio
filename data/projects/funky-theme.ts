@@ -16,7 +16,7 @@
 // mantiene la misma granularidad — no se abrevia ni se resume ningun nodo, para
 // que la topologia se lea igual en los dos idiomas.
 //
-// CIFRAS INTACTAS: `3.5k`, `3,544`, `12 oct 2026`, `191/30d`, `97.45%`, `5`,
+// CIFRAS INTACTAS: `3.6k`, `3,606`, `13 oct 2026`, `191/30d`, `97.45%`, `5`,
 // `30` (limite de keywords) se traducen sin alterar un solo digito. El ES
 // escribe el limite de keywords con coma de miles por error ("30") y con flecha
 // (->) que el EN debe respetar tal cual para no divergir del dato upstream.
@@ -40,8 +40,8 @@ export const funkyTheme: ProjectL = {
     en: "Original semantic dark theme compatible with any VSCode-based editor and terminal: 5 variants derived from a hierarchical palette defined in a single config (SSOT).",
   },
   metric: {
-    es: "3.5k descargas en Open VSX",
-    en: "3.5k downloads on Open VSX",
+    es: "3.6k descargas en Open VSX",
+    en: "3.6k downloads on Open VSX",
   },
   // Tags APROBADOS por el usuario: no se tocan.
   tags: ["VS Code", "Verified", "Open VSX", "Zed", "Token Colors", "Terminal UI"],
@@ -113,12 +113,12 @@ export const funkyTheme: ProjectL = {
         // metrics[0] = metrica RAIZ del detail (nodo raiz de la topologia).
         value: {
           // Cifra pura: se traduce por identidad (no hay palabra que traducir).
-          es: "3.3k",
-          en: "3.3k",
+          es: "3.6k",
+          en: "3.6k",
         },
         label: {
-          es: "descargas acumuladas en Open VSX (3,296 medidas el 8 oct 2026)",
-          en: "cumulative downloads on Open VSX (3,296 measured on Oct 8, 2026)",
+          es: "descargas acumuladas en Open VSX (3,606 medidas el 13 oct 2026)",
+          en: "cumulative downloads on Open VSX (3,606 measured on Oct 13, 2026)",
         },
       },
       {
@@ -240,8 +240,8 @@ export const funkyTheme: ProjectL = {
       },
       {
         // Esta hoja concentra los 5 pares `**` del ES: mismo numero, misma posicion.
-        es: "**Tracción validada:** **Verified Open VSX Publisher**; **3.3k descargas acumuladas** en Open VSX (3,296 medidas el 8 oct 2026); **191 adquisiciones/30d** en VS Code Marketplace con **funnel 97.45%** (page views → installs) — posicionamiento SEO orgánico demostrado.",
-        en: "**Traction validated:** **Verified Open VSX Publisher**; **3.3k cumulative downloads** on Open VSX (3,296 measured on Oct 8, 2026); **191 acquisitions/30d** on VS Code Marketplace with **97.45% funnel** (page views → installs) — organic SEO positioning demonstrated.",
+        es: "**Tracción validada:** **Verified Open VSX Publisher**; **3.6k descargas acumuladas** en Open VSX (3,606 medidas el 13 oct 2026); **191 adquisiciones/30d** en VS Code Marketplace con **funnel 97.45%** (page views → installs) — posicionamiento SEO orgánico demostrado.",
+        en: "**Traction validated:** **Verified Open VSX Publisher**; **3.6k cumulative downloads** on Open VSX (3,606 measured on Oct 13, 2026); **191 acquisitions/30d** on VS Code Marketplace with **97.45% funnel** (page views → installs) — organic SEO positioning demonstrated.",
       },
       {
         es: "**Cross-editor:** soporte **Zed** publicado en el registry oficial (zed.dev/extensions/funky-theme), instalable en un clic (misma paleta de editores).",
