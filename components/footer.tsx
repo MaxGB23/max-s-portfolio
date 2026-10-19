@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Github, Linkedin } from "lucide-react";
 import { motion } from "framer-motion";
-import { FadeIn } from "@/components/motion-primitives";
+import { Reveal } from "@/components/reveal";
 import { useLanguage } from "@/contexts/language-context";
 
 const socialLinks = [
@@ -24,7 +24,7 @@ export function Footer() {
       <div className="debug-l2 max-w-6xl mx-auto space-y-12 relative z-10">
         
         {/* Footer Navigation Columns */}
-        <FadeIn>
+        <Reveal>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10 pb-12 border-b border-border/60">
             
             {/* Col 1: Branding & Bio */}
@@ -68,16 +68,16 @@ export function Footer() {
             </div>
 
           </div>
-        </FadeIn>
+        </Reveal>
 
         {/* Bottom Bar: Copyright & Live Time */}
-        <FadeIn delay={0.1}>
+        <Reveal delay={0.1}>
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-muted-foreground">
             <div>
               {t("common.copyright").replace("{year}", String(new Date().getFullYear()))}
             </div>
           </div>
-        </FadeIn>
+        </Reveal>
 
       </div>
     </footer>

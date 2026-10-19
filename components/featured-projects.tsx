@@ -2,13 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { FeaturedProjectPanel, type FeaturedProject } from "@/components/featured-project-panel";
-import { FadeIn } from "@/components/motion-primitives";
+import { Reveal } from "@/components/reveal";
 import { getFeaturedProjects, localizeProject } from "@/data/projects";
 import { Section } from "@/components/section";
 import { useLanguage } from "@/contexts/language-context";
 
 // ---------------------------------------------------------------------------
-// SectionHeading - "Proyectos Destacados" block (same in-flow FadeIn pattern
+// SectionHeading - "Proyectos Destacados" block (same in-flow Reveal pattern
 // as every other section title in the site)
 // ---------------------------------------------------------------------------
 function SectionHeading() {
@@ -41,7 +41,7 @@ function SectionHeading() {
 //   past the viewport top — never by its own top crossing. Scrolling up toward About therefore scrolls title + card 0 off
 //   naturally, like any other section, instead of fading them mid-screen (the
 //   tall-viewport artifact: the 60% line scales with vh, title height does not).
-// - The heading enters early (FadeIn delayEnter, coherent with every other
+// - The heading enters early (Reveal delayEnter, coherent with every other
 //   section title) and shares panel 0's exit signal (`advanced`) — so title and
 //   card 0 leave together, exactly on the advance to card 2.
 //
@@ -163,7 +163,7 @@ export function FeaturedProjects() {
       className="featured-section relative"
       aria-labelledby="featured-projects-label"
     >
-      {/* Section heading — enters early (FadeIn delayEnter, like every other
+      {/* Section heading — enters early (Reveal delayEnter, like every other
           section title); exits ONLY when panel 1 advances past the line — it
           scrolls off naturally toward About. */}
       <Section
@@ -178,9 +178,9 @@ export function FeaturedProjects() {
           }`}
         >
           {/* Espaciado title - Primera card */}
-          <FadeIn delayEnter className="w-full mb-6 md:mb-12 lg:mb-16">
+          <Reveal delayEnter className="w-full mb-6 md:mb-12 lg:mb-16">
             <SectionHeading />
-          </FadeIn>
+          </Reveal>
         </div>
       </Section>
 

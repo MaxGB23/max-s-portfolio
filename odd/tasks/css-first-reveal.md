@@ -119,9 +119,9 @@ haciendo exactamente la misma animación.
 - [x] T2 `app/layout.tsx` + `components/theme-provider.tsx` + `package.json` — script
       inline, `class="dark"`, fuera ThemeProvider, fuera next-themes.
 - [x] T3 Verificar WU1 (typecheck + build + curl) y commit de work unit.
-- [ ] T4 `all-projects.tsx` + `featured-projects.tsx` + `footer.tsx` +
+- [x] T4 `all-projects.tsx` + `featured-projects.tsx` + `footer.tsx` +
       `motion-primitives.tsx` — migrar 5 nodos y borrar el módulo.
-- [ ] T5 Verificar WU2 y commit de work unit.
+- [x] T5 Verificar WU2 y commit de work unit.
 - [ ] T6 `hero-section.tsx` + `about-section.tsx` — fuera los 12 estilos inline,
       `data-reveal-item`, early return con reduced-motion.
 - [ ] T7 Verificar WU3 y commit de work unit.

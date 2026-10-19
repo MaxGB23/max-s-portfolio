@@ -1,7 +1,7 @@
 "use client";
 
 import { ProjectCard, type Project } from "@/components/project-card";
-import { FadeIn } from "@/components/motion-primitives";
+import { Reveal } from "@/components/reveal";
 import { Section } from "@/components/section";
 import { projects, localizeProject } from "@/data/projects";
 import { useLanguage } from "@/contexts/language-context";
@@ -45,12 +45,12 @@ export function AllProjects() {
         className="relative text-center"
         innerClassName="flex flex-col items-center text-center"
       >
-        <FadeIn delayEnter>
+        <Reveal delayEnter>
           <h2 id="all-projects-heading" className="flex flex-col gap-2 md:gap-3 justify-center items-center font-serif font-black uppercase text-fluid-section leading-[0.9] tracking-tighter text-foreground ">
             <span>{t("section.allProjects.title.first")}</span>
             <span className="text-purple-accent brightness-110">{t("section.allProjects.title.second")}</span>
           </h2>
-        </FadeIn>
+        </Reveal>
       </Section>
 
       <Section
@@ -60,13 +60,13 @@ export function AllProjects() {
         className="pt-6 md:pt-12 lg:pt-16"
         innerId="all-projects-content"
       >
-        <FadeIn delayEnter earlyOnMobile>
+        <Reveal delayEnter earlyOnMobile>
           <div className="debug-l3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {allProjects.map((project) => (
               <ProjectCard key={project.id} project={project} />
             ))}
           </div>
-        </FadeIn>
+        </Reveal>
       </Section>
     </>
   );
