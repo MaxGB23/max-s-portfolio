@@ -33,7 +33,6 @@ type RevealProps = {
 };
 
 const MOBILE_QUERY = "(max-width: 767px)";
-const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
 
 // Equivalent to framer-motion's VIEWPORT_DELAYED: a negative bottom rootMargin
 // waits until the element is ~15% of the viewport into the screen, matching the
@@ -89,12 +88,9 @@ export function Reveal({
     const el = ref.current;
     if (!el) return;
 
-    // No observer, or the user asked for no motion: reveal immediately and skip
-    // the whole gate (the inline script does not arm it in that case either).
-    if (
-      !("IntersectionObserver" in window) ||
-      window.matchMedia(REDUCED_MOTION_QUERY).matches
-    ) {
+    // No observer at all: reveal immediately. The gate is not armed in that
+    // case either, so this keeps the node correct on its own.
+    if (!("IntersectionObserver" in window)) {
       el.dataset.revealItem = "shown";
       return;
     }

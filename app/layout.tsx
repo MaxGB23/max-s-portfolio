@@ -60,8 +60,14 @@ async function getInitialLang(): Promise<Lang> {
  *
  * The served HTML is visible by default; this script is what arms the hiding
  * layer (see the "Reveal gate" block in app/globals.css). One atomic decision:
- * if IntersectionObserver is missing or the user asked for reduced motion, the
- * attribute is never set and the page renders complete and static.
+ * if IntersectionObserver is missing the attribute is never set and the page
+ * renders complete and static.
+ *
+ * It deliberately does NOT check prefers-reduced-motion. That is a project
+ * decision, not an oversight: the site keeps its entry animations for everyone
+ * because they are opacity fades and short rises, never parallax, zoom or
+ * scroll-driven motion. See the reduced motion policy in
+ * docs/design/section-animations.md before adding anything larger.
  *
  * Raw <script>, NOT next/script: an inline beforeInteractive script is
  * serialized into `self.__next_s` and executed later by the async
@@ -74,7 +80,7 @@ async function getInitialLang(): Promise<Lang> {
  * "content never appears"; with it the worst case is "content appears without
  * animation", which is strictly better than what the site did before.
  */
-const REVEAL_GATE_SCRIPT = `if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) { document.documentElement.dataset.reveal = 'on'; setTimeout(function () { var pending = document.querySelectorAll('[data-reveal-item]:not([data-reveal-item="shown"])'); for (var i = 0; i < pending.length; i++) { pending[i].dataset.revealItem = 'shown'; } }, 2000); }`
+const REVEAL_GATE_SCRIPT = `if ('IntersectionObserver' in window) { document.documentElement.dataset.reveal = 'on'; setTimeout(function () { var pending = document.querySelectorAll('[data-reveal-item]:not([data-reveal-item="shown"])'); for (var i = 0; i < pending.length; i++) { pending[i].dataset.revealItem = 'shown'; } }, 2000); }`
 
 export default async function RootLayout({
   children,

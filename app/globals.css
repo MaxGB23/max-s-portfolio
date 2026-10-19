@@ -382,11 +382,12 @@ body {
    markup: without JS the navbar never showed up. The transform part
    is gone because framer-motion still owns `transform` for the
    mobile hide-on-scroll, and two writers on one property race.
+   Runs regardless of prefers-reduced-motion, like every other entry
+   animation on the site: see the policy in
+   docs/design/section-animations.md.
    ============================================================ */
-@media (prefers-reduced-motion: no-preference) {
-  .nav-arrive {
-    animation: nav-arrive 0.45s ease-out backwards;
-  }
+.nav-arrive {
+  animation: nav-arrive 0.45s ease-out backwards;
 }
 
 @keyframes nav-arrive {

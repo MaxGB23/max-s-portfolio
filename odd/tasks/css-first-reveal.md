@@ -48,8 +48,8 @@ haciendo exactamente la misma animación.
 | `components/all-projects.tsx` | 2 `FadeIn` -> `Reveal` |
 | `components/featured-projects.tsx` | 1 `FadeIn` (heading) -> `Reveal` |
 | `components/footer.tsx` | 2 `FadeIn` -> `Reveal` |
-| `components/hero-section.tsx` | quitar 8 `style` inline; early return con reduced-motion |
-| `components/about-section.tsx` | quitar 4 `style` inline; early return con reduced-motion |
+| `components/hero-section.tsx` | quitar 8 `style` inline |
+| `components/about-section.tsx` | quitar 4 `style` inline |
 | `components/navbar.tsx` | `initial={false}`, fuera `opacity` del animate/transition, clase `nav-arrive`, deadband 4px, umbral 14 |
 | `package.json` + `pnpm-lock.yaml` | quitar `next-themes` |
 | `docs/rfcs/css-first-reveal.md` | STATUS a implementado al cerrar |
@@ -101,6 +101,13 @@ haciendo exactamente la misma animación.
    necesaria para el baseline); solo decide si se **afirma** mejora de rendimiento.
 6. Los vehículos WU1..WU4 se ejecutan en la rama `feat/css-first-reveal`, worktree
    `M:\worktrees\maxgb23-portfolio\css-first-reveal`. Nada toca `main` hasta el merge.
+7. **Las animaciones de entrada corren siempre, también con `prefers-reduced-motion`.**
+   Decisión del usuario: la preferencia viene activada por defecto en bastantes equipos
+   Windows por rendimiento (no por vestibular) y matar la entrada empobrece la página sin
+   ganar nada. Frontera escrita en el canon (`docs/design/section-animations.md`): fades y
+   desplazamientos <= 24px sí; parallax, zoom, giros o scroll-jacking tendrían que
+   respetar la preferencia. Efecto: el gate no consulta la preferencia y se cae el
+   early-return de GSAP que iba en WU3.
 
 ## Diseño del primitivo
 `components/reveal.tsx`
@@ -111,8 +118,8 @@ haciendo exactamente la misma animación.
   sin re-render, sin loop de animación.
 - `--reveal-delay` se escribe en el efecto (`0.15s` extra cuando `earlyOnMobile` corre en
   mobile), no en el render: así no hay estado ni mismatch de hidratación.
-- Si no hay `IntersectionObserver` o el usuario reduce movimiento: marca `shown` de
-  inmediato.
+- Si no hay `IntersectionObserver`: marca `shown` de inmediato.
+- No consulta `prefers-reduced-motion` (decisión 7).
 
 ## Tasks
 - [x] T1 `app/globals.css` + `components/reveal.tsx` — CSS del gate y primitivo Reveal.
@@ -122,8 +129,8 @@ haciendo exactamente la misma animación.
 - [x] T4 `all-projects.tsx` + `featured-projects.tsx` + `footer.tsx` +
       `motion-primitives.tsx` — migrar 5 nodos y borrar el módulo.
 - [x] T5 Verificar WU2 y commit de work unit.
-- [ ] T6 `hero-section.tsx` + `about-section.tsx` — fuera los 12 estilos inline,
-      `data-reveal-item`, early return con reduced-motion.
+- [ ] T6 `hero-section.tsx` + `about-section.tsx` — fuera los 12 estilos inline y
+      `data-reveal-item`.
 - [ ] T7 Verificar WU3 y commit de work unit.
 - [ ] T8 `navbar.tsx` + `globals.css` — `initial={false}`, keyframe fade-only, deadband
       y umbral.
