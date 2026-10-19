@@ -17,8 +17,12 @@ export function AboutSection() {
       ".about-description",
     ];
 
-    // Set initial hidden state synchronously BEFORE the timeline starts.
-    // autoAlpha sets both opacity:0 and visibility:hidden so there's no flash.
+    // Set initial hidden state synchronously BEFORE the timeline starts, so the
+    // timeline is deterministic even if the reveal gate never armed (no
+    // IntersectionObserver). Before paint the hiding comes from the gate CSS,
+    // not from the markup: these nodes used to carry inline
+    // `opacity:0; visibility:hidden`, which kept them out of the a11y tree and
+    // invisible forever when the JS never ran.
     gsap.set(elements, { autoAlpha: 0 });
 
     const tl = gsap.timeline({
@@ -62,7 +66,7 @@ export function AboutSection() {
       innerClassName="relative z-10 flex flex-col-reverse md:flex-row items-center justify-center w-full max-w-5xl gap-6 md:gap-12 lg:gap-14 xl:gap-16"
     >
       {/* Left Column: Portrait */}
-      <div className="about-portrait debug-l3 relative rounded-4xl shadow-xl aspect-11/9 w-full max-w-[400px] sm:max-w-[440px] mx-auto md:mx-0 md:max-w-full md:w-auto md:h-[280px] lg:h-[320px] xl:h-[360px] 2xl:h-[380px] shrink-0 z-0" style={{ opacity: 0, visibility: 'hidden' }}>
+      <div className="about-portrait debug-l3 relative rounded-4xl shadow-xl aspect-11/9 w-full max-w-[400px] sm:max-w-[440px] mx-auto md:mx-0 md:max-w-full md:w-auto md:h-[280px] lg:h-[320px] xl:h-[360px] 2xl:h-[380px] shrink-0 z-0" data-reveal-item="">
         <div className="w-full h-full rounded-4xl overflow-hidden relative">
           <Image
             src="/images/about-max.webp"
@@ -76,16 +80,16 @@ export function AboutSection() {
 
       {/* Right Column: Info */}
       <div className="about-info flex flex-col items-center md:items-start text-center md:text-left z-10">
-        <p className="about-label uppercase tracking-[0.2em] font-medium text-muted-foreground mb-2 text-fluid-eyebrow" style={{ opacity: 0, visibility: 'hidden' }}>
+        <p className="about-label uppercase tracking-[0.2em] font-medium text-muted-foreground mb-2 text-fluid-eyebrow" data-reveal-item="">
           {t("section.about.label")}
         </p>
 
-        <h2 className="about-title md:flex md:gap-4 font-serif font-black uppercase text-fluid-section leading-[0.9] tracking-tighter text-foreground mb-4 md:mb-6" style={{ opacity: 0, visibility: 'hidden' }}>
+        <h2 className="about-title md:flex md:gap-4 font-serif font-black uppercase text-fluid-section leading-[0.9] tracking-tighter text-foreground mb-4 md:mb-6" data-reveal-item="">
           <span>{t("section.about.title.first")}</span>
           <span className="text-purple-accent"> {t("section.about.title.second")}</span>
         </h2>
 
-        <div className="debug-l3 px-4 sm:px-16 md:px-0 about-description text-fluid-body leading-relaxed text-content max-w-[48ch] space-y-4" style={{ opacity: 0, visibility: 'hidden' }}>
+        <div className="debug-l3 px-4 sm:px-16 md:px-0 about-description text-fluid-body leading-relaxed text-content max-w-[48ch] space-y-4" data-reveal-item="">
           <div className="debug-test">
             <p>{t("section.about.paragraph1")}</p>
             <p>{t("section.about.paragraph2")}</p>

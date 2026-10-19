@@ -370,6 +370,16 @@ body {
 
 [data-reveal="on"] [data-reveal-item="shown"] {
   opacity: 1;
+}
+
+/* The fade lives on its own class, NOT on the shown state.
+   Hero and About also carry data-reveal-item so the gate can hide them before
+   the first paint, but their opacity is written frame by frame by GSAP. A
+   transition on those nodes would damp every GSAP write, and the 2s safety net
+   marks them shown in the middle of the timeline, which would start the
+   damping halfway through the entrance. Only components/reveal.tsx renders
+   this class. */
+.reveal-fade {
   transition: opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1);
   transition-delay: var(--reveal-delay, 0s);
 }

@@ -17,6 +17,10 @@ import { useEffect, useRef, type ReactNode } from "react";
  * The node renders `data-reveal-item` on the SERVER on purpose: adding it in the
  * effect would paint the content visible first, hide it, and reveal it again.
  *
+ * The fade itself is the `reveal-fade` class, not the `shown` state: hero and
+ * about are gate items too, but GSAP writes their opacity frame by frame, and a
+ * transition on the shown state would damp those writes.
+ *
  * Observers are shared per profile (rootMargin + threshold), not one per node.
  * The intersection work is one attribute write plus `unobserve`; no React state,
  * no re-render, no animation loop.
@@ -115,7 +119,11 @@ export function Reveal({
   }, [delay, delayEnter, earlyOnMobile]);
 
   return (
-    <div ref={ref} data-reveal-item="" className={className}>
+    <div
+      ref={ref}
+      data-reveal-item=""
+      className={className ? `reveal-fade ${className}` : "reveal-fade"}
+    >
       {children}
     </div>
   );

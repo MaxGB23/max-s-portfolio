@@ -108,6 +108,12 @@ haciendo exactamente la misma animación.
    desplazamientos <= 24px sí; parallax, zoom, giros o scroll-jacking tendrían que
    respetar la preferencia. Efecto: el gate no consulta la preferencia y se cae el
    early-return de GSAP que iba en WU3.
+8. **La transicion del fade vive en la clase `reveal-fade`, no en el estado `shown`.**
+   Hero y about también llevan `data-reveal-item` (para que el gate los oculte antes del
+   primer paint), pero su opacidad la escribe GSAP frame a frame. Con la transición en
+   `[data-reveal-item="shown"]`, la red de seguridad de 2s caería en mitad del timeline de
+   hero y empezaría a amortiguar cada escritura de GSAP. Solo `components/reveal.tsx`
+   renderiza la clase.
 
 ## Diseño del primitivo
 `components/reveal.tsx`
@@ -129,9 +135,9 @@ haciendo exactamente la misma animación.
 - [x] T4 `all-projects.tsx` + `featured-projects.tsx` + `footer.tsx` +
       `motion-primitives.tsx` — migrar 5 nodos y borrar el módulo.
 - [x] T5 Verificar WU2 y commit de work unit.
-- [ ] T6 `hero-section.tsx` + `about-section.tsx` — fuera los 12 estilos inline y
+- [x] T6 `hero-section.tsx` + `about-section.tsx` — fuera los 12 estilos inline y
       `data-reveal-item`.
-- [ ] T7 Verificar WU3 y commit de work unit.
+- [x] T7 Verificar WU3 y commit de work unit.
 - [ ] T8 `navbar.tsx` + `globals.css` — `initial={false}`, keyframe fade-only, deadband
       y umbral.
 - [ ] T9 Verificar WU4 y commit de work unit.
@@ -143,7 +149,8 @@ haciendo exactamente la misma animación.
 - No queda ningún `style="opacity:0"` ni `visibility:hidden` inline en hero, about,
   navbar, all-projects, featured ni footer del HTML servido.
 - El HTML servido trae `class="dark"` en `<html>` y **no** trae el script de next-themes.
-- El script del gate aparece en el `<head>` del HTML servido, inline, antes del `<body>`.
+- El script del gate aparece en el HTML servido, inline, dentro del `<body>` y antes de
+  `<main>`.
 - `data-reveal-item` está presente en el HTML del servidor en los 5 nodos migrados.
 - Sin JS: navbar, hero, about, featured, all-projects y footer visibles, en oscuro.
 - Con JS: la coreografía es indistinguible de `main` (desktop y mobile).

@@ -123,6 +123,16 @@ Reglas que no se pueden romper:
   async `app-bootstrap`, que puede llegar despues del primer paint.
 - Las reglas del gate son CSS sin capa (`@layer`), para que ganen a las
   utilidades de Tailwind sin `!important`.
+- La transicion del fade va en la clase `.reveal-fade`, no en el estado
+  `[data-reveal-item="shown"]`. Hero y About tambien son items del gate (para
+  que los oculte antes del primer paint), pero su opacidad la escribe GSAP
+  frame a frame: con la transicion en el estado `shown`, la red de seguridad de
+  2s entraria en mitad del timeline de hero y amortiguaria cada escritura de
+  GSAP. Solo `components/reveal.tsx` renderiza esa clase.
+- Hero y About llevan `data-reveal-item` pero NO los observa `Reveal`: el gate
+  solo aporta el estado oculto antes del primer paint, la entrada la sigue
+  dirigiendo GSAP. Para ellos la red de seguridad es el unico camino a `shown`,
+  y su unico efecto es retirar la regla de opacidad 0 del gate.
 
 ## Politica de prefers-reduced-motion
 
@@ -180,9 +190,14 @@ wash con anillo que se repite en cada click.
    inyectaba un script.
 4. **Politica de reduced motion:** explicitada en "Politica de
    prefers-reduced-motion" y aplicada al gate y a `Reveal`.
+5. **Hero y About:** fuera los 12 estilos inline de estado oculto
+   (`opacity:0; visibility:hidden`) y `data-reveal-item` en su lugar. El estado
+   oculto antes del primer paint lo aporta el gate y GSAP sigue dirigiendo la
+   entrada. Efecto colateral buscado: esos nodos vuelven al arbol de
+   accesibilidad. La transicion del fade se mueve a `.reveal-fade` (ver "Gate de
+   reveal") para no amortiguar las escrituras de GSAP.
 
-Pendiente en este mismo track: hero y about (12 estilos inline) y la entrada
-del navbar.
+Pendiente en este mismo track: la entrada del navbar.
 
 ## Deuda unica
 
@@ -198,7 +213,7 @@ del navbar.
 - **FOUC con ancla:** carga fria con `/#precios` o `/#contacto` -> el SSR pinta la
   seccion visible, GSAP aplica el estado "from" (opacity:0) al crearse el tween y
   la vuelve a animar: doble render visible. Cosmetico, solo con ancla, bajo trafico.
-  El gate CSS ("Gate de reveal") es la idea "hidden state en CSS" que este punto
-  proponia, pero hoy solo cubre las secciones con `Reveal`; en las de GSAP (About,
-  Pricing, Contact) el estado oculto lo sigue aplicando el tween en runtime, asi
-  que el FOUC con ancla SIGUE ABIERTO para ellas.
+  El gate CSS ("Gate de reveal") resolvio este punto para las secciones que
+  llevan `data-reveal-item` (About, AllProjects, Featured, Footer); en Pricing y
+  Contact el estado oculto lo sigue aplicando el tween en runtime, asi que el
+  FOUC con ancla SIGUE ABIERTO para ellas.
