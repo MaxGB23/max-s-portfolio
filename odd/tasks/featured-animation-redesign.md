@@ -1,5 +1,13 @@
 # Feature: Featured Section Animation Redesign
 
+> **Note (2026-10-19):** the `FadeIn` primitive this document refers to no
+> longer exists — it was deleted with `components/motion-primitives.tsx` in the
+> `css-first-reveal` track. The Featured heading is now `Reveal`
+> (IntersectionObserver + CSS transition) and the without-JS release uses
+> `featured-one-slide`. For the live contract see `docs/design/components.md`
+> section 4.4 and `docs/design/section-animations.md`; everything else here is
+> kept as the decision and QA record of that moment.
+
 ## Objective
 Replace the GSAP pin-based stacking animation with a scroll-reactive animation that preserves the design system's rhythm, works predictably across all viewports, and maintains premium editorial feel.
 

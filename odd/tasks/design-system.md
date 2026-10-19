@@ -1,5 +1,7 @@
 # Feature: Design system phase 2 — align code with identity README (design-system)
 
+> **Nota (2026-10-19):** la restricción de abajo ("`FadeIn`/`FadeInStagger`/`FadeInItem` se CONSERVAN") era válida cuando se ejecutó esta feature. El track `css-first-reveal` borró `components/motion-primitives.tsx` completo: las tres primitivas ya no existen y no se reintroducen. Lo vigente está en `docs/design/components.md` sección 5 y en `docs/design/iteration-guide.md` (no reintroducir `FadeIn`).
+
 ## Objective
 Alinear el código y el canon con la identidad declarada en `docs/design/README.md` (Fase 1, commit `1427c7b`): eliminar código muerto verificado, cerrar deudas tipográficas reales y actualizar `typography-families.md`/`buttons.md` para que el canon deje de declarar deuda ya resuelta. No introduce nuevas decisiones de diseño ni tokens — solo ejecuta lo ya decidido.
 

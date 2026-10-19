@@ -174,6 +174,12 @@ Reglas que no se pueden romper:
   hidratacion revienta, lo pendiente queda oculto — la misma propiedad que
   tenia el codigo anterior (`whileInView` de framer tampoco dispara sin
   hidratacion).
+- El script se inyecta en el LAYOUT, asi que la red se arma en TODAS las
+  paginas; solo la cancela `components/reveal.tsx`. En una pagina que no lo
+  importa (detalle de proyecto) dispara a los 2s sin nada que revelar: hoy es
+  inerte porque los unicos `data-reveal-item` estan en la home. Si alguna vez se
+  anaden items fuera de la home, esa pagina tiene que importar `Reveal` (o
+  cancelar `window.__revealNet`), o la red los mostrara a los 2s sin animacion.
 
 ## Politica de prefers-reduced-motion
 

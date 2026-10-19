@@ -388,6 +388,8 @@ Sin merge, sin push. Nada de este track toca `main` todavía.
 | `1097457` | `refactor(navbar)`: entrada CSS y deadband direccional del hide-on-scroll |
 | `2d417cd` | `docs(rfc)`: STATUS, §11 y §6 del doc de jank |
 | `bc704d5` | `docs(design)`: canon de componentes, botones e iteration-guide |
+| `6b55773` | `fix(reveal)`: red de seguridad acotada (la cancela el bundle), featured sin JS y techo del párrafo del hero |
+| `592382c` | `fix(project-detail)`: el control Volver pasa a enlace real |
 
 Tres desvíos respecto a lo aprobado:
 
@@ -443,3 +445,33 @@ hero/about.
 usuario no la sustituye**: el tick que percibió "mucho menor" se midió con la
 entrada ya disparada por la red de seguridad, es decir sin la animación. Hay que
 repetir las pasadas con el comportamiento corregido.
+
+## 12. Segunda ronda de testeo (2026-10-19): detalle de proyecto sin JS
+
+Este RFC es de la home; lo que sigue es de OTRA superficie, y se registra aquí
+porque salió de la misma ronda de validación y porque toca el mismo criterio
+(qué debe seguir funcionando cuando el JS no corre).
+
+Con JS apagado, `/proyectos/[id]` no cambia de vista (switcher de tabs muerto),
+no abre el lightbox y el control Volver no hacía nada.
+
+Diferencia de umbral respecto a la home: la home era una **página en blanco**
+(defecto objetivo). El detalle es una página **degradada pero completa** — las
+dos vistas viajan en el HTML desde la decisión de 2026-10-13, así que crawlers y
+print ya tenían el contenido. Sin JS solo se pierde el *cambio* de vista y el
+lightbox.
+
+Decisión: se arregla UNO, el que era un callejón real, y el resto se acepta.
+
+1. **Volver pasa a ser un enlace real.** La página no renderiza navbar (solo la
+   barra de progreso), así que ese control era el único camino de vuelta dentro
+   del sitio. Ahora es un `<a href="/">` dentro de `Button asChild` con
+   `onClick` que hace `preventDefault()` y ejecuta el handler de siempre: con JS
+   el comportamiento es idéntico y el `href` nunca se sigue.
+2. **Tabs y lightbox no se tocan.** Deuda ACEPTADA, no pendiente, declarada en
+   `docs/design/components.md` §13.7. Reimplementar los tabs con `:target` o con
+   radios CSS, o la galería como página aparte, queda DESCARTADO: sería una
+   segunda UI para un público que no es el del producto, duplicaría la fuente de
+   verdad del estado activo y arriesga la experiencia con JS, que es la que
+   importa. Criterio del dueño: sin sobreingeniería, navegar sin JS es
+   deliberado y rarísimo.
