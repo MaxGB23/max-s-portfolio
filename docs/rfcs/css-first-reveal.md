@@ -1,12 +1,18 @@
 # RFC: Reveal CSS-first — entradas fuera de framer-motion + contenido visible sin JS
 
-> **STATUS: PROPUESTO (revisión 2). Pendiente de aprobación. No implementado.**
+> **STATUS: APROBADO e IMPLEMENTADO (revisión 2) en la rama
+> `feat/css-first-reveal`.** Sin merge hasta la validación en vivo del usuario
+> (pase visual desktop y mobile, con y sin JS). No se afirma mejora de
+> rendimiento hasta que exista la pasada de perfil de §8.
 >
 > Revisión 2 corrige cuatro errores de la revisión 1: la premisa sobre
 > crawlers/LLMs (§1), el alcance real de AllProjects (§3.2), la ubicación de la
 > red de seguridad (§4.1) y el alcance de las work units (§5). Sustituye la
 > conclusión de `docs/issues/all-projects-entry-jank.md` §6, que descartó la vía
 > "solo-CSS" con un argumento que solo cubría la mitad del cambio.
+>
+> Durante la implementación hubo tres desvíos respecto a lo aprobado; están
+> registrados en §11 y reflejados en §4.1 y §5.
 
 ---
 
@@ -129,26 +135,29 @@ El estado por defecto del HTML es **visible**. El ocultamiento es una capa que
 solo existe si JS arrancó correctamente. Es la inversión exacta del patrón
 actual (`initial="hidden"` en el markup).
 
-**a) Script inline de arranque** (en `<head>`, síncrono, ~5 líneas). Contiene
-**el gate y la red de seguridad en el mismo bloque**: si la red viviera en el
-bundle, moriría justo en el fallo que debe cubrir (bundle que no carga).
+**a) Script inline de arranque** (en el `<body>`, antes de cualquier nodo de
+contenido, síncrono, ~8 líneas; el porqué de `<body>` y no `<head>` está en
+§11). Contiene **el gate y la red de seguridad en el mismo bloque**: si la red
+viviera en el bundle, moriría justo en el fallo que debe cubrir (bundle que no
+carga).
 
 ```html
 <script>
-  if ('IntersectionObserver' in window &&
-      !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  if ('IntersectionObserver' in window) {
     document.documentElement.dataset.reveal = 'on';
     setTimeout(function () {
-      document.querySelectorAll('[data-reveal-item]:not([data-reveal-item="shown"])')
-        .forEach(function (el) { el.dataset.revealItem = 'shown'; });
+      var pending = document.querySelectorAll('[data-reveal-item]:not([data-reveal-item="shown"])');
+      for (var i = 0; i < pending.length; i++) { pending[i].dataset.revealItem = 'shown'; }
     }, 2000);
   }
 </script>
 ```
 
 - Corre antes del primer paint: no hay flash de visible-a-oculto.
-- Una sola condición decide todo: sin IO o con movimiento reducido, la marca
-  nunca se pone y la página se muestra completa y estática.
+- Una sola condición decide todo: sin IO la marca nunca se pone y la página se
+  muestra completa y estática. **No hay segunda condición**: la versión
+  aprobada consultaba además `prefers-reduced-motion`, y se quitó durante la
+  implementación (§11).
 - La red de seguridad no depende del bundle, de React ni de GSAP.
 
 **b) CSS del gate** (`app/globals.css`):
@@ -160,13 +169,23 @@ bundle, moriría justo en el fallo que debe cubrir (bundle que no carga).
 
 [data-reveal='on'] [data-reveal-item='shown'] {
   opacity: 1;
+}
+
+.reveal-fade {
   transition: opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1);
   transition-delay: var(--reveal-delay, 0s);
 }
 ```
 
-No hace falta `@media (prefers-reduced-motion)` aquí: si el usuario reduce
-movimiento, el gate nunca se activa. Una sola fuente de verdad.
+La transición va en la clase `.reveal-fade` (que solo renderiza `Reveal`) y no
+en el estado `shown`, porque hero y about también son items del gate y su
+opacidad la escribe GSAP frame a frame: con la transición en `shown`, la red de
+seguridad de 2s entraría en mitad del timeline y amortiguaría cada escritura de
+GSAP (§11).
+
+No hace falta `@media (prefers-reduced-motion)` aquí: las entradas corren
+siempre, por decisión del dueño del producto (§11, y la política en
+`docs/design/section-animations.md`). Una sola fuente de verdad.
 
 **c) Atributo en el markup del servidor.** `data-reveal-item` debe renderizarse
 **en el SSR**, no añadirse en un efecto. Si se añade después de hidratar, el
@@ -239,15 +258,14 @@ una WU2 posterior tendría que repetir la infraestructura. Se unifican.
 
 ### WU1 — Reveal CSS-first (3 commits, un solo cambio coherente)
 
-1. **Infraestructura:** script inline en `<head>` (gate + red de seguridad),
-   CSS del gate, `components/reveal.tsx`, `class="dark"` en el servidor y
-   eliminación de `ThemeProvider`.
+1. **Infraestructura:** script inline (gate + red de seguridad), CSS del gate,
+   `components/reveal.tsx`, `class="dark"` en el servidor y eliminación de
+   `ThemeProvider`. El script acabó en el `<body>`, no en el `<head>`: §11.
 2. **Migración de entradas:** los 5 `FadeIn` a `Reveal`; borrado de las
    primitivas stagger muertas.
 3. **Hero, about y navbar:** quitar los 12 `style` inline; `initial={false}` en
-   el header + keyframe de entrada; early-return de GSAP cuando
-   `prefers-reduced-motion: reduce` (si el gate no se activa pero GSAP hace
-   `autoAlpha:0`, habría hide-then-show).
+   el header + keyframe de entrada. El early-return de GSAP con
+   `prefers-reduced-motion` que figuraba aquí se descartó: §11.
 
 **Verificación:** `tsc --noEmit`, build, y `curl` del HTML comprobando que (a)
 no queda ningún `style="opacity:0"` de entrada, (b) el HTML no trae el script de
@@ -275,7 +293,7 @@ a11y, y se actualiza el doc de jank con el dato nuevo.
   reintroduce el problema.
 - **No se elimina framer-motion.** Menú mobile, gestos y hide-on-scroll del
   navbar son trabajo real.
-- **No se añade `<noscript>`.** Si el script del `<head>` no corre, el gate
+- **No se añade `<noscript>`.** Si el script del gate no corre, el gate
   nunca se activa y no hay nada que rescatar. Sería un segundo mecanismo para
   un fallo que el primero ya no puede producir.
 - **No se añaden skeletons, blur-up ni render diferido.**
@@ -289,11 +307,11 @@ a11y, y se actualiza el doc de jank con el dato nuevo.
 | Riesgo | Prob. | Impacto | Mitigación |
 |---|---|---|---|
 | `data-reveal-item` ausente en el SSR → flash visible→oculto | Media | Medio | Renderizarlo en el markup, no en un efecto (§4.1c) |
-| Flash visible→oculto por orden de scripts | Baja | Medio | Script síncrono en `<head>`, antes del primer paint |
+| Flash visible→oculto por orden de scripts | Baja | Medio | Script crudo síncrono en el `<body>`, antes del contenido (§11.2); `next/script` inline NO sirve |
 | Hydration mismatch por `data-reveal` en `<html>` | Baja | Alto | `suppressHydrationWarning` ya presente; el atributo lo pone el script, no React |
 | IO no dispara y el contenido queda oculto | Baja | Crítico | Red de seguridad de 2 s **en el mismo script** (§4.1a) |
 | GSAP no carga y hero/about quedan ocultos | Baja | Crítico | Misma red de seguridad; `autoAlpha:0` ya no está inline |
-| Reduced motion: gate off pero GSAP oculta y revela | Media | Medio | Early-return de GSAP con `prefers-reduced-motion` (§5, commit 3) |
+| Reduced motion: gate off pero GSAP oculta y revela | Media | Medio | Descartado por decisión del dueño del producto: las entradas corren siempre (§11.1) |
 | La coreografía cambia de ritmo | Media | Bajo | Mismas constantes de `rootMargin`, duración y easing; comparar lado a lado |
 | CSP estricta futura bloquea el inline script | Baja | Medio | Requiere `nonce`; anotado como deuda si se añade CSP |
 | WU2 no mejora el tick | **Media** | Bajo | Aceptado: WU1 se justifica solo |
@@ -341,10 +359,63 @@ siendo correcto para lo que midió.
 
 ---
 
-## 10. Decisión pendiente
+## 10. Decisión (resuelta 2026-10-19)
 
-- [ ] ¿Se aprueba WU1 (Reveal CSS-first + home visible sin JS)? — recomendado.
-- [ ] ¿Se ejecuta el experimento de 5 minutos de §5 para decidir si WU2 existe?
-      — recomendado antes de escribir la migración.
-- [ ] ¿Se reescribe §6 de `docs/issues/all-projects-entry-jank.md` para apuntar
+- [x] ¿Se aprueba WU1 (Reveal CSS-first + home visible sin JS)? — **sí.**
+- [x] ¿Se ejecuta el experimento de 5 minutos de §5 para decidir si WU2 existe?
+      — **no se ejecutó, y dejó de ser un gate.** La migración era necesaria para
+      el baseline (la robustez y la a11y no dependen de la medición), así que el
+      experimento solo decide si se **afirma** mejora de rendimiento. Hoy no se
+      afirma: la medición sigue pendiente.
+- [x] ¿Se reescribe §6 de `docs/issues/all-projects-entry-jank.md` para apuntar
       a este RFC y corregir el argumento del heading y el número de nodos?
+      — **hecho.**
+
+---
+
+## 11. Estado de implementación y desvíos (2026-10-19)
+
+Rama `feat/css-first-reveal`, worktree `M:\worktrees\maxgb23-portfolio\css-first-reveal`.
+Sin merge, sin push. Nada de este track toca `main` todavía.
+
+| Commit | Contenido |
+|---|---|
+| `46ff7e5` | `docs(rfc)`: revisión 2 de este documento |
+| `ba27e10` | `feat(reveal)`: gate CSS + script inline + `class="dark"`, fuera next-themes, primitivo `Reveal` |
+| `db64551` | `refactor(reveal)`: 5 nodos de AllProjects, Featured (heading) y Footer migrados; borrado `motion-primitives.tsx` |
+| `1de0797` | `refactor(reveal)`: las entradas corren siempre (política de reduced motion) |
+| `6d797d7` | `refactor(reveal)`: hero y about con `data-reveal-item` en vez de los 12 estilos inline |
+| `1097457` | `refactor(navbar)`: entrada CSS y deadband direccional del hide-on-scroll |
+
+Tres desvíos respecto a lo aprobado:
+
+1. **`prefers-reduced-motion` deja de consultarse.** Decisión del dueño del
+   producto, no una omisión: la preferencia viene activada por defecto en
+   bastantes equipos Windows (por rendimiento, no por vestibular) y matar la
+   entrada empobrece la página. Efectos: el gate pierde la segunda condición, se
+   cae el early-return de GSAP de §5, y `.nav-arrive` pierde su
+   `@media (no-preference)`. Frontera y excepción documentadas en
+   `docs/design/section-animations.md` (sección "Politica de
+   prefers-reduced-motion"): fades y desplazamientos <= 24px sí; parallax, zoom,
+   giros o scroll-jacking tendrían que respetar la preferencia.
+2. **El script del gate va en el `<body>`, no en el `<head>`.** Verificado en el
+   HTML compilado: un `next/script` inline con `strategy="beforeInteractive"` no
+   se ejecuta inline — Next lo serializa en `self.__next_s` y lo corre el chunk
+   asíncrono `app-bootstrap`, que puede llegar después del primer paint y
+   producir el flash visible -> oculto. Un `<script>` crudo al principio del
+   `<body>` corre durante el parseo, antes de que exista cualquier nodo de
+   contenido.
+3. **La transición del fade se separó del estado `shown`** y vive en la clase
+   `.reveal-fade`, que solo renderiza `Reveal`. Motivo: hero y about también son
+   items del gate (para el estado oculto pre-paint) pero su opacidad la escribe
+   GSAP frame a frame; con la transición en `[data-reveal-item="shown"]`, la red
+   de seguridad de 2s caería en mitad del timeline de hero y amortiguaría cada
+   escritura de GSAP.
+
+Resultados del canal de verificación del agente (el pase visual es del usuario):
+`pnpm typecheck` y `pnpm build` en exit 0; el HTML servido en `next start` trae
+0 `opacity:0` inline y 0 `visibility:hidden` inline en la home, el script del
+gate inline antes de `<main>`, `class="dark"` en `<html>` y ningún script de
+next-themes; el CSS compilado trae las reglas del gate sin capa y el keyframe
+`nav-arrive`. `data-reveal-item` en el servidor: 5 nodos de `Reveal` + 12 de
+hero/about.

@@ -55,6 +55,8 @@ haciendo exactamente la misma animación.
 | `docs/rfcs/css-first-reveal.md` | STATUS a implementado al cerrar |
 | `docs/issues/all-projects-entry-jank.md` | §6 reescrito: el argumento del heading y el número de nodos |
 | `docs/design/section-animations.md` | canon sincronizado (sin acentos) |
+| `docs/design/components.md` | canon sincronizado: seccion 5 (Reveal), seccion 7 (tema), gotchas, deuda 13.2 |
+| `docs/design/buttons.md` + `docs/design/iteration-guide.md` | menciones de `FadeIn` al dia |
 
 **OUT (explícito)**
 - NO migrar `AnimatePresence` del menú mobile ni el hide/show por scroll del navbar a CSS.
@@ -141,8 +143,9 @@ haciendo exactamente la misma animación.
 - [x] T8 `navbar.tsx` + `globals.css` — `initial={false}`, keyframe fade-only, deadband
       y umbral.
 - [x] T9 Verificar WU4 y commit de work unit.
-- [ ] T10 Docs + medición — §6 del doc de jank, canon `section-animations.md`, STATUS del
-      RFC, y registrar la medición del usuario si la hay.
+- [x] T10 Docs + medición — §6 del doc de jank, canon `section-animations.md`,
+      canon `components.md` (+ botones e iteration-guide), STATUS del RFC, y
+      registrar la medición del usuario si la hay (no la hay todavía).
 
 ## Acceptance criteria
 - `grep FadeIn` en `components/` = 0 resultados; `motion-primitives.tsx` no existe.
