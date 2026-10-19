@@ -93,13 +93,14 @@ pagina, `scripts/section-spacing.mjs` compensa el padding propio de
 
 | Gate | Valor | Consumido por |
 |---|---|---|
-| `FEATURED_STACK_GATE` | `(min-width: 1024px) and (min-height: 768px) and (orientation: landscape)` | `featured-projects.tsx` (pin GSAP) y `use-lenis.tsx` (`PIN_MEDIA` del ScrollRestorer) |
 | Featured gap LARGE | `>=1280px` de ancho y `>=900px` de alto | `FEATURED_GAP_LG` |
 | Hero pt alto | `lg` + `min-height:700px` | `lg:[@media(min-height:700px)]:pt-34` |
 | Cap titulo featured | `max-height:800px` en `lg` | `lg:[@media(max-height:800px)]:text-4xl` |
 
-Fuente unica del gate de featured: `lib/breakpoints.ts`. No duplicar el string
-en otro archivo.
+`FEATURED_STACK_GATE` se retiro con el pin del featured (2026-10; ver 4.4): la
+seccion fluye en documento normal y ningun componente consume un gate de pin.
+El simbolo sobrevive como stub `@deprecated` en `lib/breakpoints.ts` para no
+romper imports viejos; sin consumidores, se puede borrar.
 
 ## 4. Geometria por componente
 
@@ -231,10 +232,12 @@ en otro archivo.
 ### 4.4 Stack featured (`featured-projects.tsx` + `featured-project-panel.tsx`)
 
 - Titulo standalone (mobile, `Section debug=none`) + seccion `#proyectos`
-  (desktop, pin GSAP dentro del `FEATURED_STACK_GATE`).
-- El panel (article `featured-panel`) es dueño de su altura dentro del pin:
-  NO usa `landscape:lg:min-h-screen` (eliminado en `352ab13`); el pin lo
-  mueve, no lo estira.
+  (desktop). Sin pin y deliberadamente GSAP-free: el stack vive en el flujo del
+  documento (`featured-projects.tsx`) y la animacion de los paneles es el
+  one-slide rule (ver `section-animations.md`).
+- El panel (article `featured-panel`) es dueño de su altura en el flujo: NO usa
+  `landscape:lg:min-h-screen` (eliminado en `352ab13`); nada lo estira ni lo
+  desplaza.
 - Gaps titulo<->card: `FEATURED_GAP` + `FEATURED_GAP_LG` interpolados
   (`gap-12 [@media(min-width:1280px)_and_(min-height:900px)]:gap-30`).
 - Gap titulo -> primera card de la seccion `#proyectos` (desktop):
@@ -296,9 +299,12 @@ en otro archivo.
   `h2` de la seccion `#proyectos` (cambio de `h2` a `h3` en `3f8191b`); el
   estilo viene de clases explicitas, no del selector de etiqueta.
   `leading-[1.05]` + crop `-mb-2 md:mb-0` (ver la columna de texto).
-- Stacking por pin GSAP con `matchMedia(FEATURED_STACK_GATE)`; comentario en
-  el codigo advierte: NO agregar `overflow-y-auto` al panel (rompe el pin y
-  crea scrollbars fantasma).
+- Visibilidad de cada panel por geometria (one-slide rule), no por pin: el
+  estado se lee del `getBoundingClientRect()` en cada frame de scroll. Gotcha
+  vigente: NO agregar `overflow-y-auto` al panel ni al stack, porque crea un
+  scroll container anidado dentro de una pagina con autoridad de scroll propia
+  (Lenis) y el motivo historico (rompia el pin de GSAP, ya retirado) no es el
+  unico riesgo.
 
 ### 4.5 Todos los proyectos (`all-projects.tsx`)
 
@@ -595,9 +601,9 @@ margen vertical. Badge `px-3.5 py-1 text-xs 2xl:text-sm`: el `py-1` es
   (replaceState no lo actualiza, ver seccion 9).
 - `useScrollToTop`: duracion 2s.
 - Handoff home -> detalle: `saveHomeScroll(scrollY)` en el click de las cards;
-  `takeHomeScroll`/`ScrollRestorer` en el retorno; `PIN_MEDIA` =
-  `FEATURED_STACK_GATE` (no pinear en mobile); watchdog del restorer:
-  intervalo 60ms, max 20 runs (~1.2s de deadline).
+  `takeHomeScroll`/`ScrollRestorer` en el retorno. Sin pin no hay pin-spacer que
+  esperar: el restorer recalcula el limite de Lenis (`lenis.resize()`) y hace
+  `scrollTo(target, { immediate: true })`.
 - **Gate de 768px: decision consciente, NO tocar.** `syncTouch = false` es el
   default de Lenis y el codigo no lo overridea, asi que en touch Lenis es
   pasivo: `onVirtualScroll` retorna temprano (lenis.mjs:649-655, sin
@@ -638,7 +644,7 @@ margen vertical. Badge `px-3.5 py-1 text-xs 2xl:text-sm`: el `py-1` es
 ## 10. Debug overlay
 
 - Convencion de profundidad: se cuenta desde el ancestro marcado mas externo.
-  Los wrappers sin marcar (pin GSAP, wrappers de animacion, `motion.div`) NO
+  Los wrappers sin marcar (wrappers de animacion, `motion.div`) NO
   cuentan, y varias raices hermanas arrancan cada una en l1. Regla: ningun
   marker puede tener nivel <= el de un ancestro marcado.
 - `Section.debug`: `default` (l1 outer / l2 inner) o `none` (sin markers). El
@@ -663,7 +669,8 @@ margen vertical. Badge `px-3.5 py-1 text-xs 2xl:text-sm`: el `py-1` es
 
 - `cn()` necesita el registro de tokens fluidos en `lib/utils.ts` (ver
   typography-families.md seccion 8).
-- NO agregar `overflow-y-auto` al stack de featured (rompe el pin GSAP).
+- NO agregar `overflow-y-auto` al stack de featured: crea un scroll container
+  anidado (el motivo original era el pin de GSAP, retirado el 2026-10).
 - `announceArrival` usa `replaceState` + clase, NO `:target` (no confiable
   con replaceState).
 - `copyEmail` con fallback mailto: si un futuro cambio de API lo rompe,

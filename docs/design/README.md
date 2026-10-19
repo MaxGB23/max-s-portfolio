@@ -56,7 +56,7 @@ fuentes. Regla del canon: cada tema lista la suya, una sola vez.
 | Que valor tiene X color? | `tokens.md` 2 |
 | Que token fluido para un titulo de card en grid? | `typography-families.md` 2 |
 | Cual es el gap entre hero y about? | `components.md` 2 (o `lib/rhythm.ts`) |
-| Por que el featured se apila en ciertas pantallas? | `components.md` 3 (`FEATURED_STACK_GATE`) |
+| Por que el featured se apila en ciertas pantallas? | `components.md` 4.4 (one-slide rule; sin pin) |
 | Que variante de Button para el CTA de pricing? | `buttons.md` 8 |
 | Puedo usar text-white? | `iteration-guide.md` 5 |
 | Como se activa el debug de layout? | `components.md` 10 (o skill `layout-debug-canon`) |

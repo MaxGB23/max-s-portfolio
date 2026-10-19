@@ -9,7 +9,7 @@ and typography as the product, not the decoration.
 A one-page portfolio (plus project detail pages) built to feel engineered
 rather than templated:
 
-- A GSAP-pinned featured stack that choreographs projects as you scroll
+- A scroll-reactive featured stack that choreographs projects as you scroll
 - A WebGL aurora (ogl + GLSL) behind the hero, dark-only by design
 - Lenis smooth scroll, with a tested scroll handoff between home and detail
 - A typographic system of three families and thirteen fluid type tokens
@@ -22,8 +22,8 @@ with lightbox galleries and per-project metrics.
 
 - **Next.js 16 + React 19 + TypeScript** - App Router, strict mode, typed end to end
 - **Tailwind CSS v4** - CSS-first theme via `@theme inline`; design tokens live in `app/globals.css`
-- **GSAP + ScrollTrigger** - scroll choreography: pinned featured stack, section timelines
-- **framer-motion** - entrance and stagger primitives
+- **GSAP + ScrollTrigger** - scroll choreography: section timelines and the scroll-reactive featured stack
+- **framer-motion** - interaction only, no entrances: navbar hide-on-scroll, mobile menu, hovers
 - **Lenis** - smooth scroll on desktop (native scroll elsewhere)
 - **ogl** - WebGL/GLSL aurora in the hero (dark only, hero only)
 - **shadcn/ui** - accessible primitives on Radix, styled by the local theme
@@ -31,8 +31,10 @@ with lightbox galleries and per-project metrics.
 ## Highlights
 
 - **Motion you own** - animation is authored, not pasted from a template:
-  the GSAP pin sits behind an explicit media gate, framer-motion handles
-  entrances, and the home <-> detail scroll handoff is a contract.
+  entrances are a CSS reveal driven by IntersectionObserver, so the home has no
+  hidden state baked into the server markup and reads without JS; the featured
+  stack advances by scroll instead of a pin, and the home <-> detail scroll
+  handoff is a contract.
 - **Design system as code and docs** - one purple accent, oklch tokens,
   type-led hierarchy (size and tracking, never opacity), thirteen fluid type
   tokens. The canon lives in `docs/design/` and is the source of truth.

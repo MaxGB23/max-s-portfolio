@@ -159,8 +159,9 @@ prescripcion:
    nuevo, justificalo en buttons.md.
 6. Motion: `Reveal` (CSS, IntersectionObserver + transicion de opacidad) para
    las entradas de seccion; framer-motion solo donde ya vive (menu mobile,
-   hovers, hide-on-scroll del navbar) y GSAP donde ya vive (hero, about, pin
-   featured, detalle, pricing). NO reintroducir `FadeIn`/`FadeInStagger` ni
+   hovers, hide-on-scroll del navbar) y GSAP donde ya vive (hero, about,
+   detalle, pricing). El stack del featured es geometria + CSS, sin GSAP ni
+   framer. NO reintroducir `FadeIn`/`FadeInStagger` ni
    revertir a `SlideIn`/`ScaleIn`.
 7. QA: `layout-debug-canon` (activar solo los canales que interesen y
    `debug-test` para una caja puntual) antes de pedir review.
@@ -178,7 +179,8 @@ prescripcion:
 - `overflow-x: clip` (no `hidden`): no crea scroll container y no rompe
   scrolls internos; no "mejorarlo" a hidden sin prueba.
 - `cn()` requiere el registro de tokens fluidos en `lib/utils.ts`.
-- El pin del featured NO debe recibir `overflow-y-auto`.
+- El stack del featured NO debe recibir `overflow-y-auto`: crea un scroll
+  container anidado (el motivo historico era el pin GSAP, retirado el 2026-10).
 - Snapshot: `docs/design/archive/2026-09-21-pre-designmd/` es un espejo
   byte-igual del canon anterior, CONGELADO y no canonico; la verifica
   `scripts/snapshot-check.mjs`.
