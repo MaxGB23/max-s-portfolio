@@ -386,6 +386,8 @@ Sin merge, sin push. Nada de este track toca `main` todavía.
 | `1de0797` | `refactor(reveal)`: las entradas corren siempre (política de reduced motion) |
 | `6d797d7` | `refactor(reveal)`: hero y about con `data-reveal-item` en vez de los 12 estilos inline |
 | `1097457` | `refactor(navbar)`: entrada CSS y deadband direccional del hide-on-scroll |
+| `2d417cd` | `docs(rfc)`: STATUS, §11 y §6 del doc de jank |
+| `bc704d5` | `docs(design)`: canon de componentes, botones e iteration-guide |
 
 Tres desvíos respecto a lo aprobado:
 
@@ -419,3 +421,25 @@ gate inline antes de `<main>`, `class="dark"` en `<html>` y ningún script de
 next-themes; el CSS compilado trae las reglas del gate sin capa y el keyframe
 `nav-arrive`. `data-reveal-item` en el servidor: 5 nodos de `Reveal` + 12 de
 hero/about.
+
+### Correcciones tras el primer testeo en vivo (2026-10-19)
+
+1. **La red de seguridad estaba matando las entradas de todo lo que está bajo el
+   pliegue.** Revelaba todo a los 2s, y un scroll natural desde la home llega
+   más tarde que eso: la sección llegaba ya visible y sin animación (síntoma
+   reportado: F5 con la sección a la vista sí anima; scroll natural desde
+   arriba, no). Ahora el bundle la cancela al evaluarse
+   (`window.__revealNet` desde `components/reveal.tsx`, en module scope), así
+   que solo cubre su caso real: que el bundle no llegue a ejecutarse.
+2. **Featured sin JS mostraba la sección vacía.** El estado oculto de los
+   paneles es estado de React, y el servidor lo renderiza oculto: sin JS los
+   paneles quedaban invisibles conservando su espacio. Se libera con
+   `featured-one-slide` + `html:not([data-reveal="on"])` en `app/globals.css`.
+3. **El párrafo del hero cambiaba de ancho sin JS**, porque su `max-width` sale
+   de medir el título en runtime. La clase trae ahora el mismo techo
+   (`md:max-w-[60ch]`).
+
+**La medición de rendimiento sigue sin existir, y la primera observación del
+usuario no la sustituye**: el tick que percibió "mucho menor" se midió con la
+entrada ya disparada por la red de seguridad, es decir sin la animación. Hay que
+repetir las pasadas con el comportamiento corregido.

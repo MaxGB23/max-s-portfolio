@@ -385,6 +385,25 @@ body {
 }
 
 /* ============================================================
+   One-slide featured panels without JS
+   ------------------------------------------------------------
+   The panels' hidden state is React state (`slide.visible`), so the
+   server renders them hidden and without JS the whole section stayed
+   invisible while keeping its space in flow. The gate attribute is
+   the liveness signal this rule needs: absent means the inline script
+   (and therefore the app) never ran, so the panels show as a static
+   stack with no one-slide logic. With JS the attribute is present and
+   the state machine keeps full control.
+
+   Unlayered on purpose, and using `translate` (not `transform`):
+   that is how Tailwind v4 emits `translate-y-*`.
+   ============================================================ */
+html:not([data-reveal="on"]) .featured-one-slide {
+  opacity: 1;
+  translate: none;
+}
+
+/* ============================================================
    Navbar entrance — fade-only, CSS-owned
    ------------------------------------------------------------
    The header's entrance used to be framer-motion's `initial`

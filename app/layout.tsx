@@ -79,8 +79,14 @@ async function getInitialLang(): Promise<Lang> {
  * failure it covers (a bundle that never loads). Without it the worst case is
  * "content never appears"; with it the worst case is "content appears without
  * animation", which is strictly better than what the site did before.
+ *
+ * The net covers ONLY that failure, so it is cancelled by the client bundle as
+ * soon as components/reveal.tsx is evaluated (it holds the id on
+ * `window.__revealNet`). A blanket "reveal everything at 2s" also strips the
+ * scroll entry from every section below the fold, because a natural scroll
+ * always happens after the 2s mark.
  */
-const REVEAL_GATE_SCRIPT = `if ('IntersectionObserver' in window) { document.documentElement.dataset.reveal = 'on'; setTimeout(function () { var pending = document.querySelectorAll('[data-reveal-item]:not([data-reveal-item="shown"])'); for (var i = 0; i < pending.length; i++) { pending[i].dataset.revealItem = 'shown'; } }, 2000); }`
+const REVEAL_GATE_SCRIPT = `if ('IntersectionObserver' in window) { document.documentElement.dataset.reveal = 'on'; window.__revealNet = setTimeout(function () { var pending = document.querySelectorAll('[data-reveal-item]:not([data-reveal-item="shown"])'); for (var i = 0; i < pending.length; i++) { pending[i].dataset.revealItem = 'shown'; } }, 2000); }`
 
 export default async function RootLayout({
   children,

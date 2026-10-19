@@ -186,11 +186,15 @@ export function FeaturedProjects() {
 
       {/* Panels — exactly one of panels 1..n engaged at a time; panel 0 is the
           sticky entry slide (exits only on advance). Opacity + rise via CSS,
-          flow untouched — rhythm safe. */}
+          flow untouched — rhythm safe.
+          `featured-one-slide` is the WITHOUT-JS release: the CSS rule tied to
+          the gate attribute (app/globals.css) shows the stack statically when
+          the gate never armed. Without it, the server-rendered "hidden" state
+          left the section invisible forever without JS. Do not remove it. */}
       {featuredProjects.map((project, index) => (
         <div
           key={project.id}
-          className={`transition-all duration-500 ease-out ${
+          className={`featured-one-slide transition-all duration-500 ease-out ${
             slide.visible[index] ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"
           }`}
         >

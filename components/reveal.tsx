@@ -26,6 +26,23 @@ import { useEffect, useRef, type ReactNode } from "react";
  * no re-render, no animation loop.
  */
 
+declare global {
+  interface Window {
+    /** Timeout id of the inline gate's safety net (app/layout.tsx). */
+    __revealNet?: number;
+  }
+}
+
+// The inline safety net only covers "the bundle never ran": if it fired while
+// the app is alive it would reveal every pending item at the 2s mark and strip
+// the scroll entry from every section below the fold (a natural scroll always
+// happens later than that). Cancel it as soon as this module is evaluated —
+// module scope, not an effect: on a slow hydration an effect would be too late.
+if (typeof window !== "undefined" && window.__revealNet !== undefined) {
+  clearTimeout(window.__revealNet);
+  window.__revealNet = undefined;
+}
+
 type RevealProps = {
   children: ReactNode;
   className?: string;

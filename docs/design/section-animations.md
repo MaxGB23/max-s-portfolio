@@ -57,6 +57,16 @@ normales. Geometric static fallback: if the whole `#proyectos` section fits the
 viewport, all panels + heading render visible with no one-slide animation;
 detection is geometric only (no devicePixelRatio/zoom).
 
+Sin JS los panels no pueden seguir ocultos: su estado inicial (`opacity-0
+translate-y-5`) viene del estado de React y el servidor lo renderiza asi, de
+modo que la seccion entera quedaba invisible conservando su espacio. Cada
+wrapper lleva la clase `featured-one-slide` y `app/globals.css` la libera con
+`html:not([data-reveal="on"]) .featured-one-slide { opacity: 1; translate: none }`
+(regla sin capa; en Tailwind v4 la subida es la propiedad `translate`, no
+`transform`). Con JS el atributo del gate esta presente y el state machine
+recupera el control. Sin JS la seccion degrada a un stack estatico, que es la
+forma honesta de mostrar los paneles sin la logica de geometria.
+
 ### AllProjects: Reveal
 
 AllProjects usa `Reveal delayEnter` para el heading y un unico `Reveal
@@ -107,6 +117,13 @@ Hero usa un GSAP timeline con stagger secuencial (portrait, badge, label,
 title, description, chips, cta, scroll). No usa scrollTrigger porque es la
 primera seccion y se anima on-load.
 
+El bloque de descripcion se alinea con el ancho real del titulo (`useTitleWidth`
++ `min(ancho, 60ch)` inline). El hook solo mide en md+ y en useLayoutEffect, asi
+que la clase trae el mismo techo que el tope del JS (`md:max-w-[60ch]`): sin JS
+el parrafo no se estira al ancho de la columna, y con JS el inline gana y el
+texto queda clavado al titulo. Sin el fallback, "sin JS" cambiaba el ancho del
+parrafo respecto al render con JS (visto en el primer testeo en vivo).
+
 ## Gate de reveal (CSS-first)
 
 Desde 2026-10-19 el contenido de la home es visible por defecto. El
@@ -115,7 +132,8 @@ ocultamiento es una capa que solo existe si el JS arranco bien:
 1. `app/layout.tsx` inyecta un `<script>` inline al principio del `<body>`
    (antes de cualquier nodo de contenido, asi que corre antes del primer
    paint). Si existe `IntersectionObserver`, pone `data-reveal="on"` en
-   `<html>` y programa una red de seguridad de 2s.
+   `<html>` y programa una red de seguridad de 2s (que el bundle cancela al
+   evaluarse; ver reglas abajo).
 2. `app/globals.css` oculta `[data-reveal-item]` solo bajo `[data-reveal="on"]`
    y solo hasta que el item lleva `data-reveal-item="shown"`.
 3. `components/reveal.tsx` observa, escribe `shown` y deja de observar. Un
@@ -146,6 +164,16 @@ Reglas que no se pueden romper:
   solo aporta el estado oculto antes del primer paint, la entrada la sigue
   dirigiendo GSAP. Para ellos la red de seguridad es el unico camino a `shown`,
   y su unico efecto es retirar la regla de opacidad 0 del gate.
+- La red de seguridad cubre UN fallo: que el bundle no llegue a ejecutarse. Por
+  eso el bundle la cancela en cuanto `components/reveal.tsx` se evalua (el
+  script inline deja el id del timeout en `window.__revealNet`). Una red global
+  de "revelar todo a los 2s" tambien le quita la entrada a todas las secciones
+  por debajo del pliegue: un scroll natural siempre llega despues de esos 2s.
+  Se cancela en module scope, no en un efecto: en una hidratacion lenta el
+  efecto llegaria tarde. Consecuencia asumida: si el bundle corre pero la
+  hidratacion revienta, lo pendiente queda oculto — la misma propiedad que
+  tenia el codigo anterior (`whileInView` de framer tampoco dispara sin
+  hidratacion).
 
 ## Politica de prefers-reduced-motion
 
@@ -214,8 +242,18 @@ wash con anillo que se repite en cada click.
    `initial` de framer-motion, que horneaba `opacity:0` en el servidor. El
    hide-on-scroll pasa a acumular el delta en una sola direccion con umbral de
    14px, para que un temblor de dedo no lo esconda.
+7. **Red de seguridad acotada:** el bundle la cancela al evaluarse. Antes
+   revelaba TODO a los 2s, asi que cualquier seccion por debajo del pliegue
+   llegaba ya visible y sin entrada (visto en el primer testeo en vivo: F5 con
+   la seccion a la vista si animaba; scroll natural desde la home, no).
+8. **Featured sin JS:** clase `featured-one-slide` + regla
+   `html:not([data-reveal="on"])` para que los paneles no queden invisibles
+   cuando el estado inicial de React nunca se hidrata.
+9. **Hero sin JS:** `md:max-w-[60ch]` como techo estatico del parrafo, para que
+   el ancho no cambie respecto al render con JS.
 
-Pendiente en este mismo track: docs y medicion (T10).
+Pendiente: validacion en vivo del usuario (desktop y mobile, con y sin JS) y la
+pasada de perfil para el tick de AllProjects.
 
 ## Deuda unica
 
