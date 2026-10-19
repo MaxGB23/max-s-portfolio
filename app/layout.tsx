@@ -5,7 +5,6 @@ import { Analytics } from '@vercel/analytics/next'
 import { LanguageProvider } from '@/contexts/language-context'
 import type { Lang } from '@/data/translations'
 import { SmoothScroll } from '@/components/smooth-scroll'
-import { ThemeProvider } from '@/components/theme-provider'
 import './globals.css'
 
 const inter = Inter({
@@ -56,6 +55,27 @@ async function getInitialLang(): Promise<Lang> {
   return accept.startsWith('en') ? 'en' : 'es'
 }
 
+/**
+ * Reveal gate: the only JS that runs before the first paint.
+ *
+ * The served HTML is visible by default; this script is what arms the hiding
+ * layer (see the "Reveal gate" block in app/globals.css). One atomic decision:
+ * if IntersectionObserver is missing or the user asked for reduced motion, the
+ * attribute is never set and the page renders complete and static.
+ *
+ * Raw <script>, NOT next/script: an inline beforeInteractive script is
+ * serialized into `self.__next_s` and executed later by the async
+ * app-bootstrap chunk, which can land after the first paint and flash visible
+ * -> hidden. Inline here, it runs while the body is parsed, before any content
+ * element exists, so the gate is always armed before the first paint.
+ *
+ * The 2s safety net lives HERE, not in the bundle: it must survive the exact
+ * failure it covers (a bundle that never loads). Without it the worst case is
+ * "content never appears"; with it the worst case is "content appears without
+ * animation", which is strictly better than what the site did before.
+ */
+const REVEAL_GATE_SCRIPT = `if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) { document.documentElement.dataset.reveal = 'on'; setTimeout(function () { var pending = document.querySelectorAll('[data-reveal-item]:not([data-reveal-item="shown"])'); for (var i = 0; i < pending.length; i++) { pending[i].dataset.revealItem = 'shown'; } }, 2000); }`
+
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -64,20 +84,15 @@ export default async function RootLayout({
   const initialLang = await getInitialLang()
 
   return (
-    <html lang={initialLang} suppressHydrationWarning {...debugAttrs}>
+    // `dark` is rendered by the server instead of being applied by a
+    // next-themes script: the theme is forced and has no toggle, so the class
+    // is a constant. Without JS the page is dark too, and there is no flash.
+    <html lang={initialLang} className="dark" suppressHydrationWarning {...debugAttrs}>
       <body className={`${inter.variable} ${spaceGrotesk.variable} font-sans antialiased`}>
+        <script dangerouslySetInnerHTML={{ __html: REVEAL_GATE_SCRIPT }} />
         <LanguageProvider initialLang={initialLang}>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="dark"
-            forcedTheme="dark"
-            disableTransitionOnChange
-          >
-            <SmoothScroll>
-              {children}
-            </SmoothScroll>
-            <Analytics />
-          </ThemeProvider>
+          <SmoothScroll>{children}</SmoothScroll>
+          <Analytics />
         </LanguageProvider>
       </body>
     </html>
