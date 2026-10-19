@@ -12,7 +12,7 @@ Contenido:
 - [2. Contrato de ritmo](#2-contrato-de-ritmo)
 - [3. Gates de media](#3-gates-de-media)
 - [4. Geometria por componente](#4-geometria-por-componente)
-- [5. Motion primitives](#5-motion-primitives)
+- [5. Reveal y motion](#5-reveal-y-motion)
 - [6. Aurora](#6-aurora)
 - [7. Tema y dark mode](#7-tema-y-dark-mode)
 - [8. Infraestructura de scroll](#8-infraestructura-de-scroll)
@@ -223,7 +223,10 @@ en otro archivo.
   h1 del hero: 16px en mobile, 24px desde md); parrafos `text-fluid-body
   text-content max-w-[48ch] leading-relaxed`.
 - Animacion: timeline GSAP en scroll (autoAlpha + desplazamientos suaves),
-  sin staggers; estados iniciales ocultos en el DOM para evitar flash.
+  sin staggers; el estado oculto previo al primer paint lo aporta el gate CSS
+  (los nodos llevan `data-reveal-item`), no el markup. El gate oculta solo con
+  `opacity`, asi que estos nodos siguen en el arbol de accesibilidad (antes
+  llevaban `visibility: hidden` inline y quedaban fuera).
 
 ### 4.4 Stack featured (`featured-projects.tsx` + `featured-project-panel.tsx`)
 
@@ -305,7 +308,9 @@ en otro archivo.
   `className="pt-6 md:pt-12 lg:pt-16"` (el pad vertical va en `className`, no en
   el inset), `innerId="all-projects-content"`; grid `1/2/3` con `gap-6`.
 - h2 `text-fluid-section` con palabra "Proyectos" acento + brightness-110.
-- `FadeInStagger` + `FadeInItem` en cada card (grid).
+- Entrada con `Reveal`: UN `Reveal delayEnter` para el heading y UNO para todo
+  el grid (sin stagger por card; antes `FadeInStagger` + `FadeInItemFade`). En
+  mobile el grid usa `earlyOnMobile`.
 - Fuente de datos: `data/projects.ts` (`getFeaturedProjects`, categorias).
 
 ### 4.6 ProjectCard (`project-card.tsx`)
@@ -371,7 +376,8 @@ en otro archivo.
   border-white/10`; marca serif "MaxGB23" (con 23 en acento), bio `max-w-sm`,
   redes (GitHub/LinkedIn) con hovers suaves.
 - BOTTOM: copyright una linea. Minimal por decision (sin nav, sin reloj en
-  vivo). `FadeIn` en el contenido.
+  vivo). Dos `Reveal`: grid de navegacion sin delay y barra de copyright con
+  `delay={0.1}`.
 
 ### 4.10 Detalle de proyecto (`project-detail.tsx`)
 
@@ -513,18 +519,33 @@ margen vertical. Badge `px-3.5 py-1 text-xs 2xl:text-sm`: el `py-1` es
   uno largo en la misma fila del grid: el numero queda alineado con la primera
   letra del titulo y la continuacion alinea debajo, sin numero huerfano.
 
-## 5. Motion primitives
+## 5. Reveal y motion
 
-`components/motion-primitives.tsx` (framer-motion):
+`components/reveal.tsx` - entradas de seccion:
 
-- `FadeIn`, `FadeInStagger`, `FadeInItem`. Viewports: `VIEWPORT` = `{once:
-  true, amount: 0.15}`; `VIEWPORT_DELAYED` agrega `margin: "0px 0px -15% 0px"`;
-  `STAGGER_VIEWPORT` = `{once: true, amount: "some"}`.
-- `FadeIn`: opacity + scale 0.96, 0.55s ease cubic; `FadeInItem`: y 18, 0.5s.
-- `FadeIn.as` esta declarado en la interfaz pero NO implementado (siempre
-  motion.div; el prop cae en `...rest`) - deuda.
-- `SlideIn` y `ScaleIn` YA NO se exportan: no reintroducirlos (se eliminaron
-  en el restructure de motion).
+- `Reveal` (`children`, `className`, `delay`, `delayEnter`, `earlyOnMobile`):
+  envuelve el bloque en un `<div data-reveal-item>` y lo revela al entrar al
+  viewport. IntersectionObserver COMPARTIDO por perfil (`rootMargin` +
+  `threshold`), no uno por nodo; al intersectar escribe
+  `data-reveal-item="shown"` y hace `unobserve`. Sin estado de React, sin
+  re-render y sin loop de animacion.
+- La entrada es una transicion CSS de opacidad (0.55s) en la clase
+  `.reveal-fade`; `--reveal-delay` (escrito en el efecto, no en el render) lleva
+  los delays. Perfiles: default (`threshold` 0.15, sin margen), `delayEnter`
+  (0.15 + margen -15%), `earlyOnMobile` en mobile (`threshold` 0 + margen -15% y
+  +0.15s para entrar detras del titulo).
+- El estado oculto no esta en el markup: lo aporta el gate (script inline del
+  layout + CSS del gate, unlayered), que solo se arma si el JS arranco y que
+  falla abierto. Reglas completas en `docs/design/section-animations.md`.
+- `data-reveal-item` DEBE renderizarse en el SSR. Anadirlo en un efecto produce
+  flash visible -> oculto -> visible.
+- `components/motion-primitives.tsx` YA NO EXISTE: `FadeIn`, `FadeInStagger`,
+  `FadeInItem` y `FadeInItemFade` se borraron en el track `css-first-reveal`
+  (sus unicos consumidores eran las entradas de la home). `SlideIn` y `ScaleIn`
+  tampoco se exportan: no reintroducirlos.
+- framer-motion sigue en el sitio para lo que NO es una entrada: menu mobile
+  (`AnimatePresence`), hovers, hide-on-scroll del navbar y los reveals de
+  `project-detail.tsx`.
 
 ## 6. Aurora
 
@@ -539,9 +560,12 @@ margen vertical. Badge `px-3.5 py-1 text-xs 2xl:text-sm`: el `py-1` es
 
 ## 7. Tema y dark mode
 
-- `ThemeProvider` con `attribute="class"`, `defaultTheme="dark"`,
-  `forcedTheme="dark"` y `disableTransitionOnChange` (layout.tsx): el sitio
-  es dark-first y el tema light NO se ofrece en la UI.
+- Tema: `class="dark"` renderizado por el SERVIDOR en el `<html>`
+  (layout.tsx). No hay provider ni script de tema: `next-themes` y
+  `components/theme-provider.tsx` se eliminaron en el track
+  `css-first-reveal` (el tema es forzado y no hay toggle, asi que el provider
+  solo inyectaba un script). Sin JS el sitio se ve oscuro, porque la clase
+  viene en el HTML.
 - `DarkModeToggle` esta DESMONTADO (import comentado en navbar.tsx): reintroducirlo
   requiere plan de tema completo; no descomentar a ciegas. El modo light existe
   solo como derivado de tokens (ver seccion 7 y `tokens.md`), sin UI para
@@ -638,8 +662,11 @@ margen vertical. Badge `px-3.5 py-1 text-xs 2xl:text-sm`: el `py-1` es
   con replaceState).
 - `copyEmail` con fallback mailto: si un futuro cambio de API lo rompe,
   mantener el fallback.
-- `FadeIn.as` sin implementar: si se necesita renderizar otro elemento,
-  implementarlo en motion-primitives (no en cada caller).
+- `Reveal` escribe `data-reveal-item` en el MARKUP y la transicion del fade en
+  `.reveal-fade`, no en el estado `shown`: hero y about tambien son items del
+  gate, pero su opacidad la escribe GSAP frame a frame, y una transicion ahi
+  amortiguaria cada escritura (ademas la red de seguridad de 2s cae en mitad de
+  su timeline).
 - `DarkModeToggle` desmontado: no reintroducir sin plan.
 
 ## 12. CheckList
@@ -656,7 +683,8 @@ margen vertical. Badge `px-3.5 py-1 text-xs 2xl:text-sm`: el `py-1` es
 
 - 13.1 `ProductsSection` import muerto en `page.tsx` (importado, no
   renderizado): decidir si se monta o se elimina el import.
-- 13.2 `FadeIn.as` declarado sin implementar.
+- 13.2 Los reveals de `project-detail.tsx` siguen en framer-motion: otra
+  superficie, sin migrar (deuda compartida con `section-animations.md`).
 - 13.3 `DarkModeToggle` desmontado (tema light no ofrecido; forcedTheme).
 - 13.4 `text-hero-text` en utilidades: se usa en el retrato de featured con
   index label; token mapeado, verificar usos al tocar hero.

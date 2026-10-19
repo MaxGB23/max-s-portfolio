@@ -157,9 +157,11 @@ prescripcion:
 4. Textos: regla de jerarquia (seccion 4) y de blancos (seccion 5).
 5. Botones: usa `Button` con las variantes del canon; si necesitas un hover
    nuevo, justificalo en buttons.md.
-6. Motion: `FadeIn`/`FadeInStagger` (framer-motion). NO revertir a
-   `SlideIn`/`ScaleIn`. GSAP solo donde ya vive (pin featured, detalle,
-   pricing, about).
+6. Motion: `Reveal` (CSS, IntersectionObserver + transicion de opacidad) para
+   las entradas de seccion; framer-motion solo donde ya vive (menu mobile,
+   hovers, hide-on-scroll del navbar) y GSAP donde ya vive (hero, about, pin
+   featured, detalle, pricing). NO reintroducir `FadeIn`/`FadeInStagger` ni
+   revertir a `SlideIn`/`ScaleIn`.
 7. QA: `layout-debug-canon` (activar solo los canales que interesen y
    `debug-test` para una caja puntual) antes de pedir review.
    Ver `components.md` 10.
