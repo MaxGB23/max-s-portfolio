@@ -138,9 +138,9 @@ haciendo exactamente la misma animación.
 - [x] T6 `hero-section.tsx` + `about-section.tsx` — fuera los 12 estilos inline y
       `data-reveal-item`.
 - [x] T7 Verificar WU3 y commit de work unit.
-- [ ] T8 `navbar.tsx` + `globals.css` — `initial={false}`, keyframe fade-only, deadband
+- [x] T8 `navbar.tsx` + `globals.css` — `initial={false}`, keyframe fade-only, deadband
       y umbral.
-- [ ] T9 Verificar WU4 y commit de work unit.
+- [x] T9 Verificar WU4 y commit de work unit.
 - [ ] T10 Docs + medición — §6 del doc de jank, canon `section-animations.md`, STATUS del
       RFC, y registrar la medición del usuario si la hay.
 

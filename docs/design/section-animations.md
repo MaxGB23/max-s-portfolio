@@ -80,13 +80,26 @@ copyright (`delay={0.1}`). Los iconos sociales mantienen su hover con
 framer-motion, que sigue siendo la unica razon por la que el footer importa
 `motion`.
 
-### Navbar: hide-on-scroll (Framer)
+### Navbar: entrada CSS + hide-on-scroll (Framer)
 
-El header es un `motion.header`. Hoy su entrada tambien sale de framer
-(`initial`: `y: -24px` + `opacity: 0`), asi que sin JS el navbar no aparece; la
-entrada esta en la work unit de navbar del track css-first-reveal. Lo que se
-queda en framer en cualquier caso es el hide-on-scroll de mobile, unico dueno
-de `transform` en ese nodo.
+La entrada del header es un keyframe CSS (`.nav-arrive`: opacidad 0 -> 1 en
+0.45s, `backwards`). Antes era el `initial` de framer-motion (`y: -24px` +
+`opacity: 0`), que horneaba `opacity:0` en el markup del servidor: sin JS el
+navbar no aparecia nunca. El `-24px` era decorativo (heredado del
+`useGsapAnimation` original, commit `ab90565`), no una proteccion contra jitter,
+asi que la entrada es fade-only a proposito.
+
+Lo que queda en framer es el hide-on-scroll de mobile, unico dueno de
+`transform` en ese nodo (por eso la entrada CSS toca solo `opacity`: dos
+escritores sobre la misma propiedad se pisan).
+
+El disparador del hide-on-scroll acumula el delta SOLO mientras la direccion no
+cambie y lo reinicia al cambiar de sentido, con umbral de 14px en la misma
+direccion. Un temblor de dedo oscila de direccion, asi que nunca acumula y
+nunca esconde el navbar; un scroll lento y sostenido si acumula y dispara. El
+bug anterior: el umbral era 8px y `lastY` solo se actualizaba al cruzar el
+umbral, de modo que los deltas de jitter se sumaban entre eventos (3+3+3) y el
+navbar se escondia sin scroll real.
 
 ### Hero: GSAP timeline on-load
 
@@ -197,7 +210,12 @@ wash con anillo que se repite en cada click.
    accesibilidad. La transicion del fade se mueve a `.reveal-fade` (ver "Gate de
    reveal") para no amortiguar las escrituras de GSAP.
 
-Pendiente en este mismo track: la entrada del navbar.
+6. **Navbar:** entrada fade-only por keyframe CSS (`.nav-arrive`); fuera el
+   `initial` de framer-motion, que horneaba `opacity:0` en el servidor. El
+   hide-on-scroll pasa a acumular el delta en una sola direccion con umbral de
+   14px, para que un temblor de dedo no lo esconda.
+
+Pendiente en este mismo track: docs y medicion (T10).
 
 ## Deuda unica
 

@@ -38,7 +38,13 @@ const spySections = [
 // Sección activa → link que debe encenderse (alias del scroll-spy).
 const SECTION_ALIAS: Record<string, string> = { "all-projects": "proyectos" };
 
-const SCROLL_THRESHOLD = 8; // px mínimos de delta para disparar cambio de visibilidad
+// Delta acumulado (en una sola dirección) necesario para cambiar la
+// visibilidad. El delta se acumula SOLO mientras la dirección no cambie:
+// cualquier evento en sentido contrario reinicia la cuenta, así que una
+// oscilación de ±3px nunca suma 14px. Antes el umbral era 8 y `lastY` solo se
+// actualizaba al cruzar el umbral, de modo que los temblores se sumaban
+// (3+3+3 > 8) y escondían el navbar sin que el usuario hubiera scrolleado.
+const SCROLL_THRESHOLD = 14; // px acumulados en la misma dirección
 
 export function Navbar() {
   const { t } = useLanguage();
@@ -112,25 +118,30 @@ export function Navbar() {
   // Scroll: fondo (desktop) + auto-hide/show (mobile)
   useEffect(() => {
     let lastY = window.scrollY;
+    let accumulated = 0;
 
     const handleScroll = () => {
       const currentY = window.scrollY;
       const delta = currentY - lastY;
+      lastY = currentY;
 
       // Fondo en desktop
       setScrolled(currentY > 20);
 
       // Siempre visible en el top de la página
       if (currentY === 0) {
+        accumulated = 0;
         setVisible(true);
-        lastY = currentY;
         return;
       }
 
-      // Solo reaccionar si el movimiento supera el threshold
-      if (Math.abs(delta) > SCROLL_THRESHOLD) {
-        setVisible(delta < 0); // subir → visible, bajar → oculto
-        lastY = currentY;
+      // Misma dirección: acumula. Cambio de sentido: la cuenta arranca de cero.
+      accumulated =
+        Math.sign(delta) === Math.sign(accumulated) ? accumulated + delta : delta;
+
+      if (Math.abs(accumulated) > SCROLL_THRESHOLD) {
+        setVisible(accumulated < 0); // subir → visible, bajar → oculto
+        accumulated = 0;
       }
     };
 
@@ -173,8 +184,14 @@ export function Navbar() {
   return (
     <motion.header
       ref={navRef}
-      // Entrada inicial (reemplaza useGsapAnimation para evitar conflicto en Y)
-      initial={{ y: -24, opacity: 0 }}
+      // La entrada es un keyframe CSS (`.nav-arrive`, opacidad 0 -> 1 en 0.45s).
+      // El `initial` de framer horneaba `opacity:0` en el markup del servidor:
+      // sin JS el navbar no aparecía nunca, y ya no hay entrada que animar aquí.
+      //
+      // El transform se queda en framer porque es lo único que mueve el
+      // hide-on-scroll: dos escritores sobre `transform` se pisan (con la
+      // entrada CSS tocando solo `opacity`, no hay carrera).
+      initial={false}
       animate={{
         // En mobile: ocultar/mostrar según scroll
         // En desktop: siempre visible (y: 0)
@@ -182,15 +199,12 @@ export function Navbar() {
         // la visibilidad vía translateY en TODOS los breakpoints,
         // pero solo tiene efecto visual en mobile (el desktop no scrollea en esa dirección relevante)
         y: effectivelyVisible ? 0 : "-110%",
-        opacity: effectivelyVisible ? 1 : 1, // mantener opacidad, solo mover Y
       }}
       transition={{
-        // Primera renderización: animación de entrada
         y: { duration: 0.35, ease: [0.22, 1, 0.36, 1] },
-        opacity: { duration: 0.45, ease: "easeOut" },
       }}
       className={cn(
-        "debug-l1 fixed top-0 left-0 right-0 z-50 transition-colors duration-300",
+        "debug-l1 nav-arrive fixed top-0 left-0 right-0 z-50 transition-colors duration-300",
         // Mobile y desktop: fondo condicional — transparente al top, activo al scrollear
         isBgActive
           ? "bg-nav backdrop-blur-none md:backdrop-blur-md border-b border-border shadow-sm"
