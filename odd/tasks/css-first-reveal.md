@@ -150,7 +150,15 @@ haciendo exactamente la misma animación.
       - [x] Red de seguridad acotada: el bundle la cancela (`window.__revealNet`).
       - [x] Featured sin JS: `featured-one-slide` + regla del gate.
       - [x] Hero sin JS: techo estático `md:max-w-[60ch]` en la descripción.
-- [ ] T12 Verificar y commitear las correcciones (pendiente de permiso).
+- [x] T12 Verificar y commitear las correcciones (permiso dado y ejecutado:
+      `6b55773` correcciones del reveal y `592382c` el Volver del detalle).
+- [x] T14 Cierre documental posterior a los commits (2026-10-19):
+      - [x] `docs`: registro de la segunda ronda de testeo y sincronía de lo que
+            invalidó (RFC, `reduced-motion.md`, `a11y-and-performance.md`,
+            `section-animations.md`, dos tareas ODD con `FadeIn` muerto).
+      - [x] `docs`: el canon del featured describía un pin GSAP retirado
+            (`FEATURED_STACK_GATE`, `PIN_MEDIA`, watchdog del pin-spacer) y el
+            README vendía framer-motion como primitiva de entrada: corregido.
 - [x] T13 Segunda ronda de testeo (detalle de proyecto sin JS): el botón Volver
       pasa a `<a href="/">` real dentro de `Button asChild` (`onClick` con
       `preventDefault()` igual que antes) porque la página no renderiza navbar y
