@@ -384,6 +384,12 @@ en otro archivo.
 - Volver: `fixed` arriba-izquierda, pill primary md con `className="back-btn
   pointer-events-auto hover:bg-foreground/80 transition-colors"` (excepcion:
   hover de fondo, NUNCA transition-opacity - GSAP lo controla).
+  El control NAVEGA, asi que es un `<a href="/">` real dentro de `Button
+  asChild`, no un `<button>` (2026-10-19): la pagina no renderiza navbar, asi
+  que sin JS era el unico camino de vuelta dentro del sitio y estaba muerto. El
+  `onClick` hace `preventDefault()` y ejecuta la logica de siempre (history +
+  scroll restaurado si venimos del grid, `replace("/")` en llegada directa), de
+  modo que con JS el href nunca se sigue y el comportamiento no cambia.
 - Hero detalle: `px-6 md:px-12 lg:px-20 pt-22 md:pt-24 2xl:pt-26 pb-12 md:pb-16 max-w-5xl`.
   El `pt` superior iguala el espaciado entre el boton Volver flotante y el badge
   de categoria (88 / 96 / 104px).
@@ -697,3 +703,12 @@ margen vertical. Badge `px-3.5 py-1 text-xs 2xl:text-sm`: el `py-1` es
   decisiones que si importaban ya estaban asimiladas en este canon; las dos
   referencias que quedaban (hero cue, dark mode) se reescribieron aqui en vez
   de dejar punteros muertos.
+- 13.7 Detalle de proyecto sin JS (2026-10-19): AMBAS vistas viajan en el HTML
+  (decisión 2026-10-13), pero el switcher de tabs y el lightbox de la galeria
+  son JS puro, asi que sin JS quedan sin alcanzar. DEUDA ACEPTADA, no
+  pendiente: navegar sin JS es deliberado y rarisimo, y el contenido ya esta
+  indexable e imprimible. La unica pieza que SI se arreglo es el boton Volver
+  (ver 4.10): era un callejon real, no una comodidad. Reimplementar tabs
+  (`:target`, radios CSS) o galeria como pagina aparte queda DESCARTADO:
+  duplicaria la fuente de verdad del estado activo y arriesga la experiencia
+  con JS, que es la que importa.

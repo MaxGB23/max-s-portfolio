@@ -146,6 +146,20 @@ haciendo exactamente la misma animación.
 - [x] T10 Docs + medición — §6 del doc de jank, canon `section-animations.md`,
       canon `components.md` (+ botones e iteration-guide), STATUS del RFC, y
       registrar la medición del usuario si la hay (no la hay todavía).
+- [x] T11 Correcciones del primer testeo en vivo:
+      - [x] Red de seguridad acotada: el bundle la cancela (`window.__revealNet`).
+      - [x] Featured sin JS: `featured-one-slide` + regla del gate.
+      - [x] Hero sin JS: techo estático `md:max-w-[60ch]` en la descripción.
+- [ ] T12 Verificar y commitear las correcciones (pendiente de permiso).
+- [x] T13 Segunda ronda de testeo (detalle de proyecto sin JS): el botón Volver
+      pasa a `<a href="/">` real dentro de `Button asChild` (`onClick` con
+      `preventDefault()` igual que antes) porque la página no renderiza navbar y
+      era el único camino de vuelta dentro del sitio. Tabs y galería NO se
+      tocan: sin JS quedan sin alcanzar, y se declaran como deuda ACEPTADA en
+      `components.md` §13.7 (reimplementarlas con `:target`/radios CSS o como
+      página aparte queda descartado: duplicaría la fuente de verdad del estado
+      activo y arriesga la experiencia con JS, que es la que importa). Criterio
+      del usuario: sin sobreingeniería, navegar sin JS es deliberado y rarísimo.
 
 ## Acceptance criteria
 - `grep FadeIn` en `components/` = 0 resultados; `motion-primitives.tsx` no existe.
