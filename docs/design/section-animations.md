@@ -119,10 +119,13 @@ primera seccion y se anima on-load.
 
 El bloque de descripcion se alinea con el ancho real del titulo (`useTitleWidth`
 + `min(ancho, 60ch)` inline). El hook solo mide en md+ y en useLayoutEffect, asi
-que la clase trae el mismo techo que el tope del JS (`md:max-w-[60ch]`): sin JS
-el parrafo no se estira al ancho de la columna, y con JS el inline gana y el
-texto queda clavado al titulo. Sin el fallback, "sin JS" cambiaba el ancho del
-parrafo respecto al render con JS (visto en el primer testeo en vivo).
+que sin JS el parrafo necesita un techo estatico propio: `md:max-w-[42ch]`. Ese
+numero NO es el tope del JS (60ch) a proposito: `min(ancho del titulo, 60ch)`
+suele dar bastante menos que 60ch en md+, asi que un fallback de 60ch dejaba el
+parrafo visiblemente mas ancho que el render con JS en TODAS las resoluciones a
+partir de md. `42ch` es el valor que mejor aproxima el ancho tipico del titulo
+medido, elegido a ojo en el testeo en vivo. En mobile no aplica: ahi el hook
+devuelve null y el parrafo usa el ancho natural de la columna.
 
 ## Gate de reveal (CSS-first)
 

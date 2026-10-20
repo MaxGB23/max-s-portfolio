@@ -148,7 +148,7 @@ export function HeroSection() {
               <span className="text-purple-accent  sm:tracking-[0.01em]">{HERO_NAME.last}</span>
             </h1>
 
-            <div className="hero-description debug-l4 px-4 sm:px-16 md:px-0 text-fluid-body leading-relaxed text-content max-w-full md:max-w-[60ch]" data-reveal-item="" style={{ maxWidth: titleWidth ? `min(${titleWidth}px, 60ch)` : undefined }}>
+            <div className="hero-description debug-l4 px-4 sm:px-16 md:px-0 text-fluid-body leading-relaxed text-content max-w-full md:max-w-[42ch]" data-reveal-item="" style={{ maxWidth: titleWidth ? `min(${titleWidth}px, 60ch)` : undefined }}>
               <div className="debug-test">
                 <p >{t("hero.description")}</p>
               </div>
