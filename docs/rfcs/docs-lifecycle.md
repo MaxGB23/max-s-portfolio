@@ -1,237 +1,380 @@
-# RFC: Ciclo de vida de la documentación — estado declarado, verificación mecánica y gate de cierre
+# RFC: documentación navegable — partir el canon por pregunta, un índice que no puede mentir y el seguro de los nombres muertos
 
-> **STATUS: PROPUESTO (borrador, sin decisiones cerradas).** Nace de la
-> auditoría de docs previa al merge del track `css-first-reveal` (2026-10-19),
-> que encontró tres documentos afirmando como vigente algo que ya no existía. El
-> problema no es la cantidad de documentación ni su taxonomía (canon / RFC /
-> issues / ODD): es que nada verifica que los documentos vivos sigan diciendo la
-> verdad.
+> **STATUS: PROPUESTO (revisión 2, alcance: este repo).** La revisión 1
+> proponía el flujo completo (SSOT con ancla, índice seccional por doc, estado
+> por archivo, linter de cinco checks). Medido contra este repo, ese flujo es de
+> otra escala: aquí hay ocho archivos de canon, un dev y un agente. Esta
+> revisión conserva lo que sí paga y descarta el resto; el flujo completo queda
+> documentado en el RFC hermano de `funky-ai`, para proyectos grandes.
 >
-> **Estado del archivo: VIVO** mientras está abierto; pasa a DECISIÓN al
-> aprobarse (sección 3, regla R1 aplicada a sí misma).
->
-> Las correcciones puntuales de ese caso ya están hechas en la rama del track
-> (`3a5ef9b`, `3e99920`, `1e438eb`, pendientes de merge). Este RFC no corrige el
-> caso: propone lo que evita que vuelva a pasar.
->
-> Alcance: convenciones, un script determinista y un gate de cierre. Fuera de
-> alcance: reescribir el canon, cambiar la taxonomía, y cualquier automatización
-> que decida por sí sola qué docs actualizar.
+> Evidencia: auditoría de docs previa al merge de `css-first-reveal`
+> (2026-10-19) y medición de tamaños del canon.
 
 ---
 
-## 1. Por qué existe este RFC
+## 1. Qué se midió
 
-Tres casos reales, todos del mismo patrón: un doc declara el presente cuando su
-tema ya murió.
+| Archivo | Líneas |
+|---|---|
+| `docs/design/components.md` | 721 |
+| `docs/design/section-animations.md` | 281 |
+| `docs/design/tokens.md` | 281 |
+| `docs/design/typography-families.md` | 246 |
+| `docs/design/iteration-guide.md` | 198 |
+| `buttons.md` + `pointer-gestures.md` + `README.md` | 295 |
 
-| Documento | Afirmaba | Realidad |
+Unas 2.000 líneas de markdown en ocho archivos, más 302 del espejo CSS.
+
+`docs/design/README.md` ya tiene un mapa rápido de ocho preguntas. Funciona, y
+ese es el punto de partida: **no hay que inventar la navegación, hay que
+completarla y ponerla donde se busca.**
+
+## 2. Diagnóstico: dos problemas distintos
+
+**a) Encontrar (crónico).** Tres causas concretas:
+
+- El mapa cubre solo el canon. `docs/issues/`, `docs/rfcs/`, `docs/projects/` y
+  `odd/tasks/` no aparecen en ningún índice: para saber si un tema ya se
+  investigó hay que hacer grep o recurrir a la memoria.
+- El mapa apunta a archivo, no a sección con respuesta. "components.md 10"
+  obliga a abrir un archivo de 721 líneas y buscar.
+- Los archivos son demasiado grandes para que el puntero sirva. `components.md`
+  tiene 13 secciones y 721 líneas: es un doc que se lee una vez y no se vuelve
+  a navegar.
+
+**b) Ser verdad (episódico, y aquí se cubre bien).** Los tres casos de la
+auditoría (pin de GSAP, `FadeIn*`, los 12 estilos inline del riesgo G1) se
+corrigieron, y la regla actual —sincronizar el tema al aprobar cada work
+unit— los habría cazado antes si se hubiera aplicado también en el cierre del
+track. No hay evidencia de que haga falta un SSOT ni de que haya que prohibir
+tocar docs durante el track: con un dev y un agente, la regla por work unit
+funciona.
+
+Entonces: la propuesta ataca (a) con fuerza y (b) con un seguro barato, sin
+importar maquinaria.
+
+## 3. Qué no se propone (y por qué)
+
+- **SSOT de filas con condición "Aplica si..."**: aquí hay ocho archivos de
+  canon; el índice de preguntas ya es el SSOT.
+- **Índice seccional mantenido a mano por doc**: se pudre. Evidencia de
+  `funky-ai`: el índice de `skills.md` listaba 8 de 12 headings y nada lo
+  detectaba. Se genera.
+- **Línea de estado por archivo**: la carpeta ya declara la vida (sección 5).
+  Una línea por archivo es ceremonia sin verificación.
+- **Linter de cinco checks**: tres, más un warning de tamaño.
+- **Prohibir editar docs durante el track**: la regla por work unit funciona y
+  el track es corto. El hueco estaba en el cierre, no en la ejecución.
+
+## 4. Punto de entrada único
+
+`docs/README.md` (hoy no existe), con tres bloques:
+
+1. **Mapa de preguntas** (unas 20-25 filas): pregunta, respuesta en una línea,
+   enlace con sección. Cubre todas las áreas del repo.
+2. **Áreas** (cuatro filas): canon (`docs/design/README.md`), decisiones
+   (`docs/rfcs/`), auditorías (`docs/issues/`), trabajo (`odd/tasks/`).
+3. **Reglas de vida** (sección 5).
+
+El mapa de preguntas que hoy vive en `docs/design/README.md` **se muda** a
+`docs/README.md`; el canon conserva solo su tabla de archivos. Una sola fuente
+por cosa.
+
+Criterio para una fila: solo entra si alguien la preguntó de verdad. No es un
+índice de archivos, es un índice de preguntas. Si una pregunta no tiene
+respuesta clara, eso es una señal sobre el doc, no sobre el índice.
+
+## 5. Vida declarada por carpeta
+
+| Carpeta | Vida | Obligación |
 |---|---|---|
-| `docs/design/components.md` (3, 4.4, 8, 10, 11), `tokens.md`, `iteration-guide.md` y el índice del canon | El featured es un pin de GSAP gobernado por `FEATURED_STACK_GATE`, con `PIN_MEDIA` en el ScrollRestorer y watchdog del pin-spacer | Nada de eso existe desde el rediseño del featured: `lib/breakpoints.ts` lo conserva como stub `@deprecated` con 0 consumidores |
-| `odd/tasks/featured-animation-redesign.md`, `odd/tasks/design-system.md` | `FadeIn`/`FadeInStagger`/`FadeInItem` se conservan y envuelven los paneles | Los tres se borraron con `components/motion-primitives.tsx` (2026-10-19) |
-| `docs/issues/reduced-motion.md`, `docs/issues/a11y-and-performance.md` | El riesgo G1 nace de 12 estilos inline `opacity:0`/`visibility:hidden` | Esos estilos se eliminaron; hoy la primera capa es el gate de reveal |
+| `docs/design/` | VIVO | debe ser verdad hoy |
+| `docs/rfcs/` | DECISIÓN | se congela al aprobar; se supera con otro |
+| `docs/issues/` | INSTANTÁNEA | fechada; nunca finge ser actual |
+| `docs/projects/` | DECISIÓN o TRABAJO | según el doc; si no se sabe, no es canon |
+| `odd/tasks/` | TRABAJO | cierra al mergear |
+| `docs/design/archive/` | CONGELADO | no se edita |
+| `docs/*.md` (raíz, hoy `i18n.md`) | VIVO | guía corta; mismo trato que el canon |
 
-Ninguno se detecta con un grep del nombre del track, ni con memoria. Y ninguno
-rompió nada: **el daño de un doc desactualizado es silencioso** hasta que alguien
-lee la mentira y decide en base a ella. El caso peor no es la confusión: es
-reintroducir una técnica retirada porque el canon la describe como viva.
+Consecuencia operativa: solo VIVO tiene la obligación de ser verdad hoy, y solo
+VIVO se verifica mecánicamente. Un doc de `issues/` puede citar una técnica
+retirada sin mentir: es el registro de su momento.
 
-El motivo de fondo no es falta de disciplina. Es que **no hay bucle de
-retroalimentación**: un test que falla se arregla; un doc que miente se queda ahí,
-porque no hay nada que falle.
+Y una regla explícita: **un doc cerrado no se actualiza.** Si una tarea ODD
+vieja o un RFC cerrado dice algo que ya no es cierto, no se reescribe: dejaría
+de ser el registro de lo que se decidió. Lo que siga siendo verdad se muda al
+canon; lo que murió, a `DEAD.md`. El linter no los lee como verdad, así que
+nunca te va a pedir que los toques.
 
-## 2. Diagnóstico: vidas mezcladas en el mismo archivo
+## 6. Presupuesto y partición de `components.md`
 
-Un documento solo puede tener una de estas vidas, y cada una pide un trato
-distinto:
+Regla: un doc VIVO no pasa de unas 250 líneas; si las pasa, son dos docs. No es
+estética: un doc que no se lee de un tirón no se navega. El aviso del linter
+salta a 300 (sección 10): ese margen evita que el gate nazca en rojo por
+`tokens.md` y `section-animations.md` (281 líneas cada uno), que se quedan como
+excepción documentada.
 
-| Vida | Qué afirma | Se actualiza | Ejemplos hoy |
-|---|---|---|---|
-| VIVO | el presente | en cada work unit | `docs/design/**` (canon), `AGENTS.md` |
-| DECISIÓN | el porqué de una decisión fechada | se congela al cerrar; se supera con otro, nunca se edita | `docs/rfcs/**` |
-| TRABAJO | el plan y el registro de ejecución | cierra al mergear; después es historia | `odd/tasks/**` |
-| INSTANTÁNEA | lo que se midió o auditó tal día | nunca finge ser actual | `docs/issues/**` |
+Partición propuesta (721 líneas, tres docs de 220-250):
 
-La deuda aparece cuando dos vidas conviven. `reduced-motion.md` es el caso de
-manual: contiene a la vez una decisión (congelada), un plan (trabajo) y un riesgo
-vigente (canon), y se pudrió exactamente en el cruce. Cada mitad pide una
-respuesta distinta a "¿esto sigue siendo verdad?".
+| Secciones actuales | Doc destino |
+|---|---|
+| 1 Shell, 2 contrato de ritmo, 4 geometría, 9 cue de llegada | `docs/design/sections.md` |
+| 3 gates de media, 5 reveal y motion, 6 aurora | `docs/design/motion.md` |
+| 7 tema y dark mode, 8 infraestructura de scroll, 10 debug overlay, 11 gotchas | `docs/design/platform.md` |
+| 12 checklist | `docs/design/iteration-guide.md` (es proceso, no componente) |
+| 13 deuda única | se distribuye al tema dueño (`motion.md`, `platform.md`, etc.) |
 
-**Consecuencia operativa:** mientras un archivo no declare qué vida tiene, nadie
-—persona o agente— puede saber si está desactualizado o simplemente es viejo. Esa
-incertidumbre es la que convierte la revisión de docs en trabajo infinito.
+Coste que hay que asumir de una vez: hay más de 40 referencias a
+`components.md` (canon, `AGENTS.md`, la skill `layout-debug-canon` y las tareas
+ODD abiertas). Se actualizan en el mismo work unit con un grep. Las tareas ODD
+cerradas y los RFC aprobados no se tocan: son registro, y la sección 5 lo dice.
+Hacerlo ahora cuesta una hora; después cuesta una hora más cada vez que alguien
+cite el archivo partido.
 
-## 3. Vocabulario: el estado se declara en la primera línea
+## 7. Índice de secciones generado
 
-Formato propuesto (ya es el de facto en el repo, p. ej. `CERRADO (2026-10-02)`):
+Cada doc VIVO lleva al principio un bloque delimitado:
 
-```markdown
-# Título
-
-> **Estado: VIVO** - actualizado 2026-10-19
+```
+<!-- toc:start -->
+- [1. Shell Section](#1-shell-section)
+<!-- toc:end -->
 ```
 
-Valores válidos: `VIVO`, `DECISIÓN`, `TRABAJO`, `INSTANTÁNEA`, `CERRADO` y
-`CONGELADO` (lo que no se edita nunca: `docs/design/archive/**`). Un archivo sin
-estado es un defecto, no un olvido: no se puede evaluar.
+`pnpm docs:toc` lo regenera y `pnpm lint:docs` falla si difiere. Es la única
+forma de que el índice no mienta: no depende de que alguien se acuerde. Solo se
+exige en docs de más de 120 líneas; en uno corto, el índice estorba más que
+ayuda.
 
-Preguntas abiertas:
-
-- **Blockquote o frontmatter YAML?** Recomendación: blockquote. Es visible al
-  leer, greppable y no exige parser. El frontmatter solo si algún día hace falta
-  metadato consultable.
-- **Se permite más de un estado por archivo?** Recomendación: no. Si necesitas
-  dos vidas, son dos archivos. Es la lección de `reduced-motion.md`.
-- **Se renombran los marcadores existentes?** Recomendación: sí, a la forma
-  uniforme, durante la migración (sección 7).
-
-## 4. Las cinco reglas
-
-Ordenadas por valor/coste.
-
-- **R1 - Todo doc declara su estado.** Un minuto por archivo, y habilita todo lo
-  demás. Sin esto, cualquier verificación automática es adivinación.
-- **R2 - Ningún doc VIVO contiene referencias de línea ni conteos.** Se escribe
-  el nombre del símbolo (`handleBack` en `project-detail.tsx`), no
-  `project-detail.tsx:697-772`. Los números fueron el 100% de las referencias
-  rotas de la auditoría, y no rompen nada al caducar.
-- **R3 - Registro de nombres muertos.** Tabla única de símbolos y técnicas
-  retiradas, con su sustituto y el doc que las gobierna hoy (sección 6). Es el
-  artefacto que habría cazado el caso del pin: no se encuentra con memoria ni con
-  grep del track, se encuentra con una lista de cosas muertas.
-- **R4 - El índice se deriva de los estados, no se mantiene a mano.** El índice
-  del canon ya apuntó a un gate retirado: un índice a mano solo es correcto el día
-  que se escribió. Si estado y tema son declarativos, la coherencia
-  índice <-> archivos se verifica.
-- **R5 - El gate está al CERRAR el track, no solo por work unit.** La regla
-  actual (sincronizar el tema del canon al aprobar una work unit) es correcta y se
-  mantiene, pero el fallo del pin ocurrió en el cierre: el track terminó y el
-  canon nunca se enteró. Tres preguntas antes del push final:
-  1. ¿Qué sección del canon describe el comportamiento que acabo de cambiar, y
-     qué dice ahora?
-  2. ¿Qué símbolo o técnica eliminé, y quién lo menciona?
-  3. ¿Qué cifra o referencia de este diff caduca mañana?
-
-## 5. Verificación mecánica: `scripts/docs-lint.mjs`
-
-Cinco checks deterministas, sin tokens y sin juicio. Salida
-`archivo:linea: motivo`, exit 1 si hay hallazgos.
-
-| # | Check | Qué mira |
-|---|---|---|
-| C1 | estado presente | Todo `.md` de `docs/` y `odd/` (excepto `docs/design/archive/**`) declara un estado válido en las primeras líneas |
-| C2 | nombres muertos | Ningún doc con estado VIVO contiene un token del registro (sección 6) |
-| C3 | referencias frágiles | Ningún doc VIVO contiene `\.(ts\|tsx\|css\|mjs):\d+` ni "linea N" |
-| C4 | índice coherente | Los `.md` de `docs/design/` y el listado del índice coinciden en ambos sentidos; todo enlace relativo resuelve |
-| C5 | instantánea fechada | Todo doc INSTANTÁNEA lleva fecha, y todo CERRADO lleva su fecha de cierre |
-
-Decisiones que C3 obliga a tomar:
-
-- Las referencias a líneas de **terceros** (`lenis.mjs:649-655` en el canon de
-  scroll) son evidencia legítima, pero caducan con cada actualización de
-  dependencia. Propuesta: directiva inline `<!-- docs-lint: allow-line-ref -->`
-  con motivo, en lugar de una lista blanca externa.
-- Excluir `docs/design/ejemplos/**` y `archive/**`: son material de referencia,
-  no contrato.
-
-Integración: `pnpm lint:docs` y CI. Durante la migración (sección 7) entra en
-modo reporte (avisa, no bloquea); al terminar, bloqueante. Un script no negocia, y
-esa es su virtud: lo que no rompe el build, se olvida.
-
-## 6. Registro de nombres muertos
+## 8. Registro de nombres muertos
 
 `docs/design/DEAD.md`, una tabla de una página:
 
 | Símbolo retirado | Retirado el | Sustituto | Doc que lo gobierna |
 |---|---|---|---|
-| `FadeIn`, `FadeInStagger`, `FadeInItem`, `motion-primitives.tsx` | 2026-10-19 | `Reveal` | `components.md` 5 |
-| `FEATURED_STACK_GATE`, `PIN_MEDIA` | 2026-10 | one-slide rule | `components.md` 4.4 |
-| `next-themes`, `ThemeProvider` | 2026-10-19 | `class="dark"` en el layout | `components.md` 7 |
-| pin de GSAP del featured | 2026-10 | one-slide rule | `components.md` 4.4 |
+| `FadeIn`, `FadeInStagger`, `FadeInItem`, `motion-primitives.tsx` | 2026-10-19 | `Reveal` | `motion.md` 5 |
+| `FEATURED_STACK_GATE`, `PIN_MEDIA`, pin de GSAP del featured | 2026-10 | one-slide rule | `sections.md` 4.4 |
+| `next-themes`, `ThemeProvider` | 2026-10-19 | `class="dark"` en el layout | `platform.md` 7 |
 
-Reglas del registro:
+Regla: la fila se añade en el mismo work unit que retira la técnica. Es la
+respuesta a "¿quién menciona esto?" sin depender de la memoria ni de buscar el
+nombre del track.
 
-- La fila se añade **en el mismo work unit que retira la técnica**: es parte del
-  cambio, no una tarea aparte.
-- C2 solo lo aplica a docs VIVO. Un doc DECISIÓN, TRABAJO o INSTANTÁNEA puede
-  citar nombres muertos: es un registro de su momento, y eso es correcto.
-- Es la respuesta sin ambigüedad a "¿quién menciona esto?".
+Solo los tokens entre backticks de la primera celda se verifican (C3); una fila
+en prosa —"pin de GSAP del featured"— queda como documentación humana. El
+registro no pretende ser exhaustivo: pretende que lo enumerable sea enumerable.
 
-## 7. Migración
+`DEAD.md` es VIVO y entra en la tabla del canon. C3 lo excluye del escaneo,
+junto con `archive/`: contiene sus propios tokens por definición, y un check que
+se marca a sí mismo no informa de nada.
 
-Un solo PR:
+## 9. El flujo: fix mínimo y cierre de track
 
-1. Añadir `DEAD.md` con las cuatro entradas de la sección 6.
-2. Añadir `scripts/docs-lint.mjs` y correrlo en modo reporte: esa lista es el
-   inventario real de docs sin estado (no hace falta adivinarlo).
-3. Sellar estados (mecánico): canon -> VIVO; `docs/rfcs/**` -> DECISIÓN;
-   `odd/tasks/**` -> TRABAJO (o CERRADO si ya cerraron); `docs/issues/**` ->
-   INSTANTÁNEA o CERRADO con fecha; `archive/**` -> CONGELADO. Uniformar los
-   marcadores que ya existen a la forma de la sección 3.
-4. Arreglar las referencias frágiles de los docs VIVO (pocas: canon de scroll y
-   algún issue) con directiva inline cuando la referencia sea evidencia
-   necesaria.
-5. Activar el check en CI como bloqueante.
-6. Llevar las tres preguntas del gate (R5) a la plantilla ODD y a `AGENTS.md`.
+El coste no se mide en líneas de código sino en **llamadas a herramientas**:
+cada lectura, cada edición y cada comando es una request, y el tier diario se
+agota por número, no por tokens. El flujo se ordena entonces por "cuántas
+requests cuesta decidir", no por tamaño del cambio.
 
-Presupuesto: una o dos horas, la mitad mecánica. Aquí hay que resistir la
-tentación de convertirlo en un proyecto: el valor está en las reglas, no en el
-tamaño del script.
+### 9.1 Fix de 1 a 5 líneas, sin ODD
 
-## 8. Reparto: qué automatiza el script y qué decide un agente
+Una sola pregunta, respondida sobre el diff que ya está delante:
 
-| Trabajo | Quién | Por qué |
+> ¿Este cambio altera algo que un doc VIVO afirma, o solo hace que el código
+> cumpla lo que el doc ya dice?
+
+Operativamente: ¿puedes señalar la frase que se vuelve falsa? Si puedes, editas
+esa frase. Si no, no hay trabajo documental. Tres niveles:
+
+| Nivel | Cuándo | Coste |
 |---|---|---|
-| Saber si un doc VIVO menciona algo muerto, no declara estado, o referencia líneas | script | determinista, gratis, y puede fallar el build |
-| Decidir qué sección del canon describe lo que acabo de cambiar, y si sigue siendo verdad | agente o skill, post-track, acotado al diff | juicio semántico sobre trabajo recién hecho; nadie más lo tiene en la cabeza |
+| 0 — nada | el código pasa a cumplir lo que el doc ya decía | 0 requests: el commit ya se iba a escribir |
+| 1 — una frase | cambia un valor, nombre, orden o comportamiento afirmado | 2: leer la sección y editarla |
+| 2 — ODD | comportamiento nuevo, componente nuevo, algo retirado | flujo completo |
 
-Contrato del skill (a contrastar cuando se revise funky-ai): **entrada** = el diff
-del track; **salida** = lista cerrada de secciones del canon a revisar, con
-veredicto por sección; **prohibido** = auditar el repo entero. Un skill que revisa
-todo no escala, gasta tokens y produce hallazgos que nadie cierra.
+El nivel 0 es el caso mayoritario y conviene decirlo en voz alta: **si el código
+estaba mal y el doc describía lo correcto, no hay nada que documentar.** El doc
+es la especificación; el fix es la deuda que se paga.
 
-## 9. Alternativas consideradas y descartadas
+El rastro de la decisión no necesita archivo nuevo: va en el cuerpo del commit,
+que ya es un artefacto obligatorio. Dos formas, ambas greppables:
 
-- **Skill que audita las docs en cada feature.** No es determinista, no puede
-  fallar el build y no crea bucle de retroalimentación. Se queda con la parte
-  semántica (sección 8).
-- **Migración manual de los ~30 docs.** Lenta y con criterio inconsistente entre
-  archivos; el inventario lo produce el script.
-- **Frontmatter YAML en todos.** Metadato invisible al leer y parser obligatorio,
-  a cambio de nada que el blockquote no dé hoy.
-- **Un índice central mantenido a mano.** Es la causa del puntero roto del canon;
-  si el índice se deriva, no puede mentir.
-- **Dejar issues abiertos como contenedores de trabajo.**
-  `all-projects-entry-jank.md` 6 tiene tres vidas dentro (diagnóstico, medición
-  pendiente, conclusión superada). Un issue que no cierra es un doc zombi: la
-  decisión se muda al canon y lo pendiente va a ODD.
+```
+Docs: none - el doc ya describia este comportamiento
+Docs: tokens.md 2 - --gap pasa de 1.5rem a 2rem
+```
 
-## 10. Riesgos
+Para que el nivel 1 cueste dos requests y no cuatro, `AGENTS.md` lleva la tabla
+tema → archivo de la sección 11. Está en el contexto desde el arranque, así que
+no cuesta ninguna; abrir el mapa para averiguar si el gap vive en `tokens.md` o
+en `sections.md` sí.
 
-- **Ceremonia por ceremonia:** sellar estados sin que el linter corra aporta poco.
-  Van juntos o no van.
-- **Falsos positivos en C2:** un doc VIVO puede citar legítimamente una técnica
-  retirada para explicar historia. Se resuelve moviendo la historia a un doc
-  DECISIÓN o con directiva inline; nunca relajando el check.
-- **Conocimiento con un solo dueño:** las cinco reglas viven en este RFC; si
-  `AGENTS.md` no las enlaza, se olvidan. `AGENTS.md` es el contrato, este RFC el
-  porqué.
+`pnpm lint:docs` **no corre por fix.** Es local, pero sigue siendo una request.
+Corre una vez al cerrar la sesión o el track.
 
-## 11. Criterios de aceptación
+### 9.2 Cierre de track
 
-- Un doc que miente falla CI (C2), y un doc sin estado también (C1).
-- El índice del canon no puede desincronizarse sin que CI lo note (C4).
-- La fila del registro de nombres muertos se añade dentro del mismo work unit que
-  retira la técnica.
-- El gate de cierre aparece en la plantilla ODD y en `AGENTS.md`, con las tres
-  preguntas.
-- Nada de esta propuesta cambia el canon vigente: es convención y verificación,
-  no rediseño.
+Tres preguntas antes del push final, más una comprobación que no depende de la
+memoria:
 
-## 12. Fuera de alcance
+1. ¿Qué sección del canon describe lo que acabo de cambiar, y qué dice ahora?
+2. ¿Qué símbolo o técnica eliminé, y quién lo menciona?
+3. ¿Qué cifra o referencia de este diff caduca?
 
-- Reescribir el canon o renombrar carpetas.
-- Un skill nuevo: se revisa aparte, con funky-ai como referencia de patrones a
-  copiar y a evitar.
-- Verificar que el contenido del canon sea *correcto*: eso sigue siendo revisión
-  humana.
+Comprobación: `git diff --diff-filter=D --name-only <base>...HEAD`. Cada
+borrado es deuda documental probable, y es enumerable.
+
+Y una vez, no por cambio: `pnpm lint:docs`.
+
+## 10. `scripts/docs.mjs`
+
+Un solo archivo, sin dependencias, con dos subcomandos:
+
+```
+node scripts/docs.mjs          # check (acción por defecto)
+node scripts/docs.mjs check
+node scripts/docs.mjs toc --write
+```
+
+En `package.json`: `"lint:docs": "node scripts/docs.mjs check"` y
+`"docs:toc": "node scripts/docs.mjs toc --write"`. Sin parser, sin flags, sin
+`--json`: cada uno es superficie de mantenimiento sin llamador hoy. Códigos de
+salida: `0` limpio (también `--help`), `1` hallazgos, `2` uso incorrecto. El
+`--help` son cinco líneas y describe la herramienta, nunca la política; la
+política vive en `docs/README.md` y `AGENTS.md`.
+
+C1-C3 en modo aviso durante la migración y bloqueantes al terminar (en el gate,
+porque este repo no tiene CI). C4 es siempre aviso: nunca bloquea.
+
+| # | Check | Qué mira |
+|---|---|---|
+| C1 | mapa coherente | Todo doc VIVO es alcanzable desde `docs/README.md` en un salto: enlazado directo o a través del índice de su área. Todo enlace relativo del mapa resuelve; aviso si aparece un `.md` en un área sin clasificar |
+| C2 | TOC | En docs de más de 120 líneas, el bloque `toc:start`/`toc:end` existe y coincide con los H2 reales |
+| C3 | nombres muertos | Ningún doc de `docs/design/` VIVO contiene un token de `DEAD.md`, salvo `DEAD.md` y `archive/` |
+| C4 | presupuesto | Aviso si un doc VIVO pasa de 300 líneas |
+
+C4 es aviso a propósito: hay docs legítimamente largos (una tabla de tokens) y
+no quiero una excepción por archivo.
+
+Decisiones de implementación que no son obvias:
+
+- **Parser de headings fence-aware**: ignora las líneas `##` dentro de bloques
+  ``` o ~~~. Es el fallo más común de un generador de TOC.
+- **Slug compatible con GitHub**: minúsculas, sin puntuación, espacios a
+  guiones, y sufijo `-1`, `-2` en headings duplicados por orden de aparición.
+- **EOL preservado**: detecta `\r\n` y escribe con el mismo; nunca normaliza el
+  archivo entero (evita un diff de 700 líneas por un cambio de retorno).
+- **C3 con límites de palabra**, para que `FadeIn` no dispare dentro de
+  `FadeInStagger` (que es token propio). Exención por archivo
+  `<!-- docs-lint: allow-tokens ... -->`, y el resumen informa cuántas hay.
+- **El TOC solo se inserta si falta**, justo después del H1. Nunca reordena
+  prosa ni toca nada fuera del bloque delimitado.
+
+Hoy este repo no tiene CI ni hooks de git, así que el gate es un paso
+obligatorio al cerrar el track (`pnpm lint:docs`, documentado en `AGENTS.md`),
+no una barrera automática. Si algún día se quiere bloqueante, un workflow que
+corra `pnpm lint:docs` son quince líneas; el script no cambia.
+
+## 11. Reglas para `AGENTS.md`
+
+Texto propuesto, para reemplazar el párrafo actual de docs de diseño:
+
+```
+- docs/README.md es el punto de entrada: si una pregunta no está ahí, añadirla.
+- docs/design/** es VIVO (salvo archive/, congelado): debe ser verdad hoy. rfcs
+  e issues son historia fechada.
+- Antes de cerrar cualquier cambio, fix de una línea o work unit, responde: ¿qué
+  doc VIVO afirma algo sobre esto? Si ninguna frase se vuelve falsa, escribe
+  `Docs: none - <motivo>` en el commit. Si cambia un valor, nombre, orden o
+  comportamiento, edita esa frase en el doc dueño, en el mismo commit.
+- Docs dueños (tras la partición de la sección 6):
+
+  | Si tocas... | Doc |
+  |---|---|
+  | shell, ritmo, geometría, cue de llegada | docs/design/sections.md |
+  | gates de media, reveal, aurora | docs/design/motion.md |
+  | tema, dark mode, scroll, debug overlay, gotchas | docs/design/platform.md |
+  | color, spacing, radio, sombra, z-index | docs/design/tokens.md |
+  | familias, escala, tracking, OpenType | typography-families.md |
+  | botones, gestos de puntero | buttons.md, pointer-gestures.md |
+  | proceso y checklist de iteración | iteration-guide.md |
+
+- Al cerrar un track, antes del push: las tres preguntas del gate, los borrados
+  del diff y `pnpm lint:docs`.
+- Al retirar un símbolo o técnica, añade su fila a docs/design/DEAD.md en el
+  mismo work unit.
+- Un doc VIVO de más de 250 líneas es dos docs.
+```
+
+## 12. Migración
+
+Una rama, cuatro commits:
+
+1. `scripts/docs.mjs` (C1 y C2 en aviso, con su `--help`), el TOC en los seis
+   docs grandes del canon (los de más de 120 líneas) y los dos alias de
+   `package.json`.
+2. Partición de `components.md`, actualización de las referencias con grep y
+   `docs/README.md` con el mapa de preguntas.
+3. `DEAD.md` y C3.
+4. `AGENTS.md` con la regla por afirmación, la tabla de docs dueños y el gate de
+   cierre; `docs/README.md` con la guía de uso (sección 15); C1-C3 bloqueantes
+   (hoy no hay CI en este repo).
+
+Presupuesto: una tarde. La partición es la mitad del trabajo.
+
+## 13. Alternativas descartadas
+
+- **El flujo completo (SSOT con ancla por doc)**: es correcto, pero para
+  proyectos con decenas de docs y varios colaboradores. Aquí sobra; el RFC
+  hermano de `funky-ai` lo documenta.
+- **Un solo archivo de canon**: 2.000 líneas; peor que el problema.
+- **Frontmatter YAML para el estado**: invisible al leer y exige parser, a
+  cambio de nada que la carpeta no dé.
+- **Auditoría semántica automatizada**: no existe. El gate de cierre lo hace el
+  agente sobre el diff.
+
+## 14. Criterios de aceptación
+
+- Cualquier pregunta de trabajo se responde desde el mapa sin abrir un archivo
+  de más de 250 líneas.
+- Un doc VIVO no puede citar un nombre muerto sin que falle el gate (C3).
+- El TOC no puede desincronizarse (C2).
+- Ningún doc vivo queda fuera del mapa (C1).
+- El canon no pierde contenido: la partición es movimiento, no resumen.
+- Un fix de 1 a 5 líneas cuesta cero requests de docs o dos (leer y editar),
+  nunca una cadena de lecturas para decidir.
+- Toda decisión documental queda registrada: en el cuerpo del commit o en la
+  tarea ODD. Una decisión sin rastro es la que se pierde.
+
+## 15. Guía de uso (tres anclas, quince líneas)
+
+No hay manual aparte: el sistema se explica donde se usa. Si alguna de estas
+tres piezas crece, es que el sistema creció de más.
+
+**`docs/README.md`**, al principio:
+
+```
+## Cómo se mantiene
+- Esto es VIVO: debe ser verdad hoy. rfcs/ e issues son historia fechada y no se editan.
+- Si buscas algo y no está en el mapa, añade la fila. El mapa es el índice, no un adorno.
+- Un doc de más de 250 líneas son dos docs.
+- pnpm lint:docs antes de cerrar un track; pnpm docs:toc regenera los índices.
+```
+
+**`AGENTS.md`**: los bullets y la tabla de docs dueños de la sección 11. Es el
+contrato del agente; si no está ahí, no se lee.
+
+**`--help` del script**: cinco líneas con uso, subcomandos y códigos de salida.
+Describe la herramienta, nunca la política: un help que repite política se
+pudre igual que un doc, pero sin índice ni gate que lo mire.
+
+La regla que sustituye a "¿esto requiere docs?": **mira la afirmación, no el
+tipo de archivo.** ¿Puedes señalar la frase de un doc VIVO que se vuelve falsa?
+Si no, `Docs: none - <motivo>` en el commit y cero requests. Si sí, editas esa
+frase en el doc dueño. `pnpm lint:docs` no decide esto: solo comprueba lo que
+nadie puede olvidar (mapa, TOC, nombres muertos), una vez al cerrar.
+
+## 16. Fuera de alcance
+
+- Reescribir el contenido del canon: solo moverlo y partirlo.
+- Cambiar la taxonomía de carpetas.
+- El flujo de proyectos grandes, que es el otro RFC.
