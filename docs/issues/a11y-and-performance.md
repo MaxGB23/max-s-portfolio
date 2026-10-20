@@ -37,10 +37,12 @@
   sitio son entradas pequeñas (opacity/translate ≤ 20px, una sola vez), fuera del
   alcance estricto de WCAG 2.3.3.
   Ese doc además documenta el riesgo **G1**: hero y about ocultan el contenido
-  dos veces (inline `opacity:0/visibility:hidden` + `gsap.set(autoAlpha:0)`), así
-  que un gate a medias los dejaría invisibles para siempre.
+  con dos capas (hoy el gate del reveal, `html:not([data-reveal="on"])
+  [data-reveal-item]`, + `gsap.set(autoAlpha:0)`), así que un gate a medias los
+  dejaría sin entrada. Los estilos inline que esta línea citaba cuando se
+  escribió el audit se eliminaron el 2026-10-19 (track `css-first-reveal`).
   Restricción de implementación, registrada aparte en
-  `featured-projects.tsx:66-71`: no bifurcar el render sobre `useReducedMotion()`
+  `featured-projects.tsx:48-53`: no bifurcar el render sobre `useReducedMotion()`
   —provoca `ReactHydrationError` por desajuste SSR/cliente. Eso descarta solo el
   branch de render; `gsap.matchMedia()` y `<MotionConfig reducedMotion="user">`
   corren fuera del render y no están descartados por esa regla.

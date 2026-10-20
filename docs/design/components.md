@@ -12,7 +12,7 @@ Contenido:
 - [2. Contrato de ritmo](#2-contrato-de-ritmo)
 - [3. Gates de media](#3-gates-de-media)
 - [4. Geometria por componente](#4-geometria-por-componente)
-- [5. Motion primitives](#5-motion-primitives)
+- [5. Reveal y motion](#5-reveal-y-motion)
 - [6. Aurora](#6-aurora)
 - [7. Tema y dark mode](#7-tema-y-dark-mode)
 - [8. Infraestructura de scroll](#8-infraestructura-de-scroll)
@@ -93,13 +93,14 @@ pagina, `scripts/section-spacing.mjs` compensa el padding propio de
 
 | Gate | Valor | Consumido por |
 |---|---|---|
-| `FEATURED_STACK_GATE` | `(min-width: 1024px) and (min-height: 768px) and (orientation: landscape)` | `featured-projects.tsx` (pin GSAP) y `use-lenis.tsx` (`PIN_MEDIA` del ScrollRestorer) |
 | Featured gap LARGE | `>=1280px` de ancho y `>=900px` de alto | `FEATURED_GAP_LG` |
 | Hero pt alto | `lg` + `min-height:700px` | `lg:[@media(min-height:700px)]:pt-34` |
 | Cap titulo featured | `max-height:800px` en `lg` | `lg:[@media(max-height:800px)]:text-4xl` |
 
-Fuente unica del gate de featured: `lib/breakpoints.ts`. No duplicar el string
-en otro archivo.
+`FEATURED_STACK_GATE` se retiro con el pin del featured (2026-10; ver 4.4): la
+seccion fluye en documento normal y ningun componente consume un gate de pin.
+El simbolo sobrevive como stub `@deprecated` en `lib/breakpoints.ts` para no
+romper imports viejos; sin consumidores, se puede borrar.
 
 ## 4. Geometria por componente
 
@@ -111,6 +112,15 @@ en otro archivo.
   backdrop-blur-none md:backdrop-blur-md border-b border-border shadow-sm`.
   OJO: `SCROLL_THRESHOLD = 8` NO es este umbral — alimenta el auto-hide/show del
   menu mobile, que es otra regla.
+- Sin app (JS apagado o script del gate bloqueado por CSP): el fondo condicional
+  nunca se activa porque `scrolled` es estado de React. La regla
+  `html:not([data-reveal="on"]) .nav-surface` de `globals.css` pinta entonces un
+  fondo opaco estatico con `--background` y borde `--border`. NO usa
+  `--color-nav`: ese token es translucido a proposito porque depende del
+  backdrop blur, que tambien es JS. La regla va sin capa para ganar a
+  `bg-transparent`/`border-transparent` sin `!important`. Alcance: cubre "la app
+  nunca arranco", no "el bundle murio" (ahi el atributo si esta y el header
+  sigue transparente hasta que el JS lo arregle).
 - Scroll-spy de seccion activa (`hooks/use-active-section.ts`,
   `useActiveSection(spySections)`): IntersectionObserver con
   `rootMargin "-40% 0px -40% 0px"` (banda central del 20%), sin dependencias y
@@ -223,15 +233,20 @@ en otro archivo.
   h1 del hero: 16px en mobile, 24px desde md); parrafos `text-fluid-body
   text-content max-w-[48ch] leading-relaxed`.
 - Animacion: timeline GSAP en scroll (autoAlpha + desplazamientos suaves),
-  sin staggers; estados iniciales ocultos en el DOM para evitar flash.
+  sin staggers; el estado oculto previo al primer paint lo aporta el gate CSS
+  (los nodos llevan `data-reveal-item`), no el markup. El gate oculta solo con
+  `opacity`, asi que estos nodos siguen en el arbol de accesibilidad (antes
+  llevaban `visibility: hidden` inline y quedaban fuera).
 
 ### 4.4 Stack featured (`featured-projects.tsx` + `featured-project-panel.tsx`)
 
 - Titulo standalone (mobile, `Section debug=none`) + seccion `#proyectos`
-  (desktop, pin GSAP dentro del `FEATURED_STACK_GATE`).
-- El panel (article `featured-panel`) es dueño de su altura dentro del pin:
-  NO usa `landscape:lg:min-h-screen` (eliminado en `352ab13`); el pin lo
-  mueve, no lo estira.
+  (desktop). Sin pin y deliberadamente GSAP-free: el stack vive en el flujo del
+  documento (`featured-projects.tsx`) y la animacion de los paneles es el
+  one-slide rule (ver `section-animations.md`).
+- El panel (article `featured-panel`) es dueño de su altura en el flujo: NO usa
+  `landscape:lg:min-h-screen` (eliminado en `352ab13`); nada lo estira ni lo
+  desplaza.
 - Gaps titulo<->card: `FEATURED_GAP` + `FEATURED_GAP_LG` interpolados
   (`gap-12 [@media(min-width:1280px)_and_(min-height:900px)]:gap-30`).
 - Gap titulo -> primera card de la seccion `#proyectos` (desktop):
@@ -293,9 +308,12 @@ en otro archivo.
   `h2` de la seccion `#proyectos` (cambio de `h2` a `h3` en `3f8191b`); el
   estilo viene de clases explicitas, no del selector de etiqueta.
   `leading-[1.05]` + crop `-mb-2 md:mb-0` (ver la columna de texto).
-- Stacking por pin GSAP con `matchMedia(FEATURED_STACK_GATE)`; comentario en
-  el codigo advierte: NO agregar `overflow-y-auto` al panel (rompe el pin y
-  crea scrollbars fantasma).
+- Visibilidad de cada panel por geometria (one-slide rule), no por pin: el
+  estado se lee del `getBoundingClientRect()` en cada frame de scroll. Gotcha
+  vigente: NO agregar `overflow-y-auto` al panel ni al stack, porque crea un
+  scroll container anidado dentro de una pagina con autoridad de scroll propia
+  (Lenis) y el motivo historico (rompia el pin de GSAP, ya retirado) no es el
+  unico riesgo.
 
 ### 4.5 Todos los proyectos (`all-projects.tsx`)
 
@@ -305,7 +323,9 @@ en otro archivo.
   `className="pt-6 md:pt-12 lg:pt-16"` (el pad vertical va en `className`, no en
   el inset), `innerId="all-projects-content"`; grid `1/2/3` con `gap-6`.
 - h2 `text-fluid-section` con palabra "Proyectos" acento + brightness-110.
-- `FadeInStagger` + `FadeInItem` en cada card (grid).
+- Entrada con `Reveal`: UN `Reveal delayEnter` para el heading y UNO para todo
+  el grid (sin stagger por card; antes `FadeInStagger` + `FadeInItemFade`). En
+  mobile el grid usa `earlyOnMobile`.
 - Fuente de datos: `data/projects.ts` (`getFeaturedProjects`, categorias).
 
 ### 4.6 ProjectCard (`project-card.tsx`)
@@ -371,13 +391,20 @@ en otro archivo.
   border-white/10`; marca serif "MaxGB23" (con 23 en acento), bio `max-w-sm`,
   redes (GitHub/LinkedIn) con hovers suaves.
 - BOTTOM: copyright una linea. Minimal por decision (sin nav, sin reloj en
-  vivo). `FadeIn` en el contenido.
+  vivo). Dos `Reveal`: grid de navegacion sin delay y barra de copyright con
+  `delay={0.1}`.
 
 ### 4.10 Detalle de proyecto (`project-detail.tsx`)
 
 - Volver: `fixed` arriba-izquierda, pill primary md con `className="back-btn
   pointer-events-auto hover:bg-foreground/80 transition-colors"` (excepcion:
   hover de fondo, NUNCA transition-opacity - GSAP lo controla).
+  El control NAVEGA, asi que es un `<a href="/">` real dentro de `Button
+  asChild`, no un `<button>` (2026-10-19): la pagina no renderiza navbar, asi
+  que sin JS era el unico camino de vuelta dentro del sitio y estaba muerto. El
+  `onClick` hace `preventDefault()` y ejecuta la logica de siempre (history +
+  scroll restaurado si venimos del grid, `replace("/")` en llegada directa), de
+  modo que con JS el href nunca se sigue y el comportamiento no cambia.
 - Hero detalle: `px-6 md:px-12 lg:px-20 pt-22 md:pt-24 2xl:pt-26 pb-12 md:pb-16 max-w-5xl`.
   El `pt` superior iguala el espaciado entre el boton Volver flotante y el badge
   de categoria (88 / 96 / 104px).
@@ -513,18 +540,36 @@ margen vertical. Badge `px-3.5 py-1 text-xs 2xl:text-sm`: el `py-1` es
   uno largo en la misma fila del grid: el numero queda alineado con la primera
   letra del titulo y la continuacion alinea debajo, sin numero huerfano.
 
-## 5. Motion primitives
+## 5. Reveal y motion
 
-`components/motion-primitives.tsx` (framer-motion):
+`components/reveal.tsx` - entradas de seccion:
 
-- `FadeIn`, `FadeInStagger`, `FadeInItem`. Viewports: `VIEWPORT` = `{once:
-  true, amount: 0.15}`; `VIEWPORT_DELAYED` agrega `margin: "0px 0px -15% 0px"`;
-  `STAGGER_VIEWPORT` = `{once: true, amount: "some"}`.
-- `FadeIn`: opacity + scale 0.96, 0.55s ease cubic; `FadeInItem`: y 18, 0.5s.
-- `FadeIn.as` esta declarado en la interfaz pero NO implementado (siempre
-  motion.div; el prop cae en `...rest`) - deuda.
-- `SlideIn` y `ScaleIn` YA NO se exportan: no reintroducirlos (se eliminaron
-  en el restructure de motion).
+- `Reveal` (`children`, `className`, `delay`, `delayEnter`, `earlyOnMobile`):
+  envuelve el bloque en un `<div data-reveal-item>` y lo revela al entrar al
+  viewport. IntersectionObserver COMPARTIDO por perfil (`rootMargin` +
+  `threshold`), no uno por nodo; al intersectar escribe
+  `data-reveal-item="shown"` y hace `unobserve`. Sin estado de React, sin
+  re-render y sin loop de animacion.
+- La entrada es una transicion CSS de opacidad + `translate` (ascenso de 20px,
+  0.55s) en la clase `.reveal-fade`; `--reveal-delay` (escrito en el efecto, no
+  en el render) lleva los delays. El `translate` es paridad con el `y: 20 -> 0`
+  del `FadeIn` de framer-motion que sustituyo; usar la propiedad `translate` y
+  no `transform` evita pisar cualquier transform de las utilidades de Tailwind.
+  Perfiles: default (`threshold` 0.15, sin margen), `delayEnter`
+  (0.15 + margen -15%), `earlyOnMobile` en mobile (`threshold` 0 + margen -15% y
+  +0.15s para entrar detras del titulo).
+- El estado oculto no esta en el markup: lo aporta el gate (script inline del
+  layout + CSS del gate, unlayered), que solo se arma si el JS arranco y que
+  falla abierto. Reglas completas en `docs/design/section-animations.md`.
+- `data-reveal-item` DEBE renderizarse en el SSR. Anadirlo en un efecto produce
+  flash visible -> oculto -> visible.
+- `components/motion-primitives.tsx` YA NO EXISTE: `FadeIn`, `FadeInStagger`,
+  `FadeInItem` y `FadeInItemFade` se borraron en el track `css-first-reveal`
+  (sus unicos consumidores eran las entradas de la home). `SlideIn` y `ScaleIn`
+  tampoco se exportan: no reintroducirlos.
+- framer-motion sigue en el sitio para lo que NO es una entrada: menu mobile
+  (`AnimatePresence`), hovers, hide-on-scroll del navbar y los reveals de
+  `project-detail.tsx`.
 
 ## 6. Aurora
 
@@ -539,9 +584,12 @@ margen vertical. Badge `px-3.5 py-1 text-xs 2xl:text-sm`: el `py-1` es
 
 ## 7. Tema y dark mode
 
-- `ThemeProvider` con `attribute="class"`, `defaultTheme="dark"`,
-  `forcedTheme="dark"` y `disableTransitionOnChange` (layout.tsx): el sitio
-  es dark-first y el tema light NO se ofrece en la UI.
+- Tema: `class="dark"` renderizado por el SERVIDOR en el `<html>`
+  (layout.tsx). No hay provider ni script de tema: `next-themes` y
+  `components/theme-provider.tsx` se eliminaron en el track
+  `css-first-reveal` (el tema es forzado y no hay toggle, asi que el provider
+  solo inyectaba un script). Sin JS el sitio se ve oscuro, porque la clase
+  viene en el HTML.
 - `DarkModeToggle` esta DESMONTADO (import comentado en navbar.tsx): reintroducirlo
   requiere plan de tema completo; no descomentar a ciegas. El modo light existe
   solo como derivado de tokens (ver seccion 7 y `tokens.md`), sin UI para
@@ -565,9 +613,9 @@ margen vertical. Badge `px-3.5 py-1 text-xs 2xl:text-sm`: el `py-1` es
   (replaceState no lo actualiza, ver seccion 9).
 - `useScrollToTop`: duracion 2s.
 - Handoff home -> detalle: `saveHomeScroll(scrollY)` en el click de las cards;
-  `takeHomeScroll`/`ScrollRestorer` en el retorno; `PIN_MEDIA` =
-  `FEATURED_STACK_GATE` (no pinear en mobile); watchdog del restorer:
-  intervalo 60ms, max 20 runs (~1.2s de deadline).
+  `takeHomeScroll`/`ScrollRestorer` en el retorno. Sin pin no hay pin-spacer que
+  esperar: el restorer recalcula el limite de Lenis (`lenis.resize()`) y hace
+  `scrollTo(target, { immediate: true })`.
 - **Gate de 768px: decision consciente, NO tocar.** `syncTouch = false` es el
   default de Lenis y el codigo no lo overridea, asi que en touch Lenis es
   pasivo: `onVirtualScroll` retorna temprano (lenis.mjs:649-655, sin
@@ -608,7 +656,7 @@ margen vertical. Badge `px-3.5 py-1 text-xs 2xl:text-sm`: el `py-1` es
 ## 10. Debug overlay
 
 - Convencion de profundidad: se cuenta desde el ancestro marcado mas externo.
-  Los wrappers sin marcar (pin GSAP, wrappers de animacion, `motion.div`) NO
+  Los wrappers sin marcar (wrappers de animacion, `motion.div`) NO
   cuentan, y varias raices hermanas arrancan cada una en l1. Regla: ningun
   marker puede tener nivel <= el de un ancestro marcado.
 - `Section.debug`: `default` (l1 outer / l2 inner) o `none` (sin markers). El
@@ -633,13 +681,17 @@ margen vertical. Badge `px-3.5 py-1 text-xs 2xl:text-sm`: el `py-1` es
 
 - `cn()` necesita el registro de tokens fluidos en `lib/utils.ts` (ver
   typography-families.md seccion 8).
-- NO agregar `overflow-y-auto` al stack de featured (rompe el pin GSAP).
+- NO agregar `overflow-y-auto` al stack de featured: crea un scroll container
+  anidado (el motivo original era el pin de GSAP, retirado el 2026-10).
 - `announceArrival` usa `replaceState` + clase, NO `:target` (no confiable
   con replaceState).
 - `copyEmail` con fallback mailto: si un futuro cambio de API lo rompe,
   mantener el fallback.
-- `FadeIn.as` sin implementar: si se necesita renderizar otro elemento,
-  implementarlo en motion-primitives (no en cada caller).
+- `Reveal` escribe `data-reveal-item` en el MARKUP y la transicion del fade en
+  `.reveal-fade`, no en el estado `shown`: hero y about tambien son items del
+  gate, pero su opacidad la escribe GSAP frame a frame, y una transicion ahi
+  amortiguaria cada escritura (ademas la red de seguridad de 2s cae en mitad de
+  su timeline).
 - `DarkModeToggle` desmontado: no reintroducir sin plan.
 
 ## 12. CheckList
@@ -656,7 +708,8 @@ margen vertical. Badge `px-3.5 py-1 text-xs 2xl:text-sm`: el `py-1` es
 
 - 13.1 `ProductsSection` import muerto en `page.tsx` (importado, no
   renderizado): decidir si se monta o se elimina el import.
-- 13.2 `FadeIn.as` declarado sin implementar.
+- 13.2 Los reveals de `project-detail.tsx` siguen en framer-motion: otra
+  superficie, sin migrar (deuda compartida con `section-animations.md`).
 - 13.3 `DarkModeToggle` desmontado (tema light no ofrecido; forcedTheme).
 - 13.4 `text-hero-text` en utilidades: se usa en el retrato de featured con
   index label; token mapeado, verificar usos al tocar hero.
@@ -669,3 +722,12 @@ margen vertical. Badge `px-3.5 py-1 text-xs 2xl:text-sm`: el `py-1` es
   decisiones que si importaban ya estaban asimiladas en este canon; las dos
   referencias que quedaban (hero cue, dark mode) se reescribieron aqui en vez
   de dejar punteros muertos.
+- 13.7 Detalle de proyecto sin JS (2026-10-19): AMBAS vistas viajan en el HTML
+  (decisión 2026-10-13), pero el switcher de tabs y el lightbox de la galeria
+  son JS puro, asi que sin JS quedan sin alcanzar. DEUDA ACEPTADA, no
+  pendiente: navegar sin JS es deliberado y rarisimo, y el contenido ya esta
+  indexable e imprimible. La unica pieza que SI se arreglo es el boton Volver
+  (ver 4.10): era un callejon real, no una comodidad. Reimplementar tabs
+  (`:target`, radios CSS) o galeria como pagina aparte queda DESCARTADO:
+  duplicaria la fuente de verdad del estado activo y arriesga la experiencia
+  con JS, que es la que importa.

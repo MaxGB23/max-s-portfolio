@@ -574,15 +574,24 @@ export function ProjectDetail({ project }: { project: ProjectL }) {
       <div className="fixed inset-x-0 top-4 md:top-6 z-50 pointer-events-none">
         <div className="mx-auto w-full max-w-350 pl-5">
           <Button asChild variant="primary" shape="pill" size="md" className="back-btn pointer-events-auto hover:bg-foreground/80 transition-colors">
-            <button
-              type="button"
-              onClick={handleBack}
+            {/* Real link, not a button: the control NAVIGATES, and this page
+                renders without a navbar, so it is the only way back inside the
+                site when the JS never runs. With JS nothing changes: the
+                handler keeps the smart path above (history + restored scroll
+                when we came from the grid, deterministic replace otherwise) and
+                the href is never followed. */}
+            <a
+              href="/"
+              onClick={(event) => {
+                event.preventDefault();
+                handleBack();
+              }}
               aria-label={t("section.projects.backAria")}
               title={t("common.backToProjects")}
             >
               <ArrowLeft size={16} aria-hidden="true" />
               {t("section.projects.back")}
-            </button>
+            </a>
           </Button>
         </div>
       </div>

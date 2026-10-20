@@ -344,3 +344,139 @@ body {
     box-shadow: inset 0 0 0 2px color-mix(in oklab, var(--accent-purple) 35%, transparent);
   }
 }
+
+/* ============================================================
+   Reveal gate — content is visible by default
+   ------------------------------------------------------------
+   Default state of the served HTML is VISIBLE. Hiding only exists
+   when JS started correctly: an inline script in <head> sets
+   data-reveal="on" on <html> before the first paint, and only then
+   do the items wait for the IntersectionObserver (components/reveal.tsx)
+   to mark them data-reveal-item="shown".
+
+   Failure modes, on purpose:
+   - Script blocked (CSP) or JS disabled: data-reveal is never set,
+     so nothing is hidden and the page renders complete and static.
+   - Observer never fires or the bundle dies: the same inline script
+     carries a 2s safety net that marks every remaining item as shown.
+
+   Unlayered on purpose: these rules must win over any opacity utility
+   on the same node. They are also the reason the section entries no
+   longer bake opacity:0 into the server markup.
+   ============================================================ */
+[data-reveal="on"] [data-reveal-item]:not([data-reveal-item="shown"]) {
+  opacity: 0;
+}
+
+[data-reveal="on"] [data-reveal-item="shown"] {
+  opacity: 1;
+}
+
+/* The 20px rise that framer-motion's FadeIn used to animate (`y: 20 -> 0`).
+   Same property channel caveat as the navbar: `translate` is its own CSS
+   property, so it composes with `transform` instead of racing with it.
+   Only `.reveal-fade` nodes (Reveal) rise; Hero and About keep GSAP's own
+   timeline and must not get an extra offset here. */
+[data-reveal="on"] .reveal-fade:not([data-reveal-item="shown"]) {
+  translate: 0 20px;
+}
+
+[data-reveal="on"] .reveal-fade[data-reveal-item="shown"] {
+  translate: none;
+}
+
+/* The fade lives on its own class, NOT on the shown state.
+   Hero and About also carry data-reveal-item so the gate can hide them before
+   the first paint, but their opacity is written frame by frame by GSAP. A
+   transition on those nodes would damp every GSAP write, and the 2s safety net
+   marks them shown in the middle of the timeline, which would start the
+   damping halfway through the entrance. Only components/reveal.tsx renders
+   this class. */
+.reveal-fade {
+  transition:
+    opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    translate 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--reveal-delay, 0s);
+}
+
+/* ============================================================
+   One-slide featured panels without JS
+   ------------------------------------------------------------
+   The panels' hidden state is React state (`slide.visible`), so the
+   server renders them hidden and without JS the whole section stayed
+   invisible while keeping its space in flow. The gate attribute is
+   the liveness signal this rule needs: absent means the inline script
+   (and therefore the app) never ran, so the panels show as a static
+   stack with no one-slide logic. With JS the attribute is present and
+   the state machine keeps full control.
+
+   Unlayered on purpose, and using `translate` (not `transform`):
+   that is how Tailwind v4 emits `translate-y-*`.
+   ============================================================ */
+html:not([data-reveal="on"]) .featured-one-slide {
+  opacity: 1;
+  translate: none;
+}
+
+/* ============================================================
+   Navbar surface without an app
+   ------------------------------------------------------------
+   Same liveness signal as the featured panels above. The scrolled
+   surface is React state (`scrolled`), so when the inline gate
+   script never runs (JS disabled, CSP) the header would stay
+   transparent over the page for the whole scroll. Absent attribute
+   means the app never booted, so the header gets a static, fully
+   opaque surface. `--color-nav` is NOT used here: it is translucent
+   on purpose because it relies on backdrop blur, which is also
+   gated on the app running.
+   Unlayered on purpose: it must beat `bg-transparent` and
+   `border-transparent` without `!important`.
+   ============================================================ */
+html:not([data-reveal="on"]) .nav-surface {
+  background: var(--background);
+  border-bottom: 1px solid var(--border);
+}
+
+/* ============================================================
+   Navbar entrance — CSS-owned, two tracks
+   ------------------------------------------------------------
+   The header's entrance used to be framer-motion's `initial`
+   (y: -24px + opacity 0), which baked opacity:0 into the server
+   markup: without JS the navbar never showed up. The drop survived
+   the migration on the `translate` channel, because framer-motion
+   still owns `transform` for the mobile hide-on-scroll and the two
+   properties compose instead of racing.
+   Runs regardless of prefers-reduced-motion, like every other entry
+   animation on the site: see the policy in
+   docs/design/section-animations.md.
+   ============================================================ */
+.nav-arrive {
+  /* Two tracks, exactly the two framer-motion animated on main: the drop was
+     0.35s with a strong ease-out and the fade 0.45s easeOut. Running both at
+     0.45s ease-out makes the header read as SLOWER than main, which is the
+     opposite of the parity this replaces. */
+  animation:
+    nav-arrive-fade 0.45s ease-out backwards,
+    nav-arrive-drop 0.35s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+@keyframes nav-arrive-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes nav-arrive-drop {
+  from {
+    /* `translate` (not `transform`): framer-motion writes `transform` for the
+       mobile hide-on-scroll, and the two properties compose instead of
+       overwriting each other. This is the -24px drop the header had on main. */
+    translate: 0 -24px;
+  }
+  to {
+    translate: none;
+  }
+}

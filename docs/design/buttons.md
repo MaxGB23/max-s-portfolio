@@ -103,7 +103,7 @@ duration-200` (outline, inverted).
 | Detalle | Volver | `primary pill md` + `back-btn hover:bg-foreground/80 transition-colors` | Excepcion: hover de fondo, NUNCA opacity (GSAP lo controla) |
 | Detalle | Ver codigo / Ver demo | `inverted lg rounded` | Cambio pleno a morado |
 | Detalle | CTA final (Volver a proyectos) | `primary md` | En banda morada suave |
-| Featured | Ver caso de estudio | `primary md` | Con FadeIn |
+| Featured | Ver caso de estudio | `primary md` | Con `Reveal` (entrada CSS) |
 | Pricing | Pro (destacado) | `white rounded fullWidth py-3.5` | Sin shadow (nunca) |
 | Pricing | Los demas planes | `outline rounded fullWidth py-3.5` | Sin shadow (nunca) |
 | Contacto | Conectemos en LinkedIn | `primary lg` | Unico primary en contacto |

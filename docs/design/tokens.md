@@ -236,9 +236,10 @@ Reglas:
 
 Vocabulario del sistema (sin inventar):
 
-- Gates de media en codigo: `FEATURED_STACK_GATE` en `lib/breakpoints.ts`
-  (unica fuente, compartida por GSAP y ScrollRestorer):
-  `(min-width: 1024px) and (min-height: 768px) and (orientation: landscape)`.
+- `FEATURED_STACK_GATE` ya NO es un gate vivo: se retiro con el pin del
+  featured (2026-10) y sobrevive solo como stub `@deprecated` en
+  `lib/breakpoints.ts`, sin consumidores. Los gates que quedan son clases
+  inline (`lg:[@media(...)]`) y `FEATURED_GAP_LG` (en `lib/rhythm.ts`).
 - **Token de layout (aprobado 2026-09-21, cerrado 2026-10-05)**: `--breakpoint-nav:
   830px` (token Tailwind v4 en `@theme` de `app/globals.css`, clase `nav:`)
   decide desktop vs movil por ancho de CONTENIDO, no de viewport. El navbar en

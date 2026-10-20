@@ -55,8 +55,12 @@ export function HeroSection() {
       ".hero-scroll",
     ];
 
-    // Set initial hidden state synchronously BEFORE the timeline starts.
-    // autoAlpha sets both opacity:0 and visibility:hidden so there's no flash.
+    // Set initial hidden state synchronously BEFORE the timeline starts, so the
+    // timeline is deterministic even if the reveal gate never armed (no
+    // IntersectionObserver). Before paint the hiding comes from the gate CSS,
+    // not from the markup: these nodes used to carry inline
+    // `opacity:0; visibility:hidden`, which kept them out of the a11y tree and
+    // invisible forever when the JS never ran.
     gsap.set(elements, { autoAlpha: 0 });
 
     const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
@@ -136,15 +140,15 @@ export function HeroSection() {
           {/* Left Column: Info */}
           <div className="hero-info flex flex-col items-center md:items-start text-center md:text-left z-10 ">
 
-            <p className="brightness-110 hero-label text-muted-foreground uppercase tracking-widest font-medium mb-4 text-fluid-eyebrow" style={{ opacity: 0, visibility: 'hidden' }}>
+            <p className="brightness-110 hero-label text-muted-foreground uppercase tracking-widest font-medium mb-4 text-fluid-eyebrow" data-reveal-item="">
               {t("hero.role")}
             </p>
-            <h1 ref={titleRef} className="hero-title font-serif grid grid-cols-1 gap-3 font-black uppercase text-fluid-display leading-[0.9] tracking-tighter text-foreground mb-4 md:mb-6" style={{ opacity: 0, visibility: 'hidden' }}>
+            <h1 ref={titleRef} className="hero-title font-serif grid grid-cols-1 gap-3 font-black uppercase text-fluid-display leading-[0.9] tracking-tighter text-foreground mb-4 md:mb-6" data-reveal-item="">
               <span>{HERO_NAME.first}</span>
               <span className="text-purple-accent  sm:tracking-[0.01em]">{HERO_NAME.last}</span>
             </h1>
 
-            <div className="hero-description debug-l4 px-4 sm:px-16 md:px-0 text-fluid-body leading-relaxed text-content max-w-full" style={{ opacity: 0, visibility: 'hidden', maxWidth: titleWidth ? `min(${titleWidth}px, 60ch)` : undefined }}>
+            <div className="hero-description debug-l4 px-4 sm:px-16 md:px-0 text-fluid-body leading-relaxed text-content max-w-full md:max-w-[42ch]" data-reveal-item="" style={{ maxWidth: titleWidth ? `min(${titleWidth}px, 60ch)` : undefined }}>
               <div className="debug-test">
                 <p >{t("hero.description")}</p>
               </div>
@@ -154,7 +158,7 @@ export function HeroSection() {
           {/* Right Column: Portrait */}
           <div
             className="hero-portrait relative rounded-4xl shrink-0 shadow-xl aspect-8/9 h-[280px] sm:h-[330px] md:h-[300px] 2xl:h-[340px] w-auto max-w-full z-0 mt-4 md:mt-0"
-            style={{ opacity: 0, visibility: 'hidden' }}
+            data-reveal-item=""
           >
             <div className="w-full h-full rounded-4xl overflow-hidden relative">
               <Image
@@ -170,7 +174,8 @@ export function HeroSection() {
             {/* Waving Hand Badge */}
             <motion.div
               className="hero-badge absolute -bottom-6 -right-6 md:-bottom-10 md:-right-10 w-24 h-24 md:w-32 md:h-32 rounded-full flex items-center justify-center shadow-2xl z-20 cursor-pointer"
-              style={{ backgroundColor: "#5865F2", border: "12px solid var(--background)", opacity: 0, visibility: 'hidden' }}
+              data-reveal-item=""
+              style={{ backgroundColor: "#5865F2", border: "12px solid var(--background)" }}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               transition={{ duration: 0.2 }}
@@ -188,7 +193,7 @@ export function HeroSection() {
         </div>
 
         {/* CTA buttons */}
-        <div className="hero-cta flex flex-wrap items-center justify-center gap-4" style={{ opacity: 0, visibility: 'hidden' }}>
+        <div className="hero-cta flex flex-wrap items-center justify-center gap-4" data-reveal-item="">
           <Button asChild variant="primary" shape="pill" size="md" className="shadow-md">
             <Link
               href="#proyectos"
@@ -215,7 +220,7 @@ export function HeroSection() {
 
 
         {/* Tech Stack Ticker */}
-        <div className="hero-chips flex flex-col justify-center items-center gap-3 w-full " style={{ opacity: 0, visibility: 'hidden' }}>
+        <div className="hero-chips flex flex-col justify-center items-center gap-3 w-full " data-reveal-item="">
           <p className="text-xs uppercase tracking-widest text-muted-foreground 2xl:text-base">
             {t("hero.stack")}
           </p>
@@ -232,7 +237,7 @@ export function HeroSection() {
       {/* Scroll indicator — last flow child of the section, so it always sits
           flush on the bottom edge (the section boundary). mt-* ports the gap it
           lost when it left the l2 stack. */}
-      <div className="hero-scroll relative z-10 shrink-0 flex flex-col items-center gap-2 mt-10 2xl:mt-14 text-muted-foreground" style={{ opacity: 0, visibility: 'hidden' }}>
+      <div className="hero-scroll relative z-10 shrink-0 flex flex-col items-center gap-2 mt-10 2xl:mt-14 text-muted-foreground" data-reveal-item="">
         <span className="text-xs 2xl:text-base tracking-widest uppercase">{t("hero.scroll")}</span>
         <motion.div
           className="w-px h-8 bg-border brightness-150"
