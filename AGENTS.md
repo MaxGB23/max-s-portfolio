@@ -1,10 +1,13 @@
 ### Idioma (conversación)
 Cuando respondas en español, usa siempre español neutro. Evita el voseo y los regionalismos.
 
-### Evitar vueltas y tokens innecesarios (IMPORTANTE)
+### Evitar vueltas, requests y tokens innecesarios (IMPORTANTE)
 - Una vez verificado que el estado del árbol coincide con la decisión del usuario (los cambios pedidos por el usuario) y que la comprobación (build/tsc/tests) pasa, CIERRA. No re-audites, no re-verifiques lo ya verificado, no preguntes de nuevo preguntas ya respondidas y no sigas consumiendo tokens en confirmaciones redundantes.
 - Si no hay nada que editar, dilo en una línea y para. No juegues al "no puedo creer que no haya cambios" repitiendo git diff / diff --stat cada turno.
-- No "verifiques" pidiendo permiso una y otra vez para lo ya aplicado: cuando the user ya eligió una opción, ejecútala una vez y confirma en una línea.
+- No "verifiques" pidiendo permiso una y otra vez para lo ya aplicado: cuando el usuario ya eligió una opción, ejecútala una vez y confirma en una línea.
+- **Agrupa comandos y tools en una sola llamada.** El free tier se mide en requests diarias, no en tokens: cada llamada cuenta como una. Lo independiente va junto: varias lecturas, varios greps, `git status` + `git diff --stat` + conteo de líneas.
+- **El lote es solo para lo independiente y de solo lectura.** Nunca en la misma llamada una escritura con su verificación, ni un paso que dependa de la salida del anterior: si falla a medias, no sabes qué se aplicó.
+- Presupuesto de referencia: un fix de 1-5 líneas cuesta 3-4 requests (ver el estado, editar, commitear). Si pasa de cinco, la causa suele ser que no sabes dónde está lo que buscas; arregla eso, no acumules comandos.
 
 ### Commits
 - Conventional commits siempre en inglés.
