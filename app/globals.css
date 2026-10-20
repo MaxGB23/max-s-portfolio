@@ -404,6 +404,25 @@ html:not([data-reveal="on"]) .featured-one-slide {
 }
 
 /* ============================================================
+   Navbar surface without an app
+   ------------------------------------------------------------
+   Same liveness signal as the featured panels above. The scrolled
+   surface is React state (`scrolled`), so when the inline gate
+   script never runs (JS disabled, CSP) the header would stay
+   transparent over the page for the whole scroll. Absent attribute
+   means the app never booted, so the header gets a static, fully
+   opaque surface. `--color-nav` is NOT used here: it is translucent
+   on purpose because it relies on backdrop blur, which is also
+   gated on the app running.
+   Unlayered on purpose: it must beat `bg-transparent` and
+   `border-transparent` without `!important`.
+   ============================================================ */
+html:not([data-reveal="on"]) .nav-surface {
+  background: var(--background);
+  border-bottom: 1px solid var(--border);
+}
+
+/* ============================================================
    Navbar entrance — fade-only, CSS-owned
    ------------------------------------------------------------
    The header's entrance used to be framer-motion's `initial`

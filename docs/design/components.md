@@ -112,6 +112,15 @@ romper imports viejos; sin consumidores, se puede borrar.
   backdrop-blur-none md:backdrop-blur-md border-b border-border shadow-sm`.
   OJO: `SCROLL_THRESHOLD = 8` NO es este umbral — alimenta el auto-hide/show del
   menu mobile, que es otra regla.
+- Sin app (JS apagado o script del gate bloqueado por CSP): el fondo condicional
+  nunca se activa porque `scrolled` es estado de React. La regla
+  `html:not([data-reveal="on"]) .nav-surface` de `globals.css` pinta entonces un
+  fondo opaco estatico con `--background` y borde `--border`. NO usa
+  `--color-nav`: ese token es translucido a proposito porque depende del
+  backdrop blur, que tambien es JS. La regla va sin capa para ganar a
+  `bg-transparent`/`border-transparent` sin `!important`. Alcance: cubre "la app
+  nunca arranco", no "el bundle murio" (ahi el atributo si esta y el header
+  sigue transparente hasta que el JS lo arregle).
 - Scroll-spy de seccion activa (`hooks/use-active-section.ts`,
   `useActiveSection(spySections)`): IntersectionObserver con
   `rootMargin "-40% 0px -40% 0px"` (banda central del 20%), sin dependencias y

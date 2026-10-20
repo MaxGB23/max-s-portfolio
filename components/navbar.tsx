@@ -204,7 +204,7 @@ export function Navbar() {
         y: { duration: 0.35, ease: [0.22, 1, 0.36, 1] },
       }}
       className={cn(
-        "debug-l1 nav-arrive fixed top-0 left-0 right-0 z-50 transition-colors duration-300",
+        "debug-l1 nav-arrive nav-surface fixed top-0 left-0 right-0 z-50 transition-colors duration-300",
         // Mobile y desktop: fondo condicional — transparente al top, activo al scrollear
         isBgActive
           ? "bg-nav backdrop-blur-none md:backdrop-blur-md border-b border-border shadow-sm"
