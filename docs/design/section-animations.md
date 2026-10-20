@@ -92,16 +92,27 @@ framer-motion, que sigue siendo la unica razon por la que el footer importa
 
 ### Navbar: entrada CSS + hide-on-scroll (Framer)
 
-La entrada del header es un keyframe CSS (`.nav-arrive`: opacidad 0 -> 1 en
-0.45s, `backwards`). Antes era el `initial` de framer-motion (`y: -24px` +
-`opacity: 0`), que horneaba `opacity:0` en el markup del servidor: sin JS el
-navbar no aparecia nunca. El `-24px` era decorativo (heredado del
-`useGsapAnimation` original, commit `ab90565`), no una proteccion contra jitter,
-asi que la entrada es fade-only a proposito.
+La entrada del header son dos keyframes CSS en `.nav-arrive`, con los mismos
+tiempos que las dos pistas de framer-motion en main: opacidad 0 -> 1 en 0.45s
+`ease-out` y `translate: 0 -24px -> none` en 0.35s
+`cubic-bezier(0.22, 1, 0.36, 1)`. Un unico keyframe de 0.45s para ambas se
+percibia mas lento que main: el movimiento es la pista que se nota, y 0.35s con
+un ease-out fuerte no es lo mismo que 0.45s `ease-out`. Antes era el `initial`
+de framer-motion (`y: -24px` + `opacity: 0`), que horneaba `opacity:0` en el
+markup del servidor: sin JS el navbar no aparecia nunca.
+
+El desplazamiento va por la propiedad `translate`, NO por `transform`:
+framer-motion sigue escribiendo `transform` para el hide-on-scroll mobile, y
+`translate` es una propiedad independiente que compone en vez de pisarse. Ese
+fue el motivo real de que el `-24px` desapareciera en la primera version del
+track (dos escritores sobre `transform` se pisan); con `translate` el problema
+no existe. El desplazamiento es decorativo (heredado del `useGsapAnimation`
+original, commit `ab90565`), nunca fue proteccion contra jitter: el jitter se
+arregla con el deadband de 4px y el umbral de 14px.
 
 Lo que queda en framer es el hide-on-scroll de mobile, unico dueno de
-`transform` en ese nodo (por eso la entrada CSS toca solo `opacity`: dos
-escritores sobre la misma propiedad se pisan).
+`transform` en ese nodo. La entrada CSS puede tocar `opacity` y `translate`
+porque son canales distintos; lo que no puede tocar es `transform`.
 
 El disparador del hide-on-scroll acumula el delta SOLO mientras la direccion no
 cambie y lo reinicia al cambiar de sentido, con umbral de 14px en la misma
@@ -142,7 +153,10 @@ ocultamiento es una capa que solo existe si el JS arranco bien:
 3. `components/reveal.tsx` observa, escribe `shown` y deja de observar. Un
    IntersectionObserver compartido por perfil (`rootMargin` + `threshold`), sin
    estado de React, sin re-render y sin animation loop. La entrada es una
-   transicion CSS de opacidad de 0.55s, con `--reveal-delay` para delays.
+   transicion CSS de opacidad y `translate` (ascenso de 20px) de 0.55s, con
+   `--reveal-delay` para delays. El `translate` restaura el `y: 20 -> 0` que
+   animaba el `FadeIn` de framer-motion en main: sin el, la entrada queda mas
+   seca y el branch deja de ser indistinguible del original.
 
 Reglas que no se pueden romper:
 
@@ -247,8 +261,10 @@ wash con anillo que se repite en cada click.
    accesibilidad. La transicion del fade se mueve a `.reveal-fade` (ver "Gate de
    reveal") para no amortiguar las escrituras de GSAP.
 
-6. **Navbar:** entrada fade-only por keyframe CSS (`.nav-arrive`); fuera el
-   `initial` de framer-motion, que horneaba `opacity:0` en el servidor. El
+6. **Navbar:** entrada por keyframe CSS (`.nav-arrive`: opacidad + `translate`
+   de -24px); fuera el `initial` de framer-motion, que horneaba `opacity:0` en
+   el servidor. El desplazamiento se restauro el 2026-10-20 por la propiedad
+   `translate`, que no compite con el `transform` del hide-on-scroll. El
    hide-on-scroll pasa a acumular el delta en una sola direccion con umbral de
    14px, para que un temblor de dedo no lo esconda.
 7. **Red de seguridad acotada:** el bundle la cancela al evaluarse. Antes

@@ -550,9 +550,12 @@ margen vertical. Badge `px-3.5 py-1 text-xs 2xl:text-sm`: el `py-1` es
   `threshold`), no uno por nodo; al intersectar escribe
   `data-reveal-item="shown"` y hace `unobserve`. Sin estado de React, sin
   re-render y sin loop de animacion.
-- La entrada es una transicion CSS de opacidad (0.55s) en la clase
-  `.reveal-fade`; `--reveal-delay` (escrito en el efecto, no en el render) lleva
-  los delays. Perfiles: default (`threshold` 0.15, sin margen), `delayEnter`
+- La entrada es una transicion CSS de opacidad + `translate` (ascenso de 20px,
+  0.55s) en la clase `.reveal-fade`; `--reveal-delay` (escrito en el efecto, no
+  en el render) lleva los delays. El `translate` es paridad con el `y: 20 -> 0`
+  del `FadeIn` de framer-motion que sustituyo; usar la propiedad `translate` y
+  no `transform` evita pisar cualquier transform de las utilidades de Tailwind.
+  Perfiles: default (`threshold` 0.15, sin margen), `delayEnter`
   (0.15 + margen -15%), `earlyOnMobile` en mobile (`threshold` 0 + margen -15% y
   +0.15s para entrar detras del titulo).
 - El estado oculto no esta en el markup: lo aporta el gate (script inline del

@@ -157,8 +157,9 @@ prescripcion:
 4. Textos: regla de jerarquia (seccion 4) y de blancos (seccion 5).
 5. Botones: usa `Button` con las variantes del canon; si necesitas un hover
    nuevo, justificalo en buttons.md.
-6. Motion: `Reveal` (CSS, IntersectionObserver + transicion de opacidad) para
-   las entradas de seccion; framer-motion solo donde ya vive (menu mobile,
+6. Motion: `Reveal` (CSS, IntersectionObserver + transicion de opacidad y
+   `translate` de 20px) para las entradas de seccion; framer-motion solo donde
+   ya vive (menu mobile,
    hovers, hide-on-scroll del navbar) y GSAP donde ya vive (hero, about,
    detalle, pricing). El stack del featured es geometria + CSS, sin GSAP ni
    framer. NO reintroducir `FadeIn`/`FadeInStagger` ni
