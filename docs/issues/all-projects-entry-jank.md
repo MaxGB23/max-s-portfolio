@@ -98,12 +98,49 @@ horneaba `opacity:0` en el HTML del servidor, de modo que sin JS la página se
 veía vacía, y 12 nodos de hero/about con `visibility:hidden` inline quedaban
 fuera del árbol de accesibilidad.
 
-**Lo que NO se puede afirmar todavía:** que el tick haya bajado. §5 dice dónde
-estaba el costo, no cuánto vale ahora. Medirlo exige la misma pasada de perfil
-de §4 sobre esta rama; hasta que exista, el canon
-(`docs/design/section-animations.md`) solo afirma que el loop de framer-motion
-ya no corre en esta sección. Si el tick sigue ahí, la atribución quedó
-incompleta y hay que rehacerla antes de tocar nada.
+**Lo que NO se puede afirmar:** que el tick haya bajado. §5 dice dónde estaba
+el costo en main, no cuánto vale ahora. La medición acotada de §6.1 ya existe y
+no encuentra long tasks en la entrada, así que la pregunta cambió de forma: no
+es "cuánto bajó el tick" sino "por qué se percibe un tirón que no es JS". El
+canon (`docs/design/section-animations.md`) solo afirma que el loop de
+framer-motion ya no corre en esta sección.
+
+### 6.1 Medición acotada a la entrada (2026-10-20)
+
+Método: Playwright/Chromium, contexto nuevo y cache deshabilitada por CDP en
+cada pasada, viewport 1440x900, CPU throttling 4x, `PerformanceObserver` de
+`longtask` instalado antes de navegar y `performance.mark` disparado por el
+IntersectionObserver de `#all-projects`. Ventana medida: `[entry, entry+1500]`.
+3 pasadas frías y 3 en caliente (entrar, salir, volver a entrar). Sin tracing
+en esta fase: el tracing infla las métricas.
+
+| Pasada | Long tasks en la ventana | Max (ms) | Total (ms) |
+|---|---|---|---|
+| Cold 1/2/3 | 0 / 0 / 0 | 0 / 0 / 0 | 0 / 0 / 0 |
+| Warm 1/2/3 | 0 / 0 / 0 | 0 / 0 / 0 | 0 / 0 / 0 |
+
+**Resultado:** la entrada a la sección no produce long tasks en el hilo
+principal, ni en frío ni en caliente. Las long tasks de JS de la carga fría
+(5-6, máximo ~236 ms con 4x, que equivalen a ~59 ms sin throttle) caen en la
+ventana de hidratación (~1.0-2.0 s), antes del scroll.
+
+**Lo que esto significa:** el tirón percibido al entrar NO es bloqueo de JS en
+el hilo principal. Queda atribuido a raster/composicion y a la decodificacion
+asincrona de las 6 imagenes del grid, que ocurre fuera del hilo principal y por
+eso no genera long tasks. La atribucion de §5 (`frameLoop` al entrar la
+seccion) no describe esta rama.
+
+**Lo que NO se puede afirmar:** que el tirón haya desaparecido — se sigue
+percibiendo en sesion fria desde incognito — ni que la rama rinda igual que
+main en esta ventana: no hubo pasada de main con este metodo, y cero long tasks
+es el resultado esperado si el costo nunca estuvo en el hilo principal.
+Tampoco se afirma mejora de rendimiento.
+
+**Si alguna vez se retoma:** `PerformanceObserver('long-animation-frame')`
+(LoAF) es la herramienta que si atribuye frames largos de render/composicion.
+No se abre trabajo con esto: la unica via de mejora identificada (imagenes) ya
+esta optimizada en `project-card.tsx` (`next/image` con `sizes` de 33vw y
+`decoding="async"`, ~478 KB de grid).
 
 ## 7. Evidencia cruda (excluida del repo a propósito)
 

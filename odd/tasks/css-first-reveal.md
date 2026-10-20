@@ -159,6 +159,11 @@ haciendo exactamente la misma animación.
       - [x] `docs`: el canon del featured describía un pin GSAP retirado
             (`FEATURED_STACK_GATE`, `PIN_MEDIA`, watchdog del pin-spacer) y el
             README vendía framer-motion como primitiva de entrada: corregido.
+- [x] T15 Medición acotada de la entrada a All Projects (2026-10-20): 3 pasadas
+      frías + 3 en caliente, CPU 4x, ventana `[entry, entry+1500]`; 0 long
+      tasks. El tirón percibido no es bloqueo de JS en el hilo principal.
+      Registrado en `docs/issues/all-projects-entry-jank.md` §6.1. No se afirma
+      mejora.
 - [x] T13 Segunda ronda de testeo (detalle de proyecto sin JS): el botón Volver
       pasa a `<a href="/">` real dentro de `Button asChild` (`onClick` con
       `preventDefault()` igual que antes) porque la página no renderiza navbar y

@@ -441,10 +441,16 @@ hero/about.
    de medir el título en runtime. La clase trae ahora el mismo techo
    (`md:max-w-[60ch]`).
 
-**La medición de rendimiento sigue sin existir, y la primera observación del
-usuario no la sustituye**: el tick que percibió "mucho menor" se midió con la
-entrada ya disparada por la red de seguridad, es decir sin la animación. Hay que
-repetir las pasadas con el comportamiento corregido.
+**La medición de rendimiento no existía al cerrar este RFC, y la primera
+observación del usuario no la sustituía**: el tick que percibió "mucho menor" se
+midió con la entrada ya disparada por la red de seguridad, es decir sin la
+animación.
+
+Actualización 2026-10-20: existe una medición acotada a la entrada
+(`docs/issues/all-projects-entry-jank.md` §6.1) y **no encuentra long tasks en
+la ventana de entrada**, ni en frío ni en caliente. No confirma ni desmiente
+mejora de rendimiento: el tirón percibido queda atribuido a raster/composicion
+y decodificacion asincrona, fuera del hilo principal.
 
 ## 12. Segunda ronda de testeo (2026-10-19): detalle de proyecto sin JS
 
