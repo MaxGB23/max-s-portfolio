@@ -93,7 +93,7 @@ export function useScrollToAnchor(navbarHeight = 64) {
       // looking at the previous section).
       if (lenis) {
         // onComplete gives the right timing when the tween lands, but it is
-        // SKIPPED when the visitor scrolls during the 1.4s tween — which used to
+        // SKIPPED when the visitor scrolls during the tween — which used to
         // drop the cue, and the URL hash with it, since both live in
         // announceArrival. So the cue is unconditional and the backstop
         // guarantees it; a missed cue is far worse than an arrival announced

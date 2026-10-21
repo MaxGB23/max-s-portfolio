@@ -448,9 +448,11 @@ animación.
 
 Actualización 2026-10-20: existe una medición acotada a la entrada
 (`docs/issues/all-projects-entry-jank.md` §6.1) y **no encuentra long tasks en
-la ventana de entrada**, ni en frío ni en caliente. No confirma ni desmiente
-mejora de rendimiento: el tirón percibido queda atribuido a raster/composicion
-y decodificacion asincrona, fuera del hilo principal.
+la ventana de entrada**, ni en frío ni en caliente. La causa del tirón apareció
+después, fuera del motor de animación: `images.unoptimized: true` servía los
+originales (hasta 4000x2800) y el costo estaba en la GPU, no en el main thread
+(§6.2 del mismo archivo). Esta migración no fue el fix de rendimiento, y sigue
+sin poder atribuírsele una mejora medida en esa ventana.
 
 ## 12. Segunda ronda de testeo (2026-10-19): detalle de proyecto sin JS
 

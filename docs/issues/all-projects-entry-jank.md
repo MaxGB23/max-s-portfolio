@@ -1,4 +1,4 @@
-# AllProjects: tirón en la entrada — registro y decisión aceptada
+# AllProjects: tirón en la entrada — registro y causa real (2026-10-20)
 
 > **ACEPTADO como costo conocido. No es una lista de trabajo activa.**
 > El fix aplicado está descrito abajo. El tick residual de ~58 ms se aceptó
@@ -6,6 +6,11 @@
 > `css-first-reveal` (2026-10-19) sacó después esta sección de framer-motion por
 > otros motivos (§6). Se conserva como registro de qué se midió y por qué no se
 > hizo más — el razonamiento es lo valioso, no la lista.
+>
+> **Actualización 2026-10-20:** la causa del tirón apareció fuera del motor de
+> animación (§6.2): `images.unoptimized: true` servía los originales. El tick de
+> ~58 ms aceptado aquí era otro fenómeno, y ninguna medición de long tasks lo
+> iba a encontrar.
 >
 > Contexto: el sitio está desplegado en Vercel y funciona en producción.
 > El diseño visual está aprobado, así que nada que altere el render entró
@@ -130,21 +135,50 @@ asincrona de las 6 imagenes del grid, que ocurre fuera del hilo principal y por
 eso no genera long tasks. La atribucion de §5 (`frameLoop` al entrar la
 seccion) no describe esta rama.
 
-**Lo que NO se puede afirmar:** que el tirón haya desaparecido — se sigue
-percibiendo en sesion fria desde incognito — ni que la rama rinda igual que
-main en esta ventana: no hubo pasada de main con este metodo, y cero long tasks
+**Lo que NO se puede afirmar:** que el tirón haya desaparecido en esta
+medición — se seguía percibiendo en frío — ni que la rama rindiera igual que
+main en esta ventana: no hubo pasada de main con este método, y cero long tasks
 es el resultado esperado si el costo nunca estuvo en el hilo principal.
-Tampoco se afirma mejora de rendimiento.
 
-**Si alguna vez se retoma:** `PerformanceObserver('long-animation-frame')`
-(LoAF) es la herramienta que si atribuye frames largos de render/composicion.
-No se abre trabajo con esto: la unica via de mejora identificada (imagenes) ya
-esta optimizada en `project-card.tsx` (`next/image` con `sizes` de 33vw y
-`decoding="async"`, ~478 KB de grid).
+**Cómo se salió del bloqueo:** `PerformanceObserver('long-animation-frame')`
+(LoAF) era la herramienta siguiente para atribuir render, pero el costo no
+estaba ni en el hilo principal ni en el render: estaba en la subida de texturas
+a la GPU. Lo que abrió la puerta fue dejar de mirar solo el main thread y leer
+el track de GPU de la traza (§6.2).
+
+### 6.2 Causa real (2026-10-20): el optimizador de imágenes estaba apagado
+
+La pista estaba en el otro hilo: en la traza de Performance de la entrada, el
+main thread pasa 19,9 ms de 180 ms, pero el hilo de GPU registra dos `GPUTask`
+de **71,6 ms y 65,3 ms** en los primeros frames.
+
+**Causa raíz:** `next.config.mjs` tenía `images: { unoptimized: true }`. Con esa
+bandera `next/image` emite el `src` original sin pasar por `/_next/image`: el
+navegador descargaba los archivos de `public/` tal como están — hasta
+**4000x2800** — para pintarlos en slots de ~430 px. El hero y la sección about
+sufrían lo mismo. La GPU pagaba decodificación y subida de textura de originales
+de varios megapíxeles; el main thread, en cambio, estaba ocioso. Por eso ninguna
+medición de long tasks lo encontraba.
+
+**Fix:** fuera `unoptimized`; `sharp` como dependencia, `qualities: [75, 90]` en
+la config y `quality={90}` en hero y about (el resto queda en 75).
+
+**Verificado:** la misma imagen pedida a 640w pesa **13 KB** optimizada frente a
+**81 KB** del original; `tsc --noEmit` y el build siguen verdes, y `next start`
+sirve las variantes optimizadas.
+
+**Lección de método:** cero long tasks no significa que no haya tirón. El hilo
+que rasteriza y sube texturas no aparece en `PerformanceObserver('longtask')`; en
+la traza se ve como `GPUTask`. Cuando el main thread está ocioso y el frame llega
+tarde, hay que mirar el track de GPU y los bytes que viajan, no el JS.
+
+**Lo que no se afirma:** no hay medición LoAF antes/después de la entrada en
+producción. La mejora la validó el dueño en el preview de Vercel; lo medido son
+los bytes servidos.
 
 ## 7. Evidencia cruda (excluida del repo a propósito)
 
 Los traces `traces/main-natural.json`, `traces/main-rapido.json`,
 `traces/worktree-natural.json`, `traces/worktree-rapido.json` (~37 MB
-cada uno) y `traces/call-tree-breakdown.png` viven solo en este worktree
-como binarios de diagnóstico: no se commitean.
+cada uno) y `traces/call-tree-breakdown.png` vivieron solo en el worktree de
+diagnóstico, ya eliminado: no se commitean.

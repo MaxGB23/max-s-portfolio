@@ -77,11 +77,12 @@ linea 85% que el heading (`threshold: 0` + `rootMargin -15%`, sin exigir el
 para entrar por detras del titulo. En desktop el trigger y los tiempos
 quedan intactos.
 Es la seccion de proyectos no destacados, no una seccion principal, por lo
-que usa la familia Reveal en vez de GSAP. Metrica del tick de ~58ms atribuido
-al frameLoop de framer-motion: la migracion a CSS quita el animation loop del
-main thread en esta seccion; el numero nuevo queda pendiente de la pasada de
-perfil del usuario (ver `docs/issues/all-projects-entry-jank.md`), con CLS 0
-y decode fuera del main thread en la linea base.
+que usa la familia Reveal en vez de GSAP. La migracion a CSS quita el animation
+loop de framer-motion del main thread en esta seccion. El tiron que se percibia
+al entrar no era ese numero: era `images.unoptimized: true` sirviendo originales
+de hasta 4000x2800, con el costo en la GPU (dos `GPUTask` de ~70ms). Causa y
+fix: `docs/issues/all-projects-entry-jank.md` §6.2. El tick de ~58ms no se
+volvio a medir y no gobierna ninguna decision.
 
 ### Footer
 
@@ -277,15 +278,18 @@ wash con anillo que se repite en cada click.
 9. **Hero sin JS:** `md:max-w-[60ch]` como techo estatico del parrafo, para que
    el ancho no cambie respecto al render con JS.
 
-Pendiente: validacion en vivo del usuario (desktop y mobile, con y sin JS) y la
-pasada de perfil para el tick de AllProjects.
+Pendiente: nada de esta seccion. Validado en vivo por el usuario (desktop y
+mobile, con y sin JS) y desplegado el 2026-10-20. La pasada de perfil del "tick
+de AllProjects" ya no aplica: el tiron percibido era de imagenes sin optimizar,
+no del motor de animacion.
 
 ## Deuda unica
 
-- Medir el tick de AllProjects tras la migracion a CSS
-  (`docs/issues/all-projects-entry-jank.md`). Hasta que el usuario corra las
-  pasadas de perfil, el canon no puede afirmar mejora: solo que el animation
-  loop de framer-motion ya no corre en esa seccion.
+- **AllProjects: sin deuda de medicion.** El tiron quedo atribuido a las
+  imagenes sin optimizar y esta resuelto
+  (`docs/issues/all-projects-entry-jank.md` §6.2). El tick de ~58 ms no se volvio
+  a medir; lo unico que el canon afirma es que el loop de framer-motion ya no
+  corre en esa seccion.
 - Los reveals de `components/project-detail.tsx` siguen en framer-motion. Otra
   superficie, sin migrar.
 

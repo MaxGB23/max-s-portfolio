@@ -109,7 +109,7 @@ del detail.
 | # | Hallazgo | Ubicación | Acción | Riesgo visual |
 |---|---|---|---|---|
 | P1 | `Aurora` corría un bucle WebGL con `requestAnimationFrame` que nunca se pausaba | `Aurora.jsx` (pausa offscreen + prop `frozen`) | **Hecho**: se pausa con `IntersectionObserver` (`threshold: 0`) al salir el hero y se reanuda al entrar; reanudar es barato (contexto/shaders siguen montados), el salto de `uTime` es cosmético | — |
-| P5 | `images.unoptimized: true` **desactiva la optimización de imágenes**. El componente sigue dando layout y `priority`, pero se pierde el re-dimensionado, la re-codificación y — lo más importante aquí — **el prop `sizes` deja de hacer nada**, así que una pantalla de 390px descarga la captura de 2560px. El trabajo de `sizes` ya escrito en `hero-section`, `featured-project-panel` y la galería está anulado | `next.config.mjs:6-8` | Quitar el flag | **Este sí.** El contenido es el mismo pero la imagen re-codificada y dimensionada puede diferir sutilmente del original. Exige comparación visual lado a lado |
+| P5 | `images.unoptimized: true` **desactiva la optimización de imágenes**. El componente sigue dando layout y `priority`, pero se pierde el re-dimensionado, la re-codificación y — lo más importante aquí — **el prop `sizes` deja de hacer nada**, así que una pantalla de 390px descarga la captura de 2560px. El trabajo de `sizes` ya escrito en `hero-section`, `featured-project-panel` y la galería está anulado | `next.config.mjs:6-8` | **Hecho (2026-10-20):** fuera el flag; `sharp`, `qualities: [75,90]` y `quality={90}` en hero/about. Fue la causa medida del tirón de entrada (ver `docs/issues/all-projects-entry-jank.md` §6.2) | **Este sí.** El contenido es el mismo pero la imagen re-codificada y dimensionada puede diferir sutilmente del original. Exige comparación visual lado a lado |
 | P2 | Cuatro consumidores del scroll: Lenis, navbar, `featured-projects`, `ScrollTrigger` de los botones back | ver los 4 archivos | **No hacer.** Consolidar cambiaría el orden en que los tres reaccionan al mismo scroll, y ese orden es comportamiento visible | Alto |
 | P3 | `featured-projects` lee `getBoundingClientRect()` en todos los paneles por frame | `featured-projects.tsx:89-112` | **No hacer.** Ver la corrección de abajo: el coste real es despreciable | — |
 | P4 | Code-splitting inconsistente: `scroll-progress.tsx:16-17` usa `await import("gsap")`, `project-detail.tsx:14-15` importa GSAP estático | ambos | **No hacer.** La dirección correcta (cargar GSAP con `dynamic`) retrasaría las animaciones de entrada → flash visible. La inconsistencia es inocua | Alto |
@@ -140,10 +140,12 @@ funcionaba sin sincronizar con Lenis. Es falso: la sincronización existe en
 `smooth-scroll.tsx:31` (`lenis.on("scroll", ScrollTrigger.update)`), más el
 bucle RAF en 34-39 y `lagSmoothing(0)` en 42. Punto descartado, no actuar.
 
-**Imágenes:** bien. `priority` está donde debe (`hero-section.tsx:163` para el
-LCP, `project-detail.tsx:542` para la portada) y los tres paneles de Featured
-usan `priority` (antes solo el primero: fix del tirón card 3→card 2 al volver
-a la sección tras visitar otras).
+**Imágenes:** el layout y `priority` estaban bien —`priority` en el LCP
+(`hero-section.tsx:163`), en la portada (`project-detail.tsx:542`) y en los tres
+paneles de Featured (antes solo el primero: fix del tirón card 3→card 2 al volver
+a la sección tras visitar otras)—, pero eso no bastaba: con `unoptimized` activo
+(P5) todas se servían a resolución original y el prop `sizes` no hacía nada.
+Corregido el 2026-10-20 (ver P5).
 
 ---
 
@@ -220,7 +222,7 @@ vuelva a proponer ni se re-audite desde cero.
 |---|---|---|
 | **S1 + A1** | Reestructurar `<main>` + skip-link | Único punto con riesgo visual real: el navbar hereda `text-foreground` de `<main>`. No vale el riesgo contra el diseño aprobado |
 | **2.1** | Dividir `project-detail.tsx` (776 líneas) | Riesgo de regresión silenciosa — `gsap.context` resuelve los selectores por jerarquía DOM, no por árbol de React, así que un componente fuera del `rootRef` deja de animarse sin error. Cero valor para quien ve el sitio |
-| **P5** | Quitar `images.unoptimized` | Se mantiene la optimización apagada a propósito. Costo real: un móvil descarga la captura a resolución completa. Aceptado |
+| **P5** | Quitar `images.unoptimized` | **Reabierto y hecho (2026-10-20).** La decisión de mantenerlo apagado se revirtió al medirse la causa del tirón de entrada: dos `GPUTask` de 71,6 y 65,3 ms, por originales de hasta 4000x2800 en slots de ~430 px. Un móvil descargaba la captura a resolución completa. Ver `docs/issues/all-projects-entry-jank.md` §6.2 |
 | **Reduced motion** | — | Decisión ya auditada en `docs/issues/reduced-motion.md`. No es un hallazgo |
 | **SEO** | Metadata + OpenGraph; idioma en URL | Ver "Más adelante" arriba. No urgente: el link se comparte directo, no se busca |
 | **P1** | Pausar el bucle de Aurora | **Hecho** (pausa offscreen con reanudación barata; ver sección 3) |

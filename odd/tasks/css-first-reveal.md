@@ -164,6 +164,10 @@ haciendo exactamente la misma animación.
       tasks. El tirón percibido no es bloqueo de JS en el hilo principal.
       Registrado en `docs/issues/all-projects-entry-jank.md` §6.1. No se afirma
       mejora.
+      - [x] (2026-10-20, después del cierre) Causa real: `images.unoptimized:
+            true` servía los originales (hasta 4000x2800) y el costo estaba en
+            la GPU, no en el main thread. Registrado en §6.2 del mismo issue
+            doc. Este track no fue el fix de rendimiento.
 - [x] T13 Segunda ronda de testeo (detalle de proyecto sin JS): el botón Volver
       pasa a `<a href="/">` real dentro de `Button asChild` (`onClick` con
       `preventDefault()` igual que antes) porque la página no renderiza navbar y

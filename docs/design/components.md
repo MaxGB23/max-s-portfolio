@@ -481,6 +481,14 @@ margen vertical. Badge `px-3.5 py-1 text-xs 2xl:text-sm`: el `py-1` es
 - Lightbox: `z-[70] bg-black/90`, overlay `touch-pan-y select-none`
   (ver `docs/design/pointer-gestures.md`), figcaption `text-white/70`,
   `draggable={false}`.
+  - Las imagenes del visor quedan TODAS montadas y apiladas (`fill`); la activa
+    es `opacity-100` y el resto `opacity-0 pointer-events-none`, con
+    `transition-opacity duration-100`. Montar solo la activa remontaba el
+    `<Image>` en cada flecha y la siguiente llegaba sin cache; con el set en el
+    DOM, `next`/`prev` no hace ninguna request (medido: 0 requests al abrir).
+  - Las variantes del visor se precargan al ACERCARSE la galeria
+    (IntersectionObserver con `rootMargin: 300px` mas `pointerenter`): hover
+    solo no existe en tactil, asi que no puede ser el unico disparador.
   - **`z-10` en los tres controles** (X, ◀, ▶). El `<figure>` es `relative` y va
     despues en el DOM: sin `z-index` la imagen pintaba encima y recortaba ~28px de
     cada flecha entre `nav` y ~1144px, donde el figure aun es mas angosto que
@@ -602,16 +610,29 @@ margen vertical. Badge `px-3.5 py-1 text-xs 2xl:text-sm`: el `py-1` es
   `wheelMultiplier: 1`; `gsap.registerPlugin(ScrollTrigger)`,
   `lenisInstance.on("scroll", ScrollTrigger.update)` con rAF nativo y
   `gsap.ticker.lagSmoothing(0)`.
-- `useScrollToAnchor(64)`: duracion 1.4s; aterriza con el CONTENIDO del
+- `useScrollToAnchor(64)`: `lerp: 0.1` (sin duracion fija, ver
+  `useScrollToTop`); aterriza con el CONTENIDO del
   target bajo el navbar (compensa la suma de `padding-top` de 2 niveles:
   shell + primer hijo — para `#contacto` eso lee el `SECTION_GAP_Y` que vive en
   `#contact-content` y devuelve el badge/titulo justo bajo el navbar; para el
-  resto de anclas ambos niveles son 0, o sea no-op); al completar,
+  resto de anclas ambos niveles son 0, o sea no-op); al completar — o a los
+  `ARRIVAL_FALLBACK_MS = 1600ms`, backstop que cubre un tween interrumpido —
   `announceArrival`
-  (fija hash con `history.replaceState` + clase `arrive` reflow forzado;
-  mobile: `window.scrollTo` + timeout 1000ms). NO usa `:target`
+  (fija hash con `history.replaceState` CONSERVANDO `history.state`: pasar
+  `null` borra el estado de navegacion de Next y mata la transicion en vuelo,
+  ver `docs/issues/navigation-race.md`; aborta si el ancla no existe en el
+  documento actual, y aplica la clase `arrive` con reflow forzado; mobile:
+  `window.scrollTo` + timeout 1000ms). NO usa `:target`
   (replaceState no lo actualiza, ver seccion 9).
-- `useScrollToTop`: duracion 2s.
+- `useScrollToTop`: `lerp: 0.1`, sin duracion fija. El viaje converge en
+  `ln(distancia)/6` segundos: ~0,9s a 300px, ~1,2s a 1200px, ~1,5s a 8000px
+  (medido: 1241px -> 1260ms; con `duration` fija eran 2s para cualquier
+  distancia). Lenis escala el lerp por delta time, asi que el refresco de
+  pantalla no cambia la duracion.
+- Inicio desde la propia home (`handleHomeClick`): `preventDefault` +
+  `history.replaceState(state, "", "/")` + `useScrollToTop`. El hash se limpia
+  en el CLICK, no en un `onComplete`: si el visitante interrumpe el scroll, la
+  URL igual queda sin ancla.
 - Handoff home -> detalle: `saveHomeScroll(scrollY)` en el click de las cards;
   `takeHomeScroll`/`ScrollRestorer` en el retorno. Sin pin no hay pin-spacer que
   esperar: el restorer recalcula el limite de Lenis (`lenis.resize()`) y hace

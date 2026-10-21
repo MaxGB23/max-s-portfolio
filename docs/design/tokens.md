@@ -58,6 +58,15 @@ de Tailwind (`text-foreground/80`).
 | `--input` | `oklch(0.91 0 0)` | `oklch(0.25 0.005 270)` | Borde de inputs |
 | `--ring` | `oklch(0.58 0.22 270)` | `oklch(0.62 0.22 270)` | Anillo de foco (morado) |
 
+`--ring` se aplica con UNA sola regla en `app/globals.css`:
+`:where(a, button, summary, input, select, textarea, [tabindex]):focus-visible
+{ outline: 2px solid var(--ring); outline-offset: 2px; }`. El `outline-ring/50`
+del selector `*` solo fija el COLOR (su `outline: auto` no da estilo ni grosor);
+antes convivían tres fuentes —la hoja del navegador, el `*` y las utilidades
+`focus-visible:outline` de cada componente— y el resultado dependía del orden de
+la cascada. `:where()` deja especificidad 0, así que un
+`focus-visible:outline-none` puntual (dark-mode toggle) sigue ganando.
+
 ### 2.2 Custom del portfolio
 
 | Token | Light | Dark | Rol |
