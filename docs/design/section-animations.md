@@ -11,6 +11,7 @@
 - [Deuda unica](#deuda-unica)
 - [Known issue (diferido)](#known-issue-diferido)
 <!-- toc:end -->
+<!-- docs-lint: allow-tokens FadeIn FadeInStagger FadeInItem motion-primitives.tsx next-themes -->
 
 > [!NOTE] Estado: CANONICO
 > Fuente de verdad del codigo: `components/about-section.tsx`,

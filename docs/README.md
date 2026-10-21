@@ -10,7 +10,7 @@
 - Si buscas algo y no esta en el mapa, anade la fila. El mapa es el indice, no un adorno.
 - Un doc VIVO de mas de 250 lineas son dos docs.
 - `pnpm lint:docs` antes de cerrar un track; `pnpm docs:toc` regenera los indices.
-- Un doc cerrado no se actualiza: lo que sigue siendo verdad se muda al canon, lo que murio va a `docs/design/DEAD.md` cuando exista.
+- Un doc cerrado no se actualiza: lo que sigue siendo verdad se muda al canon, lo que murio va a [DEAD.md](design/DEAD.md).
 
 | Que sabes | Donde va |
 |---|---|
@@ -54,6 +54,7 @@ eso es una senal sobre el doc, no sobre el indice.
 | Que se esta trabajando ahora? | tarea ODD abierta, cierra al mergear | [odd/tasks/](../odd/tasks/) |
 | Como se dice esto en ingles? | clave en `data/translations.ts` y `t()` | [i18n.md](i18n.md) |
 | Donde vivia el canon anterior? | snapshot byte-igual, congelado | [INDEX.md](design/archive/2026-09-21-pre-designmd/INDEX.md) |
+| Que simbolo se retiro y que lo sustituye? | tabla de nombres muertos, verifica el gate | [DEAD.md](design/DEAD.md) |
 
 ## Areas
 

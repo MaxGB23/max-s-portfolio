@@ -31,6 +31,7 @@ derivado de tokens, sin UI para alternar. Detalle completo:
 | [pointer-gestures.md](pointer-gestures.md) | Reglas de pointer/teclado/foco + lightbox (detalle) | Interaccion con el puntero, trap de foco y el lightbox como caso canonico (7 rondas de bugs QA) |
 | [section-animations.md](section-animations.md) | Patron unificado de animacion de titulos, excepciones, familias | Como se anima cada seccion y por que |
 | [iteration-guide.md](iteration-guide.md) | Reglas de decision, E9/E15, flujo serif/sans/mono, gotchas, checklist (12) | Como iterar sin romper el sistema |
+| [DEAD.md](DEAD.md) | Simbolos retirados, sustituto y doc que los gobierna | Saber si un nombre sigue vivo |
 | [../../app/globals.css](../../app/globals.css) | Fuente de verdad del tema (no es doc, es codigo) | Leerlo primero si dudas de valores |
 
 Los archivos `sections.md`, `components-detail.md`, `motion.md` y `platform.md`

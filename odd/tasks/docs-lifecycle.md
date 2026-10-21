@@ -139,10 +139,12 @@ Metodo: conteo con `(Get-Content -LiteralPath <f>).Count`. Ojo: `Measure-Object 
 **Hallazgo de T3 (split)**: los H3 4.x no viajan con su H2, asi que `components-detail.md` necesitaba un H2 propio; sin el, el TOC del archivo solo listaba la deuda. Corregido con `## 4. Geometria por componente (4.5-4.13)` y, en `sections.md`, `(4.1-4.4)`.
 
 ### T4 (WU4) - Nombres muertos
-- [ ] T4.1 `docs/design/DEAD.md` con las tres filas del RFC, ajustadas a lo que M6 demuestre.
-- [ ] T4.2 C3 implementado con limites de palabra y exencion `<!-- docs-lint: allow-tokens ... -->`; `DEAD.md` y `archive/` excluidos del escaneo.
-- [ ] T4.3 Verificar que C3 pasa sobre el canon partido y falla si se inyecta un token a mano (prueba y revertir).
-- [ ] T4.4 Commit de la WU.
+- [x] T4.1 `docs/design/DEAD.md` con las filas del RFC, ajustadas a lo que M6 demostro. PASS: 3 filas; `PIN_MEDIA` se quito porque nunca existio en el canon vivo (0 coincidencias en `HEAD:docs/design/components.md`), solo en la prosa del RFC.
+- [x] T4.2 C3 implementado con limites de palabra y exencion `<!-- docs-lint: allow-tokens ... -->`; `DEAD.md` y `archive/` excluidos del escaneo.
+- [x] T4.3 Verificar que C3 pasa sobre el canon partido y falla si se inyecta un token a mano. PASS: inyectado `FadeIn` en `sections.md`, C3 lo reporta en la linea exacta; revertido y el archivo vuelve a 311 lineas.
+- [x] T4.4 Commit de la WU.
+
+**Hallazgo de T4**: las 14 menciones de M6 son historial legitimo, asi que 6 de los 11 docs vivos llevan `allow-tokens` (`motion`, `components-detail`, `platform`, `tokens`, `iteration-guide`, `section-animations`). Es la exencion que el RFC disena, pero conviene saber el numero: un check con media canon exento solo vigila la mitad. Alternativa si molesta: C3 solo dispara cuando la linea **no** contiene una senal de retiro (`retiro`, `ya no`, `antes`, `sustitu`, `reintroducir`...). Se descarto por ahora por ser heuristica, no regla.
 
 ### T5 (WU5) - Contrato del agente y gate
 - [ ] T5.1 `AGENTS.md`: regla por afirmacion, tabla de docs duenos de la seccion 11, gate de cierre, regla de DEAD, regla de las 250 lineas.

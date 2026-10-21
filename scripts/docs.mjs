@@ -19,6 +19,7 @@ const TOC_MIN_LINES = 120;
 const SIZE_WARN_LINES = 300;
 const TOC_START = '<!-- toc:start -->';
 const TOC_END = '<!-- toc:end -->';
+const DEAD = join(DESIGN, 'DEAD.md');
 
 const HELP = [
   'docs.mjs - gate del canon de docs (mapa, TOC, tamano).',
@@ -221,6 +222,46 @@ function checkSize(file, text, findings) {
   }
 }
 
+// Only the backticked tokens of the first cell count: prose rows are documentation.
+function deadTokens() {
+  if (!existsSync(DEAD)) return [];
+  const tokens = new Set();
+  for (const line of toLines(read(DEAD))) {
+    if (!line.trim().startsWith('|')) continue;
+    const cells = line.split('|');
+    if (cells.length < 3) continue;
+    for (const match of cells[1].matchAll(/`([^`]+)`/g)) tokens.add(match[1]);
+  }
+  return [...tokens];
+}
+
+function allowedTokens(text) {
+  const allowed = new Set();
+  for (const match of text.matchAll(/<!--\s*docs-lint:\s*allow-tokens\s+([^>]*?)-->/g)) {
+    for (const token of match[1].trim().split(/\s+/)) {
+      if (token) allowed.add(token);
+    }
+  }
+  return allowed;
+}
+
+function checkDead(file, text, tokens, findings) {
+  if (file === DEAD || tokens.length === 0) return 0;
+  const allowed = allowedTokens(text);
+  const listed = tokens.filter((token) => !allowed.has(token));
+  if (listed.length === 0) return allowed.size;
+  const lines = toLines(text);
+  lines.forEach((line, index) => {
+    for (const token of listed) {
+      const escaped = token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      if (new RegExp(`(?<![\\w-])${escaped}(?![\\w-])`).test(line)) {
+        findings.push({ level: 'warning', file, message: `C3: nombre muerto \`${token}\` (linea ${index + 1})` });
+      }
+    }
+  });
+  return allowed.size;
+}
+
 function runToc(write) {
   const findings = [];
   let changed = 0;
@@ -239,16 +280,19 @@ function runToc(write) {
 function runCheck() {
   const findings = [];
   const files = listVivoDocs();
+  const tokens = deadTokens();
+  let exemptions = 0;
   checkMap(files, findings);
   for (const file of files) {
     const text = read(file);
     checkToc(file, text, findings);
     checkSize(file, text, findings);
+    if (checkDead(file, text, tokens, findings) > 0) exemptions += 1;
   }
-  return { findings };
+  return { findings, exemptions };
 }
 
-function report(findings) {
+function report(findings, exemptions = 0) {
   const blocking = findings.filter((finding) => finding.level === 'error' || !MIGRATION);
   for (const finding of findings) {
     const kind = finding.level === 'error' || !MIGRATION ? 'error' : 'aviso';
@@ -256,6 +300,7 @@ function report(findings) {
   }
   if (findings.length === 0) process.stdout.write('docs: sin hallazgos\n');
   else process.stdout.write(`docs: ${findings.length} hallazgo(s), ${blocking.length} bloqueante(s)\n`);
+  if (exemptions > 0) process.stdout.write(`docs: ${exemptions} archivo(s) con allow-tokens\n`);
   return blocking.length;
 }
 
@@ -267,7 +312,8 @@ if (argv.includes('--help') || argv.includes('-h')) {
 
 const command = argv[0] ?? 'check';
 if (command === 'check' && argv.length === 1) {
-  process.exit(report(runCheck().findings) > 0 ? 1 : 0);
+  const { findings, exemptions } = runCheck();
+  process.exit(report(findings, exemptions) > 0 ? 1 : 0);
 }
 if (command === 'toc') {
   if (argv.length !== 2 || argv[1] !== '--write') fail('toc solo acepta --write');

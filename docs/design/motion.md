@@ -1,5 +1,7 @@
 # Motion - canon de animacion y gates de media
 
+<!-- docs-lint: allow-tokens FEATURED_STACK_GATE FadeIn FadeInStagger FadeInItem motion-primitives.tsx -->
+
 > [!NOTE] Estado: CANONICO
 > Parte del canon de geometria que vivia en un solo `components.md` hasta el
 > 2026-10-21. Numeracion compartida: este archivo cubre 3, 5 y 6; el resto vive en `sections.md` y `platform.md`.

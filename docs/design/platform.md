@@ -7,6 +7,7 @@
 - [11. Gotchas](#11-gotchas)
 - [13. Deuda](#13-deuda)
 <!-- toc:end -->
+<!-- docs-lint: allow-tokens next-themes ThemeProvider -->
 
 > [!NOTE] Estado: CANONICO
 > Parte del canon de geometria que vivia en un solo `components.md` hasta el

@@ -11,6 +11,7 @@
 - [8. Scrollbar](#8-scrollbar)
 - [9. Deuda unica de tokens](#9-deuda-unica-de-tokens)
 <!-- toc:end -->
+<!-- docs-lint: allow-tokens FEATURED_STACK_GATE -->
 
 > [!NOTE] Estado: CANONICO
 > Fuente de verdad: `app/globals.css` (bloques `:root`, `.dark` y `@theme inline`).

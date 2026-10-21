@@ -4,6 +4,7 @@
 - [4. Geometria por componente (4.5-4.13)](#4-geometria-por-componente-45-413)
 - [13. Deuda](#13-deuda)
 <!-- toc:end -->
+<!-- docs-lint: allow-tokens FadeInStagger -->
 
 > [!NOTE] Estado: CANONICO
 > Parte del canon de geometria que vivia en un solo `components.md` hasta el

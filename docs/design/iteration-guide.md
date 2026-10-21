@@ -14,6 +14,7 @@
 - [12. CheckList](#12-checklist)
 - [13. Deuda](#13-deuda)
 <!-- toc:end -->
+<!-- docs-lint: allow-tokens FadeIn FadeInStagger -->
 
 > [!NOTE] Estado: CANONICO
 > Reglas de decision para iterar sobre el sistema de diseño. Fuentes:
