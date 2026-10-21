@@ -14,16 +14,22 @@
 
 ## 1. Qué se midió
 
-| Archivo | Líneas |
-|---|---|
-| `docs/design/components.md` | 721 |
-| `docs/design/section-animations.md` | 281 |
-| `docs/design/tokens.md` | 281 |
-| `docs/design/typography-families.md` | 246 |
-| `docs/design/iteration-guide.md` | 198 |
-| `buttons.md` + `pointer-gestures.md` + `README.md` | 295 |
+Medición del 2026-10-19 (base previa al merge de `css-first-reveal`) y
+re-medición del 2026-10-21 (base `c3b90e5`, tras los 18 commits de imágenes,
+scroll y navegación). Manda la segunda.
 
-Unas 2.000 líneas de markdown en ocho archivos, más 302 del espejo CSS.
+| Archivo | Líneas (10-19) | Líneas (10-21) |
+|---|---|---|
+| `docs/design/components.md` | 721 | 754 |
+| `docs/design/section-animations.md` | 281 | 304 |
+| `docs/design/tokens.md` | 281 | 290 |
+| `docs/design/typography-families.md` | 246 | 246 |
+| `docs/design/iteration-guide.md` | 198 | 199 |
+| `buttons.md` + `pointer-gestures.md` + `README.md` | 295 | 143 + 89 + 63 = 295 |
+
+2.088 líneas de markdown en ocho archivos, más 302 del espejo CSS. Dos cifras no
+envejecieron: `typography-families.md` y el trío de archivos menores. Las demás
+crecieron entre 1 y 33 líneas.
 
 `docs/design/README.md` ya tiene un mapa rápido de ocho preguntas. Funciona, y
 ese es el punto de partida: **no hay que inventar la navegación, hay que
@@ -110,26 +116,40 @@ nunca te va a pedir que los toques.
 
 Regla: un doc VIVO no pasa de unas 250 líneas; si las pasa, son dos docs. No es
 estética: un doc que no se lee de un tirón no se navega. El aviso del linter
-salta a 300 (sección 10): ese margen evita que el gate nazca en rojo por
-`tokens.md` y `section-animations.md` (281 líneas cada uno), que se quedan como
-excepción documentada.
+salta a 300 (sección 10). Re-medido el 2026-10-21, solo `section-animations.md`
+(304) queda por encima de ese umbral y se queda como excepción documentada;
+`tokens.md` (290) ya no la necesita, aunque sigue sin sitio para crecer.
 
-Partición propuesta (721 líneas, tres docs de 220-250):
+Partición (754 líneas, decidida el 2026-10-21 tras la re-medición):
 
-| Secciones actuales | Doc destino |
-|---|---|
-| 1 Shell, 2 contrato de ritmo, 4 geometría, 9 cue de llegada | `docs/design/sections.md` |
-| 3 gates de media, 5 reveal y motion, 6 aurora | `docs/design/motion.md` |
-| 7 tema y dark mode, 8 infraestructura de scroll, 10 debug overlay, 11 gotchas | `docs/design/platform.md` |
-| 12 checklist | `docs/design/iteration-guide.md` (es proceso, no componente) |
-| 13 deuda única | se distribuye al tema dueño (`motion.md`, `platform.md`, etc.) |
+| Secciones actuales | Líneas | Doc destino |
+|---|---|---|
+| 1 Shell, 2 contrato de ritmo, 4.1-4.4 navbar/hero/sobre-mí/featured, 9 cue | 289 | `docs/design/sections.md` |
+| 3 gates de media, 5 reveal y motion, 6 aurora | 55 | `docs/design/motion.md` |
+| 7 tema y dark mode, 8 infraestructura de scroll, 10 debug overlay, 11 gotchas | 114 | `docs/design/platform.md` |
+| 4.5-4.13 all-projects, card, pricing, contacto, footer, detalle y auxiliares | 233 | `docs/design/components-detail.md` |
+| 12 checklist | 10 | `docs/design/iteration-guide.md` (es proceso, no componente) |
+| 13 deuda única | 27 | se distribuye al tema dueño |
 
-Coste que hay que asumir de una vez: hay más de 40 referencias a
-`components.md` (canon, `AGENTS.md`, la skill `layout-debug-canon` y las tareas
-ODD abiertas). Se actualizan en el mismo work unit con un grep. Las tareas ODD
-cerradas y los RFC aprobados no se tocan: son registro, y la sección 5 lo dice.
-Hacerlo ahora cuesta una hora; después cuesta una hora más cada vez que alguien
-cite el archivo partido.
+El reparto por número de sección no servía: daba 524 / 55 / 114 porque la sección
+4 sola ocupa 446 líneas (105-550). Su primera mitad —navbar, hero, about,
+featured— pertenece al relato de la home; la segunda abre otra superficie
+(listas, pricing y la página de detalle). Partida por ese corte, `components.md`
+desaparece y cada mitad se lee en el contexto en que se busca.
+
+`sections.md` queda en 289: por encima de las 250 de la regla blanda y por debajo
+del aviso de 300, que es la excepción documentada. Se acepta a sabiendas: cortar
+más habría partido la geometría de la home en dos archivos sin ganar navegación.
+`motion.md` (55) y `platform.md` (114) nacen cortos y crecen con la deuda
+distribuida de la sección 13.
+
+Coste real de las referencias: 70 menciones a `components.md` en el repo, de las
+cuales solo **9 son vivas** (4 en `docs/design/README.md`; 1 cada una en
+`pointer-gestures.md`, `tokens.md`, `buttons.md`, `iteration-guide.md` y la skill
+`layout-debug-canon`). `AGENTS.md` **no** cita el archivo: la revisión 1 daba por
+hecho que sí. El resto es registro (`odd/tasks/` 33, `docs/rfcs/` 7,
+`docs/issues/` 1, `archive/` 7) y no se toca. El argumento para hacerlo ahora
+sigue valiendo, pero por navegación, no por volumen.
 
 ## 7. Índice de secciones generado
 
