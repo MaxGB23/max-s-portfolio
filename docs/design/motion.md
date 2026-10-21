@@ -21,6 +21,30 @@ seccion fluye en documento normal y ningun componente consume un gate de pin.
 El simbolo sobrevive como stub `@deprecated` en `lib/breakpoints.ts` para no
 romper imports viejos; sin consumidores, se puede borrar.
 
+**Carga de imagenes.** Politica de `loading`/`priority`/`sizes`, medida con
+`scripts/audit-projects.mjs` (emulador mobile, 3G, `pnpm build && pnpm start`):
+
+- Las cards de "Todos los proyectos" piden su imagen con `loading="eager"`
+  (`components/project-card.tsx`). El lazy nativo de Chrome lanza el request
+  cuando la card YA esta en pantalla, y el hueco gris de cada card dura
+  ~1.0s con scroll rapido y 1.5-3.1s con la cache de imagenes en frio. Con
+  `eager` el request sale al parsear el HTML: los mismos bytes, antes en el
+  pipe.
+- El stack featured precarga SOLO el primer panel (`priority`). La one-slide
+  rule deja un panel visible a la vez: eagerly precargar los otros dos
+  descargaba capturas invisibles (155KB en mobile) en el load inicial.
+- En 3G el bundle hidrata a los ~4s, despues de que el visitante ya paso la
+  grid: por eso la precarga tiene que ser de servidor (`loading`/`priority` en
+  el HTML), no de cliente. Un `IntersectionObserver` que monte una capa
+  invisible llega tarde y no adelanta nada.
+- `sizes` por componente: card `(max-width: 768px) 100vw, (max-width: 1200px)
+  50vw, 33vw`; featured `(max-width: 1024px) 100vw, 50vw`; hero `(max-width:
+  768px) 280px, (max-width: 1200px) 34vw, 380px`; about `(max-width: 768px)
+  400px, (max-width: 1200px) 464px, 490px`.
+- Pendiente, medido y sin aplicar: el `sizes` de la card no coincide con los
+  cortes de la grid (`sm`=640, `lg`=1024) y declara `100vw` para un slot de
+  `100vw - 48px`; el navegador pide 1200w donde 1080w bastaria.
+
 ## 5. Reveal y motion
 
 `components/reveal.tsx` - entradas de seccion:

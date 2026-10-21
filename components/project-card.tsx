@@ -21,6 +21,19 @@ export interface Project {
   featured?: boolean;
 }
 
+/**
+ * Sizes of the card image.
+ *
+ * The card is `100vw - 48px` wide (the section inset is `px-6`), so `100vw`
+ * over-declares the slot and the browser picks a bigger variant than it
+ * needs: 1200w where 1080w would do on a 393px phone at DPR3.
+ *
+ * The breakpoints here do not match the grid (sm=640, lg=1024): that is a
+ * separate, measured item (over-fetch between 640-768 and 1024-1200), not
+ * part of the eager change.
+ */
+const CARD_IMAGE_SIZES = "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw";
+
 interface ProjectCardProps {
   project: Project;
 }
@@ -53,8 +66,9 @@ export function ProjectCard({ project }: ProjectCardProps) {
             alt={project.imageAlt}
             fill
             decoding="async"
+            loading="eager"
             className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            sizes={CARD_IMAGE_SIZES}
           />
         ) : (
           <div className="flex items-center justify-center h-full w-full bg-gradient-to-br from-purple-accent/10 to-transparent">
