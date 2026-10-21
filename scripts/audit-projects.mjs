@@ -60,6 +60,13 @@ const scrollPause = Number(pick("--scroll-pause", "100"));
 const waitHydration = args.includes("--wait-hydration");
 // Warm the server-side image cache before measuring (see runProfile).
 const warm = !args.includes("--no-warm");
+// Force the decode of every image. Off by default: it creates a burst of
+// decodes the browser would schedule on its own, and it fakes a dropped frame
+// in the frame timeline.
+const forceDecode = args.includes("--force-decode");
+// Headed: real Chrome, real GPU. Software raster in headless overstates the
+// cost of painting images by ~10x.
+const headed = args.includes("--headed");
 
 // Chrome DevTools-like network presets, in bytes per second.
 const NET_PROFILES = {
@@ -100,6 +107,7 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms));
  * paint.
  */
 const INIT_JS = () => {
+  const forceDecode = window.__FORCE_DECODE__ === true;
   const p = {
     loads: [],
     decodes: [],
@@ -107,8 +115,20 @@ const INIT_JS = () => {
     longtasks: [],
     lcp: [],
     reveals: [],
+    frames: [],
   };
   window.__perf = p;
+
+  // Frame timeline. A hitch is a DROPPED FRAME, not necessarily a long task:
+  // at 60Hz a 32ms frame is already visible, and the longtask API only sees
+  // >50ms. This is the signal that matches "me dio un tiron".
+  let lastFrame = performance.now();
+  const tick = (now) => {
+    p.frames.push({ t: now, d: now - lastFrame });
+    lastFrame = now;
+    p.raf = requestAnimationFrame(tick);
+  };
+  p.raf = requestAnimationFrame(tick);
 
   try {
     new PerformanceObserver((list) => {
@@ -158,10 +178,11 @@ const INIT_JS = () => {
         h: el.naturalHeight,
       };
       p.loads.push(rec);
-      // decode() resolves when the bitmap is ready to paint. It forces a
-      // decode that the browser would do anyway at paint time, and it is the
-      // only timestamp that separates "bytes arrived" from "pixels ready".
-      if (typeof el.decode === "function") {
+      // decode() resolves when the bitmap is ready to paint, but CALLING it
+      // forces a decode the browser would schedule on its own. With eager
+      // images that becomes a burst of forced decodes and a fake dropped
+      // frame, so it is opt-in (--force-decode) and off by default.
+      if (forceDecode && typeof el.decode === "function") {
         el.decode()
           .then(() => p.decodes.push({ key: rec.key, t: performance.now() }))
           .catch(() => {});
@@ -246,11 +267,16 @@ function pad(s, n) {
 }
 
 async function launchBrowser() {
+  // Headed mode runs the real Chrome with GPU rasterization. The bundled
+  // headless Chromium rasterizes in software (SwiftShader), which inflates
+  // the cost of painting images by an order of magnitude and does NOT
+  // reproduce what a visitor sees on a desktop.
+  const opts = { headless: !headed };
   try {
-    return await chromium.launch();
+    return await chromium.launch(opts);
   } catch (e) {
     console.warn(`[browser fallback] ${String(e.message).split("\n")[0]}`);
-    return await chromium.launch({ channel: process.env.PW_CHANNEL || "chrome" });
+    return await chromium.launch({ ...opts, channel: process.env.PW_CHANNEL || "chrome" });
   }
 }
 
@@ -264,6 +290,7 @@ async function runProfile(browser, key) {
     userAgent: prof.userAgent,
   });
   await context.addInitScript(INIT_JS);
+  await context.addInitScript(`window.__FORCE_DECODE__ = ${forceDecode};`);
   const page = await context.newPage();
 
   const client = await context.newCDPSession(page);
@@ -476,6 +503,59 @@ function report(run) {
     if (pop >= 0) pops.push(pop);
     console.log(
       `  ${pad(label, 36)} ${pad(v.t.toFixed(0), 9)} ${pad(l ? l.t.toFixed(0) : "-", 8)} ${pad(d ? d.t.toFixed(0) : "-", 8)} ${pad(pop >= 0 ? pop.toFixed(0) : "-", 7)}`
+    );
+  }
+
+  // --- Frame timeline ----------------------------------------------------
+  const gridFade = gridReveal ? gridReveal.t : null;
+  const inWindow = (t, from, to) => t >= from && t <= to;
+  const frameStats = (from, to) => {
+    const frames = perf.frames.filter((f) => inWindow(f.t, from, to));
+    if (frames.length < 2) return null;
+    const deltas = frames.map((f) => f.d).sort((a, b) => a - b);
+    const over32 = deltas.filter((d) => d > 32);
+    const over50 = deltas.filter((d) => d > 50);
+    return {
+      n: frames.length,
+      median: deltas[Math.floor(deltas.length / 2)],
+      p95: deltas[Math.floor(deltas.length * 0.95)],
+      max: deltas[deltas.length - 1],
+      over32: over32.length,
+      over50: over50.length,
+      lostMs: over32.reduce((s, d) => s + (d - 16.7), 0),
+    };
+  };
+  const scrollFrames = frameStats(scrollStart, scrollEnd);
+  const fadeFrames = gridFade ? frameStats(gridFade, gridFade + 700) : null;
+
+  console.log("\n-- frame timeline (60Hz = 16.7ms) --");
+  if (scrollFrames) {
+    console.log(
+      `  scroll completo: ${scrollFrames.n} frames  mediana ${scrollFrames.median.toFixed(1)}ms  p95 ${scrollFrames.p95.toFixed(1)}ms  max ${scrollFrames.max.toFixed(1)}ms`
+    );
+    console.log(
+      `    frames >32ms (caidos): ${scrollFrames.over32}   >50ms: ${scrollFrames.over50}   frames perdidos: ~${scrollFrames.lostMs.toFixed(0)}ms`
+    );
+  }
+  if (fadeFrames) {
+    console.log(
+      `  ventana del fade de la grid (700ms): ${fadeFrames.n} frames  mediana ${fadeFrames.median.toFixed(1)}ms  max ${fadeFrames.max.toFixed(1)}ms  caidos ${fadeFrames.over32} (~${fadeFrames.lostMs.toFixed(0)}ms perdidos)`
+    );
+  } else {
+    console.log("  ventana del fade: sin datos");
+  }
+
+  // The worst frames, with their position relative to the grid fade: a hitch
+  // at the fade is the grid; a hitch at page load is the eager download.
+  const worst = perf.frames
+    .filter((f) => f.d > 32)
+    .sort((a, b) => b.d - a.d)
+    .slice(0, 6);
+  console.log("  frames mas pesados (d = duracion, t = posicion):");
+  for (const f of worst) {
+    const rel = gridFade == null ? "?" : Math.round(f.t - gridFade);
+    console.log(
+      `    d=${f.d.toFixed(0)}ms  t=${Math.round(f.t)}ms  ${rel >= 0 ? rel + "ms tras el fade" : Math.abs(rel) + "ms antes del fade"}`
     );
   }
 
