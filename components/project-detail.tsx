@@ -371,7 +371,41 @@ export function ProjectDetail({ project }: { project: ProjectL }) {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const isLightboxOpen = lightboxIndex !== null;
   const closeLightbox = useCallback(() => setLightboxIndex(null), []);
+
+  // Precarga del set de la galeria (ver el efecto de abajo).
+  const [prefetchGallery, setPrefetchGallery] = useState(false);
+  const galleryRef = useRef<HTMLElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
+
+  // La galeria pide 1024px en el visor y 33vw en el grid: son variantes
+  // distintas en /_next/image, asi que el thumbnail no calienta lo que necesita
+  // el lightbox. Cuando la seccion esta a 300px de entrar en pantalla se monta
+  // una capa invisible con las MISMAS props que usa el visor, para que
+  // next/image pida exactamente las URLs que se van a necesitar —
+  // reconstruirlas a mano contra deviceSizes es fragil y se rompe en silencio.
+  // El observer cubre el tactil, que no tiene hover; el pointerenter de la
+  // seccion refuerza en desktop cuando el grid ya esta ahi.
+  useEffect(() => {
+    if (prefetchGallery || realImages.length === 0) return;
+    const node = galleryRef.current;
+    if (!node) return;
+    if (typeof IntersectionObserver === "undefined") {
+      setPrefetchGallery(true);
+      return;
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          setPrefetchGallery(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "300px" }
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [prefetchGallery, realImages.length]);
+
   const nextLightbox = useCallback(() => {
     setLightboxIndex((current) => (current === null ? null : (current + 1) % realImages.length));
   }, [realImages.length]);
@@ -807,7 +841,11 @@ export function ProjectDetail({ project }: { project: ProjectL }) {
           </section>
 
           {/* Gallery Spotlight - hover zoom affordance, click opens lightbox */}
-          <section className="detail-section detail-gallery mb-12 md:mb-16">
+          <section
+            ref={galleryRef}
+            onPointerEnter={() => setPrefetchGallery(true)}
+            className="detail-section detail-gallery mb-12 md:mb-16"
+          >
             <SectionTitle>{t("section.projects.sectionGallery")}</SectionTitle>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {(() => {
@@ -885,6 +923,32 @@ export function ProjectDetail({ project }: { project: ProjectL }) {
           </section>
         </div>
       </div>
+
+      {/* Capa de precarga de la galeria. Invisible, sin interaccion y fuera del
+          arbol de accesibilidad: 1x1 en la esquina para no crear una capa
+          compuesta del tamano del viewport. El navegador la considera dentro
+          del viewport, asi que descarga las variantes del visor; el decode se
+          aplaza hasta que el lightbox las pinta. Se desmonta al abrir el visor:
+          las URLs son las mismas y salen de cache. */}
+      {prefetchGallery && lightboxIndex === null && realImages.length > 0 && (
+        <div
+          aria-hidden="true"
+          className="fixed left-0 top-0 h-px w-px overflow-hidden opacity-0 pointer-events-none"
+        >
+          {realImages.map((image) => (
+            <Image
+              key={image.src}
+              src={image.src}
+              alt=""
+              fill
+              loading="eager"
+              draggable={false}
+              className="object-contain"
+              sizes="(max-width: 1024px) 100vw, 1024px"
+            />
+          ))}
+        </div>
+      )}
 
       {/* Lightbox - full-screen image viewer with prev/next and close on backdrop */}
       {lightboxIndex !== null && (() => {
