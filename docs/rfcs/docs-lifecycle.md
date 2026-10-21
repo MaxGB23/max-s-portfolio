@@ -116,9 +116,11 @@ nunca te va a pedir que los toques.
 
 Regla: un doc VIVO no pasa de unas 250 líneas; si las pasa, son dos docs. No es
 estética: un doc que no se lee de un tirón no se navega. El aviso del linter
-salta a 300 (sección 10). Re-medido el 2026-10-21, solo `section-animations.md`
-(304) queda por encima de ese umbral y se queda como excepción documentada;
-`tokens.md` (290) ya no la necesita, aunque sigue sin sitio para crecer.
+salta a 300 (sección 10). Medido el 2026-10-21 **después** de insertar los TOC,
+quedan por encima: `components.md` (770, desaparece con la partición),
+`section-animations.md` (316) y `tokens.md` (302). Los dos últimos se quedan como
+excepción documentada: el bloque TOC suma 12-16 líneas y es el precio de que el
+índice exista.
 
 Partición (754 líneas, decidida el 2026-10-21 tras la re-medición):
 

@@ -1,5 +1,17 @@
 # Section Title Animations
 
+<!-- toc:start -->
+- [Patron unificado (GSAP)](#patron-unificado-gsap)
+- [Excepciones documentadas](#excepciones-documentadas)
+- [Gate de reveal (CSS-first)](#gate-de-reveal-css-first)
+- [Politica de prefers-reduced-motion](#politica-de-prefers-reduced-motion)
+- [Secciones por familia](#secciones-por-familia)
+- [Cambios aplicados (2026-10-01)](#cambios-aplicados-2026-10-01)
+- [Cambios aplicados (2026-10-19)](#cambios-aplicados-2026-10-19)
+- [Deuda unica](#deuda-unica)
+- [Known issue (diferido)](#known-issue-diferido)
+<!-- toc:end -->
+
 > [!NOTE] Estado: CANONICO
 > Fuente de verdad del codigo: `components/about-section.tsx`,
 > `components/hero-section.tsx`, `components/contact-section.tsx`,

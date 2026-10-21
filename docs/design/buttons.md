@@ -1,5 +1,18 @@
 # Botones - canon v3
 
+<!-- toc:start -->
+- [1. API real](#1-api-real)
+- [2. Principios](#2-principios)
+- [3. Variantes y por que cada hover](#3-variantes-y-por-que-cada-hover)
+- [4. Formas](#4-formas)
+- [5. Tamanos y fullWidth](#5-tamanos-y-fullwidth)
+- [6. Sombra (glow)](#6-sombra-glow)
+- [7. Tipografia y foco](#7-tipografia-y-foco)
+- [8. Inventario por seccion (verificado)](#8-inventario-por-seccion-verificado)
+- [9. Historia v1 -> v2 -> v3](#9-historia-v1---v2---v3)
+- [10. Deuda unica de botones](#10-deuda-unica-de-botones)
+<!-- toc:end -->
+
 > [!NOTE] Estado: CANONICO
 > API y clases verificadas contra `components/ui/button.tsx` y todos los
 > call sites del sitio. Glosario de migracion:

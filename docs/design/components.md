@@ -1,5 +1,21 @@
 # Componentes - canon de geometria
 
+<!-- toc:start -->
+- [1. Shell Section](#1-shell-section)
+- [2. Contrato de ritmo](#2-contrato-de-ritmo)
+- [3. Gates de media](#3-gates-de-media)
+- [4. Geometria por componente](#4-geometria-por-componente)
+- [5. Reveal y motion](#5-reveal-y-motion)
+- [6. Aurora](#6-aurora)
+- [7. Tema y dark mode](#7-tema-y-dark-mode)
+- [8. Infraestructura de scroll](#8-infraestructura-de-scroll)
+- [9. Cue de llegada a contacto](#9-cue-de-llegada-a-contacto)
+- [10. Debug overlay](#10-debug-overlay)
+- [11. Gotchas](#11-gotchas)
+- [12. CheckList](#12-checklist)
+- [13. Deuda unica de componentes](#13-deuda-unica-de-componentes)
+<!-- toc:end -->
+
 > [!NOTE] Estado: CANONICO
 > Todo el layout del portfolio esta verificado contra el codigo real
 > (componentes bajo `components/`). Si un cambio visual contradice este

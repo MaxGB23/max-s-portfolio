@@ -1,5 +1,18 @@
 # Guia de iteracion
 
+<!-- toc:start -->
+- [1. Como decides (reglas duras)](#1-como-decides-reglas-duras)
+- [2. Decisiones de este restructure (E9 / E15)](#2-decisiones-de-este-restructure-e9-e15)
+- [3. Flujo de decision serif / sans / mono](#3-flujo-de-decision-serif-sans-mono)
+- [4. Jerarquia por tamano y tracking](#4-jerarquia-por-tamano-y-tracking)
+- [5. Blancos y opacidades](#5-blancos-y-opacidades)
+- [6. Gradientes escasos](#6-gradientes-escasos)
+- [7. Que NO copiamos de las marcas de referencia](#7-que-no-copiamos-de-las-marcas-de-referencia)
+- [8. Iteracion segura (paso a paso)](#8-iteracion-segura-paso-a-paso)
+- [9. Gotchas de entorno](#9-gotchas-de-entorno)
+- [10. Deuda unica de la guia](#10-deuda-unica-de-la-guia)
+<!-- toc:end -->
+
 > [!NOTE] Estado: CANONICO
 > Reglas de decision para iterar sobre el sistema de diseño. Fuentes:
 > decisiones tomadas en este restructure (E9/E15) y reglas migradas del

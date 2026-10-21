@@ -8,7 +8,9 @@
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "audit:i18n": "node scripts/audit-i18n-content.mjs",
-    "shots": "node scripts/shots.mjs"
+    "shots": "node scripts/shots.mjs",
+    "lint:docs": "node scripts/docs.mjs check",
+    "docs:toc": "node scripts/docs.mjs toc --write"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",

@@ -1,5 +1,17 @@
 # Tokens del sistema
 
+<!-- toc:start -->
+- [1. Identidad](#1-identidad)
+- [2. Color](#2-color)
+- [3. Tipografia](#3-tipografia)
+- [4. Radio](#4-radio)
+- [5. Espaciado y ritmo](#5-espaciado-y-ritmo)
+- [6. Elevacion](#6-elevacion)
+- [7. Responsive](#7-responsive)
+- [8. Scrollbar](#8-scrollbar)
+- [9. Deuda unica de tokens](#9-deuda-unica-de-tokens)
+<!-- toc:end -->
+
 > [!NOTE] Estado: CANONICO
 > Fuente de verdad: `app/globals.css` (bloques `:root`, `.dark` y `@theme inline`).
 > Espejo de extraccion: `docs/design/tailwind-v4-theme.css` (NO editar a mano).

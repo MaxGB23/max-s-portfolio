@@ -1,5 +1,17 @@
 # Tipografia - familias y sistema fluido
 
+<!-- toc:start -->
+- [1. Familias](#1-familias)
+- [2. Los 13 tokens fluidos](#2-los-13-tokens-fluidos)
+- [3. Dos escalas: editorial y UI](#3-dos-escalas-editorial-y-ui)
+- [4. Reglas de jerarquia](#4-reglas-de-jerarquia)
+- [5. Jerarquia global (quien usa que)](#5-jerarquia-global-quien-usa-que)
+- [6. Medida editorial](#6-medida-editorial)
+- [7. Historia (callouts)](#7-historia-callouts)
+- [8. Gotchas](#8-gotchas)
+- [9. Deuda unica de tipografia](#9-deuda-unica-de-tipografia)
+<!-- toc:end -->
+
 > [!NOTE] Estado: CANONICO
 > Valores verbatim de `app/globals.css` (`@theme inline`) y de las clases
 > reales de los componentes. Glosario de migracion en
