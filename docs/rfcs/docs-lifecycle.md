@@ -1,6 +1,10 @@
 # RFC: documentación navegable — partir el canon por pregunta, un índice que no puede mentir y el seguro de los nombres muertos
 
-> **STATUS: PROPUESTO (revisión 2, alcance: este repo).** La revisión 1
+> **STATUS: IMPLEMENTADO (revisión 2, alcance: este repo).** Implementado el
+> 2026-10-21 en la rama `docs/lifecycle`: una re-medición previa y los cuatro
+> commits de la sección 12. Se congela aquí: una corrección futura es otro RFC.
+>
+> La revisión 1
 > proponía el flujo completo (SSOT con ancla, índice seccional por doc, estado
 > por archivo, linter de cinco checks). Medido contra este repo, ese flujo es de
 > otra escala: aquí hay ocho archivos de canon, un dev y un agente. Esta

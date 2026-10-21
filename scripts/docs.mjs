@@ -11,9 +11,8 @@ const DOCS = join(ROOT, 'docs');
 const DESIGN = join(DOCS, 'design');
 const ENTRY = join(DOCS, 'README.md');
 
-// The canon is being split in this track: C1-C3 report but do not fail yet.
-// Section 12 of docs/rfcs/docs-lifecycle.md flips this to false at the end.
-const MIGRATION = true;
+// The canon migration is done: C1-C3 fail the gate, C4 never does (level "note").
+const MIGRATION = false;
 
 const TOC_MIN_LINES = 120;
 const SIZE_WARN_LINES = 300;
@@ -218,7 +217,7 @@ function checkMap(files, findings) {
 function checkSize(file, text, findings) {
   const count = lineCount(text);
   if (count > SIZE_WARN_LINES) {
-    findings.push({ level: 'warning', file, message: `C4: ${count} lineas (presupuesto ${SIZE_WARN_LINES})` });
+    findings.push({ level: 'note', file, message: `C4: ${count} lineas (presupuesto ${SIZE_WARN_LINES})` });
   }
 }
 
@@ -293,9 +292,10 @@ function runCheck() {
 }
 
 function report(findings, exemptions = 0) {
-  const blocking = findings.filter((finding) => finding.level === 'error' || !MIGRATION);
+  const blocks = (finding) => finding.level === 'error' || (finding.level === 'warning' && !MIGRATION);
+  const blocking = findings.filter(blocks);
   for (const finding of findings) {
-    const kind = finding.level === 'error' || !MIGRATION ? 'error' : 'aviso';
+    const kind = finding.level === 'note' ? 'aviso' : blocks(finding) ? 'error' : 'aviso';
     process.stdout.write(`${kind}: ${rel(finding.file)}: ${finding.message}\n`);
   }
   if (findings.length === 0) process.stdout.write('docs: sin hallazgos\n');

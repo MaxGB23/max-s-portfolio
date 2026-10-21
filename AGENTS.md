@@ -50,7 +50,25 @@ Cuando respondas en español, usa siempre español neutro. Evita el voseo y los 
 ### Internacionalización
 - Todo texto visible va como clave en `data/translations.ts` (ES + EN) y se renderiza con `t()`; nunca hardcodear. Mini guía: `docs/i18n.md`.
 
-### Docs de diseño
-- No actualices `docs/design/` por cada cambio mínimo: al APROBAR una work unit (igual que el ciclo de commits), sincroniza el archivo tema que corresponda si el cambio afecta componentes, tokens o utilidades de UI. Si no sincronizas en esa work unit, declara la deuda en el archivo tema en cuanto lo sepas — nunca dejes el canon desincronizado del código.
-- `docs/design/README.md` es el índice del canon: actualízalo solo cuando cambie la estructura (nuevo/renombrado/eliminado archivo), no por cambios de contenido.
+### Docs (regla por afirmación)
+- `docs/README.md` es el punto de entrada: si una pregunta no está en el mapa, añade la fila.
+- `docs/design/**` es VIVO (salvo `archive/`, congelado): debe ser verdad hoy. `rfcs/` e `issues/` son historia fechada y no se editan.
+- Antes de cerrar cualquier cambio, fix de una línea o work unit, responde: ¿qué doc VIVO afirma algo sobre esto? Si ninguna frase se vuelve falsa, escribe `Docs: none - <motivo>` en el commit. Si cambia un valor, nombre, orden o comportamiento, edita esa frase en el doc dueño, en el mismo commit.
+- Docs dueños:
+
+  | Si tocas... | Doc |
+  |---|---|
+  | shell, ritmo, geometría, cue de llegada | `docs/design/sections.md` |
+  | listas, cards, pricing, contacto, footer, detalle | `docs/design/components-detail.md` |
+  | gates de media, reveal, aurora | `docs/design/motion.md` |
+  | tema, dark mode, scroll, debug overlay, gotchas | `docs/design/platform.md` |
+  | color, spacing, radio, sombra, z-index | `docs/design/tokens.md` |
+  | familias, escala, tracking, OpenType | `docs/design/typography-families.md` |
+  | botones, gestos de puntero | `docs/design/buttons.md`, `docs/design/pointer-gestures.md` |
+  | proceso y checklist de iteración | `docs/design/iteration-guide.md` |
+
+- Al cerrar un track, antes del push: las tres preguntas del gate, `git diff --diff-filter=D --name-only <base>...HEAD` y `pnpm lint:docs`.
+- Al retirar un símbolo o técnica, añade su fila a `docs/design/DEAD.md` en el mismo work unit.
+- `docs/design/README.md` es el índice de archivos del canon: actualízalo solo cuando cambie la estructura (nuevo/renombrado/eliminado archivo), no por cambios de contenido.
+- Un doc VIVO de más de 250 líneas son dos docs.
 - `docs/design/archive/` es congelado: no editar.

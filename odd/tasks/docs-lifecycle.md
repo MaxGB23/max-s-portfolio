@@ -147,10 +147,14 @@ Metodo: conteo con `(Get-Content -LiteralPath <f>).Count`. Ojo: `Measure-Object 
 **Hallazgo de T4**: las 14 menciones de M6 son historial legitimo, asi que 6 de los 11 docs vivos llevan `allow-tokens` (`motion`, `components-detail`, `platform`, `tokens`, `iteration-guide`, `section-animations`). Es la exencion que el RFC disena, pero conviene saber el numero: un check con media canon exento solo vigila la mitad. Alternativa si molesta: C3 solo dispara cuando la linea **no** contiene una senal de retiro (`retiro`, `ya no`, `antes`, `sustitu`, `reintroducir`...). Se descarto por ahora por ser heuristica, no regla.
 
 ### T5 (WU5) - Contrato del agente y gate
-- [ ] T5.1 `AGENTS.md`: regla por afirmacion, tabla de docs duenos de la seccion 11, gate de cierre, regla de DEAD, regla de las 250 lineas.
-- [ ] T5.2 C1-C3 pasan a bloqueantes (C4 sigue en aviso), documentado en `AGENTS.md` y en `docs/README.md`.
-- [ ] T5.3 `docs/README.md`: guia de uso de la seccion 15 (reparto "que sabes / donde va").
-- [ ] T5.4 `pnpm lint:docs` en 0; commit de la WU.
+- [x] T5.1 `AGENTS.md`: regla por afirmacion, tabla de docs duenos de la seccion 11, gate de cierre, regla de DEAD, regla de las 250 lineas.
+- [x] T5.2 C1-C3 pasan a bloqueantes (C4 sigue en aviso), documentado en `AGENTS.md` y en `docs/README.md`. Implementado con `MIGRATION = false` y un nivel `note` propio para C4, para que el aviso de tamano nunca bloquee.
+- [x] T5.3 `docs/README.md`: guia de uso de la seccion 15 (reparto "que sabes / donde va") + las reglas de vida.
+- [x] T5.4 `pnpm lint:docs` en 0; commit de la WU.
+
+**Prueba negativa del gate (T5)**: inyectar `FadeIn` en `sections.md` da `error` + `exit=1`; el arbol limpio da `exit=0` con dos avisos C4. El gate bloquea de verdad, no solo informa.
+
+**Cierre del track (seccion 9.2 del RFC)**: las tres preguntas, los borrados del diff y `pnpm lint:docs`.
 
 ## Acceptance criteria
 - Cada cifra de la seccion 1 del RFC esta confirmada o corregida, con el comando que la produjo, en el bloque de medicion.
