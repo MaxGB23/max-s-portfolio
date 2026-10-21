@@ -4,6 +4,13 @@
 > Un simbolo retirado no desaparece: deja de ser cierto y sigue citado. Esta tabla
 > es la respuesta a "quien menciona esto?" sin depender de la memoria.
 > Regla: la fila se anade en el mismo work unit que retira la tecnica.
+
+Solo entran simbolos que ya no existen o cuya tecnica se retiro. Un simbolo cuyo
+archivo sigue en el repo y ya esta documentado como deuda (desmontado, huerfano,
+pendiente de redecision) **no entra aqui**: se documenta en su doc dueno y en la
+deuda de ese tema. Ejemplo: `ProductsSection` desmontada vive en
+[components-detail.md](components-detail.md) 4.11 y 13.1, no en esta tabla; meterla
+aqui obligaria a eximir el propio canon que la explica.
 > Solo los tokens entre backticks de la primera celda se verifican (C3); una fila
 > en prosa queda como documentacion humana.
 

@@ -156,6 +156,16 @@ Metodo: conteo con `(Get-Content -LiteralPath <f>).Count`. Ojo: `Measure-Object 
 
 **Cierre del track (seccion 9.2 del RFC)**: las tres preguntas, los borrados del diff y `pnpm lint:docs`.
 
+## Prueba del sistema con un agente limpio (2026-10-21)
+
+Worktree desechable `docs-test-13-1` (rama `test/13-1-dead-import`) creado desde `0b497f0`, subagente con modelo flash y prompt sin pistas: "quita el import muerto de ProductsSection en page.tsx...".
+
+- **Acerto**: encontro 4.11 y 13.1, edito las dos en el mismo commit que el codigo (`ca37872`), y marco 13.1 RESUELTO sin cerrar la decision abierta (montar o borrar el componente). `pnpm typecheck` y `lint:docs` verificados despues, no solo reportados.
+- **Fallo 1**: el formato del rastro se perdio (`Docs: docs/design/...md, ...`, sin nivel ni que cambio) porque `AGENTS.md` solo mostraba la forma `none`. Corregido: `AGENTS.md` fija las dos formas. Se retiro la etiqueta de nivel porque el ejemplo del RFC se contradecia con su propia tabla; el RFC queda como registro y no se toca.
+- **Fallo 2**: invento una fila en `DEAD.md` para un simbolo que sigue existiendo y tuvo que eximir `ProductsSection` en `components-detail.md` para que C3 no marcara el canon que lo explica. Corregido: `DEAD.md` declara que un simbolo con archivo vivo no entra ahi; es deuda de su doc dueno.
+- **Sin probar**: el mapa. El prompt nombraba el simbolo, asi que el agente llego por grep. La prueba del mapa (pregunta de trabajo, sin escrituras) queda pendiente, y es la unica que valida `docs/README.md`.
+- La rama `test/13-1-dead-import` no se mergea: el cambio de codigo es correcto, pero la fila de DEAD seria falsa con la regla aclarada.
+
 ## Acceptance criteria
 - Cada cifra de la seccion 1 del RFC esta confirmada o corregida, con el comando que la produjo, en el bloque de medicion.
 - La tabla de particion apunta a secciones que existen hoy; toda seccion de `components.md` tiene destino unico.

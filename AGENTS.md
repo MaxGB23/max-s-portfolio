@@ -54,6 +54,7 @@ Cuando respondas en español, usa siempre español neutro. Evita el voseo y los 
 - `docs/README.md` es el punto de entrada: si una pregunta no está en el mapa, añade la fila.
 - `docs/design/**` es VIVO (salvo `archive/`, congelado): debe ser verdad hoy. `rfcs/` e `issues/` son historia fechada y no se editan.
 - Antes de cerrar cualquier cambio, fix de una línea o work unit, responde: ¿qué doc VIVO afirma algo sobre esto? Si ninguna frase se vuelve falsa, escribe `Docs: none - <motivo>` en el commit. Si cambia un valor, nombre, orden o comportamiento, edita esa frase en el doc dueño, en el mismo commit.
+- El rastro va en el cuerpo del commit, en una de estas dos formas: `Docs: none - <motivo>` o `Docs: <archivo> - <qué cambió>`, una línea por archivo si tocas varios. El nivel no se etiqueta: se deduce del commit (si hubo tarea ODD, fue nivel 2).
 - Docs dueños:
 
   | Si tocas... | Doc |
