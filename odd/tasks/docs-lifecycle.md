@@ -210,9 +210,11 @@ Worktree `docs-test-13-1`, rama `test/map`, agente limpio, pregunta real del usu
 - Sin PR hasta validacion del usuario; el merge a `main` es del usuario.
 - Forecast: la particion es la mitad del trabajo; el resto son tres piezas pequenas.
 
-## Cierre: aprobada para merge (2026-10-21)
+## Cierre (2026-10-21)
 
-Estado: **aprobada**. Lista para fast-forward sobre `main`; el push queda en manos del usuario.
+Merge local a `main` por fast-forward, sin squash: los commits del track son el
+registro. El estado no se afirma, se comprueba: `git log --oneline -1 main` y
+`git rev-list --count origin/main..main`.
 
 - Gate: `node scripts/docs.mjs check` exit 0, con los dos avisos C4 conocidos (`sections.md` 311, `section-animations.md` 317). `toc --write` idempotente.
 - Pruebas reales: una WU de codigo y una pregunta de navegacion con agentes limpios, ambas registradas arriba. Corrigieron el contrato en cuatro puntos: formato del rastro, alcance de `DEAD.md`, a quien sirve el mapa y el gate de la tabla.

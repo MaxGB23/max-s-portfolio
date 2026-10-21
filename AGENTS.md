@@ -68,6 +68,7 @@ Cuando respondas en español, usa siempre español neutro. Evita el voseo y los 
   | proceso y checklist de iteración | `docs/design/iteration-guide.md` |
 
 - Al cerrar un track, antes del push: las tres preguntas del gate, `git diff --diff-filter=D --name-only <base>...HEAD` y `pnpm lint:docs`.
+- El estado de una tarea o un RFC se escribe como hecho verificable (rama, commit, merge), no como adjetivo.
 - Al retirar un símbolo o técnica, añade su fila a `docs/design/DEAD.md` en el mismo work unit (solo símbolos que ya no existen).
 - Punto de entrada, vida de cada carpeta, reglas de tamaño e índice del canon: `docs/README.md`.
 - Este archivo no pasa de 80 líneas: si crece, el detalle se muda a `docs/README.md`, donde el gate lo puede ver.
