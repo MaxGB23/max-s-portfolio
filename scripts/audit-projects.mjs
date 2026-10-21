@@ -41,6 +41,7 @@
  */
 import { chromium } from "playwright";
 import { resolveBase } from "./audit-base.mjs";
+import { analyzeTrace, printTraceReport } from "./trace-analysis.mjs";
 
 const args = process.argv.slice(2);
 const pick = (flag, fallback) => {
@@ -67,6 +68,8 @@ const forceDecode = args.includes("--force-decode");
 // Headed: real Chrome, real GPU. Software raster in headless overstates the
 // cost of painting images by ~10x.
 const headed = args.includes("--headed");
+// Trace: capture a Chrome trace and attribute what fills the slow frame.
+const trace = args.includes("--trace");
 
 // Chrome DevTools-like network presets, in bytes per second.
 const NET_PROFILES = {
@@ -116,6 +119,7 @@ const INIT_JS = () => {
     lcp: [],
     reveals: [],
     frames: [],
+    marks: {},
   };
   window.__perf = p;
 
@@ -213,11 +217,18 @@ const INIT_JS = () => {
     for (const r of records) {
       const el = r.target;
       if (el.dataset && el.dataset.revealItem === "shown") {
+        const isGrid = !!el.querySelector("article.project-card");
         p.reveals.push({
           t: performance.now(),
-          isGrid: !!el.querySelector("article.project-card"),
+          isGrid,
           label: (el.className || "").toString().slice(0, 48),
         });
+        // Anchor between the page clock and the trace clock.
+        try {
+          const name = isGrid ? "grid-fade" : "reveal";
+          performance.mark(name);
+          p.marks[name] = performance.now();
+        } catch {}
       }
     }
   });
@@ -295,6 +306,39 @@ async function runProfile(browser, key) {
 
   const client = await context.newCDPSession(page);
   await client.send("Network.enable");
+
+  // Which GPU is actually doing the work. A machine without hardware
+  // acceleration rasterizes in the GPU process with SwiftShader and every
+  // GPU task costs 10x more than on a real GPU: without this line, a
+  // software-rendered artifact reads as a page problem.
+  let gpuInfo = null;
+  try {
+    const info = await client.send("SystemInfo.getInfo");
+    const devs = info?.gpu?.devices || [];
+    gpuInfo = devs.map((d) => `${d.deviceString || "?"} (${d.vendorId || "?"}:${d.deviceId || "?"})`).join(" | ") || "sin GPU";
+  } catch {
+    gpuInfo = null;
+  }
+  if (!gpuInfo) {
+    // SystemInfo is not always exposed; the WebGL renderer string is the
+    // portable way to know whether the GPU process is faking it in software
+    // (SwiftShader / llvmpipe / "Software Adapter").
+    gpuInfo = await page
+      .evaluate(() => {
+        try {
+          const gl = document.createElement("canvas").getContext("webgl");
+          if (!gl) return "sin WebGL";
+          const ext = gl.getExtension("WEBGL_debug_renderer_info");
+          const r = ext
+            ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL)
+            : gl.getParameter(gl.RENDERER);
+          return String(r);
+        } catch {
+          return "no disponible";
+        }
+      })
+      .catch(() => "no disponible");
+  }
   if (net.downloadThroughput !== -1) {
     await client.send("Network.emulateNetworkConditions", {
       offline: false,
@@ -373,6 +417,14 @@ async function runProfile(browser, key) {
 
   await page.goto(url, { waitUntil: "domcontentloaded", timeout: 90000 });
 
+  // A backgrounded window gets its compositor throttled and the frame
+  // timeline turns into noise. In headed mode, bring it to the front.
+  if (headed) {
+    try {
+      await page.bringToFront();
+    } catch {}
+  }
+
   // Align the page clock with the node clock.
   const pageNow = await page.evaluate(() => performance.now());
   const offset = Date.now() - net0 - pageNow;
@@ -406,6 +458,23 @@ async function runProfile(browser, key) {
 
   // Scroll the way a visitor does: wheel events, so Lenis handles them.
   const scrollStart = Date.now() - net0;
+  const traceEvents = [];
+  if (trace) {
+    client.on("Tracing.dataCollected", (e) => {
+      for (const ev of e.value) traceEvents.push(ev);
+    });
+    await client.send("Tracing.start", {
+      categories: [
+        "devtools.timeline",
+        "disabled-by-default-devtools.timeline",
+        "disabled-by-default-devtools.timeline.frame",
+        "disabled-by-default-devtools.timeline.image",
+        "blink.user_timing",
+        "latencyInfo",
+      ].join(","),
+      transferMode: "ReportEvents",
+    });
+  }
   const gridTop = await page.evaluate(() => {
     const grid = document.querySelector("#all-projects .grid");
     if (!grid) return null;
@@ -429,6 +498,19 @@ async function runProfile(browser, key) {
   }
   const scrollEnd = Date.now() - net0;
 
+  if (trace) {
+    try {
+      await page.evaluate(() => performance.mark("scroll-end"));
+    } catch {}
+    // CDPSession is an EventEmitter, not a Page: no waitForEvent.
+    const tracingDone = new Promise((resolve) => {
+      client.once("Tracing.tracingComplete", () => resolve());
+      setTimeout(resolve, 30000);
+    });
+    await client.send("Tracing.end");
+    await tracingDone;
+  }
+
   // Let the stragglers land.
   await wait(2500);
 
@@ -436,7 +518,22 @@ async function runProfile(browser, key) {
   const now = Date.now() - net0;
   await context.close();
 
-  return { prof, key, perf, imageLog, offset, scrollStart, scrollEnd, now, gridTop, reachedGrid, hydratedAt, checkAt };
+  return {
+    prof,
+    key,
+    perf,
+    imageLog,
+    offset,
+    scrollStart,
+    scrollEnd,
+    now,
+    gridTop,
+    reachedGrid,
+    hydratedAt,
+    checkAt,
+    traceEvents,
+    gpuInfo,
+  };
 }
 
 function report(run) {
@@ -445,6 +542,7 @@ function report(run) {
 
   console.log(`\n================ ${prof.label} ================`);
   console.log(`net=${netArg} cpu=x${cpuRate} scroll=${scrollStart}..${scrollEnd}ms`);
+  if (run.gpuInfo) console.log(`gpu: ${run.gpuInfo}`);
   console.log(
     `hidratacion: ${
       hydratedAt == null
@@ -557,6 +655,34 @@ function report(run) {
     console.log(
       `    d=${f.d.toFixed(0)}ms  t=${Math.round(f.t)}ms  ${rel >= 0 ? rel + "ms tras el fade" : Math.abs(rel) + "ms antes del fade"}`
     );
+  }
+
+  // --- Trace attribution -------------------------------------------------
+  if (run.traceEvents && run.traceEvents.length) {
+    const winStart = scrollStart - offset;
+    const winEnd = scrollEnd - offset;
+    let slow = null;
+    for (const f of perf.frames) {
+      if (f.t < winStart || f.t > winEnd) continue;
+      if (!slow || f.d > slow.d) slow = { t: f.t, d: f.d };
+    }
+    const anchorPage = perf.marks && perf.marks["grid-fade"];
+    const anchorEv = run.traceEvents.find((e) => e.name === "grid-fade");
+    if (slow && anchorPage != null && anchorEv) {
+      const traceReport = analyzeTrace(run.traceEvents, {
+        slowFrame: slow,
+        anchorPage,
+        anchorTs: anchorEv.ts,
+      });
+      printTraceReport(traceReport);
+      console.log(
+        `  (con tracing el frame se infla: ${slow.d.toFixed(0)}ms aqui vs lo que se midio sin trace)`
+      );
+    } else {
+      console.log(
+        "  trace: sin ancla (grid-fade) o sin frame lento en la ventana del scroll"
+      );
+    }
   }
 
   // --- Long tasks ---------------------------------------------------------

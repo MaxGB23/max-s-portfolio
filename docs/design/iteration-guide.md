@@ -161,7 +161,11 @@ prescripcion:
    mide el request de cada imagen, cuando entra en pantalla y el hueco gris
    que queda. Requiere server de PRODUCCION (`pnpm build && pnpm start`) y su
    alcance es la HOME y la grid de "Todos los proyectos": no dice nada del
-   detail.
+   detail. Con `--headed` corre en el Chrome real (GPU de verdad) y con
+   `--trace` captura un trace de Chrome y attribuye que ocupa el frame lento
+   (proceso GPU, paint, decode o JS). Para atribuir hay que medir con la
+   ventana al frente: una ventana tapada no pinta y el frame timeline es
+   ruido.
 4. Textos: regla de jerarquia (seccion 4) y de blancos (seccion 5).
 5. Botones: usa `Button` con las variantes del canon; si necesitas un hover
    nuevo, justificalo en buttons.md.
