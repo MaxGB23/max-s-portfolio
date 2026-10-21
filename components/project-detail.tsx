@@ -976,7 +976,7 @@ export function ProjectDetail({ project }: { project: ProjectL }) {
                   aria-hidden={index === lightboxIndex ? undefined : true}
                   fill
                   draggable={false}
-                  className={`object-contain transition-opacity duration-300 ${
+                  className={`object-contain transition-opacity duration-150 ${
                     index === lightboxIndex
                       ? "opacity-100"
                       : "opacity-0 pointer-events-none"
