@@ -28,6 +28,9 @@ doc se paga al mantenerlo, no al escribirlo: documentar lo obvio es deuda.
 Solo entra la pregunta que alguien hizo de verdad. Si no tiene respuesta clara,
 eso es una senal sobre el doc, no sobre el indice.
 
+Esto es para humanos: pregunta, doc y ancla. Los agentes entran por la tabla de
+docs duenos de `AGENTS.md`.
+
 | Pregunta | Respuesta en una linea | Donde |
 |---|---|---|
 | Como se compone una seccion nueva? | primitivo `Section` primero (shell + debug), luego tokens y ritmo | [sections.md](design/sections.md) 1 |
