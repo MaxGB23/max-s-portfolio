@@ -33,18 +33,27 @@ export function useLenis(): Lenis | null {
  * The forced reflow restarts the CSS animation on repeat clicks.
  */
 function announceArrival(href: string) {
-  const base = window.location.pathname + window.location.search;
-  window.history.replaceState(null, "", base + href);
-
+  // Solo se anuncia un ancla que EXISTA en la pagina actual. Este aviso llega
+  // por onComplete pero tambien por el backstop de 1600ms, y ese backstop puede
+  // dispararse despues de que el visitante ya haya pulsado otra cosa. Antes,
+  // ese disparo tardio reescribia la URL de la pagina de destino con un ancla
+  // que no le pertenece.
   const target = document.getElementById(href.slice(1));
-  if (target) {
-    target.classList.remove("arrive");
-    void target.offsetWidth;
-    target.classList.add("arrive");
-    // Clear the class once the cue has played so a static reduced-motion
-    // highlight does not linger and repeat clicks always start clean.
-    window.setTimeout(() => target.classList.remove("arrive"), 2200);
-  }
+  if (!target) return;
+
+  const base = window.location.pathname + window.location.search;
+  // `history.state` se conserva a proposito: Next guarda ahi el arbol de la
+  // navegacion en curso. Pasar `null` lo borra, y si el aviso llega mientras
+  // una transicion esta en vuelo (primera visita, RSC lento) el router no
+  // puede confirmarla: la URL se queda en el ancla y la ficha nunca pinta.
+  window.history.replaceState(window.history.state, "", base + href);
+
+  target.classList.remove("arrive");
+  void target.offsetWidth;
+  target.classList.add("arrive");
+  // Clear the class once the cue has played so a static reduced-motion
+  // highlight does not linger and repeat clicks always start clean.
+  window.setTimeout(() => target.classList.remove("arrive"), 2200);
 }
 
 /**
