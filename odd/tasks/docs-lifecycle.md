@@ -209,3 +209,14 @@ Worktree `docs-test-13-1`, rama `test/map`, agente limpio, pregunta real del usu
 - Orden obligatorio: T1 mide -> T2 instala la herramienta -> T3 mueve contenido -> T4 vigila nombres -> T5 fija el contrato. T2 es inerte: en modo aviso no bloquea nada.
 - Sin PR hasta validacion del usuario; el merge a `main` es del usuario.
 - Forecast: la particion es la mitad del trabajo; el resto son tres piezas pequenas.
+
+## Cierre: aprobada para merge (2026-10-21)
+
+Estado: **aprobada**. Lista para fast-forward sobre `main`; el push queda en manos del usuario.
+
+- Gate: `node scripts/docs.mjs check` exit 0, con los dos avisos C4 conocidos (`sections.md` 311, `section-animations.md` 317). `toc --write` idempotente.
+- Pruebas reales: una WU de codigo y una pregunta de navegacion con agentes limpios, ambas registradas arriba. Corrigieron el contrato en cuatro puntos: formato del rastro, alcance de `DEAD.md`, a quien sirve el mapa y el gate de la tabla.
+- `C5` anadido y probado en negativo: una ruta inexistente en la tabla de docs duenos bloquea con exit 1.
+- Rama: 14 commits sobre `origin/main` c3b90e5, 0 atras. Merge fast-forward, sin squash: los commits son el registro.
+- Fuera de alcance por decision: CI, hooks de git y el gate automatico.
+- Deuda conocida y declarada: 6 de 11 docs VIVO con `allow-tokens` de C3; `sections.md` y `section-animations.md` por encima del presupuesto de 300.
