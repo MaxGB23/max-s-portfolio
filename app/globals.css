@@ -180,6 +180,18 @@ body {
     @apply border-border outline-ring/50;
   }
 
+  /* Anillo de foco unico. La regla de arriba solo fija el COLOR del outline;
+     el estilo y el grosor siguen siendo los de la UA (`outline: auto`), que
+     Chrome pinta con su propio anillo claro. Encima, los componentes de shadcn
+     dibujan un `ring` de `--ring`. Resultado: el mismo Tab pinta blanco en un
+     enlace y purple en un boton. Aqui una sola regla decide las tres cosas en
+     todo el sitio. `:where()` deja especificidad cero a proposito: los
+     `focus-visible:outline-none` puntuales (dark-mode-toggle) siguen ganando. */
+  :where(a, button, summary, input, select, textarea, [tabindex]):focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
   /* ======== Custom scrollbar ======== */
   /* Estándar (Firefox y Chromium nuevo) */
   html {
