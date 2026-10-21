@@ -17,18 +17,6 @@
 > Espejo de extraccion: `docs/design/tailwind-v4-theme.css` (NO editar a mano).
 > Este documento describe los tokens y sus roles; el CSS real vive en el codigo.
 
-Contenido:
-
-- [1. Identidad](#1-identidad)
-- [2. Color](#2-color)
-- [3. Tipografia](#3-tipografia)
-- [4. Radio](#4-radio)
-- [5. Espaciado y ritmo](#5-espaciado-y-ritmo)
-- [6. Elevacion](#6-elevacion)
-- [7. Responsive](#7-responsive)
-- [8. Scrollbar](#8-scrollbar)
-- [9. Deuda unica de tokens](#9-deuda-unica-de-tokens)
-
 ## 1. Identidad
 
 - Dark-first: el sitio se ve y se diseña en dark. El tema light existe pero la
@@ -276,8 +264,8 @@ Vocabulario del sistema (sin inventar):
   con altura).
 - Topo tipografico: el crecimiento `vw` se agota a los 1600px de ancho
   (3.13vw del display = 50px = cap).
-- Paddings horizontales por seccion: ver tabla de geometria en
-  `docs/design/components.md` (unica fuente, no duplicar aqui).
+- Paddings horizontales por seccion: ver `docs/design/sections.md` 1
+  (padding horizontal) y 2 (ritmo); unica fuente, no duplicar aqui.
 
 ## 8. Scrollbar
 

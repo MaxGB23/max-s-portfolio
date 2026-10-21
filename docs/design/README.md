@@ -4,6 +4,7 @@
 > Fuente de verdad del codigo: `app/globals.css`, `lib/rhythm.ts`,
 > `lib/breakpoints.ts`, `lib/utils.ts` y los componentes.
 > Glosario de migracion (que vino de donde): `docs/design/archive/2026-09-21-pre-designmd/INDEX.md`.
+> Punto de entrada general (mapa de preguntas de todo el repo): `docs/README.md`.
 
 ## Identidad (resumen)
 
@@ -19,15 +20,23 @@ derivado de tokens, sin UI para alternar. Detalle completo:
 
 | Archivo | Que contiene | Para que sirve |
 |---|---|---|
-| `tokens.md` | Tokens de color, tipografia, radio, ritmo, elevacion y scrollbar | La paleta y las variables del sistema; fuente: globals.css |
-| `tailwind-v4-theme.css` | Espejo de extraccion del nucleo de tema (NO editar) | Regenerar/verificar el tema Tailwind v4 |
-| `typography-families.md` | Familias, 13 tokens fluidos, jerarquia, medida, historia | Tipografia: que token para que texto |
-| `components.md` | Shell Section, contrato de ritmo, gates, geometria por componente, motion, scroll | Layout verificada de cada seccion |
-| `buttons.md` | API de Button, variantes, hovers, inventario por seccion, historia v1->v3 | Que boton usar donde |
-| `pointer-gestures.md` | Reglas de pointer/teclado/foco + lightbox (detalle) | Interaccion con el puntero, trap de foco y el lightbox como caso canonico (7 rondas de bugs QA) |
-| `section-animations.md` | Patron unificado de animacion de titulos, excepciones, familias | Como se anima cada seccion y por que |
-| `iteration-guide.md` | Reglas de decision, E9/E15, flujo serif/sans/mono, gotchas | Como iterar sin romper el sistema |
-| `../../app/globals.css` | Fuente de verdad del tema (no es doc, es codigo) | Leerlo primero si dudas de valores |
+| [tokens.md](tokens.md) | Tokens de color, tipografia, radio, ritmo, elevacion y scrollbar | La paleta y las variables del sistema; fuente: globals.css |
+| [tailwind-v4-theme.css](tailwind-v4-theme.css) | Espejo de extraccion del nucleo de tema (NO editar) | Regenerar/verificar el tema Tailwind v4 |
+| [typography-families.md](typography-families.md) | Familias, 13 tokens fluidos, jerarquia, medida, historia | Tipografia: que token para que texto |
+| [sections.md](sections.md) | 1 shell, 2 contrato de ritmo, 4.1-4.4 (navbar, hero, about, featured), 9 cue de llegada | La estructura de la home, verificada |
+| [components-detail.md](components-detail.md) | 4.5-4.13: all-projects, cards, pricing, contacto, footer, detalle, auxiliares | Las superficies fuera de la home |
+| [motion.md](motion.md) | 3 gates de media, 5 reveal y motion, 6 aurora | Como entra y se mueve el contenido |
+| [platform.md](platform.md) | 7 tema y dark mode, 8 scroll, 10 debug overlay, 11 gotchas | La infraestructura que sostiene todo |
+| [buttons.md](buttons.md) | API de Button, variantes, hovers, inventario por seccion, historia v1->v3 | Que boton usar donde |
+| [pointer-gestures.md](pointer-gestures.md) | Reglas de pointer/teclado/foco + lightbox (detalle) | Interaccion con el puntero, trap de foco y el lightbox como caso canonico (7 rondas de bugs QA) |
+| [section-animations.md](section-animations.md) | Patron unificado de animacion de titulos, excepciones, familias | Como se anima cada seccion y por que |
+| [iteration-guide.md](iteration-guide.md) | Reglas de decision, E9/E15, flujo serif/sans/mono, gotchas, checklist (12) | Como iterar sin romper el sistema |
+| [../../app/globals.css](../../app/globals.css) | Fuente de verdad del tema (no es doc, es codigo) | Leerlo primero si dudas de valores |
+
+Los archivos `sections.md`, `components-detail.md`, `motion.md` y `platform.md`
+nacieron el 2026-10-21 de partir `components.md`. Conservan la numeracion del
+original: 4.4 sigue siendo el featured y 10 sigue siendo el debug overlay, vivan
+donde vivan.
 
 ## Snapshot (no canonico)
 
@@ -45,19 +54,11 @@ prescripcion (ver `iteration-guide.md` seccion 7).
 
 ## Deuda unica del canon
 
-La deuda del sistema vive DENTRO de cada archivo (seccion "Deuda unica") y
-en `iteration-guide.md` seccion 10; el README no la repite para no duplicar
+La deuda del sistema vive DENTRO de cada archivo (seccion "Deuda") y en
+`iteration-guide.md` seccion 10; el README no la repite para no duplicar
 fuentes. Regla del canon: cada tema lista la suya, una sola vez.
 
-## Donde esta cada pieza (mapa rapido)
+## Donde esta cada pieza
 
-| Pregunta | Archivo |
-|---|---|
-| Que valor tiene X color? | `tokens.md` 2 |
-| Que token fluido para un titulo de card en grid? | `typography-families.md` 2 |
-| Cual es el gap entre hero y about? | `components.md` 2 (o `lib/rhythm.ts`) |
-| Por que el featured se apila en ciertas pantallas? | `components.md` 4.4 (one-slide rule; sin pin) |
-| Que variante de Button para el CTA de pricing? | `buttons.md` 8 |
-| Puedo usar text-white? | `iteration-guide.md` 5 |
-| Como se activa el debug de layout? | `components.md` 10 (o skill `layout-debug-canon`) |
-| De donde se extrae el espejo del tema? | `app/globals.css` -> `tailwind-v4-theme.css` |
+El mapa de preguntas se mudo a `docs/README.md`: una sola fuente por cosa. Aqui
+solo queda el indice de archivos de arriba.

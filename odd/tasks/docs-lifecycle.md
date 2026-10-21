@@ -104,35 +104,39 @@ Metodo: conteo con `(Get-Content -LiteralPath <f>).Count`. Ojo: `Measure-Object 
 
    | Doc | Contenido | Lineas |
    |---|---|---|
-   | `sections.md` | 1 Shell, 2 contrato de ritmo, 4.1-4.4 (navbar, hero, about, featured), 9 cue | 289 |
-   | `motion.md` | 3 gates de media, 5 reveal y motion, 6 aurora | 55 |
-   | `platform.md` | 7 tema/dark, 8 scroll, 10 debug overlay, 11 gotchas | 114 |
-   | `components-detail.md` | 4.5-4.13 (all-projects, card, pricing, contacto, footer, detalle, auxiliares) | 233 |
-   | `iteration-guide.md` | recibe 12 checklist | +10 |
-   | deuda 13 | se distribuye al tema dueno | +27 |
+   | `sections.md` | 1 Shell, 2 contrato de ritmo, 4.1-4.4 (navbar, hero, about, featured), 9 cue | 311 |
+   | `motion.md` | 3 gates de media, 5 reveal y motion, 6 aurora | 67 |
+   | `platform.md` | 7 tema/dark, 8 scroll, 10 debug overlay, 11 gotchas | 133 |
+   | `components-detail.md` | 4.5-4.13 (all-projects, card, pricing, contacto, footer, detalle, auxiliares) | 262 |
+   | `iteration-guide.md` | recibe 12 checklist | +24 |
+   | deuda 13 | se distribuye al tema dueno (13.1/13.7 detail, 13.2 motion, 13.3 platform, 13.4 sections, 13.5/13.6 guide) | +27 |
 
-   `sections.md` en 289 es la excepcion aceptada: por encima de la regla blanda de 250, por debajo del aviso C4 de 300. Alternativas descartadas: equilibrado en cuatro docs (rompe la agrupacion por tema) y regla subida a 300 (el doc naceria con 524).
+   `sections.md` queda en 311 (no en los 289 estimados: cabecera, bloque TOC y deuda suman 22). Sigue por debajo de `section-animations.md` y se acepta como segunda excepcion de C4. Alternativas descartadas: equilibrado en cuatro docs (rompe la agrupacion por tema) y regla subida a 300 (el doc naceria con 524).
 
 **Salida**: bloque `## Medicion (re-baseline 2026-10-21, base c3b90e5)` en este archivo. Si la medicion contradice el RFC, se corrige ahi mismo en este WU (el RFC esta en estado PROPUESTO: aun no es registro congelado).
 
 **Commit**: `docs(odd): re-baseline the docs canon measurement against main`
 
 ### T2 (WU2) - Herramienta y TOC
-- [ ] T2.1 `scripts/docs.mjs` con `check` (C1 y C2 en modo aviso) y `toc --write`; `--help` de cinco lineas; sin dependencias; codigos de salida 0/1/2.
-- [ ] T2.2 Parser fence-aware, slug compatible con GitHub con sufijo `-1`, `-2` en duplicados, EOL preservado, TOC solo si falta y justo tras el H1.
-- [ ] T2.3 `package.json`: `lint:docs` y `docs:toc`.
-- [ ] T2.4 Insertar el bloque TOC en los docs VIVO que M5 marque por encima de 120 lineas.
-- [ ] T2.5 Verificar: `node --check scripts/docs.mjs`, `pnpm docs:toc` idempotente (segunda pasada sin diff), `pnpm lint:docs` en 0 o solo avisos.
-- [ ] T2.6 Commit de la WU.
+- [x] T2.1 `scripts/docs.mjs` con `check` (C1 y C2 en modo aviso) y `toc --write`; `--help` de cinco lineas; sin dependencias; codigos de salida 0/1/2.
+- [x] T2.2 Parser fence-aware, slug compatible con GitHub con sufijo `-1`, `-2` en duplicados, EOL preservado, TOC solo si falta y justo tras el H1.
+- [x] T2.3 `package.json`: `lint:docs` y `docs:toc`.
+- [x] T2.4 Insertar el bloque TOC en los docs VIVO que M5 marque por encima de 120 lineas.
+- [x] T2.5 Verificar: `node --check scripts/docs.mjs`, `pnpm docs:toc` idempotente (segunda pasada sin diff), `pnpm lint:docs` en 0 o solo avisos. PASS: segunda pasada escribe 0 archivos.
+- [x] T2.6 Commit de la WU. (`542eacd`)
 
 ### T3 (WU3) - Particion y punto de entrada
-- [ ] T3.1 Crear `sections.md` (§1, §2, §4.1-4.4, §9), `motion.md` (§3, §5, §6), `platform.md` (§7, §8, §10, §11) y `components-detail.md` (§4.5-4.13) moviendo el texto tal cual; seccion 12 a `iteration-guide.md`; seccion 13 distribuida al tema dueno (decision 1).
-- [ ] T3.2 Borrar `components.md` y actualizar con grep las referencias **vivas** del inventario M4; las cerradas no se tocan.
-- [ ] T3.3 `docs/README.md`: mapa de preguntas (20-25 filas, criterio: pregunta real, enlace con seccion), areas, reglas de vida, guia de uso de la seccion 15 del RFC.
-- [ ] T3.4 `docs/design/README.md`: queda con su tabla de archivos y el enlace al mapa nuevo; fuera el mapa duplicado.
-- [ ] T3.5 `pnpm docs:toc` sobre los archivos nuevos; `pnpm lint:docs` sin errores de C1/C2 en los docs tocados.
-- [ ] T3.6 Verificar que no se perdio texto: conteo de lineas antes/despues del split y diff de contenido por seccion.
-- [ ] T3.7 Commit de la WU.
+- [x] T3.1 Crear `sections.md` (§1, §2, §4.1-4.4, §9), `motion.md` (§3, §5, §6), `platform.md` (§7, §8, §10, §11) y `components-detail.md` (§4.5-4.13) moviendo el texto tal cual; seccion 12 a `iteration-guide.md`; seccion 13 distribuida al tema dueno (decision 1).
+- [x] T3.2 Borrar `components.md` y actualizar con grep las referencias **vivas** del inventario M4; las cerradas no se tocan. PASS: 9 lineas en 6 archivos (pointer-gestures, tokens, buttons, iteration-guide, `design/README.md`, skill `layout-debug-canon`).
+- [x] T3.3 `docs/README.md`: mapa de preguntas (24 filas), areas, reglas de vida, guia de uso de la seccion 15 del RFC.
+- [x] T3.4 `docs/design/README.md`: queda con su tabla de archivos y el enlace al mapa nuevo; fuera el mapa duplicado.
+- [x] T3.5 `pnpm docs:toc` sobre los archivos nuevos; `pnpm lint:docs` sin errores de C1/C2. PASS: C1 en 0 con enlaces reales.
+- [x] T3.6 Verificar que no se perdio texto: los 13 H2 y las 13 subsecciones 4.x tienen destino, y los marcadores (`FEATURED_STACK_GATE`, `Aurora`, `DarkModeToggle`, `ScrollRestorer`, `13.7`, `12. CheckList`) aparecen en su archivo nuevo.
+- [x] T3.7 Commit de la WU.
+
+**Hallazgo de T3**: cinco docs (`buttons`, `tokens`, `typography-families`, `iteration-guide`, y el difunto `components`) llevaban una lista manual `Contenido:` que duplicaba el TOC generado. Se borraron las cuatro que siguen vivas; el TOC las sustituye. Efecto medido: `tokens.md` vuelve de 302 a 290 y sale del aviso C4.
+
+**Hallazgo de T3 (split)**: los H3 4.x no viajan con su H2, asi que `components-detail.md` necesitaba un H2 propio; sin el, el TOC del archivo solo listaba la deuda. Corregido con `## 4. Geometria por componente (4.5-4.13)` y, en `sections.md`, `(4.1-4.4)`.
 
 ### T4 (WU4) - Nombres muertos
 - [ ] T4.1 `docs/design/DEAD.md` con las tres filas del RFC, ajustadas a lo que M6 demuestre.

@@ -116,11 +116,10 @@ nunca te va a pedir que los toques.
 
 Regla: un doc VIVO no pasa de unas 250 líneas; si las pasa, son dos docs. No es
 estética: un doc que no se lee de un tirón no se navega. El aviso del linter
-salta a 300 (sección 10). Medido el 2026-10-21 **después** de insertar los TOC,
-quedan por encima: `components.md` (770, desaparece con la partición),
-`section-animations.md` (316) y `tokens.md` (302). Los dos últimos se quedan como
-excepción documentada: el bloque TOC suma 12-16 líneas y es el precio de que el
-índice exista.
+salta a 300 (sección 10). Medido el 2026-10-21 **con la partición ya hecha**,
+quedan por encima `section-animations.md` (316) y `sections.md` (311). Los dos se
+quedan como excepción documentada; `tokens.md` (290) se libró al quitarle la lista
+manual, que el TOC generado sustituye.
 
 Partición (754 líneas, decidida el 2026-10-21 tras la re-medición):
 
@@ -139,11 +138,11 @@ featured— pertenece al relato de la home; la segunda abre otra superficie
 (listas, pricing y la página de detalle). Partida por ese corte, `components.md`
 desaparece y cada mitad se lee en el contexto en que se busca.
 
-`sections.md` queda en 289: por encima de las 250 de la regla blanda y por debajo
-del aviso de 300, que es la excepción documentada. Se acepta a sabiendas: cortar
-más habría partido la geometría de la home en dos archivos sin ganar navegación.
-`motion.md` (55) y `platform.md` (114) nacen cortos y crecen con la deuda
-distribuida de la sección 13.
+`sections.md` queda en 311 una vez contados cabecera, TOC y su deuda: por encima
+de las 250 de la regla blanda y sólo 11 líneas por encima del aviso de 300, que se
+acepta como excepción. Cortar más habría partido la geometría de la home en dos
+archivos sin ganar navegación. `motion.md` (67) y `platform.md` (133) nacen cortos
+y crecen con la deuda distribuida de la sección 13.
 
 Coste real de las referencias: 70 menciones a `components.md` en el repo, de las
 cuales solo **9 son vivas** (4 en `docs/design/README.md`; 1 cada una en

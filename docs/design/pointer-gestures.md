@@ -2,7 +2,7 @@
 
 Reglas para cualquier sección interactiva del portfolio: galerías, lightboxes, carruseles, modales. Cubre **puntero** (drag, swipe, hover-zoom, tap) y **teclado/foco** (navegación por flechas, trap de foco, retorno del foco). El proyecto **hand-rolls** toda interacción (cero dependencias), así que estas reglas las aplicamos a mano.
 
-Contexto: la galería y el lightbox viven en `components/project-detail.tsx`; la infraestructura de scroll en `hooks/use-lenis.tsx` y `components/smooth-scroll.tsx` (ver `components.md`).
+Contexto: la galería y el lightbox viven en `components/project-detail.tsx`; la infraestructura de scroll en `hooks/use-lenis.tsx` y `components/smooth-scroll.tsx` (ver `components-detail.md` 4.10 y `platform.md` 8).
 
 ---
 

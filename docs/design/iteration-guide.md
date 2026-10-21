@@ -11,6 +11,8 @@
 - [8. Iteracion segura (paso a paso)](#8-iteracion-segura-paso-a-paso)
 - [9. Gotchas de entorno](#9-gotchas-de-entorno)
 - [10. Deuda unica de la guia](#10-deuda-unica-de-la-guia)
+- [12. CheckList](#12-checklist)
+- [13. Deuda](#13-deuda)
 <!-- toc:end -->
 
 > [!NOTE] Estado: CANONICO
@@ -18,19 +20,6 @@
 > decisiones tomadas en este restructure (E9/E15) y reglas migradas del
 > canon anterior, verificadas contra el codigo.
 > Glosario: `docs/design/archive/2026-09-21-pre-designmd/INDEX.md`.
-
-Contenido:
-
-- [1. Como decides (reglas duras)](#1-como-decides-reglas-duras)
-- [2. Decisiones de este restructure (E9 / E15)](#2-decisiones-de-este-restructure-e9--e15)
-- [3. Flujo de decision serif / sans / mono](#3-flujo-de-decision-serif--sans--mono)
-- [4. Jerarquia por tamano y tracking](#4-jerarquia-por-tamano-y-tracking)
-- [5. Blancos y opacidades](#5-blancos-y-opacidades)
-- [6. Gradientes escasos](#6-gradientes-escasos)
-- [7. Que NO copiamos de las marcas de referencia](#7-que-no-copiamos-de-las-marcas-de-referencia)
-- [8. Iteracion segura (paso a paso)](#8-iteracion-segura-paso-a-paso)
-- [9. Gotchas de entorno](#9-gotchas-de-entorno)
-- [10. Deuda unica de la guia](#10-deuda-unica-de-la-guia)
 
 ## 1. Como decides (reglas duras)
 
@@ -179,7 +168,7 @@ prescripcion:
    revertir a `SlideIn`/`ScaleIn`.
 7. QA: `layout-debug-canon` (activar solo los canales que interesen y
    `debug-test` para una caja puntual) antes de pedir review.
-   Ver `components.md` 10.
+   Ver `platform.md` 10.
 
 ## 9. Gotchas de entorno
 
@@ -210,3 +199,25 @@ prescripcion:
   vivo: es informacion de rama agotada y el snapshot la conserva.
 - 10.3 `chart-1..5` mapeados sin definicion (ver tokens.md 9.1): si llega
   un chart, definirlos; si no, eliminar el mapeo.
+## 12. CheckList
+
+- [ ] Nueva seccion: usar `Section` primero (shell + debug), luego tokens de
+      color/tipografia, luego ritmo (`SECTION_GAP`/pares de espaciadores).
+- [ ] Verificar contraste: titulos `text-foreground`, cuerpo `text-content`,
+      labels `text-muted-foreground` (nunca parrafos en muted).
+- [ ] Respecto de reglas de blancos y brightness (ver iteration-guide).
+- [ ] Correr audit de ritmo (`scripts/rhythm-contract.mjs`,
+      `scripts/section-spacing.mjs`) antes de commitear layout.
+
+## 13. Deuda
+
+- 13.5 La nota "Vercel Preview Deployment activado para la rama
+  feat/fluid-typo" del canon anterior se ELIMINO del canon vivo (informacion
+  de rama agotada; el snapshot `2026-09-21-pre-designmd` la conserva).
+
+- 13.6 `docs/ideas-features/` se elimino (2026-10-05): eran ideas sin estado
+  (ni completo/pendiente ni decision fechada), que es exactamente el problema
+  que `docs/rfcs/` y `odd/tasks/` resuelven con su propio ciclo de vida. Las
+  decisiones que si importaban ya estaban asimiladas en este canon; las dos
+  referencias que quedaban (hero cue, dark mode) se reescribieron aqui en vez
+  de dejar punteros muertos.

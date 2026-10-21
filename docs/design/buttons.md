@@ -18,19 +18,6 @@
 > call sites del sitio. Glosario de migracion:
 > `docs/design/archive/2026-09-21-pre-designmd/INDEX.md`.
 
-Contenido:
-
-- [1. API real](#1-api-real)
-- [2. Principios](#2-principios)
-- [3. Variantes y por que cada hover](#3-variantes-y-por-que-cada-hover)
-- [4. Formas](#4-formas)
-- [5. Tamanos y fullWidth](#5-tamanos-y-fullwidth)
-- [6. Sombra (glow)](#6-sombra-glow)
-- [7. Tipografia y foco](#7-tipografia-y-foco)
-- [8. Inventario por seccion (verificado)](#8-inventario-por-seccion-verificado)
-- [9. Historia v1 -> v2 -> v3](#9-historia-v1---v2---v3)
-- [10. Deuda unica de botones](#10-deuda-unica-de-botones)
-
 ## 1. API real
 
 `components/ui/button.tsx` (cva + Slot si `asChild`):
@@ -124,7 +111,7 @@ duration-200` (outline, inverted).
 | Contacto | Copiar correo | `outline glow lg` | Estado copiado: `border-purple-accent/40 text-purple-accent brightness-110` |
 | Contacto | Descargar CV | `outline glow lg` | Icono `Download` primero (patrón de la fila); `href` de `data/cv.ts` (un PDF por idioma) con `download`; label corto `CV`/`Resume` en <sm; va ANTES de GitHub (prioridad: contacto > evidencia) |
 | Contacto | GitHub | `outline glow lg` | Firma morada; comparte fila (2 columnas) con Descargar CV por debajo de `lg` |
-| Products (no renderizado) | Saber mas | `outline fullWidth px-5 py-3 justify-between` | Import muerto en page.tsx (ver components.md 4.11) |
+| Products (no renderizado) | Saber mas | `outline fullWidth px-5 py-3 justify-between` | Import muerto en page.tsx (ver components-detail.md 4.11) |
 
 Nota: el inventario anterior incluia un boton "Banner" `compact px-4 py-2.5
 w-11` que NO existe en el codigo actual: el contacto real usa 5 botones

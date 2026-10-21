@@ -56,7 +56,7 @@ como anadir un nivel) viven en la skill global `layout-debug` y no se duplican a
 |---|---|
 | El array de canales | `app/layout.tsx` (`LAYOUT_DEBUG`) |
 | Las reglas CSS | `app/globals.css`, bloque `@layer utilities` |
-| Contrato detallado (si existe) | `docs/design/components.md` seccion 10 — solo en este repo; si no esta, las reglas estan en `layout-debug` |
+| Contrato detallado (si existe) | `docs/design/platform.md` seccion 10 - solo en este repo; si no esta, las reglas estan en `layout-debug` |
 | Las reglas y como anadir un nivel | skill global `layout-debug` |
 
 ## Anadir un nivel
