@@ -24,15 +24,20 @@ export interface Project {
 /**
  * Sizes of the card image.
  *
- * The card is `100vw - 48px` wide (the section inset is `px-6`), so `100vw`
- * over-declares the slot and the browser picks a bigger variant than it
- * needs: 1200w where 1080w would do on a 393px phone at DPR3.
+ * The real slot is NOT 100vw: the section inset is `px-6` (48px) and the
+ * grid is 1/2/3 columns with a 24px gap, so the card is
+ * `100vw - 48px`, `(100vw - 72px) / 2` and `(100vw - 96px) / 3`.
+ * Declaring the real width matters twice: the browser picks the variant
+ * that fits the slot instead of the next one up, and the GPU uploads a
+ * texture that matches what gets painted. With `100vw` a 448px slot in a
+ * 1440px viewport asked for 640w; the trace showed the slow frame at the
+ * grid going entirely to the GPU process (texture upload and scaling)
+ * with the renderer main thread idle.
  *
- * The breakpoints here do not match the grid (sm=640, lg=1024): that is a
- * separate, measured item (over-fetch between 640-768 and 1024-1200), not
- * part of the eager change.
+ * The breakpoints match the grid (`sm`=640, `lg`=1024).
  */
-const CARD_IMAGE_SIZES = "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw";
+const CARD_IMAGE_SIZES =
+  "(max-width: 640px) calc(100vw - 48px), (max-width: 1024px) calc((100vw - 72px) / 2), calc((100vw - 96px) / 3)";
 
 interface ProjectCardProps {
   project: Project;

@@ -33,17 +33,23 @@ romper imports viejos; sin consumidores, se puede borrar.
 - El stack featured precarga SOLO el primer panel (`priority`). La one-slide
   rule deja un panel visible a la vez: eagerly precargar los otros dos
   descargaba capturas invisibles (155KB en mobile) en el load inicial.
+- El frame lento al entrar a la grid NO es JS, ni red, ni decode: con un
+  trace de Chrome, el tiempo va al proceso GPU (subida de texturas y
+  escalado) con el renderer principal ocioso. Por eso lo que mueve la aguja
+  son los PIXELES de la textura, no cuando llega el request: la card
+  declara el ancho real del slot (`calc(100vw - 48px)` y los repartos de la
+  grid de 1/2/3 columnas) y `next.config` declara `480` en `deviceSizes`,
+  porque el candidato default mas cercano a un slot de 448px era 640 (un
+  43% mas de textura). Medido: la variante pedida bajo de 640w a 480w y las
+  cards de la home bajaron de 20-61KB a 13-18KB en desktop.
 - En 3G el bundle hidrata a los ~4s, despues de que el visitante ya paso la
   grid: por eso la precarga tiene que ser de servidor (`loading`/`priority` en
   el HTML), no de cliente. Un `IntersectionObserver` que monte una capa
   invisible llega tarde y no adelanta nada.
-- `sizes` por componente: card `(max-width: 768px) 100vw, (max-width: 1200px)
-  50vw, 33vw`; featured `(max-width: 1024px) 100vw, 50vw`; hero `(max-width:
-  768px) 280px, (max-width: 1200px) 34vw, 380px`; about `(max-width: 768px)
-  400px, (max-width: 1200px) 464px, 490px`.
-- Pendiente, medido y sin aplicar: el `sizes` de la card no coincide con los
-  cortes de la grid (`sm`=640, `lg`=1024) y declara `100vw` para un slot de
-  `100vw - 48px`; el navegador pide 1200w donde 1080w bastaria.
+- `sizes` por componente: card `calc(100vw - 48px)` / `calc((100vw - 72px) /
+  2)` / `calc((100vw - 96px) / 3)`; featured `(max-width: 1024px) 100vw,
+  50vw`; hero `(max-width: 768px) 280px, (max-width: 1200px) 34vw, 380px`;
+  about `(max-width: 768px) 400px, (max-width: 1200px) 464px, 490px`.
 
 ## 5. Reveal y motion
 
