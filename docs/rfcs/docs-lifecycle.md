@@ -345,7 +345,7 @@ Presupuesto: una tarde. La partición es la mitad del trabajo.
 - Toda decisión documental queda registrada: en el cuerpo del commit o en la
   tarea ODD. Una decisión sin rastro es la que se pierde.
 
-## 15. Guía de uso (tres anclas, quince líneas)
+## 15. Guía de uso (tres anclas y el reparto)
 
 No hay manual aparte: el sistema se explica donde se usa. Si alguna de estas
 tres piezas crece, es que el sistema creció de más.
@@ -358,6 +358,17 @@ tres piezas crece, es que el sistema creció de más.
 - Si buscas algo y no está en el mapa, añade la fila. El mapa es el índice, no un adorno.
 - Un doc de más de 250 líneas son dos docs.
 - pnpm lint:docs antes de cerrar un track; pnpm docs:toc regenera los índices.
+
+| Qué sabes | Dónde va |
+|---|---|
+| Cómo funciona esta función | el código |
+| Por qué esto parece raro | un comentario junto a esa línea |
+| Qué valor, orden o gate es contrato | el doc del tema |
+| Por qué elegimos A y no B | RFC o nota de decisión |
+| Cómo se repite un proceso | iteration-guide.md |
+
+Si un recién llegado puede deducirlo leyendo el archivo que toca, no es doc. Un
+doc se paga al mantenerlo, no al escribirlo: documentar lo obvio es deuda.
 ```
 
 **`AGENTS.md`**: los bullets y la tabla de docs dueños de la sección 11. Es el
