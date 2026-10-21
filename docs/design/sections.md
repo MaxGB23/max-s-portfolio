@@ -280,6 +280,7 @@ pagina, `scripts/section-spacing.mjs` compensa el padding propio de
   columna se estrecha al 50% del grid y hay que recortar para no rebasar el
   limite de medida).
 - Imagen mockup: `aspect-4/3` en móvil + `lg:aspect-auto lg:h-full lg:min-h-[25rem] lg:max-h-[28rem] 2xl:min-h-[28rem] 2xl:max-h-[36rem]`, `rounded-2xl shadow-2xl ring-1 ring-black/5`, `object-cover` intacto; el segundo tramo vive en `2xl` porque ahí crecen texto e iconos (`text-sm→2xl:text-lg`, `w-10→2xl:w-12`), mientras `xl` solo añade `xl:mb-2` de espaciado y lo cubre la banda `lg`; empalme sin salto en 28rem; excepción deliberada de featured, no patrón;
+- Solo el PRIMER panel precarga su imagen (`priority`); con la one-slide rule los otros dos no se ven a la vez y precargaban capturas invisibles. Politica y numeros en `motion.md` 3.
   badge flotante `-bottom-4 -right-4 w-14 h-14 rounded-full shadow-lg`;
   chips de stack con `shadow-sm` y rings.
 - h3 `text-fluid-featured` serif black con ultima palabra

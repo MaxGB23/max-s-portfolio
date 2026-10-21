@@ -27,9 +27,23 @@ interface FeaturedProjectPanelProps {
   children?: React.ReactNode;
   /** Last panel: top-only padding — the page-level SECTION_GAP owns the exit. */
   isLast?: boolean;
+  /**
+   * Eager image (next/image `priority`).
+   *
+   * Only the FIRST panel takes it. The one-slide rule keeps a single panel
+   * visible at a time, so eager-loading the other two downloaded images nobody
+   * could see, and they did it at page load: measured, they took 155KB of pipe
+   * on mobile before the grid below had even started to load.
+   */
+  eager?: boolean;
 }
 
-export function FeaturedProjectPanel({ project, children, isLast = false }: FeaturedProjectPanelProps) {
+export function FeaturedProjectPanel({
+  project,
+  children,
+  isLast = false,
+  eager = false,
+}: FeaturedProjectPanelProps) {
   const { t } = useLanguage();
 
   // Extract last word for the purple accent styling
@@ -138,7 +152,7 @@ export function FeaturedProjectPanel({ project, children, isLast = false }: Feat
                     fill
                     className="object-cover"
                     sizes="(max-width: 1024px) 100vw, 50vw"
-                    priority
+                    priority={eager}
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-purple-accent/10 to-transparent">
