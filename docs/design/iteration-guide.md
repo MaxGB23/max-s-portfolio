@@ -156,7 +156,12 @@ prescripcion:
 3. Verificar en orden de costo: estatico (`tsc`, `build`, grep sobre el CSS
    compilado, `Test-Path` de rutas de imagen) antes que render. Solo el
    navegador computa layout real, y un server mal consultado cuesta mas que
-   el check que reemplaza.
+   el check que reemplaza. Para la linea de tiempo de las imagenes de la home
+   esta `scripts/audit-projects.mjs`: emulador mobile, red y CPU limitadas,
+   mide el request de cada imagen, cuando entra en pantalla y el hueco gris
+   que queda. Requiere server de PRODUCCION (`pnpm build && pnpm start`) y su
+   alcance es la HOME y la grid de "Todos los proyectos": no dice nada del
+   detail.
 4. Textos: regla de jerarquia (seccion 4) y de blancos (seccion 5).
 5. Botones: usa `Button` con las variantes del canon; si necesitas un hover
    nuevo, justificalo en buttons.md.
