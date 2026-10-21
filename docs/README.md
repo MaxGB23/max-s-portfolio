@@ -65,6 +65,10 @@ eso es una senal sobre el doc, no sobre el indice.
 | Auditorias | mediciones e incidencias fechadas | [docs/issues/](issues/) |
 | Trabajo | tareas ODD en curso y cerradas | [odd/tasks/](../odd/tasks/) |
 
+Si cambia la estructura del canon (archivo nuevo, renombrado o eliminado),
+actualiza la tabla de [design/README.md](design/README.md) en el mismo commit:
+ese archivo es el indice de archivos, no de contenido.
+
 ## Reglas de vida
 
 | Carpeta | Vida | Obligacion |

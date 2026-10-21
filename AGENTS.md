@@ -51,8 +51,6 @@ Cuando respondas en español, usa siempre español neutro. Evita el voseo y los 
 - Todo texto visible va como clave en `data/translations.ts` (ES + EN) y se renderiza con `t()`; nunca hardcodear. Mini guía: `docs/i18n.md`.
 
 ### Docs (regla por afirmación)
-- `docs/README.md` es el punto de entrada: si una pregunta no está en el mapa, añade la fila.
-- `docs/design/**` es VIVO (salvo `archive/`, congelado): debe ser verdad hoy. `rfcs/` e `issues/` son historia fechada y no se editan.
 - Antes de cerrar cualquier cambio, fix de una línea o work unit, responde: ¿qué doc VIVO afirma algo sobre esto? Si ninguna frase se vuelve falsa, escribe `Docs: none - <motivo>` en el commit. Si cambia un valor, nombre, orden o comportamiento, edita esa frase en el doc dueño, en el mismo commit.
 - El rastro va en el cuerpo del commit, en una de estas dos formas: `Docs: none - <motivo>` o `Docs: <archivo> - <qué cambió>`, una línea por archivo si tocas varios. El nivel no se etiqueta: se deduce del commit (si hubo tarea ODD, fue nivel 2).
 - Docs dueños:
@@ -69,7 +67,6 @@ Cuando respondas en español, usa siempre español neutro. Evita el voseo y los 
   | proceso y checklist de iteración | `docs/design/iteration-guide.md` |
 
 - Al cerrar un track, antes del push: las tres preguntas del gate, `git diff --diff-filter=D --name-only <base>...HEAD` y `pnpm lint:docs`.
-- Al retirar un símbolo o técnica, añade su fila a `docs/design/DEAD.md` en el mismo work unit.
-- `docs/design/README.md` es el índice de archivos del canon: actualízalo solo cuando cambie la estructura (nuevo/renombrado/eliminado archivo), no por cambios de contenido.
-- Un doc VIVO de más de 250 líneas son dos docs.
-- `docs/design/archive/` es congelado: no editar.
+- Al retirar un símbolo o técnica, añade su fila a `docs/design/DEAD.md` en el mismo work unit (solo símbolos que ya no existen).
+- Punto de entrada, vida de cada carpeta, reglas de tamaño e índice del canon: `docs/README.md`.
+- Este archivo no pasa de 80 líneas: si crece, el detalle se muda a `docs/README.md`, donde el gate lo puede ver.
