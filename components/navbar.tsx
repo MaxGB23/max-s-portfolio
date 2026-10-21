@@ -176,6 +176,12 @@ export function Navbar() {
     const isHome = window.location.pathname === "/";
     if (href === "/" && isHome) {
       e.preventDefault();
+      // Cancelar la navegacion cancela tambien el unico mecanismo que limpiaba
+      // el hash: sin esto la URL sigue en el ancla anterior con el hero en
+      // pantalla, y copiar ese enlace manda a una seccion que ya no estas
+      // viendo. Se limpia al pulsar, no al terminar el scroll: no se depende de
+      // un callback que puede no dispararse si el visitante interrumpe.
+      window.history.replaceState(window.history.state, "", "/");
       scrollToTop();
       setMobileOpen(false);
     }
