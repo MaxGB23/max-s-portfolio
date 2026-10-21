@@ -52,6 +52,7 @@ Cuando respondas en español, usa siempre español neutro. Evita el voseo y los 
 
 ### Docs (regla por afirmación)
 - Antes de cerrar cualquier cambio, fix de una línea o work unit, responde: ¿qué doc VIVO afirma algo sobre esto? Si ninguna frase se vuelve falsa, escribe `Docs: none - <motivo>` en el commit. Si cambia un valor, nombre, orden o comportamiento, edita esa frase en el doc dueño, en el mismo commit.
+- Para saber qué doc es el dueño, entra por el mapa de `docs/README.md`. Añade una fila solo si la pregunta la hizo el usuario y no estaba; si una fila ya apunta a esa sección, amplía su vocabulario en vez de duplicarla.
 - El rastro va en el cuerpo del commit, en una de estas dos formas: `Docs: none - <motivo>` o `Docs: <archivo> - <qué cambió>`, una línea por archivo si tocas varios. El nivel no se etiqueta: se deduce del commit (si hubo tarea ODD, fue nivel 2).
 - Docs dueños:
 
