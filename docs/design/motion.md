@@ -42,6 +42,14 @@ romper imports viejos; sin consumidores, se puede borrar.
   porque el candidato default mas cercano a un slot de 448px era 640 (un
   43% mas de textura). Medido: la variante pedida bajo de 640w a 480w y las
   cards de la home bajaron de 20-61KB a 13-18KB en desktop.
+- La grid que entra con fade se promueve con `will-change: opacity,
+  translate` (clase en el `Reveal` que la envuelve, NO en la grid interior:
+  el que se anima es el wrapper). Sin promocion, el raster de las 6 cards cae
+  en el frame critico; con ella, el raster ocurre una vez y el fade compone
+  una textura. Medido en Chrome real (headed, ventana al frente): peor frame
+  205ms -> 79ms en desktop y 97ms -> 67ms en mobile, y la varianza entre
+  corridas desaparece. `will-change` NO es global: solo en esta seccion, que
+  es la unica con 6 imagenes grandes a la vez.
 - En 3G el bundle hidrata a los ~4s, despues de que el visitante ya paso la
   grid: por eso la precarga tiene que ser de servidor (`loading`/`priority` en
   el HTML), no de cliente. Un `IntersectionObserver` que monte una capa

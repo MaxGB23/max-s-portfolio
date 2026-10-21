@@ -60,7 +60,7 @@ export function AllProjects() {
         className="pt-6 md:pt-12 lg:pt-16"
         innerId="all-projects-content"
       >
-        <Reveal delayEnter earlyOnMobile>
+        <Reveal delayEnter earlyOnMobile className="[will-change:opacity,translate]">
           <div className="debug-l3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {allProjects.map((project) => (
               <ProjectCard key={project.id} project={project} />
