@@ -107,7 +107,7 @@ export function useScrollToAnchor(navbarHeight = 64) {
           announceArrival(href);
         };
 
-        lenis.scrollTo(y, { duration: 1.4, onComplete: fire });
+        lenis.scrollTo(y, { lerp: 0.1, onComplete: fire });
         window.setTimeout(fire, ARRIVAL_FALLBACK_MS);
       } else {
         // Mobile real (sin Lenis): el mismo cálculo de offset que desktop.
@@ -135,7 +135,11 @@ export function useScrollToTop() {
 
   return useCallback(() => {
     if (lenis) {
-      lenis.scrollTo(0, { duration: 2 });
+      // Sin `duration`: una duracion fija tarda lo mismo en 8000px que en 300px,
+      // asi que el viaje corto se arrastra a 150px/s. `lerp` avanza un
+      // porcentaje del recorrido restante en cada frame y conserva la misma
+      // sensacion a cualquier distancia.
+      lenis.scrollTo(0, { lerp: 0.1 });
     } else {
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
@@ -156,8 +160,8 @@ let pendingRestore: number | null = null;
 // one, so a stale backstop can never announce the wrong destination.
 let arrivalToken = 0;
 
-/** Backstop delay — just past the 1.4s tween, so it only fires when the tween
- *  was interrupted and onComplete will never run. */
+/** Backstop delay — just past where the lerp converges (~1.2-1.5s at 60Hz), so
+ *  it only fires when the scroll was interrupted and onComplete never runs. */
 const ARRIVAL_FALLBACK_MS = 1600;
 
 /** Called on portfolio card clicks: remember where the grid was. */
