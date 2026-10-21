@@ -166,6 +166,23 @@ Worktree desechable `docs-test-13-1` (rama `test/13-1-dead-import`) creado desde
 - **Sin probar**: el mapa. El prompt nombraba el simbolo, asi que el agente llego por grep. La prueba del mapa (pregunta de trabajo, sin escrituras) queda pendiente, y es la unica que valida `docs/README.md`.
 - La rama `test/13-1-dead-import` no se mergea: el cambio de codigo es correcto, pero la fila de DEAD seria falsa con la regla aclarada.
 
+## Segunda prueba: el mapa no es la entrada (2026-10-21)
+
+Worktree `docs-test-13-1`, rama `test/map`, agente limpio, pregunta real del usuario: donde esta documentado que la tab de arquitectura del detalle se monta siempre para crawlers y LLM. Solo lectura.
+
+- **Acerto**: `components-detail.md` 4.10 y 13.7, el commit `e6efdee` con el porque, y `rfcs/css-first-reveal.md` como segunda cuenta mas rigurosa (corrige el over-claim sobre crawlers). Detecto que el prefijo `fix(a11y)` del commit es enganoso: el motivo real era legibilidad para crawlers.
+- **Hallazgo**: nunca abrio `docs/README.md`. Resolvio con la tabla de docs duenos de `AGENTS.md` ("detalle -> components-detail") y despues grepeo el doc. Para un agente, la tabla es la entrada real; el mapa aporta vocabulario humano, ancla y respuesta en una linea.
+- **Corregido**: el contrato decia "entra por el mapa". Ahora `AGENTS.md` manda a la tabla y `docs/README.md` declara que el mapa es para humanos. El mapa se acota a 40 filas y `C5` comprueba que cada ruta de la tabla existe (probado en negativo: una ruta falsa bloquea el gate).
+- **Coste de entorno, no de docs**: 2 llamadas quemadas (`codegraph_explore` sobre un worktree sin `.codegraph/` y `tools.shell` dentro de code-mode).
+
+### Conclusiones
+
+1. El predicado funciona: dos agentes limpios editaron o respondieron sin barridos. En la WU de codigo abrio un solo doc; en la pregunta abrio docs porque la pregunta era sobre docs.
+2. La pieza que mas se usa es la tabla de docs duenos, y era la unica sin gate. Por eso `C5`.
+3. Los fallos que aparecieron fueron de contrato (formato del rastro, ambito de `DEAD.md`, a quien sirve el mapa), no de contenido del canon.
+4. Sin probar: el mapa como entrada para humanos. No hay evidencia para podarlo ni para darlo por bueno; queda como artefacto de lectura.
+5. Nada de esto obliga a un agente: los dientes son el gate y el rastro en el commit.
+
 ## Acceptance criteria
 - Cada cifra de la seccion 1 del RFC esta confirmada o corregida, con el comando que la produjo, en el bloque de medicion.
 - La tabla de particion apunta a secciones que existen hoy; toda seccion de `components.md` tiene destino unico.

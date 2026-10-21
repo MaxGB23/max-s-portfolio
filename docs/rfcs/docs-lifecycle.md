@@ -4,6 +4,13 @@
 > 2026-10-21 en la rama `docs/lifecycle`: una re-medición previa y los cuatro
 > commits de la sección 12. Se congela aquí: una corrección futura es otro RFC.
 >
+> Validado con dos pruebas reales de agente limpio en worktrees desechables: una
+> WU de código (retirar un import muerto) y una pregunta de navegación (dónde vive
+> una decisión ya tomada). El registro y las conclusiones están en
+> `odd/tasks/docs-lifecycle.md`. Lo que las pruebas corrigieron del contrato
+> (formato del rastro, alcance de `DEAD.md`, a quién sirve el mapa) se aplicó en
+> la rama antes del merge; el RFC no se reescribe.
+>
 > La revisión 1
 > proponía el flujo completo (SSOT con ancla, índice seccional por doc, estado
 > por archivo, linter de cinco checks). Medido contra este repo, ese flujo es de

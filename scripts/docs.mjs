@@ -19,11 +19,17 @@ const SIZE_WARN_LINES = 300;
 const TOC_START = '<!-- toc:start -->';
 const TOC_END = '<!-- toc:end -->';
 const DEAD = join(DESIGN, 'DEAD.md');
+const AGENTS = join(ROOT, 'AGENTS.md');
+
+// C5: the owner table is the path an agent actually walks; a dead path there
+// sends it nowhere with the rest of the gate green.
+const AGENTS_MAX_LINES = 80;
+const MAP_MAX_ROWS = 40;
 
 const HELP = [
-  'docs.mjs - gate del canon de docs (mapa, TOC, tamano).',
+  'docs.mjs - gate del canon de docs (mapa, TOC, nombres muertos, tamano).',
   'Uso: node scripts/docs.mjs [check | toc --write]',
-  '  check        Informa C1 (mapa), C2 (TOC) y C4 (tamano). Es la accion por defecto.',
+  '  check        Informa C1 (mapa), C2 (TOC), C3 (nombres muertos), C4 (tamano) y C5 (tabla de docs duenos). Es la accion por defecto.',
   '  toc --write  Inserta o regenera el bloque TOC de los docs VIVO de mas de 120 lineas.',
   'Salida: 0 limpio, 1 hallazgos, 2 uso incorrecto.',
 ].join('\n');
@@ -261,6 +267,74 @@ function checkDead(file, text, tokens, findings) {
   return allowed.size;
 }
 
+// Rows of the first table that appears after a matching line (header excluded).
+function tableAfter(lines, matcher) {
+  const at = lines.findIndex((line) => matcher.test(line));
+  if (at === -1) return null;
+  let i = at + 1;
+  while (i < lines.length && !lines[i].trim().startsWith('|')) {
+    if (lines[i].trim() !== '') return null;
+    i += 1;
+  }
+  const rows = [];
+  let header = true;
+  for (; i < lines.length; i += 1) {
+    const line = lines[i].trim();
+    if (!line.startsWith('|')) break;
+    const cells = line.split('|').slice(1, -1).map((cell) => cell.trim());
+    if (cells.every((cell) => /^:?-{2,}:?$/.test(cell))) continue;
+    if (header) {
+      header = false;
+      continue;
+    }
+    rows.push(cells);
+  }
+  return rows;
+}
+
+function checkOwnerTable(findings) {
+  if (!existsSync(AGENTS)) {
+    findings.push({ level: 'warning', file: AGENTS, message: 'C5: AGENTS.md no existe' });
+    return;
+  }
+  const text = read(AGENTS);
+  const count = lineCount(text);
+  if (count > AGENTS_MAX_LINES) {
+    findings.push({
+      level: 'note',
+      file: AGENTS,
+      message: `C5: ${count} lineas (tope ${AGENTS_MAX_LINES}); mueve el detalle a docs/README.md`,
+    });
+  }
+  const rows = tableAfter(toLines(text), /^-\s+Docs due\S*os:/i);
+  if (rows === null) {
+    findings.push({ level: 'warning', file: AGENTS, message: 'C5: falta la tabla de docs duenos' });
+    return;
+  }
+  for (const cells of rows) {
+    for (const match of cells[cells.length - 1].matchAll(/`([^`]+)`/g)) {
+      const path = match[1];
+      if (!path.endsWith('.md')) continue;
+      if (!existsSync(resolve(ROOT, path))) {
+        findings.push({ level: 'error', file: AGENTS, message: `C5: doc dueno inexistente -> ${path}` });
+      }
+    }
+  }
+}
+
+function checkMapRows(findings) {
+  if (!existsSync(ENTRY)) return;
+  const rows = tableAfter(toLines(read(ENTRY)), /^##\s+Mapa de preguntas/i);
+  if (rows === null) return;
+  if (rows.length > MAP_MAX_ROWS) {
+    findings.push({
+      level: 'note',
+      file: ENTRY,
+      message: `C5: mapa con ${rows.length} filas (tope ${MAP_MAX_ROWS}); fusiona o retira la menos usada`,
+    });
+  }
+}
+
 function runToc(write) {
   const findings = [];
   let changed = 0;
@@ -282,6 +356,8 @@ function runCheck() {
   const tokens = deadTokens();
   let exemptions = 0;
   checkMap(files, findings);
+  checkOwnerTable(findings);
+  checkMapRows(findings);
   for (const file of files) {
     const text = read(file);
     checkToc(file, text, findings);

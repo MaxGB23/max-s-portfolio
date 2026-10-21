@@ -100,4 +100,4 @@ Mira la afirmacion, no el tipo de archivo: **puedes senalar la frase de un doc
 VIVO que se vuelve falsa?** Si no, `Docs: none - <motivo>` en el commit y cero
 lecturas. Si si, editas esa frase en el doc dueno, en el mismo commit.
 `pnpm lint:docs` no decide esto: solo comprueba lo que nadie puede olvidar (mapa,
-TOC, nombres muertos), una vez al cerrar el track.
+TOC, nombres muertos y la tabla de docs duenos), una vez al cerrar el track.
