@@ -11,6 +11,9 @@ const nextConfig = {
     // 4000x2800. Decodificar y escalar eso ocurre fuera del main thread, por
     // eso ninguna medicion de long tasks lo veia: picos de GPU de 60-130ms.
     // `sharp` es el motor de next/image en `next start`; Vercel lo provee.
+    // Next 16 limita las calidades a esta allowlist (default [75]); un `quality`
+    // fuera de la lista se coercion al valor mas cercano.
+    qualities: [75, 90],
   },
 }
 

@@ -72,6 +72,7 @@ export function AboutSection() {
             src="/images/about-max.webp"
             alt={t("section.about.imageAlt")}
             fill
+            quality={90}
             className="object-cover object-top 2xl:object-right"
             sizes="(max-width: 768px) 400px, (max-width: 1200px) 464px, 490px"
           />

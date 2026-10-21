@@ -166,6 +166,7 @@ export function HeroSection() {
                 alt="Maximiliano González Ballesteros Full Stack Developer Profile Picture"
                 fill
                 priority
+                quality={90}
                 className="object-cover object-top"
                 sizes="(max-width: 768px) 280px, (max-width: 1200px) 34vw, 380px"
               />
