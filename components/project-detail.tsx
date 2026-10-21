@@ -959,15 +959,31 @@ export function ProjectDetail({ project }: { project: ProjectL }) {
               className="relative w-full h-[80vh] max-h-[85vh]"
               onClick={onLightboxImageClick}
             >
-              <Image
-                ref={lightboxImageRef}
-                src={lightboxImage.src}
-                alt={lightboxImage.alt}
-                fill
-                draggable={false}
-                className="object-contain"
-                sizes="(max-width: 1024px) 100vw, 1024px"
-              />
+              {/* Todas las imagenes del set viven montadas y apiladas; solo la
+                  activa es visible. next/image pide asi, al abrir el lightbox,
+                  exactamente las mismas URLs que se usaran al navegar (mismo
+                  width, mismo quality), en paralelo y fuera del critical path:
+                  al pulsar next/prev no hay red ni decode, solo un cambio de
+                  opacidad. Antes cada cambio pedia una variante nueva y, hasta
+                  que pintaba, nada se movia en pantalla — de ahi el doble clic
+                  que terminaba dos imagenes mas adelante. */}
+              {realImages.map((image, index) => (
+                <Image
+                  key={image.src}
+                  ref={index === lightboxIndex ? lightboxImageRef : undefined}
+                  src={image.src}
+                  alt={index === lightboxIndex ? image.alt : ""}
+                  aria-hidden={index === lightboxIndex ? undefined : true}
+                  fill
+                  draggable={false}
+                  className={`object-contain transition-opacity duration-300 ${
+                    index === lightboxIndex
+                      ? "opacity-100"
+                      : "opacity-0 pointer-events-none"
+                  }`}
+                  sizes="(max-width: 1024px) 100vw, 1024px"
+                />
+              ))}
             </div>
             <figcaption className="mt-3 text-center text-sm text-white/70">
               {lightboxImage.alt}
