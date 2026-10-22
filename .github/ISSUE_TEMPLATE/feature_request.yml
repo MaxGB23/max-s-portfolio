@@ -1,0 +1,37 @@
+name: Feature request
+description: A behavior or a tool this repo should have, and why it does not yet
+title: "feat: "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Write in English. One problem per issue: if it needs two, it is two issues.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What is missing or wrong today, with the evidence that shows it.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+      description: What you want to happen, concretely.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: What else you weighed and why you dropped it.
+    validations:
+      required: true
+  - type: textarea
+    id: done
+    attributes:
+      label: Closing criterion
+      description: How we know this is done, as something observable.
+    validations:
+      required: true

@@ -1,6 +1,9 @@
 ### Idioma (conversación)
 Cuando respondas en español, usa siempre español neutro. Evita el voseo y los regionalismos.
 
+### Idioma (artefactos)
+Código, comentarios, commits, ramas, README, issues y PRs en inglés; este archivo, `docs/` y las tareas ODD en español.
+
 ### Evitar vueltas, requests y tokens innecesarios (IMPORTANTE)
 - Una vez verificado que el estado del árbol coincide con la decisión del usuario (los cambios pedidos por el usuario) y que la comprobación (build/tsc/tests) pasa, CIERRA. No re-audites, no re-verifiques lo ya verificado, no preguntes de nuevo preguntas ya respondidas y no sigas consumiendo tokens en confirmaciones redundantes.
 - Si no hay nada que editar, dilo en una línea y para. No juegues al "no puedo creer que no haya cambios" repitiendo git diff / diff --stat cada turno.
@@ -67,7 +70,8 @@ Cuando respondas en español, usa siempre español neutro. Evita el voseo y los 
   | botones, gestos de puntero | `docs/design/buttons.md`, `docs/design/pointer-gestures.md` |
   | proceso y checklist de iteración | `docs/design/iteration-guide.md` |
 
-- Al cerrar un track, antes del push: las tres preguntas del gate, `git diff --diff-filter=D --name-only <base>...HEAD` y `pnpm lint:docs`.
+- Todo commit que toque `docs/` o `AGENTS.md` pasa por el gate: lo corre el hook `pre-commit` (una vez por clon, `pnpm hooks:install`); si editaste un doc de mas de 120 lineas, `pnpm docs:toc --write` en el mismo commit. El detalle operativo vive en `docs/README.md`.
+- Al cerrar un track, antes del push: las tres preguntas del gate y `git diff --diff-filter=D --name-only <base>...HEAD`.
 - El estado de una tarea o un RFC se escribe como hecho verificable (rama, commit, merge), no como adjetivo.
 - Al retirar un símbolo o técnica, añade su fila a `docs/design/DEAD.md` en el mismo work unit (solo símbolos que ya no existen).
 - Punto de entrada, vida de cada carpeta, reglas de tamaño e índice del canon: `docs/README.md`.

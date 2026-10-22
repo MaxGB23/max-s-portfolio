@@ -1,0 +1,11 @@
+#!/bin/sh
+# Gate de docs en el momento del commit, no al cerrar el track (odd/tasks/docs-verification.md T4).
+# Solo corre cuando el commit toca documentacion: un cambio de codigo no espera a los docs.
+staged=$(git diff --cached --name-only --diff-filter=ACMR)
+if printf '%s\n' "$staged" | grep -qE '^(docs/|AGENTS\.md$)'; then
+  if ! node scripts/docs.mjs check; then
+    printf '\npre-commit: el gate de docs fallo. Si es un TOC desincronizado, corre `pnpm docs:toc --write`.\n' >&2
+    exit 1
+  fi
+fi
+exit 0

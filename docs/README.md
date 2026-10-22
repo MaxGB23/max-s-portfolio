@@ -8,7 +8,9 @@
 ## Como se mantiene
 
 - Si buscas algo y no esta en el mapa, anade la fila: una por pregunta de usuario, no por consulta del agente. Si una fila ya apunta a esa seccion, amplia su vocabulario en vez de duplicarla. El mapa no pasa de 40 filas: al llenarse, fusiona o retira la menos usada.
-- El presupuesto de tamano lo fija el gate (`scripts/docs.mjs`, 300 lineas hoy): un doc que lo pase es dos docs.
+- El presupuesto de tamano lo avisa el gate (`scripts/docs.mjs`, 300 lineas hoy): un doc que lo pase es dos docs. El aviso no bloquea; la particion es deuda declarada, no un mergeo roto.
+- El gate valida ademas los enlaces (destino y ancla) de los docs VIVO y la seccion citada en cada fila de este mapa: un H2 renombrado o renumerado pone el gate en rojo.
+- El gate lo corre el hook `pre-commit` en cada commit que toque `docs/` o `AGENTS.md` (`pnpm hooks:install`, una vez por clon), y `commit-msg` valida el rastro `Docs:`/`Risk:` de `AGENTS.md`. Los hooks viven en `.githooks/` y se saltan a proposito con `git commit --no-verify`.
 - `pnpm lint:docs` antes de cerrar un track; `pnpm docs:toc` regenera los indices.
 - Un doc cerrado no se actualiza: lo que sigue siendo verdad se muda al canon, lo que murio va a [DEAD.md](design/DEAD.md).
 
