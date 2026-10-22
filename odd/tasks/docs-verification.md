@@ -31,12 +31,12 @@ S6 - Verificacion antes del merge.
 
 | ID | Spec | Route | Commit |
 |---|---|---|---|
-| T1 | S2 | inline | WU1 |
-| T2 | S2 | inline | WU1 |
-| T3 | S4 | inline | WU2 |
-| T4 | S1 | inline | WU3 |
-| T5 | S5 | inline | WU4 |
-| T6 | S3 | inline | WU5 |
+| T1 | S2 | inline | `fa01ff4` |
+| T2 | S2 | inline | `fa01ff4` |
+| T3 | S4 | inline | `fa01ff4` |
+| T4 | S1 | inline | `44d2114` |
+| T5 | S5 | inline | `44d2114` |
+| T6 | S3 | inline | `1399c4b` |
 | T7 | S6 | inline | - |
 
 - T1 - `scripts/docs.mjs` exporta sus helpers puros y guarda el CLI; `scripts/docs.test.mjs` con `node:test`; script `pnpm test`. Fixtures: TOC ausente, ancla rota, nombre muerto exento, doc dueno inexistente, enlace roto.
@@ -62,3 +62,13 @@ L5 (decision, 2026-10-22): los hooks se instalan a mano con `pnpm hooks:install`
 L6 (contexto, 2026-10-22): el trabajo del README sigue sin commitear en el checkout principal, rama `docs/readme-refresh` (working tree con `README.md` y `docs/design/motion.md`). Este track vive en un worktree aparte para no tocarlo.
 
 L7 (hallazgo que motiva el track, 2026-10-22): `pnpm lint:docs` en `main` (`a909669`) falla con `error: docs/design/motion.md: C2: falta el bloque TOC (132 lineas)`. `motion.md` cruzo el umbral de 120 lineas al editarse en la PR #6 y el gate solo se ejecutaba "al cerrar un track".
+
+L8 (decision de implementacion, 2026-10-22): WU1 absorbe T3. La severidad de C2 y la frase de politica de C4 son la misma afirmacion que los checks nuevos, y separarlas obligaba a un commit cuyo test suite no podia pasar todavia (los tests fijan `level: 'note'` para C2). Un commit: checks nuevos, tests, severidades y politica.
+
+L9 (medicion que decide el alcance, 2026-10-22): hoy hay **0 enlaces con fragmento** en `docs/` (40 enlaces relativos, todos sanos) y **16 filas del mapa citan una seccion numerica**, las 16 resuelven. Por eso el check de seccion citada se hace bloqueante (protege la convencion real de `docs/README.md`) y el de fragmento se queda como red para enlaces futuros, sin hallazgos hoy.
+
+L10 (verificacion, 2026-10-22): `pnpm test` 27/27, `pnpm lint:docs` 0 bloqueantes (3 avisos: C2 de `motion.md`, C4 de `section-animations.md` 317 y `sections.md` 312), `pnpm typecheck` limpio, `pnpm build` completo. Hooks probados de punta a punta: `commit-msg` rechaza un mensaje sin `Docs:`/`Risk:` y `pre-commit` rechaza un doc VIVO fuera del mapa.
+
+L11 (diferencial, 2026-10-22): el gate VIEJO (`a909669`) sobre el arbol NUEVO reproduce exactamente 1 bloqueante, el C2 preexistente de `motion.md` (archivo que este track no toca), y **ningun hallazgo nuevo** de los checks agregados; el gate NUEVO sobre ese arbol da 0 bloqueantes. Sin regresiones.
+
+L12 (pendiente fuera de este track, 2026-10-22): el badge de CI en el README y el TOC de `motion.md` viajan con la rama `docs/readme-refresh`, que sigue sin commitear en el checkout principal. El badge solo tiene sentido despues del primer run verde en `main`.
