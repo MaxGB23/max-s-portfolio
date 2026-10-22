@@ -1,0 +1,5 @@
+#!/bin/sh
+# Rastro obligatorio del commit (`Docs:` y `Risk:`), definido en AGENTS.md.
+# Se salta a proposito con `git commit --no-verify`.
+node scripts/commit-trace.mjs "$1" || exit 1
+exit 0
