@@ -31,24 +31,25 @@
 ## 8. Infraestructura de scroll
 
 - `SmoothScroll` (`smooth-scroll.tsx`): Lenis SOLO desktop (`window.innerWidth
-  >= 768`); config `duration: 0.5`, easing expo-out, `smoothWheel: true`,
+  >= 768`); config `duration: 0.6`, easing expo-out, `smoothWheel: true`,
   `wheelMultiplier: 1`; `gsap.registerPlugin(ScrollTrigger)`,
   `lenisInstance.on("scroll", ScrollTrigger.update)` con rAF nativo y
   `gsap.ticker.lagSmoothing(0)`.
-- **`duration` 0.5, no 1: medido.** Con `scripts/audit-projects.mjs` (desktop
+- **`duration` 0.6, no 1: medido.** Con `scripts/audit-projects.mjs` (desktop
   2048x1280 dpr1.25, gesto `--wheel`, iGPU) la animacion de 1s deja 7.8% de
   frames avanzando menos de la mitad del paso y la pagina llega tarde respecto
-  a la mano — ese es el "delay" que se percibe. A 0.5 baja a 4.5-5.1% y el
-  suavizado se sigue leyendo: 30 frames de glide a 60Hz, 82 a 165Hz. `0.6` no
-  se midio con la curva stock, asi que no hay numero que lo respalde.
+  a la mano — ese es el "delay" que se percibe. A 0.6 baja a 4.6%, el salto
+  maximo por frame de 43-47px a 39-41px y el ratio max/mediana queda en
+  5.0-6.6x. **0.6 gana a 0.5 en las tres metricas** (0.5: cola 4.5-5.1% pero
+  ratio 7.3-7.7x, o sea cada notch pega mas fuerte), asi que 0.6 es el valor.
 - **La curva NO se cambia.** `ease-in-out` (arranque lento) con input
   re-apuntado acumula deuda: `current` se queda atras de un `target` que sigue
   sumando notches y al cesar el gesto la deuda se descarga de golpe. Medido:
   saltos de 1315px en un frame y el scroll terminando en 0.4s. El ease-out
   exponencial es obligatorio.
-- **Frames muertos: ~1 por notch, estructurales.** 12% del gesto y 24% de la
-  ventana asentada, identico con `duration 1`, `duration 0.5`, `lerp 0.1` y
-  `lerp 0.2` (~108 en valor absoluto en las cuatro). Es el frame en que el
+- **Frames muertos: ~1 por notch, estructurales.** ~12.6% del gesto y ~26% de
+  la ventana asentada, identico con `duration 1`, `duration 0.5`, `duration
+  0.6`, `lerp 0.1` y `lerp 0.2` (~108 en valor absoluto en las cuatro). Es el frame en que el
   evento nuevo re-apunta la animacion sin que la posicion avance, y ocurre
   justo cuando la mano se mueve: no se percibe como frenazo y NO es ajustable.
 - `useScrollToAnchor(64)`: `lerp: 0.1` (sin duracion fija, ver
