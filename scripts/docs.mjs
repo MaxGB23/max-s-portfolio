@@ -77,7 +77,7 @@ function listVivoDocs() {
   return files.sort();
 }
 
-function headings(lines) {
+export function headings(lines) {
   const out = [];
   let fence = null;
   lines.forEach((raw, index) => {
@@ -96,7 +96,7 @@ function headings(lines) {
   return out;
 }
 
-function slugify(text) {
+export function slugify(text) {
   return text
     .toLowerCase()
     .replace(/[^\p{L}\p{N}\s_-]/gu, '')
@@ -104,7 +104,7 @@ function slugify(text) {
     .replace(/\s+/g, '-');
 }
 
-function tocEntries(list) {
+export function tocEntries(list) {
   const seen = new Map();
   const entries = [];
   for (const heading of list) {
@@ -154,37 +154,110 @@ function applyToc(file, text, findings) {
   return true;
 }
 
-function checkToc(file, text, findings) {
+// Anclas reales del doc, con la desambiguacion `-1`, `-2` que usa GitHub,
+// para poder validar enlaces con fragmento sin abrir el navegador.
+export function anchorSlugs(text) {
+  const seen = new Map();
+  const slugs = new Set();
+  for (const heading of headings(toLines(text))) {
+    const base = slugify(heading.text);
+    const count = seen.get(base) ?? 0;
+    seen.set(base, count + 1);
+    slugs.add(count === 0 ? base : `${base}-${count}`);
+  }
+  return slugs;
+}
+
+export function checkToc(file, text, findings) {
   if (lineCount(text) <= TOC_MIN_LINES) return;
   const lines = toLines(text);
   const list = headings(lines);
   const range = tocRange(lines);
   if (!range) {
-    findings.push({ level: 'warning', file, message: `C2: falta el bloque TOC (${lineCount(text)} lineas)` });
+    findings.push({ level: 'note', file, message: `C2: falta el bloque TOC (${lineCount(text)} lineas)` });
     return;
   }
   const expected = expectedToc(list, eolOf(text)).map((line) => line.replace(/\r?\n$/, ''));
   const current = lines.slice(range.start, range.end + 1);
   if (current.join('\n') !== expected.join('\n')) {
-    findings.push({ level: 'warning', file, message: 'C2: el TOC no coincide con los H2 reales' });
+    findings.push({ level: 'note', file, message: 'C2: el TOC no coincide con los H2 reales' });
   }
 }
 
 const LINK_RE = /\[[^\]]*\]\(\s*([^)\s]+)\s*\)/g;
 
-function linksOf(file) {
-  const targets = [];
-  const text = read(file);
-  let match;
-  while ((match = LINK_RE.exec(text)) !== null) {
-    let target = match[1].trim();
-    if (/^(https?:|mailto:|#)/.test(target)) continue;
-    target = target.split('#')[0];
+// Destino y fragmento de cada enlace relativo. Externos y anclas locales se
+// ignoran: no hay archivo que resolver.
+export function linkRefs(text) {
+  const refs = [];
+  for (const match of text.matchAll(LINK_RE)) {
+    const raw = match[1].trim();
+    if (/^(https?:|mailto:)/.test(raw)) continue;
+    const hash = raw.indexOf('#');
+    const target = hash === -1 ? raw : raw.slice(0, hash);
+    const fragment = hash === -1 ? '' : raw.slice(hash + 1);
     if (!target) continue;
-    const full = target.startsWith('/') ? join(ROOT, target.slice(1)) : resolve(dirname(file), target);
-    targets.push(full);
+    refs.push({ target, fragment });
   }
-  return targets;
+  return refs;
+}
+
+function resolveLink(file, target) {
+  return target.startsWith('/') ? join(ROOT, target.slice(1)) : resolve(dirname(file), target);
+}
+
+// `lookup(target)` devuelve el texto del doc o null si no existe: asi la regla
+// se prueba sin disco.
+export function missingAnchors(refs, lookup) {
+  const missing = [];
+  for (const ref of refs) {
+    if (!ref.fragment) continue;
+    const text = lookup(ref.target);
+    if (text == null) {
+      missing.push({ ...ref, reason: 'missing-file' });
+      continue;
+    }
+    if (!anchorSlugs(text).has(ref.fragment)) missing.push({ ...ref, reason: 'missing-anchor' });
+  }
+  return missing;
+}
+
+// El mapa cita la seccion en prosa ("doc + 4.4"), no como fragmento, asi que se
+// valida el numero contra los headings del doc destino.
+const MAP_SECTION_RE = /\]\(\s*([^)\s#]+)\s*\)\s*(\d+(?:\.\d+)?)\b/;
+
+export function mapSectionRefs(text) {
+  const refs = [];
+  for (const line of toLines(text)) {
+    if (!line.trim().startsWith('|')) continue;
+    const cells = line.split('|').slice(1, -1);
+    const last = (cells[cells.length - 1] ?? '').trim();
+    const match = MAP_SECTION_RE.exec(last);
+    if (match) refs.push({ target: match[1], section: match[2] });
+  }
+  return refs;
+}
+
+export function docSections(text) {
+  const sections = new Set();
+  for (const heading of headings(toLines(text))) {
+    const match = /^(\d+(?:\.\d+)?)[.\s]/.exec(heading.text);
+    if (match) sections.add(match[1]);
+  }
+  return sections;
+}
+
+export function missingSections(refs, lookup) {
+  const missing = [];
+  for (const ref of refs) {
+    const text = lookup(ref.target);
+    if (text == null) {
+      missing.push({ ...ref, reason: 'missing-file' });
+      continue;
+    }
+    if (!docSections(text).has(ref.section)) missing.push({ ...ref, reason: 'missing-section' });
+  }
+  return missing;
 }
 
 function checkMap(files, findings) {
@@ -198,11 +271,19 @@ function checkMap(files, findings) {
   for (let hop = 0; hop < 2 && frontier.length > 0; hop += 1) {
     const next = [];
     for (const file of frontier) {
-      for (const target of linksOf(file)) {
+      for (const ref of linkRefs(read(file))) {
+        const target = resolveLink(file, ref.target);
         if (!target.endsWith('.md')) continue;
         if (!existsSync(target)) {
           findings.push({ level: 'warning', file, message: `C1: enlace roto -> ${rel(target)}` });
           continue;
+        }
+        if (ref.fragment && !anchorSlugs(read(target)).has(ref.fragment)) {
+          findings.push({
+            level: 'error',
+            file,
+            message: `C1: ancla inexistente -> ${rel(target)}#${ref.fragment}`,
+          });
         }
         if (!reachable.has(target)) {
           reachable.add(target);
@@ -220,7 +301,23 @@ function checkMap(files, findings) {
   }
 }
 
-function checkSize(file, text, findings) {
+function checkMapSections(findings) {
+  if (!existsSync(ENTRY)) return;
+  const refs = mapSectionRefs(read(ENTRY));
+  const missing = missingSections(refs, (target) => {
+    const full = resolve(dirname(ENTRY), target);
+    return existsSync(full) ? read(full) : null;
+  });
+  for (const miss of missing) {
+    findings.push({
+      level: 'error',
+      file: ENTRY,
+      message: `C1: seccion citada inexistente -> ${miss.target} ${miss.section}`,
+    });
+  }
+}
+
+export function checkSize(file, text, findings) {
   const count = lineCount(text);
   if (count > SIZE_WARN_LINES) {
     findings.push({ level: 'note', file, message: `C4: ${count} lineas (presupuesto ${SIZE_WARN_LINES})` });
@@ -250,8 +347,8 @@ function allowedTokens(text) {
   return allowed;
 }
 
-function checkDead(file, text, tokens, findings) {
-  if (file === DEAD || tokens.length === 0) return 0;
+export function checkDead(file, text, tokens, findings) {
+  if (resolve(file) === DEAD || tokens.length === 0) return 0;
   const allowed = allowedTokens(text);
   const listed = tokens.filter((token) => !allowed.has(token));
   if (listed.length === 0) return allowed.size;
@@ -268,7 +365,7 @@ function checkDead(file, text, tokens, findings) {
 }
 
 // Rows of the first table that appears after a matching line (header excluded).
-function tableAfter(lines, matcher) {
+export function tableAfter(lines, matcher) {
   const at = lines.findIndex((line) => matcher.test(line));
   if (at === -1) return null;
   let i = at + 1;
@@ -292,6 +389,16 @@ function tableAfter(lines, matcher) {
   return rows;
 }
 
+export function ownerDocPaths(rows) {
+  const paths = [];
+  for (const cells of rows ?? []) {
+    for (const match of (cells[cells.length - 1] ?? '').matchAll(/`([^`]+)`/g)) {
+      if (match[1].endsWith('.md')) paths.push(match[1]);
+    }
+  }
+  return paths;
+}
+
 function checkOwnerTable(findings) {
   if (!existsSync(AGENTS)) {
     findings.push({ level: 'warning', file: AGENTS, message: 'C5: AGENTS.md no existe' });
@@ -311,13 +418,9 @@ function checkOwnerTable(findings) {
     findings.push({ level: 'warning', file: AGENTS, message: 'C5: falta la tabla de docs duenos' });
     return;
   }
-  for (const cells of rows) {
-    for (const match of cells[cells.length - 1].matchAll(/`([^`]+)`/g)) {
-      const path = match[1];
-      if (!path.endsWith('.md')) continue;
-      if (!existsSync(resolve(ROOT, path))) {
-        findings.push({ level: 'error', file: AGENTS, message: `C5: doc dueno inexistente -> ${path}` });
-      }
+  for (const path of ownerDocPaths(rows)) {
+    if (!existsSync(resolve(ROOT, path))) {
+      findings.push({ level: 'error', file: AGENTS, message: `C5: doc dueno inexistente -> ${path}` });
     }
   }
 }
@@ -356,6 +459,7 @@ function runCheck() {
   const tokens = deadTokens();
   let exemptions = 0;
   checkMap(files, findings);
+  checkMapSections(findings);
   checkOwnerTable(findings);
   checkMapRows(findings);
   for (const file of files) {
@@ -380,22 +484,30 @@ function report(findings, exemptions = 0) {
   return blocking.length;
 }
 
+// Solo corre el CLI cuando se ejecuta como script: al importarlo desde los
+// tests, este bloque no debe ni interpretar argv ni llamar a process.exit.
+const invokedDirectly = Boolean(process.argv[1]) && resolve(process.argv[1]) === fileURLToPath(import.meta.url);
+
 const argv = process.argv.slice(2);
-if (argv.includes('--help') || argv.includes('-h')) {
+if (invokedDirectly && (argv.includes('--help') || argv.includes('-h'))) {
   process.stdout.write(`${HELP}\n`);
   process.exit(0);
 }
 
 const command = argv[0] ?? 'check';
-if (command === 'check' && argv.length === 1) {
+if (invokedDirectly && command === 'check' && argv.length === 1) {
   const { findings, exemptions } = runCheck();
   process.exit(report(findings, exemptions) > 0 ? 1 : 0);
 }
-if (command === 'toc') {
+if (invokedDirectly && command === 'toc') {
   if (argv.length !== 2 || argv[1] !== '--write') fail('toc solo acepta --write');
   const { findings, changed } = runToc(true);
   report(findings);
   process.stdout.write(`docs: TOC escrito en ${changed} archivo(s)\n`);
   process.exit(findings.some((finding) => finding.level === 'error') ? 1 : 0);
 }
-fail(`subcomando desconocido: ${argv.join(' ')}`);
+if (!invokedDirectly) {
+  // Importado como modulo (tests): no hay CLI que ejecutar.
+} else {
+  fail(`subcomando desconocido: ${argv.join(' ')}`);
+}
