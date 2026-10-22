@@ -25,7 +25,21 @@
  *   node scripts/audit-projects.mjs [--url http://localhost:<port>]
  *        [--profile mobile|desktop|both] [--net off|fast3g|slow4g]
  *        [--cpu 4] [--scroll-step 600] [--scroll-pause 100]
+ *        [--wheel [--wheel-delta 100] [--wheel-interval 50]]
+ *        [--dpr 1.5]
+ *        [--viewport 2048x1280]
+ *        [--inject-css "selector{prop:val}"]
  *        [--wait-hydration] [--no-warm]
+ *
+ * TWO GESTURES, and they measure different things:
+ *   - steps (default): 600px every 100ms. Each step lets the smooth scroll
+ *     settle, so the frame timeline sees short bursts with idle gaps.
+ *   - --wheel: a wheel event every N ms for the whole traversal, which keeps
+ *     Lenis interpolating at a steady velocity the way a human flick does.
+ *     Use this one to measure JANK THAT LASTS: a section that keeps dropping
+ *     frames while its images upload looks mild in step mode (the gaps hide
+ *     it) and obvious here. `--wheel-delta 100 --wheel-interval 50` is
+ *     ~2000px/s, an ordinary deliberate scroll.
  *
  * Requires a PRODUCTION server (`pnpm build && pnpm start`): in dev mode
  * next/image has no cache and every variant is resized on the fly, which
@@ -70,6 +84,28 @@ const forceDecode = args.includes("--force-decode");
 const headed = args.includes("--headed");
 // Trace: capture a Chrome trace and attribute what fills the slow frame.
 const trace = args.includes("--trace");
+// Continuous wheel gesture instead of steps (see the header).
+const wheelMode = args.includes("--wheel");
+const wheelDelta = Number(pick("--wheel-delta", "100"));
+const wheelInterval = Number(pick("--wheel-interval", "50"));
+// Device pixel ratio override. The profile defaults are a proxy, not the
+// visitor's screen: a Windows laptop at 125/150% scaling asks for bigger image
+// variants than dpr1 does (750w instead of 480w for the same card slot), and
+// the texture cost scales with those pixels. Without this flag a scaled display
+// measures a scenario nobody runs.
+const dprArg = pick("--dpr", null);
+// Viewport override. The card slot is `(100vw - 96px) / 3` in 3 columns, so the
+// window width decides which image variant the browser asks for: a 2048px
+// window makes a 650px card and an 828w texture, a 1440px one asks for 640w.
+// Measuring the default 1440x900 measures a smaller texture than the visitor's
+// own screen produces.
+const viewportArg = pick("--viewport", null);
+// Inject a CSS snippet before the scroll so a pure-CSS hypothesis (a
+// `content-visibility`, a `will-change`, a smaller variant) can be measured
+// A/B against the running build without rebuilding and restarting the server.
+// It is a measurement aid, never a fix delivery: the winning rule still has to
+// land in the source and be re-measured on a real build.
+const injectCss = pick("--inject-css", null);
 
 // Chrome DevTools-like network presets, in bytes per second.
 const NET_PROFILES = {
@@ -293,9 +329,16 @@ async function launchBrowser() {
 
 async function runProfile(browser, key) {
   const prof = PROFILES[key];
+  const dpr = dprArg ? Number(dprArg) : prof.deviceScaleFactor;
+  const [vw, vh] = viewportArg ? viewportArg.split("x").map(Number) : [prof.viewport.width, prof.viewport.height];
+  const viewport = { width: vw, height: vh };
+  const label =
+    dpr === prof.deviceScaleFactor && vw === prof.viewport.width && vh === prof.viewport.height
+      ? prof.label
+      : `${vw}x${vh} dpr${dpr}`;
   const context = await browser.newContext({
-    viewport: prof.viewport,
-    deviceScaleFactor: prof.deviceScaleFactor,
+    viewport,
+    deviceScaleFactor: dpr,
     isMobile: prof.isMobile,
     hasTouch: prof.hasTouch,
     userAgent: prof.userAgent,
@@ -457,6 +500,9 @@ async function runProfile(browser, key) {
   }
 
   // Scroll the way a visitor does: wheel events, so Lenis handles them.
+  if (injectCss) {
+    await page.addStyleTag({ content: injectCss });
+  }
   const scrollStart = Date.now() - net0;
   const traceEvents = [];
   if (trace) {
@@ -483,18 +529,45 @@ async function runProfile(browser, key) {
 
   let guard = 0;
   let reachedGrid = false;
+  const gesture = wheelMode
+    ? `wheel continuo (${wheelDelta}px cada ~${wheelInterval}ms)`
+    : `pasos (${scrollStep}px cada ${scrollPause}ms)`;
   while (guard++ < 400) {
-    await page.mouse.wheel(0, scrollStep);
-    await wait(scrollPause);
-    const y = await page.evaluate(() => window.scrollY);
-    if (gridTop != null && !reachedGrid && y >= gridTop - 200) reachedGrid = true;
-    const end = await page.evaluate(() => {
+    if (wheelMode) {
+      await page.mouse.wheel(0, wheelDelta);
+      await wait(wheelInterval);
+    } else {
+      await page.mouse.wheel(0, scrollStep);
+      await wait(scrollPause);
+    }
+    // Una sola ida al renderer. Cuatro evaluate por paso convierten el
+    // instrumento en carga, y en el modo continuo el intervalo declarado se
+    // vuelve mentira: el gesto medido ya no es el que se pidio.
+    const s = await page.evaluate(() => {
       const grid = document.querySelector("#all-projects .grid");
-      if (!grid) return null;
-      return grid.getBoundingClientRect().bottom + window.scrollY;
+      const rect = grid ? grid.getBoundingClientRect() : null;
+      return {
+        y: window.scrollY,
+        gridBottom: rect ? rect.bottom + window.scrollY : null,
+        innerHeight: window.innerHeight,
+        scrollHeight: document.body.scrollHeight,
+      };
     });
-    if (end != null && y >= end + 100) break;
-    if (y + (await page.evaluate(() => window.innerHeight)) >= (await page.evaluate(() => document.body.scrollHeight))) break;
+    if (gridTop != null && !reachedGrid && s.y >= gridTop - 200) reachedGrid = true;
+    if (s.gridBottom != null && s.y >= s.gridBottom + 100) break;
+    if (s.y + s.innerHeight >= s.scrollHeight) break;
+  }
+
+  // Lenis sigue interpolando despues del ultimo wheel. Si el reloj se corta
+  // aqui, la ventana medida termina antes que la animacion y los frames del
+  // frenado caen fuera: la mitad del tirón se pierde justo donde se produce.
+  let lastY = -1;
+  let stable = 0;
+  for (let i = 0; i < 30 && stable < 3; i++) {
+    const y = await page.evaluate(() => window.scrollY);
+    stable = Math.abs(y - lastY) < 1 ? stable + 1 : 0;
+    lastY = y;
+    await wait(100);
   }
   const scrollEnd = Date.now() - net0;
 
@@ -519,7 +592,7 @@ async function runProfile(browser, key) {
   await context.close();
 
   return {
-    prof,
+    prof: { ...prof, label },
     key,
     perf,
     imageLog,
@@ -533,6 +606,7 @@ async function runProfile(browser, key) {
     checkAt,
     traceEvents,
     gpuInfo,
+    gesture,
   };
 }
 
@@ -542,6 +616,8 @@ function report(run) {
 
   console.log(`\n================ ${prof.label} ================`);
   console.log(`net=${netArg} cpu=x${cpuRate} scroll=${scrollStart}..${scrollEnd}ms`);
+  console.log(`gesto: ${run.gesture}`);
+  if (injectCss) console.log(`css inyectado: ${injectCss}`);
   if (run.gpuInfo) console.log(`gpu: ${run.gpuInfo}`);
   console.log(
     `hidratacion: ${
@@ -623,7 +699,10 @@ function report(run) {
       lostMs: over32.reduce((s, d) => s + (d - 16.7), 0),
     };
   };
-  const scrollFrames = frameStats(scrollStart, scrollEnd);
+  // El frame timeline vive en el reloj de la pagina y scrollStart/scrollEnd en el
+// de node: sin restar el offset, la ventana solo coincide cuando la desviacion
+// es cero por casualidad.
+const scrollFrames = frameStats(scrollStart - offset, scrollEnd - offset);
   const fadeFrames = gridFade ? frameStats(gridFade, gridFade + 700) : null;
 
   console.log("\n-- frame timeline (60Hz = 16.7ms) --");
@@ -655,6 +734,50 @@ function report(run) {
     console.log(
       `    d=${f.d.toFixed(0)}ms  t=${Math.round(f.t)}ms  ${rel >= 0 ? rel + "ms tras el fade" : Math.abs(rel) + "ms antes del fade"}`
     );
+  }
+
+  // --- Load window vs settled window --------------------------------------
+  // El sintoma util no es "hay un frame de 90ms": es "la seccion arrastra
+  // frames mientras termina de cargar y queda lisa despues". Eso no se ve en
+  // un frame suelto ni en la mediana del scroll completo, asi que la ventana de
+  // carga se define con las cargas REALES de las cards y se compara contra la
+  // cola del scroll, cuando ya no queda nada que subir ni re-rasterizar.
+  const cardKeys = new Set(cardVisible.map((v) => v.key));
+  const cardLoadTimes = perf.loads
+    .filter((l) => cardKeys.has(l.key))
+    .map((l) => l.t)
+    .sort((a, b) => a - b);
+  const fadeAt = gridFade != null ? gridFade : cardLoadTimes[0] ?? null;
+  let loadStats = null;
+  let settledStats = null;
+  if (fadeAt != null) {
+    const loadEnd = cardLoadTimes.length
+      ? Math.max(cardLoadTimes[cardLoadTimes.length - 1], fadeAt + 300)
+      : fadeAt + 300;
+    loadStats = frameStats(fadeAt, loadEnd);
+    settledStats = frameStats(loadEnd, scrollEnd - offset);
+
+    console.log("\n-- ventana de carga vs ventana asentada --");
+    console.log(
+      `  carga:    fade +0ms .. ultima card +${(loadEnd - fadeAt).toFixed(0)}ms (${cardLoadTimes.length} cards con bytes)`
+    );
+    if (loadStats) {
+      console.log(
+        `            ${loadStats.n} frames  mediana ${loadStats.median.toFixed(1)}ms  p95 ${loadStats.p95.toFixed(1)}ms  max ${loadStats.max.toFixed(1)}ms  caidos ${loadStats.over32} (~${loadStats.lostMs.toFixed(0)}ms perdidos)`
+      );
+    } else {
+      console.log("            sin datos (menos de 2 frames en la ventana)");
+    }
+    if (settledStats) {
+      console.log(
+        `  asentada: +${(loadEnd - fadeAt).toFixed(0)}ms .. fin (${((scrollEnd - offset - loadEnd) / 1000).toFixed(1)}s)`
+      );
+      console.log(
+        `            ${settledStats.n} frames  mediana ${settledStats.median.toFixed(1)}ms  p95 ${settledStats.p95.toFixed(1)}ms  max ${settledStats.max.toFixed(1)}ms  caidos ${settledStats.over32} (~${settledStats.lostMs.toFixed(0)}ms perdidos)`
+      );
+    } else {
+      console.log("  asentada: sin datos (el scroll termino dentro de la ventana de carga)");
+    }
   }
 
   // --- Trace attribution -------------------------------------------------
@@ -722,6 +845,22 @@ function report(run) {
   console.log("\n-- verdict --");
   console.log(`  worst pop (visible -> bytes): ${worstPop.toFixed(0)}ms   median: ${medianPop.toFixed(0)}ms`);
   console.log(`  main thread blocked during scroll: ${blocked.toFixed(0)}ms`);
+  if (loadStats && settledStats) {
+    const loadLost = loadStats.lostMs;
+    const settledLost = settledStats.lostMs;
+    if (loadLost > 100 && loadLost > settledLost * 2) {
+      console.log(
+        `  => LOAD-WINDOW bound: ${loadLost.toFixed(0)}ms perdidos mientras carga vs ${settledLost.toFixed(0)}ms ya asentada.`
+      );
+      console.log(
+        "     El tirón dura lo que dura la carga, no es un frame de entrada. Fix: sacar del frame los píxeles que invalidan la capa (will-change permanente, content-visibility)."
+      );
+    } else if (settledLost > 100) {
+      console.log(
+        `  => SETTLED-JANK: ${settledLost.toFixed(0)}ms perdidos con la seccion ya cargada. No es la carga: buscar animacion/scroll continuo (Lenis, blend, canvas).`
+      );
+    }
+  }
   if (medianPop > 300 && blocked < 500) {
     console.log("  => NETWORK bound: the image arrives long after the card is visible.");
     console.log("     Fix: preload the card variants (same `sizes`) before the grid is reached.");
@@ -733,9 +872,11 @@ function report(run) {
   }
   if (bytesBefore > 200 * 1024) {
     console.log(
-      `  => ${(bytesBefore / 1024).toFixed(0)}KB of below-the-fold images landed before the grid:`
+      `  => ${(bytesBefore / 1024).toFixed(0)}KB of below-the-fold images landed before the grid: hero,`
     );
-    console.log("     M1 contention. Fix: drop `priority` from the featured panels (only the hero is LCP).");
+    console.log(
+      "     about and the featured stack share the pipe with the cards (M1 contention)."
+    );
   }
   if (gridRevealNode != null) {
     const firstCardLoad = imgs.find((i) => i.isCard);

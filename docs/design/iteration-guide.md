@@ -165,7 +165,14 @@ prescripcion:
    `--trace` captura un trace de Chrome y attribuye que ocupa el frame lento
    (proceso GPU, paint, decode o JS). Para atribuir hay que medir con la
    ventana al frente: una ventana tapada no pinta y el frame timeline es
-   ruido.
+   ruido. Dos gestos, dos preguntas: el modo pasos (por defecto, 600px cada
+   100ms) deja que el scroll suave se asiente entre pasos y los huecos
+   esconden el jank que dura; `--wheel` emite un wheel cada ~50ms durante todo
+   el recorrido, que es lo que mantiene a Lenis interpolando como un flick
+   humano. Para un tiron que DURA (la seccion sigue cayendo frames mientras
+   carga y queda lisa despues) usar `--wheel`: el reporte separa la ventana de
+   carga (hasta los bytes de la ultima card) de la ventana ya asentada, y esa
+   diferencia es el sintoma.
 4. Textos: regla de jerarquia (seccion 4) y de blancos (seccion 5).
 5. Botones: usa `Button` con las variantes del canon; si necesitas un hover
    nuevo, justificalo en buttons.md.
