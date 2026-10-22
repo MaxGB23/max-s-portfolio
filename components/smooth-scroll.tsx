@@ -18,8 +18,15 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
     gsap.registerPlugin(ScrollTrigger);
 
     // Initialize Lenis with optimal settings from docs
+    // 0.6s, no 1s: a 165Hz la animacion de 1s sobrevive al gesto y la pagina
+    // llega tarde respecto a la mano (eso se lee como delay). Medido con
+    // scripts/audit-projects.mjs: la cola de frames que avanzan menos de la
+    // mitad del paso baja de 7.8% a 4.6% y el salto maximo por frame de
+    // 43-47px a 39-41px. Gana a 0.5 en las tres metricas.
+    // La curva NO se toca: el ease-out exponencial es lo que evita que el
+    // target acumulado se descargue de golpe al cesar el input.
     const lenisInstance = new Lenis({
-      duration: 1,
+      duration: 0.6,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
       wheelMultiplier: 1,

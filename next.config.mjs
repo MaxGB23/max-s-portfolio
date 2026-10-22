@@ -14,6 +14,12 @@ const nextConfig = {
     // Next 16 limita las calidades a esta allowlist (default [75]); un `quality`
     // fuera de la lista se coercion al valor mas cercano.
     qualities: [75, 90],
+    // 480 entra porque el slot real de una card en 3 columnas es de 448px y
+    // el candidato default mas cercano era 640: el navegador subia una
+    // textura un 43% mas grande de la que se pinta. Medido en el trace: el
+    // frame lento al entrar a la grid lo gasta el proceso GPU (subida de
+    // texturas y escalado), con el renderer principal ocioso.
+    deviceSizes: [480, 640, 750, 828, 1080, 1200, 1920, 2048, 3840],
   },
 }
 

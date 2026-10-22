@@ -34,7 +34,9 @@
   (`duration-300 ease-out`; `shadow-black/8` retirado por codigo muerto en
   dark mode). Featured: `border-purple-accent/40
   ring-1 ring-purple-accent/20` en lugar de `border-border`.
-- Imagen `aspect-16/10 bg-muted` con scale suave en hover.
+- Imagen `aspect-16/10 bg-muted` con scale suave en hover. La imagen se pide
+  con `loading="eager"` (no lazy): la politica y sus numeros estan en
+  `motion.md` 3.
 - Cuerpo `p-5`: h3 `text-fluid-card-title font-semibold capitalize`; desc
   `text-fluid-card-desc text-muted-foreground line-clamp-3 max-h-[4.875em]`;
   chip metrica (etiqueta degradada `text-foreground/60`, excepcion acotada);

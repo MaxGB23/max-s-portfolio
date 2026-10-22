@@ -60,6 +60,16 @@ export function AllProjects() {
         className="pt-6 md:pt-12 lg:pt-16"
         innerId="all-projects-content"
       >
+        {/* Sin `will-change` propio. La promocion a capa la hace la transicion
+            de `Reveal` (`opacity` + `translate`) mientras dura, y con eso basta:
+            dejarla puesta como clase estatica hacia que TODO el grid (6 cards,
+            todo el ancho del contenedor) quedara como una unica capa promovida
+            para siempre, y cada frame del scroll tenia que re-rasterizarla.
+            Medido a 2048x1280 dpr1.25 con `audit-projects.mjs --wheel`: la clase
+            permanente dejaba el scroll en 12.1ms de mediana y 363ms de frames
+            perdidos; sin ella, 6.1ms y 89ms. Tambien mejora la entrada (85 ->
+            67ms). El commit que la introdujo arreglaba el frame de entrada y a
+            cambio creaba este coste continuo. */}
         <Reveal delayEnter earlyOnMobile>
           <div className="debug-l3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {allProjects.map((project) => (

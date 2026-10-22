@@ -201,6 +201,7 @@ export function FeaturedProjects() {
           <FeaturedProjectPanel
             project={project}
             isLast={index === featuredProjects.length - 1}
+            eager={index === 0}
           />
         </div>
       ))}

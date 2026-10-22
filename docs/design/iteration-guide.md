@@ -156,7 +156,28 @@ prescripcion:
 3. Verificar en orden de costo: estatico (`tsc`, `build`, grep sobre el CSS
    compilado, `Test-Path` de rutas de imagen) antes que render. Solo el
    navegador computa layout real, y un server mal consultado cuesta mas que
-   el check que reemplaza.
+   el check que reemplaza. Para la linea de tiempo de las imagenes de la home
+   esta `scripts/audit-projects.mjs`: emulador mobile, red y CPU limitadas,
+   mide el request de cada imagen, cuando entra en pantalla y el hueco gris
+   que queda. Requiere server de PRODUCCION (`pnpm build && pnpm start`) y su
+   alcance es la HOME y la grid de "Todos los proyectos": no dice nada del
+   detail. Con `--headed` corre en el Chrome real (GPU de verdad) y con
+   `--trace` captura un trace de Chrome y attribuye que ocupa el frame lento
+   (proceso GPU, paint, decode o JS). Para atribuir hay que medir con la
+   ventana al frente: una ventana tapada no pinta y el frame timeline es
+   ruido. Dos gestos, dos preguntas: el modo pasos (por defecto, 600px cada
+   100ms) deja que el scroll suave se asiente entre pasos y los huecos
+   esconden el jank que dura; `--wheel` emite un wheel cada ~50ms durante todo
+   el recorrido, que es lo que mantiene a Lenis interpolando como un flick
+   humano. Para un tiron que DURA (la seccion sigue cayendo frames mientras
+   carga y queda lisa despues) usar `--wheel`: el reporte separa la ventana de
+   carga (hasta los bytes de la ultima card) de la ventana ya asentada, y esa
+   diferencia es el sintoma. El reporte tambien mide el paso de scroll por
+   frame (mediana, p95, max, frames sin movimiento, ratio max/mediana): un
+   interpolador de scroll puede dejar 0 px en un frame con la mediana de
+   duracion intacta, y eso se lee como tiron aunque no caiga ningun frame. Ese
+   numero es el unico que distingue "el motor de scroll esta mal calibrado" de
+   "la pagina pinta caro".
 4. Textos: regla de jerarquia (seccion 4) y de blancos (seccion 5).
 5. Botones: usa `Button` con las variantes del canon; si necesitas un hover
    nuevo, justificalo en buttons.md.
