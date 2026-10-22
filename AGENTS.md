@@ -17,6 +17,8 @@ Código, comentarios, commits, ramas, README, issues y PRs en inglés; este arch
 - Un commit = una work unit (behavior, fix o docs). Nunca separar por tipo de archivo. Consultar la skill `work-unit-commits` para planificar los commits.
 - **Commitea al terminar cada work unit.** No acumules cambios sin commitear durante la sesión: un cambio no commiteado es trabajo sin punto de recuperación.
 - **El agente nunca asume que debe commitear.** Tras cualquier cambio (aunque sea mínimo), PREGUNTA al usuario antes de hacer commit — siempre hay ajustes pendientes.
+- **Push = deploy.** Un push a `main` publica en producción y un push a una rama crea una preview en Vercel: se pide aprobación y se agrupa (un push por lote de work units, nunca uno por commit). Commitear es local y libre; pushear es entregar.
+- Si el lote incluye commits que no deben publicarse todavía, dilo antes de pushear: `git log origin/main..HEAD --oneline` es la prueba de qué viaja en ese push.
 - Antes de operaciones destructivas de git (`git checkout --`, `git reset --hard`, force-push): ejecuta `git status` y revisa el diff. Si el archivo tiene cambios no commiteados, confirma explícitamente qué se pierde antes de revertir.
 - PowerShell no es seguro con UTF-8 en PS 5.1: no escribir archivos fuente con `Set-Content`/`Out-File` (corrompe acentos y em dash), y no leerlos con `Get-Content` para COMPARAR (lee UTF-8 como Windows-1252: una raya `—` U+2014 se ve como guion). Para editar, las herramientas del asistente; para inspeccionar caracteres, `[System.IO.File]::ReadAllText($p, [System.Text.Encoding]::UTF8)` y `[int]$c`.
 
