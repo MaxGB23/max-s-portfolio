@@ -48,7 +48,8 @@ with lightbox galleries and per-project metrics.
 - **QA by script, not by eye.** `rhythm-contract.mjs`, `section-spacing.mjs`,
   `type-scale.mjs`, `hero-about-audit.mjs`, `navbar-active.mjs` and the
   `audit-*.mjs` instruments verify spacing, type scale and frame timelines.
-  Layout is audited, not squinted at.- **Typed end to end.** Type errors fail the build; `ignoreBuildErrors` is
+  Layout is audited, not squinted at.
+- **Typed end to end.** Type errors fail the build; `ignoreBuildErrors` is
   deliberately off so a broken type cannot reach production.
 - **Reviewable slices.** One work unit per commit, with tests and docs alongside
   the behavior, and pull requests of roughly 400 authored lines.
