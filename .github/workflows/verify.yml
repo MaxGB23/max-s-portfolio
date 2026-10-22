@@ -1,12 +1,12 @@
 name: verify
 
-# El ejecutor externo que faltaba: Vercel compila la preview, pero no corre los
-# tests ni el gate de docs. Un empujon a main o una PR pasan por aqui antes del
-# mergeo (odd/tasks/docs-verification.md S3).
+# The outside executor that was missing: Vercel builds the preview but runs
+# neither the tests nor the docs gate. A push to main or a PR goes through here
+# before merging (odd/tasks/docs-verification.md S3).
 #
-# Las actions van fijadas por SHA completo, no por tag: un tag se puede mover a
-# otro codigo despues de la revision (supply chain). El comentario con la
-# version lo mantiene legible y Dependabot reescribe ambos.
+# Actions are pinned by full commit SHA, not by tag: a tag can be moved to
+# another commit after review (supply chain). The version comment keeps the pin
+# readable, and a bump is a deliberate commit, never a bot's.
 on:
   push:
     branches: [main]
