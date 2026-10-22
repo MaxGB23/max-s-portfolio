@@ -4,7 +4,10 @@ import { Inter, Space_Grotesk } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { LanguageProvider } from '@/contexts/language-context'
 import type { Lang } from '@/data/translations'
-import { SmoothScroll } from '@/components/smooth-scroll'
+// PROBE BRANCH (test/no-smooth-scroll): Lenis disabled to compare the wheel
+// feel against production. Uncomment both this import and the wrapper below to
+// restore smooth scroll.
+// import { SmoothScroll } from '@/components/smooth-scroll'
 import './globals.css'
 
 const inter = Inter({
@@ -103,7 +106,11 @@ export default async function RootLayout({
       <body className={`${inter.variable} ${spaceGrotesk.variable} font-sans antialiased`}>
         <script dangerouslySetInnerHTML={{ __html: REVEAL_GATE_SCRIPT }} />
         <LanguageProvider initialLang={initialLang}>
-          <SmoothScroll>{children}</SmoothScroll>
+          {/* PROBE BRANCH: no Lenis. Anchors fall back to window.scrollTo, and
+              ScrollRestorer is unmounted (home position on back is then handled
+              by Next's native restoration). */}
+          {/* <SmoothScroll>{children}</SmoothScroll> */}
+          {children}
           <Analytics />
         </LanguageProvider>
       </body>
