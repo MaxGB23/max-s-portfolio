@@ -1,5 +1,12 @@
 # Motion - canon de animacion y gates de media
 
+<!-- toc:start -->
+- [3. Gates de media](#3-gates-de-media)
+- [5. Reveal y motion](#5-reveal-y-motion)
+- [6. Aurora](#6-aurora)
+- [13. Deuda](#13-deuda)
+<!-- toc:end -->
+
 <!-- docs-lint: allow-tokens FEATURED_STACK_GATE FadeIn FadeInStagger FadeInItem motion-primitives.tsx -->
 
 > [!NOTE] Estado: CANONICO
