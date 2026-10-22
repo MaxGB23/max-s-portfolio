@@ -172,7 +172,12 @@ prescripcion:
    humano. Para un tiron que DURA (la seccion sigue cayendo frames mientras
    carga y queda lisa despues) usar `--wheel`: el reporte separa la ventana de
    carga (hasta los bytes de la ultima card) de la ventana ya asentada, y esa
-   diferencia es el sintoma.
+   diferencia es el sintoma. El reporte tambien mide el paso de scroll por
+   frame (mediana, p95, max, frames sin movimiento, ratio max/mediana): un
+   interpolador de scroll puede dejar 0 px en un frame con la mediana de
+   duracion intacta, y eso se lee como tiron aunque no caiga ningun frame. Ese
+   numero es el unico que distingue "el motor de scroll esta mal calibrado" de
+   "la pagina pinta caro".
 4. Textos: regla de jerarquia (seccion 4) y de blancos (seccion 5).
 5. Botones: usa `Button` con las variantes del canon; si necesitas un hover
    nuevo, justificalo en buttons.md.

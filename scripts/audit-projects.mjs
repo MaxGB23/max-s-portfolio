@@ -162,9 +162,13 @@ const INIT_JS = () => {
   // Frame timeline. A hitch is a DROPPED FRAME, not necessarily a long task:
   // at 60Hz a 32ms frame is already visible, and the longtask API only sees
   // >50ms. This is the signal that matches "me dio un tiron".
+  // `y` es la posicion de scroll en ese frame. Sin ella el instrumento no
+  // distingue "llegaron los frames" de "el contenido se movio de forma
+  // pareja": un interpolador de scroll puede mover 0 px en un frame y 4 px en
+  // el siguiente con la mediana de duracion intacta, y eso se ve como tiron.
   let lastFrame = performance.now();
   const tick = (now) => {
-    p.frames.push({ t: now, d: now - lastFrame });
+    p.frames.push({ t: now, d: now - lastFrame, y: window.scrollY });
     lastFrame = now;
     p.raf = requestAnimationFrame(tick);
   };
@@ -705,6 +709,45 @@ function report(run) {
 const scrollFrames = frameStats(scrollStart - offset, scrollEnd - offset);
   const fadeFrames = gridFade ? frameStats(gridFade, gridFade + 700) : null;
 
+  // Suavidad percibida != frames puntuales. Mide cuanto se movio el contenido
+  // en cada frame: un frame sin movimiento durante el gesto es un frame que el
+  // ojo lee como frenazo, aunque la duracion del frame sea perfecta.
+  const jitterStats = (from, to) => {
+    const frames = perf.frames.filter(
+      (f) => inWindow(f.t, from, to) && typeof f.y === "number"
+    );
+    if (frames.length < 10) return null;
+    const steps = [];
+    for (let i = 1; i < frames.length; i++) steps.push(Math.abs(frames[i].y - frames[i - 1].y));
+    const sorted = [...steps].sort((a, b) => a - b);
+    const median = sorted[Math.floor(sorted.length / 2)];
+    const p95 = sorted[Math.floor(sorted.length * 0.95)];
+    const max = sorted[sorted.length - 1];
+    return {
+      n: steps.length,
+      median,
+      p95,
+      max,
+      zero: steps.filter((s) => s < 0.5).length,
+      under: steps.filter((s) => s >= 0.5 && s < median * 0.5).length,
+      ratio: median > 0.01 ? max / median : 0,
+      travel: steps.reduce((s, v) => s + v, 0),
+    };
+  };
+  const showJitter = (label, j) => {
+    if (!j) {
+      console.log(`  ${label}: sin datos`);
+      return;
+    }
+    const pct = (v) => ((v / j.n) * 100).toFixed(1);
+    console.log(
+      `  ${label}: paso mediana ${j.median.toFixed(2)}px  p95 ${j.p95.toFixed(2)}px  max ${j.max.toFixed(2)}px  ratio ${j.ratio.toFixed(1)}x`
+    );
+    console.log(
+      `    frames sin movimiento: ${j.zero} de ${j.n} (${pct(j.zero)}%)   bajo la mitad del paso: ${j.under} (${pct(j.under)}%)   recorrido ${j.travel.toFixed(0)}px`
+    );
+  };
+
   console.log("\n-- frame timeline (60Hz = 16.7ms) --");
   if (scrollFrames) {
     console.log(
@@ -735,6 +778,12 @@ const scrollFrames = frameStats(scrollStart - offset, scrollEnd - offset);
       `    d=${f.d.toFixed(0)}ms  t=${Math.round(f.t)}ms  ${rel >= 0 ? rel + "ms tras el fade" : Math.abs(rel) + "ms antes del fade"}`
     );
   }
+
+  // --- Jitter de desplazamiento ------------------------------------------
+  // El frame llega puntual; la pregunta es si el contenido se movio lo mismo en
+  // cada frame. Aqui se ve el suavizado de scroll (Lenis) y no en la mediana.
+  console.log("\n-- jitter de desplazamiento (px por frame) --");
+  showJitter("scroll completo", jitterStats(scrollStart - offset, scrollEnd - offset));
 
   // --- Load window vs settled window --------------------------------------
   // El sintoma util no es "hay un frame de 90ms": es "la seccion arrastra
@@ -778,6 +827,9 @@ const scrollFrames = frameStats(scrollStart - offset, scrollEnd - offset);
     } else {
       console.log("  asentada: sin datos (el scroll termino dentro de la ventana de carga)");
     }
+    console.log("\n-- jitter: carga vs asentada (px por frame) --");
+    showJitter("carga   ", jitterStats(fadeAt, loadEnd));
+    showJitter("asentada", jitterStats(loadEnd, scrollEnd - offset));
   }
 
   // --- Trace attribution -------------------------------------------------
