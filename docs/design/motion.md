@@ -72,9 +72,17 @@ romper imports viejos; sin consumidores, se puede borrar.
   el HTML), no de cliente. Un `IntersectionObserver` que monte una capa
   invisible llega tarde y no adelanta nada.
 - `sizes` por componente: card `calc(100vw - 48px)` / `calc((100vw - 72px) /
-  2)` / `calc((100vw - 96px) / 3)`; featured `(max-width: 1024px) 100vw,
-  50vw`; hero `(max-width: 768px) 280px, (max-width: 1200px) 34vw, 380px`;
+  2)` / `calc(min(100vw - 96px, 1232px) / 3)`; featured
+  `(max-width: 1023px) calc(100vw - 48px), calc(min(100vw - 48px, 1280px) /
+  2)`; hero `(max-width: 768px) 280px, (max-width: 1200px) 34vw, 380px`;
   about `(max-width: 768px) 400px, (max-width: 1200px) 464px, 490px`.
+- El panel featured tenia el MISMO defecto y mas caro: declaraba `50vw`, asi
+  que a una ventana de 2048px pedia `1024px` de slot cuando su caja mide
+  616px, y el navegador bajaba la variante **1920w** (6.2x los pixeles que
+  pinta) en los tres paneles, durante el scroll que precede a la grid. El
+  corte es `1023px` y no `1024px` a proposito: `lg` de Tailwind arranca en
+  1024, y con `max-width: 1024px` el ancho exacto 1024 declaraba una columna
+  cuando el layout ya tiene dos.
 
 ## 5. Reveal y motion
 

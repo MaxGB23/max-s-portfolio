@@ -151,7 +151,7 @@ export function FeaturedProjectPanel({
                     alt={project.imageAlt}
                     fill
                     className="object-cover"
-                    sizes="(max-width: 1024px) 100vw, 50vw"
+                    sizes="(max-width: 1023px) calc(100vw - 48px), calc(min(100vw - 48px, 1280px) / 2)"
                     priority={eager}
                   />
                 ) : (
