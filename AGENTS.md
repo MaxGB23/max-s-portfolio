@@ -1,6 +1,9 @@
 ### Idioma (conversación)
 Cuando respondas en español, usa siempre español neutro. Evita el voseo y los regionalismos.
 
+### Idioma (artefactos)
+Código, comentarios, commits, ramas, README, issues y PRs en inglés; este archivo, `docs/` y las tareas ODD en español.
+
 ### Evitar vueltas, requests y tokens innecesarios (IMPORTANTE)
 - Una vez verificado que el estado del árbol coincide con la decisión del usuario (los cambios pedidos por el usuario) y que la comprobación (build/tsc/tests) pasa, CIERRA. No re-audites, no re-verifiques lo ya verificado, no preguntes de nuevo preguntas ya respondidas y no sigas consumiendo tokens en confirmaciones redundantes.
 - Si no hay nada que editar, dilo en una línea y para. No juegues al "no puedo creer que no haya cambios" repitiendo git diff / diff --stat cada turno.

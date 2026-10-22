@@ -1,0 +1,56 @@
+name: Bug report
+description: Something behaves differently from what the code or the docs say it should
+title: "fix: "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Write in English. Do not report a measurement you did not take.
+  - type: textarea
+    id: happens
+    attributes:
+      label: What happens
+      description: What you see, and where in the site.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1.
+        2.
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      value: |
+        Browser:
+        Viewport (CSS px) and DPR:
+        Refresh rate (Hz):
+        Build: production or dev
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: Measurements, traces, screenshots, or the exact command you ran.
+    validations:
+      required: true
+  - type: textarea
+    id: done
+    attributes:
+      label: Closing criterion
+      description: How we know this is fixed, as something observable.
+    validations:
+      required: true
