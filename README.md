@@ -50,6 +50,8 @@ with lightbox galleries and per-project metrics.
   deliberately off so a broken type cannot reach production.
 - **Reviewable slices.** One work unit per commit, with tests and docs alongside
   the behavior, and pull requests of roughly 400 authored lines.
+- **Supply chain.** Every GitHub Action is pinned by a full commit SHA, never a
+  movable tag, and Dependabot bumps the pin weekly.
 
 ## Getting started
 
