@@ -53,7 +53,7 @@ with lightbox galleries and per-project metrics.
 - **Reviewable slices.** One work unit per commit, with tests and docs alongside
   the behavior, and pull requests of roughly 400 authored lines.
 - **Supply chain.** Every GitHub Action is pinned by a full commit SHA, never a
-  movable tag, and Dependabot bumps the pin weekly.
+  movable tag, and every bump is a deliberate commit instead of an automatic one.
 
 ## Getting started
 
