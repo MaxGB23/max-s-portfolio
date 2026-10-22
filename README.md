@@ -1,5 +1,7 @@
 # MaxGB23 - Portfolio 👻
 
+[![verify](https://github.com/MaxGB23/max-s-portfolio/actions/workflows/verify.yml/badge.svg)](https://github.com/MaxGB23/max-s-portfolio/actions/workflows/verify.yml)
+
 The portfolio of Maximiliano González Ballesteros: a dark-first, type-led
 personal portfolio built by a full-stack developer who treats layout, motion
 and typography as the product, not the decoration.
