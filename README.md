@@ -4,15 +4,22 @@ The portfolio of Maximiliano González Ballesteros: a dark-first, type-led
 personal portfolio built by a full-stack developer who treats layout, motion
 and typography as the product, not the decoration.
 
+**Live: <https://max-gonzalez-ballesteros.vercel.app/>**
+
 ## What this is
 
-A one-page portfolio (plus project detail pages) built to feel engineered
-rather than templated:
+A one-page portfolio (plus project detail pages), in Spanish and English, built
+to feel engineered rather than templated:
 
 - A scroll-reactive featured stack that choreographs projects as you scroll
 - A WebGL aurora (ogl + GLSL) behind the hero, dark-only by design
-- Lenis smooth scroll, with a tested scroll handoff between home and detail
+- Smooth scroll that is authored, not left to the browser: the wheel is tuned on
+  a 165 Hz panel, so high-refresh displays get a ride no template gives you
 - A typographic system of three families and thirteen fluid type tokens
+- Bilingual by the server: ES or EN is decided from the `lang` cookie and then
+  `Accept-Language` before the first paint, so there is no flash and no swap
+- Keyboard-first detail views: the gallery lightbox is a real dialog with a focus
+  trap, and reduced-motion visitors keep only opacity and short rises
 
 Sections, in the site's own language: Hero, "Sobre mí", featured projects,
 all projects, "Precios", "Contacto" - plus `/proyectos/[id]` detail pages
@@ -28,21 +35,21 @@ with lightbox galleries and per-project metrics.
 - **ogl** - WebGL/GLSL aurora in the hero (dark only, hero only)
 - **shadcn/ui** - accessible primitives on Radix, styled by the local theme
 
-## Highlights
+## How I work
 
-- **Motion you own** - animation is authored, not pasted from a template:
-  entrances are a CSS reveal driven by IntersectionObserver, so the home has no
-  hidden state baked into the server markup and reads without JS; the featured
-  stack advances by scroll instead of a pin, and the home <-> detail scroll
-  handoff is a contract.
-- **Design system as code and docs** - one purple accent, oklch tokens,
-  type-led hierarchy (size and tracking, never opacity), thirteen fluid type
-  tokens. The canon lives in `docs/design/` and is the source of truth.
-- **Rhythm by contract** - vertical spacing is a single file
-  (`lib/rhythm.ts`) with QA scripts that verify every section against it.
-  Layout is audited by script, not by eye.
-- **Dark-first identity** - the brand IS dark. Light mode exists only as
-  derived tokens, never offered in the UI.
+- **Issue first.** Every change starts as an issue and lands in a pull request
+  that closes it, so the reasoning survives after the branch is deleted.
+- **Docs as a contract.** The design canon is enforced by a gate
+  (`pnpm lint:docs`): a doc over its line budget, or one that drifted from the
+  code, fails the check. A retired symbol gets its row in `docs/design/DEAD.md`
+  in the same commit that removes it.
+- **QA by script, not by eye.** `rhythm-contract.mjs`, `section-spacing.mjs`,
+  `type-scale.mjs`, `hero-about-audit.mjs`, `navbar-active.mjs` and the
+  `audit-*.mjs` instruments verify spacing, type scale and frame timelines.
+  Layout is audited, not squinted at.- **Typed end to end.** Type errors fail the build; `ignoreBuildErrors` is
+  deliberately off so a broken type cannot reach production.
+- **Reviewable slices.** One work unit per commit, with tests and docs alongside
+  the behavior, and pull requests of roughly 400 authored lines.
 
 ## Getting started
 
@@ -50,25 +57,34 @@ Uses pnpm.
 
 ```bash
 pnpm install
-pnpm dev      # start the dev server
-pnpm build    # production build
-pnpm start    # serve the production build
-pnpm lint     # run eslint
-pnpm shots    # playwright screenshot QA
+pnpm dev        # start the dev server
+pnpm build      # production build
+pnpm start      # serve the production build
+pnpm typecheck  # tsc --noEmit
+pnpm lint:docs  # documentation gate
+pnpm shots      # playwright screenshot QA
+pnpm audit:i18n # translation coverage audit
+pnpm docs:toc   # regenerate the documentation indexes
 ```
 
 ## Project structure
 
 - `app/` - pages: one-page home (`page.tsx`) and project detail (`proyectos/[id]`)
 - `components/` - sections and UI primitives
-- `data/` - project content for the grids and detail pages
+- `data/` - project content for the grids and detail pages, plus the ES/EN dictionary
 - `lib/` - design contracts: rhythm, breakpoints, token registry
 - `hooks/` - scroll, GSAP and layout hooks
 - `scripts/` - QA audits and screenshot tooling
 - `docs/design/` - the design system canon
+- `docs/issues/` - dated post-mortems of real bugs
+- `docs/rfcs/` - decision records, frozen once approved
+- `odd/tasks/` - work in flight
 - `public/images/projects/` - project media
 
 ## Docs
 
+- [Documentation map](docs/README.md) - the entry point: question, answer, doc
 - [Design system canon](docs/design/README.md) - identity, tokens, typography, components
 - [Work conventions](AGENTS.md) - commits, design-doc sync, worktrees
+- [Post-mortems](docs/issues/) - what each performance bug actually was
+- [Decision records](docs/rfcs/) - why A and not B
