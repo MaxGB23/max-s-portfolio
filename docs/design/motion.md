@@ -39,17 +39,34 @@ romper imports viejos; sin consumidores, se puede borrar.
   son los PIXELES de la textura, no cuando llega el request: la card
   declara el ancho real del slot (`calc(100vw - 48px)` y los repartos de la
   grid de 1/2/3 columnas) y `next.config` declara `480` en `deviceSizes`,
-  porque el candidato default mas cercano a un slot de 448px era 640 (un
-  43% mas de textura). Medido: la variante pedida bajo de 640w a 480w y las
-  cards de la home bajaron de 20-61KB a 13-18KB en desktop.
-- La grid que entra con fade se promueve con `will-change: opacity,
-  translate` (clase en el `Reveal` que la envuelve, NO en la grid interior:
-  el que se anima es el wrapper). Sin promocion, el raster de las 6 cards cae
-  en el frame critico; con ella, el raster ocurre una vez y el fade compone
-  una textura. Medido en Chrome real (headed, ventana al frente): peor frame
-  205ms -> 79ms en desktop y 97ms -> 67ms en mobile, y la varianza entre
-  corridas desaparece. `will-change` NO es global: solo en esta seccion, que
-  es la unica con 6 imagenes grandes a la vez.
+  porque el candidato default mas cercano a un slot de ~411px era 640.
+- El grid de la home deja de crecer en el `max-width: 1280px` del
+  contenedor, asi que el tercer reparto de `sizes` lleva tope:
+  `calc(min(100vw - 96px, 1232px) / 3)`. Sin el, una ventana de 2048px
+  declaraba un slot de 650px para una card de 411 y el navegador pedia la
+  variante **828w**: 4x los pixeles que la card pinta, de los cuales la
+  textura es justo lo que cuesta. Medido a 2048x1280 dpr1.25 con
+  `audit-projects.mjs --wheel`: 828w -> 640w, cards de 29-43KB a 20-32KB, y
+  el scroll paso de mediana 12.1ms con 363ms de frames perdidos a 6.1ms con
+  95ms. Un `sizes` que crece con el viewport cuando el contenedor ya esta
+  topado sobre-descarga sin que nada lo delate: ni red, ni JS, ni long tasks.
+- El frame de entrada que queda (~67ms, siempre 95-132ms despues del fade) NO
+  es la textura: bajarla a 480w lo deja igual o peor (72.5ms) y 828w tampoco
+  lo empeora. Es el coste fijo de pintar el area de la grid (bordes, sombras,
+  badges, tipografia, iconos) mas el arranque del fade. No buscar ahi mas
+  reducciones de imagen: no las hay.
+- El grid que entra con fade NO lleva `will-change` propio. La promocion a
+  capa la hace la transicion de `Reveal` (`opacity` + `translate`) mientras
+  dura, y eso basta para sacar el raster del frame critico. Una clase
+  ESTATICA de `will-change: opacity, translate` sobre el wrapper de la grid
+  (lo que hubo entre 2026-10 y 2026-10-22) deja TODO el grid como una unica
+  capa promovida para siempre, del ancho del contenedor y 3 filas de alto.
+  OJO CON EL ORDEN DE LOS FACTORES: a 828w de textura esa capa hundia el
+  scroll entero (mediana 12.1ms -> 6.1ms al retirarla, mismo build, mismas
+  texturas); a 640w la diferencia cae dentro del ruido (+-100ms entre
+  corridas). Se retira igual: un `will-change` que no caduca es una promesa
+  permanente que se paga en cada frame, y no hay razon para dejarla cuando la
+  transicion ya promueve sola.
 - En 3G el bundle hidrata a los ~4s, despues de que el visitante ya paso la
   grid: por eso la precarga tiene que ser de servidor (`loading`/`priority` en
   el HTML), no de cliente. Un `IntersectionObserver` que monte una capa

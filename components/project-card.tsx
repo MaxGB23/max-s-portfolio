@@ -27,6 +27,10 @@ export interface Project {
  * The real slot is NOT 100vw: the section inset is `px-6` (48px) and the
  * grid is 1/2/3 columns with a 24px gap, so the card is
  * `100vw - 48px`, `(100vw - 72px) / 2` and `(100vw - 96px) / 3`.
+ * The grid ALSO stops growing at the section's 1280px max width, so from
+ * ~1328px of viewport upward the third branch must stop growing too: without
+ * the cap a 2048px window declared a 650px slot for a 411px card and the
+ * browser picked the 828w variant (4x the pixels the card paints, measured).
  * Declaring the real width matters twice: the browser picks the variant
  * that fits the slot instead of the next one up, and the GPU uploads a
  * texture that matches what gets painted. With `100vw` a 448px slot in a
@@ -34,10 +38,11 @@ export interface Project {
  * grid going entirely to the GPU process (texture upload and scaling)
  * with the renderer main thread idle.
  *
- * The breakpoints match the grid (`sm`=640, `lg`=1024).
+ * The breakpoints match the grid (`sm`=640, `lg`=1024). `1232px` is the
+ * grid's own width once the container is capped: 1280 - 48 of insets.
  */
 const CARD_IMAGE_SIZES =
-  "(max-width: 640px) calc(100vw - 48px), (max-width: 1024px) calc((100vw - 72px) / 2), calc((100vw - 96px) / 3)";
+  "(max-width: 640px) calc(100vw - 48px), (max-width: 1024px) calc((100vw - 72px) / 2), calc(min(100vw - 96px, 1232px) / 3)";
 
 interface ProjectCardProps {
   project: Project;
