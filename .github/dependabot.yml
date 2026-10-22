@@ -1,0 +1,14 @@
+version: 2
+
+# Las actions del workflow van fijadas por SHA completo (supply chain). Sin este
+# actualizador, un pin es una trampa: te quedas en la version que tenias el dia
+# que lo fijaste, con sus CVEs, y nada te avisa. Dependabot abre una PR con el
+# SHA nuevo y su comentario de version.
+updates:
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 3
+    commit-message:
+      prefix: ci

@@ -3,6 +3,10 @@ name: verify
 # El ejecutor externo que faltaba: Vercel compila la preview, pero no corre los
 # tests ni el gate de docs. Un empujon a main o una PR pasan por aqui antes del
 # mergeo (odd/tasks/docs-verification.md S3).
+#
+# Las actions van fijadas por SHA completo, no por tag: un tag se puede mover a
+# otro codigo despues de la revision (supply chain). El comentario con la
+# version lo mantiene legible y Dependabot reescribe ambos.
 on:
   push:
     branches: [main]
@@ -12,13 +16,13 @@ jobs:
   verify:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
         with:
           version: 12.3.4
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version: 24
           cache: pnpm
