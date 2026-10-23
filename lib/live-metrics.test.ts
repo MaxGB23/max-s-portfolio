@@ -8,7 +8,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import type { ProjectL } from "../data/projects/types.ts";
-import { formatDownloads, getLiveMetrics, getOpenVsxDownloads } from "./live-metrics.ts";
+import { formatDownloads, getLiveMetrics, getOpenVsxDownloads, withLiveMetric } from "./live-metrics.ts";
 
 test("las cuentas chicas se escriben sin sufijo", () => {
   assert.equal(formatDownloads(0), "0");
@@ -131,4 +131,14 @@ test("el registry se consulta con un tope de espera", async () => {
   } finally {
     restore();
   }
+});
+
+test("el valor vivo reemplaza la cifra y deja el texto de la card intacto", () => {
+  assert.equal(withLiveMetric("4.4k descargas en Open VSX", "4.6k"), "4.6k descargas en Open VSX");
+  assert.equal(withLiveMetric("4.4k downloads on Open VSX", "12.3k"), "12.3k downloads on Open VSX");
+  assert.equal(withLiveMetric("999 descargas en Open VSX", "1k"), "1k descargas en Open VSX");
+});
+
+test("una metrica sin cifra inicial se queda como esta", () => {
+  assert.equal(withLiveMetric("Verified Open VSX Publisher", "4.6k"), "Verified Open VSX Publisher");
 });

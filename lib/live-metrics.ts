@@ -53,6 +53,20 @@ export async function getOpenVsxDownloads(url: string): Promise<number | null> {
 export type LiveMetricValues = Record<string, string>;
 
 /**
+ * Sustituye la cifra inicial de una metrica de card por su valor vivo.
+ *
+ * La metrica de una card es una frase ("4.4k descargas en Open VSX"): cambiar la
+ * frase entera por la cifra dejaba la card mostrando solo el numero. Si la
+ * frase no empieza con una cifra ("Verified Open VSX Publisher"), se devuelve
+ * intacta: ahi no hay numero que actualizar.
+ */
+export function withLiveMetric(metric: string, live: string): string {
+  // Sin `\s*` entre la cifra y la `k`: consumiria el espacio de "999 descargas"
+  // y devolveria "1kdescargas".
+  return metric.replace(/^[\d.,]+k?/i, live);
+}
+
+/**
  * Resuelve en paralelo la metrica viva de cada proyecto que la declara.
  *
  * Un proyecto cuya API no responde queda FUERA del mapa: quien consume el

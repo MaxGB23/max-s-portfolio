@@ -5,6 +5,7 @@ import { Reveal } from "@/components/reveal";
 import { Section } from "@/components/section";
 import { projects, localizeProject } from "@/data/projects";
 import type { LiveMetricValues } from "@/lib/live-metrics";
+import { withLiveMetric } from "@/lib/live-metrics";
 import { useLanguage } from "@/contexts/language-context";
 
 // ---------------------------------------------------------------------------
@@ -26,7 +27,9 @@ export function AllProjects({ liveMetrics }: { liveMetrics?: LiveMetricValues })
         id: localized.id,
         title: localized.title,
         description: localized.hook,
-        metric: liveMetrics?.[localized.id] ?? localized.metric,
+        metric: liveMetrics?.[localized.id]
+          ? withLiveMetric(localized.metric, liveMetrics[localized.id])
+          : localized.metric,
         image: localized.image,
         imageAlt: localized.imageAlt,
         category: localized.category,

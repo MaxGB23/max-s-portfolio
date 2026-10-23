@@ -5,6 +5,7 @@ import { FeaturedProjectPanel, type FeaturedProject } from "@/components/feature
 import { Reveal } from "@/components/reveal";
 import { getFeaturedProjects, localizeProject } from "@/data/projects";
 import type { LiveMetricValues } from "@/lib/live-metrics";
+import { withLiveMetric } from "@/lib/live-metrics";
 import { Section } from "@/components/section";
 import { useLanguage } from "@/contexts/language-context";
 
@@ -68,7 +69,9 @@ export function FeaturedProjects({ liveMetrics }: { liveMetrics?: LiveMetricValu
         index: index + 1,
         title: localized.title,
         description: localized.hook,
-        metric: liveMetrics?.[localized.id] ?? localized.metric,
+        metric: liveMetrics?.[localized.id]
+          ? withLiveMetric(localized.metric, liveMetrics[localized.id])
+          : localized.metric,
         tags: localized.tags,
         image: localized.image,
         imageAlt: localized.imageAlt,
