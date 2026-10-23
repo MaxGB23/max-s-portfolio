@@ -85,6 +85,19 @@ export interface ProjectL {
   imageAlt: L;
   links: LinkL[];
   featured?: boolean;
+  /**
+   * Metrica que se lee de un registry en vez de una medicion fija: la ficha
+   * muestra la cifra viva y este bloque dice de donde sale. El valor escrito en
+   * `detail.metrics` queda como respaldo si la API no responde.
+   */
+  liveMetric?: {
+    /** Indice dentro de `detail.metrics` — por convencion, 0 es la raiz. */
+    index: number;
+    /** Fuente de la cifra: hoy solo Open VSX. */
+    kind: "openvsx";
+    /** Endpoint publico del registry. */
+    url: string;
+  };
   detail: {
     headline: L;
     summary: L;

@@ -35,7 +35,7 @@ Tema oscuro semántico original bajo MIT, operado como producto multi-marketplac
 
 | Value | Label |
 | --- | --- |
-| 4.4k | descargas acumuladas en Open VSX (4,450 medidas el 22 oct 2026) |
+| 4.4k | descargas acumuladas en Open VSX (en vivo: la ficha lee `liveMetric` del registry, respaldo) |
 | 191/30d | adquisiciones VS Code Marketplace |
 | 97.45% | funnel de conversión (page views → installs) |
 | 5 | variantes del tema |

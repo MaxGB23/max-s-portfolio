@@ -51,6 +51,13 @@ export const funkyTheme: ProjectL = {
     en: "Screenshot of VS Code with the funky-theme theme applied to an editor",
   },
   featured: true,
+  // La cifra de descargas se lee del registry (cache de 24 h); el valor de
+  // `detail.metrics[0]` queda como respaldo si la API no responde.
+  liveMetric: {
+    index: 0,
+    kind: "openvsx",
+    url: "https://open-vsx.org/api/MaxGB23/funky-theme-vscode",
+  },
   links: [
     {
       label: linkLabelCode,
@@ -117,8 +124,8 @@ export const funkyTheme: ProjectL = {
           en: "4.4k",
         },
         label: {
-          es: "descargas acumuladas en Open VSX (4,450 medidas el 22 oct 2026)",
-          en: "cumulative downloads on Open VSX (4,450 measured on Oct 22, 2026)",
+          es: "descargas acumuladas en Open VSX (en vivo)",
+          en: "cumulative downloads on Open VSX (live)",
         },
       },
       {
