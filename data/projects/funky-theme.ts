@@ -16,8 +16,8 @@
 // mantiene la misma granularidad — no se abrevia ni se resume ningun nodo, para
 // que la topologia se lea igual en los dos idiomas.
 //
-// CIFRAS INTACTAS: `4.4k`, `4,450`, `22 oct 2026`, `191/30d`, `97.45%`, `5`,
-// `30` (limite de keywords) se traducen sin alterar un solo digito. El ES
+// CIFRAS INTACTAS: `4.8k`, `4,502`, `369`, `23 oct 2026`, `191/30d`, `97.45%`,
+// `5`, `30` (limite de keywords) se traducen sin alterar un solo digito. El ES
 // escribe el limite de keywords con coma de miles por error ("30") y con flecha
 // (->) que el EN debe respetar tal cual para no divergir del dato upstream.
 
@@ -40,8 +40,8 @@ export const funkyTheme: ProjectL = {
     en: "Original semantic dark theme compatible with any VSCode-based editor and terminal: 5 variants derived from a hierarchical palette defined in a single config (SSOT).",
   },
   metric: {
-    es: "4.4k descargas en Open VSX",
-    en: "4.4k downloads on Open VSX",
+    es: "4.8k descargas en Open VSX y Zed",
+    en: "4.8k downloads on Open VSX and Zed",
   },
   // Tags APROBADOS por el usuario: no se tocan.
   tags: ["VS Code", "Verified", "Open VSX", "Zed", "Token Colors", "Terminal UI"],
@@ -51,12 +51,15 @@ export const funkyTheme: ProjectL = {
     en: "Screenshot of VS Code with the funky-theme theme applied to an editor",
   },
   featured: true,
-  // La cifra de descargas se lee del registry (cache de 24 h); el valor de
-  // `detail.metrics[0]` queda como respaldo si la API no responde.
+  // La cifra de descargas se lee de los registries (cache de 24 h) y se publica
+  // como SUMA: 4,502 en Open VSX + 369 en Zed. El valor de `detail.metrics[0]`
+  // queda como respaldo si alguna de las dos APIs no responde.
   liveMetric: {
     index: 0,
-    kind: "openvsx",
-    url: "https://open-vsx.org/api/MaxGB23/funky-theme-vscode",
+    sources: [
+      { kind: "openvsx", url: "https://open-vsx.org/api/MaxGB23/funky-theme-vscode" },
+      { kind: "zed", url: "https://api.zed.dev/extensions/funky-theme" },
+    ],
   },
   links: [
     {
@@ -120,12 +123,20 @@ export const funkyTheme: ProjectL = {
         // metrics[0] = metrica RAIZ del detail (nodo raiz de la topologia).
         value: {
           // Cifra pura: se traduce por identidad (no hay palabra que traducir).
-          es: "4.4k",
-          en: "4.4k",
+          es: "4.8k",
+          en: "4.8k",
         },
         label: {
-          es: "descargas acumuladas en Open VSX (en vivo)",
-          en: "cumulative downloads on Open VSX (live)",
+          // Etiqueta del RESPALDO: la cifra escrita es una foto de ese dia, y lo
+          // dice. Si ambas APIs fallan, el lector ve una cifra fechada y no una
+          // que se hace pasar por actualizada.
+          es: "descargas acumuladas en Open VSX y Zed (medidas el 23 oct 2026)",
+          en: "cumulative downloads on Open VSX and Zed (measured on Oct 23, 2026)",
+        },
+        // Solo se muestra cuando la cifra viene de los registries.
+        labelLive: {
+          es: "descargas acumuladas en Open VSX y Zed (en vivo)",
+          en: "cumulative downloads on Open VSX and Zed (live)",
         },
       },
       {
@@ -247,8 +258,8 @@ export const funkyTheme: ProjectL = {
       },
       {
         // Esta hoja concentra los 5 pares `**` del ES: mismo numero, misma posicion.
-        es: "**Tracción validada:** **Verified Open VSX Publisher**; **4,450 descargas medidas el 22 oct 2026** en Open VSX; **191 adquisiciones/30d** en VS Code Marketplace con **funnel 97.45%** (page views → installs) — posicionamiento SEO orgánico demostrado.",
-        en: "**Traction validated:** **Verified Open VSX Publisher**; **4,450 downloads measured on Oct 22, 2026** on Open VSX; **191 acquisitions/30d** on VS Code Marketplace with **97.45% funnel** (page views → installs) — organic SEO positioning demonstrated.",
+        es: "**Tracción validada:** **Verified Open VSX Publisher**; **4,502 descargas medidas el 23 oct 2026** en Open VSX y **369 en Zed**, medidas el mismo día; **191 adquisiciones/30d** en VS Code Marketplace con **funnel 97.45%** (page views → installs) — posicionamiento SEO orgánico demostrado.",
+        en: "**Traction validated:** **Verified Open VSX Publisher**; **4,502 downloads measured on Oct 23, 2026** on Open VSX and **369 on Zed**, measured the same day; **191 acquisitions/30d** on VS Code Marketplace with **97.45% funnel** (page views → installs) — organic SEO positioning demonstrated.",
       },
       {
         es: "**Cross-editor:** soporte **Zed** publicado en el registry oficial (zed.dev/extensions/funky-theme), instalable en un clic (misma paleta de editores).",

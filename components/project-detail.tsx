@@ -205,13 +205,21 @@ export function ProjectDetail({
   const base = localizeProject(project, lang);
   // Una metrica puede venir de un registry (`project.liveMetric`): la cifra
   // viva reemplaza al valor escrito, que queda como respaldo si la API falla.
+  // La etiqueta cambia con ella: la escrita esta FECHADA (es una foto) y solo la
+  // viva puede decir "en vivo".
   const localized = liveMetric
     ? {
         ...base,
         detail: {
           ...base.detail,
           metrics: base.detail.metrics.map((metric, index) =>
-            index === liveMetric.index ? { ...metric, value: liveMetric.value } : metric,
+            index === liveMetric.index
+              ? {
+                  ...metric,
+                  value: liveMetric.value,
+                  label: metric.labelLive ?? metric.label,
+                }
+              : metric,
           ),
         },
       }

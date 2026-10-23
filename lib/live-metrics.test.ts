@@ -8,7 +8,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import type { ProjectL } from "../data/projects/types.ts";
-import { formatDownloads, getLiveMetrics, getOpenVsxDownloads, withLiveMetric } from "./live-metrics.ts";
+import { formatDownloads, getLiveMetrics, getOpenVsxDownloads, getZedDownloads, sumDownloads, withLiveMetric } from "./live-metrics.ts";
 
 test("las cuentas chicas se escriben sin sufijo", () => {
   assert.equal(formatDownloads(0), "0");
@@ -93,7 +93,7 @@ test("solo los proyectos que declaran liveMetric entran al mapa", async () => {
   }) as typeof fetch);
   try {
     const map = await getLiveMetrics([
-      fakeProject("funky-theme", { index: 0, kind: "openvsx", url: "https://example.test/api" }),
+      fakeProject("funky-theme", { index: 0, sources: [{ kind: "openvsx", url: "https://example.test/api" }] }),
       fakeProject("color-highlight"),
     ]);
     // Una sola clave: el id del que declara la metrica, con la cifra formateada.
@@ -110,7 +110,7 @@ test("si el registry falla, el mapa queda vacio y el llamador cae al valor estat
   }) as typeof fetch);
   try {
     const map = await getLiveMetrics([
-      fakeProject("funky-theme", { index: 0, kind: "openvsx", url: "https://example.test/api" }),
+      fakeProject("funky-theme", { index: 0, sources: [{ kind: "openvsx", url: "https://example.test/api" }] }),
     ]);
     assert.deepEqual(map, {});
     assert.equal(Object.keys(map).length, 0);
@@ -141,4 +141,74 @@ test("el valor vivo reemplaza la cifra y deja el texto de la card intacto", () =
 
 test("una metrica sin cifra inicial se queda como esta", () => {
   assert.equal(withLiveMetric("Verified Open VSX Publisher", "4.6k"), "Verified Open VSX Publisher");
+});
+
+// -- Zed: el payload trae una fila por version publicada ----------------------
+
+function zedRows(rows: unknown[]) {
+  return new Response(JSON.stringify({ data: rows }), { status: 200 });
+}
+
+test("el parser de Zed toma la version mas reciente, no la ultima del array", async () => {
+  const restore = withFetch((async () =>
+    zedRows([
+      { version: "0.1.0", published_at: "2026-10-09T11:58:03Z", download_count: 330 },
+      { version: "0.2.1", published_at: "2026-10-21T09:19:43Z", download_count: 331 },
+      { version: "0.2.0", published_at: "2026-10-15T09:24:06Z", download_count: 300 },
+    ])) as typeof fetch);
+  try {
+    assert.equal(await getZedDownloads("https://example.test/zed"), 331);
+  } finally {
+    restore();
+  }
+});
+
+test("una lista de versiones vacia no es cero descargas, es no disponible", async () => {
+  // Zed responde 200 con `data: []` cuando el id no existe: publicar 0 seria
+  // afirmar que la extension no tiene descargas.
+  const restore = withFetch((async () => zedRows([])) as typeof fetch);
+  try {
+    assert.equal(await getZedDownloads("https://example.test/zed"), null);
+  } finally {
+    restore();
+  }
+});
+
+function twoSources() {
+  return [
+    { kind: "openvsx" as const, url: "https://example.test/openvsx" },
+    { kind: "zed" as const, url: "https://example.test/zed" },
+  ];
+}
+
+test("la cifra publicada es la suma de los registries declarados", async () => {
+  const restore = withFetch((async (input: RequestInfo | URL) => {
+    if (String(input).includes("zed")) {
+      return zedRows([{ version: "0.2.1", published_at: "2026-10-21T09:19:43Z", download_count: 330 }]);
+    }
+    return new Response(JSON.stringify({ downloadCount: 4450 }), { status: 200 });
+  }) as typeof fetch);
+  try {
+    assert.equal(await sumDownloads(twoSources()), 4780);
+    assert.equal(formatDownloads(4780), "4.7k");
+    const map = await getLiveMetrics([fakeProject("funky-theme", { index: 0, sources: twoSources() })]);
+    assert.deepEqual(map, { "funky-theme": "4.7k" });
+  } finally {
+    restore();
+  }
+});
+
+test("si un registry falla no se publica una suma parcial", async () => {
+  const restore = withFetch((async (input: RequestInfo | URL) => {
+    if (String(input).includes("zed")) throw new Error("sin red");
+    return new Response(JSON.stringify({ downloadCount: 4450 }), { status: 200 });
+  }) as typeof fetch);
+  try {
+    // Sumar solo Open VSX (4.4k) publicaria menos traccion que la real.
+    assert.equal(await sumDownloads(twoSources()), null);
+    const map = await getLiveMetrics([fakeProject("funky-theme", { index: 0, sources: twoSources() })]);
+    assert.deepEqual(map, {});
+  } finally {
+    restore();
+  }
 });

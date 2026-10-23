@@ -130,7 +130,7 @@ const IDENTICAL_OK = new Set([
   "~80%",
   "97.45%",
   "3.3k",
-  "4.4k",
+  "4.8k",
   "191/30d",
   "FSM",
   "RL",
