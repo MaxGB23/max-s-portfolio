@@ -33,7 +33,9 @@ import { fileURLToPath } from "node:url";
 const require = createRequire(import.meta.url);
 const ts = require("typescript");
 
-const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
+// `AUDIT_I18N_ROOT` permite apuntar el audit a un fixture (tests). En uso
+// normal el script se audita a si mismo desde la raiz del repo.
+const ROOT = process.env.AUDIT_I18N_ROOT ?? join(dirname(fileURLToPath(import.meta.url)), "..");
 
 // Props que contienen strings NO traducibles (rutas, urls, ids, cifras con
 // moneda, nombres de stack, categorias de enlace). Todo literal fuera de una
