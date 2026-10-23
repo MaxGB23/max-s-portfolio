@@ -24,7 +24,8 @@ Código, comentarios, commits, ramas, README, issues y PRs en inglés; este arch
 
 ### Dependencias
 - Siempre usar pnpm.
-- Nunca pushear a main con errores de lint o build.
+- No hay linter ni formatter: el "lint" de este repo es `pnpm lint:docs` + `pnpm audit:i18n`, y la verificacion completa antes de pushear es `pnpm typecheck`, `pnpm test`, `pnpm lint:docs`, `pnpm audit:i18n` y `pnpm build`.
+- CI corre en cada push a main y en cada PR: un push directo sin PR tambien se verifica, pero despues de publicar, asi que esa corrida local va antes del push. El hook local es mas chico a proposito: valida el gate de docs (solo si se toca `docs/` o este archivo) y el rastro `Docs:`/`Risk:`, no typecheck ni tests.
 
 ### Dev servers (bajo demanda; el pase visual es del usuario)
 - Se levanta uno solo cuando una medicion lo necesita (los scripts de `scripts/` que miden layout o timeline exigen build de produccion); la lectura visual sigue siendo del usuario. Detalle en `iteration-guide.md` 8.
