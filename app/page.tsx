@@ -10,7 +10,15 @@ import { Footer } from "@/components/footer";
 import { ScrollProgress } from "@/components/scroll-progress";
 import { PageSpacing } from "@/components/page-spacing";
 import { SECTION_GAP_HALF } from "@/lib/rhythm";
-export default function Home() {
+import { projects } from "@/data/projects";
+import { getLiveMetrics } from "@/lib/live-metrics";
+
+export default async function Home() {
+  // Una metrica puede venir de un registry: se resuelve en el servidor y las
+  // cards reciben la cifra ya formateada, para que la home y la ficha del
+  // proyecto no muestren numeros distintos. La respuesta se cachea 24 h.
+  const liveMetrics = await getLiveMetrics(projects);
+
   return (
     <main className="min-h-screen bg-background text-foreground overflow-x-hidden">
       <ScrollProgress />
@@ -22,10 +30,10 @@ export default function Home() {
       <AboutSection />
       <PageSpacing pair="about-projects" />
 
-      <FeaturedProjects />
+      <FeaturedProjects liveMetrics={liveMetrics} />
       <PageSpacing pair="projects-all-projects" />
 
-      <AllProjects />
+      <AllProjects liveMetrics={liveMetrics} />
       <PageSpacing pair="all-projects-pricing" />
 
       <PricingSection />

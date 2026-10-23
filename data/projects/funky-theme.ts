@@ -247,8 +247,8 @@ export const funkyTheme: ProjectL = {
       },
       {
         // Esta hoja concentra los 5 pares `**` del ES: mismo numero, misma posicion.
-        es: "**Tracción validada:** **Verified Open VSX Publisher**; **4.4k descargas acumuladas** en Open VSX (4,450 medidas el 22 oct 2026); **191 adquisiciones/30d** en VS Code Marketplace con **funnel 97.45%** (page views → installs) — posicionamiento SEO orgánico demostrado.",
-        en: "**Traction validated:** **Verified Open VSX Publisher**; **4.4k cumulative downloads** on Open VSX (4,450 measured on Oct 22, 2026); **191 acquisitions/30d** on VS Code Marketplace with **97.45% funnel** (page views → installs) — organic SEO positioning demonstrated.",
+        es: "**Tracción validada:** **Verified Open VSX Publisher**; **4,450 descargas medidas el 22 oct 2026** en Open VSX; **191 adquisiciones/30d** en VS Code Marketplace con **funnel 97.45%** (page views → installs) — posicionamiento SEO orgánico demostrado.",
+        en: "**Traction validated:** **Verified Open VSX Publisher**; **4,450 downloads measured on Oct 22, 2026** on Open VSX; **191 acquisitions/30d** on VS Code Marketplace with **97.45% funnel** (page views → installs) — organic SEO positioning demonstrated.",
       },
       {
         es: "**Cross-editor:** soporte **Zed** publicado en el registry oficial (zed.dev/extensions/funky-theme), instalable en un clic (misma paleta de editores).",

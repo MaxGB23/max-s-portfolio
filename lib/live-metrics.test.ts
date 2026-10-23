@@ -7,7 +7,8 @@
 
 import assert from "node:assert/strict";
 import test from "node:test";
-import { formatDownloads, getOpenVsxDownloads } from "./live-metrics.ts";
+import type { ProjectL } from "../data/projects/types.ts";
+import { formatDownloads, getLiveMetrics, getOpenVsxDownloads } from "./live-metrics.ts";
 
 test("las cuentas chicas se escriben sin sufijo", () => {
   assert.equal(formatDownloads(0), "0");
@@ -73,6 +74,46 @@ test("un registry que lanza tampoco rompe la ficha", async () => {
   }) as typeof fetch);
   try {
     assert.equal(await getOpenVsxDownloads("https://example.test/api"), null);
+  } finally {
+    restore();
+  }
+});
+
+// `getLiveMetrics` solo lee `id` y `liveMetric`: el resto de la ficha no hace
+// falta para probar el contrato del mapa.
+function fakeProject(id: string, liveMetric?: ProjectL["liveMetric"]): ProjectL {
+  return { id, liveMetric } as unknown as ProjectL;
+}
+
+test("solo los proyectos que declaran liveMetric entran al mapa", async () => {
+  const consulted: string[] = [];
+  const restore = withFetch((async (input: RequestInfo | URL) => {
+    consulted.push(String(input));
+    return new Response(JSON.stringify({ downloadCount: 4450 }), { status: 200 });
+  }) as typeof fetch);
+  try {
+    const map = await getLiveMetrics([
+      fakeProject("funky-theme", { index: 0, kind: "openvsx", url: "https://example.test/api" }),
+      fakeProject("color-highlight"),
+    ]);
+    // Una sola clave: el id del que declara la metrica, con la cifra formateada.
+    assert.deepEqual(map, { "funky-theme": "4.4k" });
+    assert.deepEqual(consulted, ["https://example.test/api"]);
+  } finally {
+    restore();
+  }
+});
+
+test("si el registry falla, el mapa queda vacio y el llamador cae al valor estatico", async () => {
+  const restore = withFetch((async () => {
+    throw new Error("sin red");
+  }) as typeof fetch);
+  try {
+    const map = await getLiveMetrics([
+      fakeProject("funky-theme", { index: 0, kind: "openvsx", url: "https://example.test/api" }),
+    ]);
+    assert.deepEqual(map, {});
+    assert.equal(Object.keys(map).length, 0);
   } finally {
     restore();
   }
