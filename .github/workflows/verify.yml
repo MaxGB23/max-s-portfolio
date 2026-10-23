@@ -42,4 +42,6 @@ jobs:
 
       - run: pnpm lint:docs
 
+      - run: pnpm audit:i18n
+
       - run: pnpm build
