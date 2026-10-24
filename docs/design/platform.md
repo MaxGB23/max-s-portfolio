@@ -75,6 +75,20 @@
   `history.replaceState(state, "", "/")` + `useScrollToTop`. El hash se limpia
   en el CLICK, no en un `onComplete`: si el visitante interrumpe el scroll, la
   URL igual queda sin ancla.
+- **Contrato de los dos caminos de navegación (`closeMenuThenScroll`)**: el
+  scroll programático NUNCA arranca en la misma tarea que cierra el menú móvil.
+  En mobile el scroll es nativo (`window.scrollTo({ behavior: "smooth" })`, sin
+  Lenis) y el navegador lo cancela si el exit del menú (`height: auto -> 0`)
+  empieza en el mismo frame: el link parece muerto. Se cierra primero y se
+  espera el cierre commiteado (doble rAF); con el menú ya cerrado (desktop) el
+  scroll sale en el acto, sin rAF. Ancla e Inicio comparten UNA implementación a
+  propósito: cuando cada camino llevaba su propio orden, el que quedó fuera se
+  rompió dos veces (`docs/issues/mobile-menu-scroll-cancelled.md`).
+  **Verificación**: no se reproduce en Chromium ni en el emulador mobile de
+  DevTools (ahí los smooth scroll programáticos se resuelven sin animación, o
+  sea sin la ventana donde ocurre la cancelación). La aserción que distingue los
+  dos órdenes vive en `scripts/navbar-active.mjs` y corre en `webkit` — instala
+  el binario una vez con `npx playwright install webkit`.
 - Handoff home -> detalle: `saveHomeScroll(scrollY)` en el click de las cards;
   `takeHomeScroll`/`ScrollRestorer` en el retorno. Sin pin no hay pin-spacer que
   esperar: el restorer recalcula el limite de Lenis (`lenis.resize()`) y hace
