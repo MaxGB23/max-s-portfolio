@@ -18,7 +18,16 @@
 //       TAPPED section is active (regression: the batch-local tie-break let
 //       the next section override while both shared the band - About is
 //       short at md and Projects pokes into it on that viewport)
-import { chromium } from "playwright";
+//   (f) WebKit/iPhone, menu tap -> "Inicio" reaches scrollY 0 and clears the
+//       hash, with an anchor tap as the control. Chromium cannot verify this
+//       class of bug: it resolves programmatic smooth scrolls without the
+//       animation window where the cancellation happens, which is why both
+//       incidents (2026-09-14 anchors, 2026-10-24 Inicio) passed in DevTools
+//       mobile and failed on a real phone.
+//       Needs the WebKit binary once: `npx playwright install webkit`.
+//
+// See docs/issues/mobile-menu-scroll-cancelled.md.
+import { chromium, webkit, devices } from "playwright";
 import { resolveBase } from "./audit-base.mjs";
 
 const BASE = await resolveBase("navbar-active");
@@ -458,6 +467,98 @@ console.log("\n==== tablet 768x1024 portrait - anchor landing spy ====");
   await tapAndAssert("#proyectos");
 
   await page.close();
+}
+
+// ------------------------------------------------- mobile Safari (WebKit) ---
+console.log("\n==== WebKit / iPhone 14 - menu tap -> Inicio ====");
+{
+  let safari = null;
+  try {
+    safari = await webkit.launch();
+  } catch (error) {
+    check(
+      false,
+      "(f) WebKit disponible",
+      `falta el binario: npx playwright install webkit (${error.message.split("\n")[0]})`
+    );
+  }
+
+  if (safari) {
+    const context = await safari.newContext({ ...devices["iPhone 14"] });
+    const page = await context.newPage();
+    await page.goto(BASE, { waitUntil: "networkidle" });
+    await page.waitForTimeout(1200);
+
+    const menuState = () =>
+      page.evaluate(() => ({
+        y: Math.round(window.scrollY),
+        hash: location.hash,
+        menu: !!document.getElementById("mobile-menu"),
+      }));
+
+    // Llegar a mitad de pagina como el visitante que ya scrolleo. Salto
+    // instantaneo a proposito: lo que se mide es el tap, no este scroll.
+    const park = async () => {
+      await page.evaluate(() => {
+        const el = document.getElementById("precios");
+        if (!el) throw new Error("missing #precios");
+        window.scrollTo(0, el.getBoundingClientRect().top + window.scrollY - 80);
+      });
+      await page.waitForTimeout(600);
+    };
+
+    // El navbar se auto-oculta al bajar: un gesto hacia arriba lo devuelve,
+    // igual que en el caso real (sin el, el tap no alcanza la hamburguesa).
+    const openMenu = async () => {
+      await page.evaluate(() => window.scrollBy(0, -180));
+      await page.waitForTimeout(700); // hide/show transition (0.35s)
+      await page.tap('button[aria-controls="mobile-menu"]');
+      await page.waitForTimeout(500); // height animation (0.28s)
+    };
+
+    // Control: con el mismo menu abierto y el mismo tap, una ancla aterriza.
+    // Sin este control un fallo de "Inicio" seria indistinguible de "WebKit
+    // no scrollea nada en este entorno".
+    await park();
+    await openMenu();
+    const anchorBefore = await menuState();
+    await page.tap('#mobile-menu a[href="#sobre-mi"]');
+    await page.waitForTimeout(2000);
+    const anchorAfter = await menuState();
+    check(
+      anchorBefore.y > 2000 && anchorAfter.y < anchorBefore.y - 1000 && anchorAfter.hash === "#sobre-mi",
+      "(f) control: menu tap on #sobre-mi lands on the section",
+      `before=${anchorBefore.y} after=${anchorAfter.y} hash=${anchorAfter.hash || "-"}`
+    );
+
+    // El caso reportado: Inicio debe llegar al top. Si el smooth scroll
+    // arranca en la misma tarea que cierra el menu, WebKit lo cancela a los
+    // pocos frames y el link "parece muerto".
+    await park();
+    await openMenu();
+    const homeBefore = await menuState();
+    await page.tap('#mobile-menu a[href="/"]');
+    await page.waitForTimeout(2000);
+    const homeAfter = await menuState();
+    check(
+      homeBefore.y > 2000 && homeAfter.y === 0,
+      "(f) menu tap on Inicio reaches scrollY 0",
+      `before=${homeBefore.y} after=${homeAfter.y}`
+    );
+    check(
+      homeAfter.hash === "",
+      "(f) Inicio clears the anchor in the URL",
+      `hash=${homeAfter.hash || "(empty)"}`
+    );
+    check(
+      !homeAfter.menu,
+      "(f) Inicio closes the mobile menu",
+      `menuInDom=${homeAfter.menu}`
+    );
+
+    await context.close();
+    await safari.close();
+  }
 }
 
 function r1Print(n) {

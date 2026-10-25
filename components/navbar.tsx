@@ -155,19 +155,34 @@ export function Navbar() {
   // Fondo desktop: condicional por scroll o menú abierto
   const isBgActive = scrolled || mobileOpen;
 
+  // Contrato único de navegación del navbar: el scroll programático NUNCA
+  // arranca en la misma tarea que cierra el menú móvil. En mobile el scroll es
+  // nativo (`window.scrollTo({ top, behavior: "smooth" })`, sin Lenis) y el
+  // navegador lo cancela si el exit del menú (height: auto -> 0) empieza en el
+  // mismo frame: el link parece muerto. Cerrando primero y esperando el cierre
+  // commiteado (doble rAF) el scroll arranca contra layout estable. Una sola
+  // implementación a propósito: los dos caminos (ancla e Inicio) se separaron
+  // una vez y el que quedó fuera volvió a romperse en teléfono real.
+  // Ver docs/issues/mobile-menu-scroll-cancelled.md.
+  const closeMenuThenScroll = (scroll: () => void) => {
+    // Sin menú abierto no hay animación que esperar (desktop): el scroll sale
+    // en el acto, como antes del doble rAF.
+    if (!mobileOpen) {
+      scroll();
+      return;
+    }
+    setMobileOpen(false);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(scroll);
+    });
+  };
+
   // Intercepta clicks en anchors para scrollear con Lenis (desktop).
   // Devuelve false si el link no es un anchor manejable (navegación normal de Next).
   const handleAnchorClick = (e: React.MouseEvent, href: string) => {
     if (!href.startsWith("#") || !document.getElementById(href.slice(1))) return;
     e.preventDefault();
-    // Cerrar el menú ANTES de scrollear: en Android real, iniciar el smooth
-    // scroll en el mismo frame que el exit (height:0) del menú móvil lo
-    // cancela y el link parece muerto. Tras el cierre commiteado (doble rAF)
-    // el scroll arranca contra layout estable.
-    setMobileOpen(false);
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => scrollToAnchor(href));
-    });
+    closeMenuThenScroll(() => scrollToAnchor(href));
   };
 
   // Híbrido para "Inicio" (/): si ya estamos en la home, hace scroll al top
@@ -182,8 +197,7 @@ export function Navbar() {
       // viendo. Se limpia al pulsar, no al terminar el scroll: no se depende de
       // un callback que puede no dispararse si el visitante interrumpe.
       window.history.replaceState(window.history.state, "", "/");
-      scrollToTop();
-      setMobileOpen(false);
+      closeMenuThenScroll(scrollToTop);
     }
   };
 

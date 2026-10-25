@@ -55,7 +55,7 @@ docs duenos de `AGENTS.md`.
 | Como se comporta el lightbox con teclado? | trap de foco, lecciones de siete rondas de QA | [pointer-gestures.md](design/pointer-gestures.md) |
 | Como se anima cada seccion y por que? | patron unificado y excepciones | [section-animations.md](design/section-animations.md) |
 | Por que se tomo esta decision y no otra? | RFC fechado; se congela al aprobar | [docs/rfcs/](rfcs/) |
-| Por que pasaba este bug de rendimiento? | auditoria fechada con su metodo | [docs/issues/](issues/) |
+| Por que pasaba este bug? | auditoria o incidencia fechada con su metodo (rendimiento, navegacion, telefono vs devtools) | [docs/issues/](issues/) |
 | Que se esta trabajando ahora? | tarea ODD abierta, cierra al mergear | [odd/tasks/](../odd/tasks/) |
 | Como se dice esto en ingles? | clave en `data/translations.ts` y `t()` | [i18n.md](i18n.md) |
 | Donde vivia el canon anterior? | snapshot byte-igual, congelado | [INDEX.md](design/archive/2026-09-21-pre-designmd/INDEX.md) |
