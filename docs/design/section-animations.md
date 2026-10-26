@@ -138,9 +138,21 @@ navbar se escondia sin scroll real.
 
 ### Hero: GSAP timeline on-load
 
-Hero usa un GSAP timeline con stagger secuencial (portrait, badge, label,
-title, description, chips, cta, scroll). No usa scrollTrigger porque es la
-primera seccion y se anima on-load.
+Hero usa un GSAP timeline con stagger secuencial. No usa scrollTrigger porque es
+la primera seccion y se anima on-load.
+
+**El orden depende del breakpoint (`gsap.matchMedia`, hero y About).** La fila
+de desktop (`md:flex-row`) pone el retrato a la izquierda y la cascada arranca
+por el (portrait, badge, label, title, description, chips, cta, scroll: los
+offsets relativos historicos). La columna de mobile lo deja al final (`flex-col`
+en Hero, `flex-col-reverse` en About), asi que ahi la cascada sigue el ORDEN
+VISUAL de arriba abajo y el retrato cierra: Hero `label, title, description,
+portrait, badge, cta, chips, scroll` y About `label, title, description,
+portrait`, con cadencia pareja (0.1s y 0.12s) que deja la misma duracion total
+que desktop. Es la misma regla que `EARLY_MOBILE_ORDER_DELAY` en
+`components/reveal.tsx`: en mobile un bloque no puede ganar la carrera contra lo
+que esta arriba. Medido en WebKit/iPhone 14 y Chromium 1280x800: orden visual ==
+orden de aparicion en mobile, tiempos de desktop iguales a los de antes.
 
 El bloque de descripcion se alinea con el ancho real del titulo (`useTitleWidth`
 + `min(ancho, 60ch)` inline). El hook solo mide en md+ y en useLayoutEffect, asi

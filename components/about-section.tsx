@@ -10,50 +10,69 @@ export function AboutSection() {
 
   // GSAP timeline: sequences all elements when scrolled into view.
   const containerRef = useGsapAnimation<HTMLElement>((gsap) => {
-    const elements = [
-      ".about-portrait",
-      ".about-label",
-      ".about-title",
-      ".about-description",
+    // One set of tween vars per element, and TWO sequences: the desktop row
+    // puts the portrait on the left (it enters first, read left to right) while
+    // the mobile column is `flex-col-reverse`, so the portrait sits BELOW the
+    // text and the reading order is text first, portrait last. The cascade
+    // follows the visual order: same rule as EARLY_MOBILE_ORDER_DELAY in
+    // components/reveal.tsx (a block below never wins the race against what is
+    // above it). Mobile uses an even 0.12s cadence that lands at the same
+    // 0.86s total as the desktop chain, so neither layout feels slower.
+    const steps = {
+      portrait: { autoAlpha: 1, x: 0, duration: 0.5, startAt: { x: -40 } },
+      label: { autoAlpha: 1, y: 0, duration: 0.5, startAt: { y: 12 } },
+      title: { autoAlpha: 1, y: 0, duration: 0.55, startAt: { y: 24 } },
+      description: { autoAlpha: 1, y: 0, duration: 0.2, startAt: { y: 10 } },
+    };
+    type Step = keyof typeof steps;
+    type Sequence = [Step, number | string][];
+
+    // Desktop keeps the relative offsets it always had (portrait first).
+    const desktop: Sequence = [
+      ["portrait", 0],
+      ["label", "-=0.4"],
+      ["title", "-=0.3"],
+      ["description", "-=0.2"],
+    ];
+    const mobile: Sequence = [
+      ["label", 0],
+      ["title", 0.12],
+      ["description", 0.24],
+      ["portrait", 0.36],
     ];
 
-    // Set initial hidden state synchronously BEFORE the timeline starts, so the
-    // timeline is deterministic even if the reveal gate never armed (no
+    // Set initial hidden state synchronously BEFORE any timeline starts, so the
+    // timelines are deterministic even if the reveal gate never armed (no
     // IntersectionObserver). Before paint the hiding comes from the gate CSS,
     // not from the markup: these nodes used to carry inline
     // `opacity:0; visibility:hidden`, which kept them out of the a11y tree and
     // invisible forever when the JS never ran.
-    gsap.set(elements, { autoAlpha: 0 });
+    gsap.set(
+      Object.keys(steps).map((name) => `.about-${name}`),
+      { autoAlpha: 0 }
+    );
 
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: containerRef.current,
-        start: "top 80%",
-      },
-      defaults: { ease: "power2.out" },
-    });
-
-    tl.to(".about-portrait", {
-      autoAlpha: 1,
-      x: 0,
-      duration: 0.5,
-      startAt: { x: -40 },
-    })
-      .to(
-        ".about-label",
-        { autoAlpha: 1, y: 0, duration: 0.5, startAt: { y: 12 } },
-        "-=0.4"
-      )
-      .to(
-        ".about-title",
-        { autoAlpha: 1, y: 0, duration: 0.55, startAt: { y: 24 } },
-        "-=0.3"
-      )
-      .to(
-        ".about-description",
-        { autoAlpha: 1, y: 0, duration: 0.2, startAt: { y: 10 } },
-        "-=0.2"
-      );
+    // gsap.matchMedia (not a one-time window.matchMedia read): rotating the
+    // phone changes which sequence is active, and GSAP reverts the previous
+    // context on its own.
+    const media = gsap.matchMedia();
+    for (const [query, sequence] of [
+      ["(min-width: 768px)", desktop],
+      ["(max-width: 767px)", mobile],
+    ] as const) {
+      media.add(query, () => {
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: "top 80%",
+          },
+          defaults: { ease: "power2.out" },
+        });
+        for (const [name, at] of sequence) {
+          tl.to(`.about-${name}`, steps[name], at);
+        }
+      });
+    }
   });
 
   return (
