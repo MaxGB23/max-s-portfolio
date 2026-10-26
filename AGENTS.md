@@ -26,6 +26,7 @@ Código, comentarios, commits, ramas, README, issues y PRs en inglés; este arch
 - Siempre usar pnpm.
 - No hay linter ni formatter: el "lint" de este repo es `pnpm lint:docs` + `pnpm audit:i18n`, y la verificacion completa antes de pushear es `pnpm typecheck`, `pnpm test`, `pnpm lint:docs`, `pnpm audit:i18n` y `pnpm build`.
 - CI corre en cada push a main y en cada PR: un push directo sin PR tambien se verifica, pero despues de publicar, asi que esa corrida local va antes del push. El hook local es mas chico a proposito: valida el gate de docs (solo si se toca `docs/` o este archivo) y el rastro `Docs:`/`Risk:`, no typecheck ni tests.
+- Un bug que solo aparece en un telefono real no se cierra con Chromium ni con el emulador mobile de DevTools: se verifica en WebKit (`npx playwright install webkit`; `scripts/navbar-active.mjs` ya lo usa) o en el dispositivo.
 
 ### Dev servers (bajo demanda; el pase visual es del usuario)
 - Se levanta uno solo cuando una medicion lo necesita (los scripts de `scripts/` que miden layout o timeline exigen build de produccion); la lectura visual sigue siendo del usuario. Detalle en `iteration-guide.md` 8.
@@ -54,7 +55,8 @@ Código, comentarios, commits, ramas, README, issues y PRs en inglés; este arch
   |---|---|
   | shell, ritmo, geometría, cue de llegada | `docs/design/sections.md` |
   | listas, cards, pricing, contacto, footer, detalle | `docs/design/components-detail.md` |
-  | gates de media, reveal, aurora | `docs/design/motion.md` |
+  | gates de media, familia Reveal (CSS), aurora | `docs/design/motion.md` |
+  | orden de entrada de cada sección (timelines GSAP, stagger) | `docs/design/section-animations.md` |
   | tema, dark mode, scroll, debug overlay, gotchas | `docs/design/platform.md` |
   | color, spacing, radio, sombra, z-index | `docs/design/tokens.md` |
   | familias, escala, tracking, OpenType | `docs/design/typography-families.md` |
