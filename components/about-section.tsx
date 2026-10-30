@@ -19,6 +19,11 @@ export function AboutSection() {
     // above it). Mobile runs the text on an even 0.12s cadence; the portrait
     // keeps its own 0.5s entrance but on its OWN trigger (see ownPortraitTrigger
     // below), because one section trigger cannot fit both.
+    //
+    // Ease is Hero's `power3.out`, not the `power2.out` of the other scroll
+    // sections: both sections are read back to back, and with the softer curve
+    // About feels slower even though its window (0.85s) is SHORTER than Hero's
+    // (1.1s). Its calm comes from having four steps, not from a softer curve.
     const steps = {
       portrait: { autoAlpha: 1, x: 0, duration: 0.5, startAt: { x: -40 } },
       label: { autoAlpha: 1, y: 0, duration: 0.5, startAt: { y: 12 } },
@@ -68,7 +73,7 @@ export function AboutSection() {
             trigger: containerRef.current,
             start: "top 80%",
           },
-          defaults: { ease: "power2.out" },
+          defaults: { ease: "power3.out" },
         });
         for (const [name, at] of sequence) {
           tl.to(`.about-${name}`, steps[name], at);

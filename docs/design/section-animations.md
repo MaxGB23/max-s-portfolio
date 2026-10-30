@@ -36,6 +36,9 @@ para el header (titulo + descripcion):
 | Trigger | `scrollTrigger: { start: "top 80%" }` |
 | Once | `true` (solo una vez) |
 
+About es la excepcion en el ease: usa `power3.out` para emparejar con Hero
+(ver "Hero: GSAP timeline on-load"). El resto de la tabla se mantiene.
+
 ### Trigger `top 80%`
 
 El trigger `top 80%` (antes `top 85%`) hace que la animacion dispare cuando
@@ -168,6 +171,13 @@ viewport de margen - el valor que usaban las secciones antes del 2026-10-01, no
 un numero nuevo. El orden visual se mantiene porque el retrato esta debajo del
 texto: su trigger siempre dispara despues del de la seccion. En desktop no
 cambia nada: ahi el retrato cae dentro de la banda que ya revela `top 80%`.
+
+**About usa el ease de Hero (`power3.out`), no el `power2.out` de las otras
+secciones con scroll.** Las dos secciones son contiguas en la lectura: si Hero
+frena con una curva y About con otra, About se siente mas lento aunque su
+ventana total (0.85s) sea MENOR que la de Hero (1.1s). La calma de About la da
+su cadencia de 4 pasos, no una curva mas blanda. Consecuencia asumida: About es
+la unica seccion con scroll fuera del ease del patron unificado.
 
 El bloque de descripcion se alinea con el ancho real del titulo (`useTitleWidth`
 + `min(ancho, 60ch)` inline). El hook solo mide en md+ y en useLayoutEffect, asi
@@ -332,6 +342,9 @@ no del motor de animacion.
 2. **`gsap.set` inicial:** sin cambios; el retrato sigue oculto por el gate CSS
    antes del primer paint y por `autoAlpha: 0` en JS hasta que su trigger lo
    revela.
+3. **About:** ease `power2.out` -> `power3.out`, para frenar igual que Hero. El
+   cambio revierte ese token del punto 1 del 2026-10-01 (que habia llevado About
+   a `power2.out`); trigger, duraciones y direcciones no cambian.
 
 ## Deuda unica
 
