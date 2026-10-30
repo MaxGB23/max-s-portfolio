@@ -118,6 +118,17 @@
   `ScrollTrigger` no depende de que Lenis este vivo, asi que el gate no puede
   romper animaciones de scroll. Nota: `import gsap from "gsap"` resuelve por
   `module: index.js` (bundle completo, 71.1 KB), no a un core minimo.
+- **Presupuesto de frame y gate de la entrada de seccion.** A 165 Hz el
+  presupuesto es 6,06 ms por frame (8,33 a 120 Hz, 16,7 a 60 Hz): el MISMO
+  trabajo de 65 ms son 11 frames perdidos a 165 y 4 a 60, asi que un tiron puede
+  depender de la tasa de refresco sin que cambie el coste ni una linea de codigo.
+  La entrada a `#all-projects` se mide con `node scripts/audit-projects.mjs
+  --profile desktop --viewport 2048x1280 --dpr 1.25 --net off --wheel --headed
+  --trace` sobre build de produccion (dev falsifica next/image): la ventana
+  `fade de la grid (700ms)` debe quedar con maximo <= 16,7 ms y 0 frames > 32 ms,
+  y el `GPUTask` mayor < 10 ms. Estado 2026-10: 18,1 ms y 9,6 ms. Matriz de
+  variantes falsificadas, atribucion y metodo en
+  `docs/issues/all-projects-entry-jank.md` 6.3.
 
 ## 10. Debug overlay
 
