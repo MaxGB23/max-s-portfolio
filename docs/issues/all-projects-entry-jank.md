@@ -176,6 +176,52 @@ tarde, hay que mirar el track de GPU y los bytes que viajan, no el JS.
 producción. La mejora la validó el dueño en el preview de Vercel; lo medido son
 los bytes servidos.
 
+### 6.3 Coste residual: los iconos de marca, no las fotos (2026-10-22)
+
+**Método.** `node scripts/audit-projects.mjs --profile desktop --viewport
+2048x1280 --dpr 1.25 --net off --wheel --headed [--trace]` sobre build de
+producción (`pnpm build && next start`), Chrome real con GPU real (ANGLE D3D11
+sobre Intel UHD, viewport CSS 2048x1280 = panel 2560x1600 al 125%), pantalla a
+165 Hz. Métrica: la ventana `fade de la grid (700ms)` que imprime el script y el
+track de GPU de la traza.
+
+**Atribución corregida.** El coste residual NO eran las fotos de las cards.
+Ocultando solo el contenedor de la foto, el máximo de la ventana se queda en
+66,4 ms; ocultando solo la fila de iconos de marca, baja a **18,3 ms con 0 frames
+caídos**. La causa son los ~28 `<img src="/brands/*.svg">` de cada grid:
+Chromium no cachea el raster de un SVG usado como imagen, replayea su
+`SkPicture` en cada pintado, y cada instancia suma operaciones al `GrOpList` del
+tile, que se vuelca entero en `RasterDecoderImpl::DoEndRasterCHROMIUM`
+(`prepareForExternalIO`), dentro de un `GPUTask` del proceso GPU. El main thread
+no participa: 0 long tasks y evento más largo de 1 ms.
+
+**Fix aplicado.** `scripts/brand-icons.mjs` rasteriza los 34 SVG a WebP 64x64
+(lossless, con alfa) y `StackIcon` los sirve con `width`/`height` y
+`decoding="async"`. Regenerable con `pnpm icons:build`; los `.webp` se commitean
+porque el deploy no ejecuta el generador. Los logos se verificaron en captura:
+idénticos.
+
+| | antes | después |
+|---|---|---|
+| máximo de la ventana de fade | 60,8-72,8 ms | **18,1 ms** |
+| `GPUTask` mayor | 67,7 ms | **9,6 ms** |
+| frames caídos | 1-2 | **0** |
+
+**Variantes falsificadas** (todas medidas con el mismo protocolo): quitar Lenis
+(64,9 ms); quitar la animación de entrada (peor: 78,7 ms y 107-113 ms perdidos
+en dos frames); sin sombras ni radios (66,8); 3 cards y 1 card visibles (69,1 /
+80,1); variante 480w con 33% menos bytes (66,8); `will-change` de pre-pago
+(76,7); una capa compuesta por card (66,6); adelantar el gatillo del reveal
+(mueve la parada dentro del gesto); hold con liberación al parar el scroll
+(entrada de 6,8 ms pero liberación de 149 ms); copia transparente de pre-pago
+(66,4); copia opaca con `z-index: -1` (64,7, no se pinta); copia opaca con
+cubierta hermana (65,4); SVG sin `width`/`height` declarados (54,4-66,7, ruido).
+
+**Lo que queda.** 18,1 ms es el suelo de esta entrada en esta máquina: es
+exactamente el valor de referencia con los iconos ocultos, o sea que los iconos
+ya no aportan. Por debajo habría que atacar el raster de las fotos y la capa
+promovida, y ahí ninguna de las variantes medidas movió el número.
+
 ## 7. Evidencia cruda (excluida del repo a propósito)
 
 Los traces `traces/main-natural.json`, `traces/main-rapido.json`,

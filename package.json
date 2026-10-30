@@ -12,6 +12,7 @@
     "shots": "node scripts/shots.mjs",
     "lint:docs": "node scripts/docs.mjs check",
     "docs:toc": "node scripts/docs.mjs toc --write",
+    "icons:build": "node scripts/brand-icons.mjs",
     "test": "node --test \"scripts/*.test.mjs\"",
     "hooks:install": "node scripts/hooks-install.mjs"
   },
