@@ -93,3 +93,14 @@ pnpm docs:toc   # regenerate the documentation indexes
 - [Work conventions](AGENTS.md) - commits, design-doc sync, worktrees
 - [Post-mortems](docs/issues/) - what each performance bug actually was
 - [Decision records](docs/rfcs/) - why A and not B
+
+## License
+
+No license is granted: this repository is **all rights reserved**, not open
+source. The source may be read, reviewed and learned from, but it may not be
+copied, modified, distributed or reused in another project. See
+[LICENSE](LICENSE).
+
+The notice covers the code, the design system, the documentation, the written
+copy and the media in `public/images/`. Third-party dependencies keep their own
+licenses.
