@@ -170,6 +170,12 @@
   amortiguaria cada escritura (ademas la red de seguridad de 2s cae en mitad de
   su timeline).
 - `DarkModeToggle` desmontado: no reintroducir sin plan.
+- El navbar deriva su fondo tambien de `window.scrollY` **al montar**, no solo
+  de eventos `scroll` (`navbar.tsx:118-132`). Al recargar dentro de una seccion
+  el navegador restaura el scroll antes de hidratar y despues no se mueve nada:
+  sin esa lectura inicial el navbar se quedaba transparente sobre el contenido.
+  El valor NO puede ir en `useState`, porque el HTML del servidor no conoce la
+  posicion del cliente y el primer render divergiria (mismatch de hidratacion).
 
 ## 13. Deuda
 
