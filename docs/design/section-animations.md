@@ -8,6 +8,7 @@
 - [Secciones por familia](#secciones-por-familia)
 - [Cambios aplicados (2026-10-01)](#cambios-aplicados-2026-10-01)
 - [Cambios aplicados (2026-10-19)](#cambios-aplicados-2026-10-19)
+- [Cambios aplicados (2026-10-30)](#cambios-aplicados-2026-10-30)
 - [Deuda unica](#deuda-unica)
 - [Known issue (diferido)](#known-issue-diferido)
 <!-- toc:end -->
@@ -148,11 +149,25 @@ offsets relativos historicos). La columna de mobile lo deja al final (`flex-col`
 en Hero, `flex-col-reverse` en About), asi que ahi la cascada sigue el ORDEN
 VISUAL de arriba abajo y el retrato cierra: Hero `label, title, description,
 portrait, badge, cta, chips, scroll` y About `label, title, description,
-portrait`, con cadencia pareja (0.1s y 0.12s) que deja la misma duracion total
-que desktop. Es la misma regla que `EARLY_MOBILE_ORDER_DELAY` en
+portrait`, con cadencia pareja (0.1s Hero, 0.12s About para el texto). Es la misma regla que `EARLY_MOBILE_ORDER_DELAY` en
 `components/reveal.tsx`: en mobile un bloque no puede ganar la carrera contra lo
 que esta arriba. Medido en WebKit/iPhone 14 y Chromium 1280x800: orden visual ==
 orden de aparicion en mobile, tiempos de desktop iguales a los de antes.
+
+**About en mobile: el retrato lleva su PROPIO trigger.** Un trigger de seccion
+no puede servir a los dos bloques. En mobile el retrato es el ultimo bloque y
+queda cerca de una pantalla por debajo del borde superior de la seccion, asi que
+con `top 80%` su tween corria entero mientras la imagen estaba todavia fuera del
+viewport: al scrollear hasta ella ya estaba en `autoAlpha: 1` y su entrada no se
+veia nunca (reportado en un Android real). Con `top 85%` sobre la seccion el
+problema no se arregla: el umbral necesario depende del alto del texto, que
+cambia con el idioma, el ancho del telefono y el tamano de fuente del sistema.
+Regla: en mobile el texto se anima con la timeline de la seccion (`top 80%`) y
+el retrato con `trigger: ".about-portrait", start: "top 85%"`, es decir 15% de
+viewport de margen - el valor que usaban las secciones antes del 2026-10-01, no
+un numero nuevo. El orden visual se mantiene porque el retrato esta debajo del
+texto: su trigger siempre dispara despues del de la seccion. En desktop no
+cambia nada: ahi el retrato cae dentro de la banda que ya revela `top 80%`.
 
 El bloque de descripcion se alinea con el ancho real del titulo (`useTitleWidth`
 + `min(ancho, 60ch)` inline). El hook solo mide en md+ y en useLayoutEffect, asi
@@ -307,6 +322,16 @@ Pendiente: nada de esta seccion. Validado en vivo por el usuario (desktop y
 mobile, con y sin JS) y desplegado el 2026-10-20. La pasada de perfil del "tick
 de AllProjects" ya no aplica: el tiron percibido era de imagenes sin optimizar,
 no del motor de animacion.
+
+## Cambios aplicados (2026-10-30)
+
+1. **About mobile:** el retrato sale de la timeline de la seccion y pasa a un
+   `ScrollTrigger` propio (`".about-portrait"`, `top 85%`). Motivo y regla en
+   "Hero: GSAP timeline on-load". El texto conserva la cascada pareja
+   (label 0, title 0.12, description 0.24). Desktop sin cambios.
+2. **`gsap.set` inicial:** sin cambios; el retrato sigue oculto por el gate CSS
+   antes del primer paint y por `autoAlpha: 0` en JS hasta que su trigger lo
+   revela.
 
 ## Deuda unica
 

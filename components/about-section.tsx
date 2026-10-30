@@ -16,8 +16,9 @@ export function AboutSection() {
     // text and the reading order is text first, portrait last. The cascade
     // follows the visual order: same rule as EARLY_MOBILE_ORDER_DELAY in
     // components/reveal.tsx (a block below never wins the race against what is
-    // above it). Mobile uses an even 0.12s cadence that lands at the same
-    // 0.86s total as the desktop chain, so neither layout feels slower.
+    // above it). Mobile runs the text on an even 0.12s cadence; the portrait
+    // keeps its own 0.5s entrance but on its OWN trigger (see ownPortraitTrigger
+    // below), because one section trigger cannot fit both.
     const steps = {
       portrait: { autoAlpha: 1, x: 0, duration: 0.5, startAt: { x: -40 } },
       label: { autoAlpha: 1, y: 0, duration: 0.5, startAt: { y: 12 } },
@@ -34,11 +35,12 @@ export function AboutSection() {
       ["title", "-=0.3"],
       ["description", "-=0.2"],
     ];
+    // No portrait here: on mobile it is the block closest to the fold, so it
+    // is animated by its own ScrollTrigger instead of this chain.
     const mobile: Sequence = [
       ["label", 0],
       ["title", 0.12],
       ["description", 0.24],
-      ["portrait", 0.36],
     ];
 
     // Set initial hidden state synchronously BEFORE any timeline starts, so the
@@ -56,9 +58,9 @@ export function AboutSection() {
     // phone changes which sequence is active, and GSAP reverts the previous
     // context on its own.
     const media = gsap.matchMedia();
-    for (const [query, sequence] of [
-      ["(min-width: 768px)", desktop],
-      ["(max-width: 767px)", mobile],
+    for (const [query, sequence, ownPortraitTrigger] of [
+      ["(min-width: 768px)", desktop, false],
+      ["(max-width: 767px)", mobile, true],
     ] as const) {
       media.add(query, () => {
         const tl = gsap.timeline({
@@ -70,6 +72,26 @@ export function AboutSection() {
         });
         for (const [name, at] of sequence) {
           tl.to(`.about-${name}`, steps[name], at);
+        }
+
+        // On mobile the portrait is the LAST block, roughly a screen below the
+        // section top, so the section trigger fires while the image is still
+        // offscreen and its entrance finishes unseen (measured on a real
+        // Android: by the time you scroll to it, it is already fully visible).
+        // Anchoring it to its own position starts the tween with its top edge
+        // at 85% of the viewport, so it runs while the image is entering. The
+        // 85% value is the one sections used before 2026-10-01, not a new
+        // magic number. Order is preserved: the portrait sits below the text,
+        // so this trigger always fires after the section one. Desktop keeps the
+        // shared trigger, where the portrait is inside the revealed band.
+        if (ownPortraitTrigger) {
+          gsap.to(".about-portrait", {
+            ...steps.portrait,
+            scrollTrigger: {
+              trigger: ".about-portrait",
+              start: "top 85%",
+            },
+          });
         }
       });
     }
