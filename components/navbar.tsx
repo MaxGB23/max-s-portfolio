@@ -120,6 +120,15 @@ export function Navbar() {
     let lastY = window.scrollY;
     let accumulated = 0;
 
+    // El fondo NO se puede derivar solo de eventos: al recargar dentro de una
+    // seccion el navegador restaura el scroll antes de hidratar y despues no se
+    // mueve nada, asi que ningun evento `scroll` llega y el navbar se quedaba
+    // transparente sobre el contenido (medido: y=3000 con `bg-transparent` tras
+    // F5). Se sincroniza una vez al montar, aqui y no en `useState`, porque el
+    // HTML del servidor no puede conocer la posicion del cliente y el primer
+    // render divergiria (mismatch de hidratacion).
+    setScrolled(window.scrollY > 20);
+
     const handleScroll = () => {
       const currentY = window.scrollY;
       const delta = currentY - lastY;
