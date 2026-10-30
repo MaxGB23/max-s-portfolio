@@ -53,7 +53,10 @@
   entrada a AllProjects: 60,8-72,8 ms -> 18,1 ms de frame maximo y `GPUTask`
   67,7 -> 9,6 ms. Los `.svg` se quedan como fuente; los `.webp` se commitean
   porque el deploy no ejecuta el generador. Detalle en
-  `docs/issues/all-projects-entry-jank.md` 6.3.
+  `docs/issues/all-projects-entry-jank.md` 6.3. Un guard
+  (`scripts/brand-icons.test.mjs`, dentro de `pnpm test`) falla si un `.svg` no
+  tiene su `.webp` hermano, porque un icono roto no lo detecta ni `build` ni
+  `typecheck`.
 
 ### 4.7 Pricing (`pricing-section.tsx`)
 
