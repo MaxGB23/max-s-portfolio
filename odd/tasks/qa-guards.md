@@ -69,3 +69,8 @@ fuera de pantalla. Se cubren con guards en `scripts/`, manuales, sin CI.
   en `platform.md`, el habito en el checklist y la fila nueva del mapa de
   `docs/README.md` cierra el descubrimiento. Lo que si corre en CI es la logica
   del veredicto, via `pnpm test`.
+
+- **L7 (plan a futuro, verbatim):** *"quiero dejar el plan para icons y qa, ya
+  que qa en un futuro va a crecer, este es solo el comienzo, hay tests valiosos
+  que si requieren probarse, pero no todo en ci"* -> este RFC. Siguiente work
+  unit que propone: el manifiesto con hash de `pnpm icons:build`.
