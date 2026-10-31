@@ -230,6 +230,11 @@ prescripcion:
 - [ ] Respecto de reglas de blancos y brightness (ver iteration-guide).
 - [ ] Correr audit de ritmo (`scripts/rhythm-contract.mjs`,
       `scripts/section-spacing.mjs`) antes de commitear layout.
+- [ ] Correr los guards DOM con un server levantado: `pnpm qa` (o
+      `pnpm qa -- --url http://localhost:<puerto>`). Cubren el fondo del navbar en
+      un enlace profundo y el orden de entrada de About en mobile (con scroll
+      lento, 1 px por frame); son manuales a proposito (no estan en CI), asi que
+      esta casilla es su unico dueno. Ver `odd/tasks/qa-guards.md`.
 
 ## 13. Deuda
 

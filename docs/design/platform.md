@@ -194,6 +194,11 @@
   sin esa lectura inicial el navbar se quedaba transparente sobre el contenido.
   El valor NO puede ir en `useState`, porque el HTML del servidor no conoce la
   posicion del cliente y el primer render divergiria (mismatch de hidratacion).
+  Guard: `pnpm qa:navbar-deep-link` sobre un server levantado (ver
+  `odd/tasks/qa-guards.md`); la logica del veredicto corre en `pnpm test`.
+  El escenario tiene que ser un ENLACE profundo (`/#precios`), no una recarga:
+  recargar una pagina ya scrolleada dispara un evento `scroll` y esconde el bug
+  (verificado contra el deployment previo, que pasa ese caso y falla el enlace).
 
 ## 13. Deuda
 
