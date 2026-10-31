@@ -131,7 +131,7 @@ Resumen operativo:
 
 ## 7. Que NO copiamos de las marcas de referencia
 
-Las marcas de referencia (`docs/design/ejemplos/`) ilustran FORMA, no son
+Las marcas de referencia (`docs/design/archive/ejemplos/`) ilustran FORMA, no son
 prescripcion:
 
 - Bugatti: oscuridad + tipografia editorial (forma); NO copiar su nav
