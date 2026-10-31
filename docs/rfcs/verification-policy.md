@@ -119,11 +119,21 @@ registro de build, no un asset.
 
 **Script.** Rasteriza cuando falta la entrada, cuando `svgSha256` no coincide,
 cuando falta el WebP o cuando `webpSha256` no coincide (binario cambiado a mano).
-La primera corrida **adopta** lo existente: registra los hashes actuales sin
-re-rasterizar, de modo que el registro arranca verdadero y desde ahi la frescura
-es detectable.
 
-**Borrados.** Un SVG eliminado se poda: el script borra su entrada y el WebP
+**Arranque sin manifiesto: verifica, no confia.** Sin rasterizar no hay forma de
+saber si un WebP existente salio del SVG actual, asi que el arranque rasteriza a
+un temporal, compara su hash con el WebP en disco y solo registra la entrada si
+coinciden. Si no coinciden, el WebP esta rancio: se reescribe desde el SVG y el
+script lo informa. El arranque se dispara **solo** cuando el manifiesto no
+existe (ENOENT); cualquier otro error de lectura (permisos, EISDIR) aborta. Un
+manifiesto malformado, con `version` desconocida o con nombres duplicados tambien
+aborta: nunca se sobrescribe un registro que no se entiende.
+
+**Escritura y borrados.** El manifiesto se escribe a un temporal y se renombra
+(atómico) **antes** de tocar archivos: si algo se corta en el medio, el peor
+estado es un WebP huerfano que el test detecta, nunca un binario borrado que el
+manifiesto todavia lista. Un SVG eliminado poda su entrada y su WebP, y la
+comparacion de nombres es insensible a mayusculas: un `Logo.SVG` es fuente, no un
 huerfano. El test falla si queda un WebP sin SVG o una entrada sin SVG, asi que
 esto no depende de que alguien corra el script.
 
@@ -134,7 +144,7 @@ hermanos por cinco aserciones.
 2. Cada SVG tiene entrada de manifiesto con `svgSha256` correcto.
 3. Cada entrada tiene su SVG y su WebP, y `webpSha256` coincide.
 4. No hay WebP sin SVG.
-5. `version` es 1.
+5. `version` es 1 y no hay nombres duplicados.
 
 **CI no ejecuta `icons:build`.** Rasterizar con `sharp`/libvips puede emitir
 bytes distintos por plataforma y version: regenerar y diffear daria rojo

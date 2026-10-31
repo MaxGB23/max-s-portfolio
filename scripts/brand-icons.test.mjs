@@ -3,8 +3,8 @@
 // sin reconstruir su WebP sirve un icono viejo, y ni typecheck ni build lo
 // detectan: este es el unico chequeo que falla.
 import { createHash } from 'node:crypto';
-import { readdirSync, readFileSync, statSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { readdirSync, readFileSync } from 'node:fs';
+import { basename, dirname, extname, join } from 'node:path';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { fileURLToPath } from 'node:url';
@@ -15,36 +15,41 @@ const manifestPath = join(here, 'brand-icons.manifest.json');
 
 const sha256 = (path) => createHash('sha256').update(readFileSync(path)).digest('hex');
 
-const isFile = (path) => {
-  try {
-    return statSync(path).isFile();
-  } catch {
-    return false;
-  }
-};
+const listing = () =>
+  readdirSync(brandsDir).map((file) => {
+    const extension = extname(file);
+    return { file, name: basename(file, extension), ext: extension.toLowerCase() };
+  });
 
-const filesWith = (extension) =>
-  readdirSync(brandsDir)
-    .filter((name) => name.endsWith(extension))
-    .map((name) => name.slice(0, -extension.length))
-    .sort();
+// La comparacion es insensible a mayusculas en la extension y en el nombre:
+// `Logo.SVG` es la fuente de `Logo.webp`, nunca un huerfano.
+const indexOf = (extension) =>
+  new Map(
+    listing()
+      .filter((entry) => entry.ext === extension)
+      .map((entry) => [entry.name.toLowerCase(), entry]),
+  );
+
+const sourcesOf = () => [...indexOf('.svg').values()].sort((a, b) => (a.name < b.name ? -1 : 1));
 
 const manifest = () => JSON.parse(readFileSync(manifestPath, 'utf8'));
 
 test('1. hay al menos un SVG en public/brands (guarda al guard)', () => {
   assert.ok(
-    filesWith('.svg').length > 0,
+    sourcesOf().length > 0,
     'public/brands no tiene ningun SVG: una carpeta vacia pasaria todas las aserciones siguientes',
   );
 });
 
 test('2. cada SVG tiene entrada de manifiesto con su svgSha256', () => {
-  const entries = new Map(manifest().icons.map((entry) => [entry.name, entry]));
+  const byName = new Map(manifest().icons.map((entry) => [entry.name.toLowerCase(), entry]));
 
-  const stale = filesWith('.svg').filter((name) => {
-    const entry = entries.get(name);
-    return !entry || entry.svgSha256 !== sha256(join(brandsDir, `${name}.svg`));
-  });
+  const stale = sourcesOf()
+    .filter((source) => {
+      const entry = byName.get(source.name.toLowerCase());
+      return !entry || entry.svgSha256 !== sha256(join(brandsDir, source.file));
+    })
+    .map((source) => source.name);
 
   assert.deepEqual(
     stale,
@@ -54,20 +59,23 @@ test('2. cada SVG tiene entrada de manifiesto con su svgSha256', () => {
 });
 
 test('3. cada entrada tiene su SVG y su WebP, y webpSha256 coincide', () => {
+  const svgByName = indexOf('.svg');
+  const webpByName = indexOf('.webp');
   const problems = [];
 
   for (const entry of manifest().icons) {
-    const svg = join(brandsDir, `${entry.name}.svg`);
-    const webp = join(brandsDir, `${entry.name}.webp`);
-    if (!isFile(svg)) {
+    const key = entry.name.toLowerCase();
+    const svg = svgByName.get(key);
+    const webp = webpByName.get(key);
+    if (!svg) {
       problems.push(`${entry.name}: entrada sin SVG`);
       continue;
     }
-    if (!isFile(webp)) {
+    if (!webp) {
       problems.push(`${entry.name}: entrada sin WebP`);
       continue;
     }
-    if (entry.webpSha256 !== sha256(webp)) {
+    if (entry.webpSha256 !== sha256(join(brandsDir, webp.file))) {
       problems.push(`${entry.name}: webpSha256 no coincide`);
     }
   }
@@ -80,9 +88,11 @@ test('3. cada entrada tiene su SVG y su WebP, y webpSha256 coincide', () => {
 });
 
 test('4. no hay WebP sin SVG', () => {
-  const svgs = new Set(filesWith('.svg'));
+  const sources = new Set(indexOf('.svg').keys());
 
-  const orphans = filesWith('.webp').filter((name) => !svgs.has(name));
+  const orphans = [...indexOf('.webp')]
+    .filter(([key]) => !sources.has(key))
+    .map(([, entry]) => entry.name);
 
   assert.deepEqual(
     orphans,
@@ -91,10 +101,21 @@ test('4. no hay WebP sin SVG', () => {
   );
 });
 
-test('5. el manifiesto es version 1', () => {
+test('5. el manifiesto es version 1 y no repite nombres', () => {
+  const parsed = manifest();
+
   assert.equal(
-    manifest().version,
+    parsed.version,
     1,
     'la forma del manifiesto no es la version 1: un bump reescribe el archivo entero',
+  );
+
+  const names = parsed.icons.map((entry) => entry.name);
+  const duplicates = [...new Set(names.filter((name, index) => names.indexOf(name) !== index))];
+
+  assert.deepEqual(
+    duplicates,
+    [],
+    `${duplicates.length} nombre(s) repetido(s) en el manifiesto: ${duplicates.join(', ')}. Dos entradas para un icono colapsan en silencio, asi que el generador aborta; corrige el archivo a mano.`,
   );
 });
