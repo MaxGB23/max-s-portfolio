@@ -1,142 +1,178 @@
 # RFC: Politica de verificacion - que gatea CI, que corre local y como crece
 
-> **STATUS: PROPUESTO (2026-10-30).** Implementa el estado que abre el PR #17
-> (guards manuales de navbar y About) y planifica el crecimiento de `pnpm qa` y
-> de `pnpm icons:build`. Se congela cuando el dueno lo apruebe; hasta entonces
-> es una propuesta, no canon.
+> **STATUS: PROPUESTO (2026-10-30), en la rama `docs/verification-policy`
+> (PR #19, sin mergear).** Viaja junto con su primera implementacion, el
+> manifiesto de `pnpm icons:build`. Se congela al mergear y se supera con otro
+> RFC, segun la tabla de vida de `docs/README.md`.
 
 ## 1. Contexto
 
 El repo tiene cinco gates en CI (`typecheck`, `test`, `lint:docs`, `audit:i18n`,
 `build`), una capa de scripts manuales con aserciones reales
-(`navbar-active.mjs`, `hero-about-audit.mjs`, `audit-*.mjs`, ...) y una sonda
+(`navbar-active.mjs`, `hero-about-audit.mjs`, `audit-*.mjs`) y una sonda
 desechable cada vez que aparece un bug raro.
 
-Dos casos recientes muestran donde duele:
+Dos casos recientes delimitan el problema:
 
-- **Navbar y About:** regresiones que fallan en silencio y que se habian
-  verificado con sondas que no quedaron. El PR #17 les dio guard (veredicto puro
-  en `pnpm test`, recorrido manual en `pnpm qa`).
+- **Navbar y About:** regresiones silenciosas verificadas con sondas que no
+  quedaron. El PR #17 (mergeado en `12e9276`) les dio guard: veredicto puro en
+  `pnpm test` y recorrido manual en `pnpm qa`.
 - **Iconos de marca:** la generacion (`pnpm icons:build`) es local y su salida
-  esta commiteada; el invariante "cada SVG tiene su WebP" si vive en
-  `pnpm test`. El hueco es la frescura: el WebP puede quedar rancio respecto de
-  su SVG y nada lo detecta.
+  esta commiteada; el invariante "cada SVG tiene su WebP" vive en `pnpm test`.
+  El hueco es la frescura, y su causa real es esta: `newer()` compara mtime con
+  `>=` (`scripts/brand-icons.mjs:33-40`), y en un clon fresco git escribe todos
+  los archivos con el timestamp del checkout, asi que la comparacion deja de
+  significar algo y un WebP rancio se conserva sin que nada lo note.
 
-La pregunta que este RFC responde: cuando aparezcan mas casos, que sube a CI,
-que se queda local, y con que disparadores crece la estructura sin volverse un
-cementerio.
+La pregunta del RFC: cuando aparezcan mas casos, que sube a CI, que se queda
+local, y con que disparadores crece la estructura sin volverse un cementerio.
 
 ## 2. Principio
 
 **El veredicto sube a CI; el recorrido se queda local.**
 
-Todo lo que se puede decidir sobre *datos* (una clase de DOM, la geometria de un
-rect, el hash de un archivo) es una funcion pura y corre en CI gratis, hermetico
-y en milisegundos. Todo lo que necesita *un navegador, un server, una red o un
-reloj* es caro y flaky por naturaleza: se ejecuta local, cuando alguien lo pide.
+Lo que se decide sobre *datos* (una clase de DOM, la geometria de un rect, el
+hash de un archivo) es una funcion pura: corre en CI, hermetico y en
+milisegundos. Lo que necesita *navegador, server, red o reloj* es caro y flaky
+por naturaleza: se ejecuta local, cuando alguien lo pide.
 
 Corolario: si un invariante no se puede expresar sobre datos, la pregunta no es
 "como lo gateo" sino "por que el codigo no expone ese dato".
 
 ## 3. Niveles
 
-| Nivel | Que es | Ejemplos | Corre en CI | Bloquea |
+| Nivel | Que es | Ejemplos | CI | Bloquea |
 | --- | --- | --- | --- | --- |
-| **T1** | Gate hermetico | `typecheck`, `test`, `lint:docs`, `audit:i18n`, `build` | si | si |
-| **T2** | Veredicto puro dentro de `pnpm test` | fixtures de `reveal-guards.test.mjs`, `brand-icons.test.mjs` | si | si |
-| **T3** | Driver de navegador manual | `pnpm qa`, `navbar-active.mjs`, `audit-*.mjs` | no | no |
-| **T4** | Medicion desechable | sonda de una sola vez, nunca se commitea | no | no |
+| **GATE** | Hermetico: sin red, sin navegador, sin reloj | `typecheck`, `test` (incluye los veredictos puros y el manifiesto de iconos), `lint:docs`, `audit:i18n`, `build` | si | si |
+| **DRIVER** | Necesita navegador y un server | `pnpm qa` (`navbar-deep-link-bg.mjs`, `about-reveal-order.mjs`), `navbar-active.mjs` | no | no |
+| **PROBE** | Medicion de una sola vez, nunca se commitea | la sonda que mide un tiron o una cadencia | no | no |
 
-Criterios de admision a **T1/T2**: determinista, sin red, sin navegador, sin
-dependencia de plataforma, y el total de `pnpm test` se mantiene por debajo de
-~5 s. Si algo no cumple, no es que "todavia no es gate": es T3.
+`audit-*.mjs` son auditorias de layout, no drivers de asercion, y
+`audit-i18n-content.mjs` es un GATE: no se mezclan.
 
-Criterios de admision a **T3**: necesita browser/server/reloj, o su veredicto
-depende de cadencia de frames.
+Admision a **GATE**: determinista, sin red, sin navegador, sin dependencia de
+plataforma. Hoy `pnpm test` son 42 casos en 1.78 s (medido el 2026-10-30); si un
+caso cae fuera de ese perfil, no es "todavia no es gate": es DRIVER.
 
 ## 4. Criterio para escribir un guard nuevo
 
 Tres preguntas; las tres tienen que ser "si":
 
 1. **Falla en silencio.** Solo se nota si visitas el escenario exacto.
-2. **Alguien lo rompe sin querer.** El codigo que lo produce vive cerca de algo
-   que se edita por otros motivos.
+2. **Se rompe por una de estas dos vias:** al editar codigo cercano, o por
+   quedarse rancio un artefacto derivado cuya frescura nadie comprueba.
 3. **Se observa con una lectura barata.** Una clase, un rect, un hash, un
    atributo. Si hace falta una captura o un modelo, no es guard.
 
-Presupuesto: los drivers de T3 se quedan por debajo de **6** y cada uno debe
-poder borrarse sin tocar a los demas. Si el catalogo crece mas rapido que eso,
-el problema es de contrato de componentes, no de verificacion.
+La segunda via existe por el caso de los iconos: agregar un SVG y olvidar
+`pnpm icons:build` no se parece a "romper codigo cercano", pero es el mismo tipo
+de falla silenciosa sobre un artefacto derivado.
 
-## 5. Como crece `qa`
+Propiedad exigida, sin numeros arbitrarios: **cada driver se puede borrar sin
+tocar a los demas**, y el catalogo no crece si el invariante se puede expresar
+como dato.
 
-Disparadores concretos, para que la decision no dependa de esta conversacion:
+## 5. Como crece
 
-- **Tercer guard:** `pnpm qa` deja el array literal y descubre
-  `scripts/guards/*.guard.mjs` por glob. Registro gratis; nada que recordar.
+- **Tercer driver:** recien ahi se decide entre descubrir
+  `scripts/guards/*.guard.mjs` por glob o seguir con el array de `scripts/qa.mjs`.
+  Con dos, el array se lee y no sorprende.
 - **Tercer driver que copie el mismo boilerplate** (launch, `resolveBase`,
   reporte, exit code): se extrae `scripts/lib/guard-harness.mjs`. Antes de eso es
   abstraccion sin evidencia.
-- **Docs:** una sola fila en el mapa de `docs/README.md` para la clase de
-  pregunta ("como se que X no se rompio"), nunca una fila por guard. La lista de
-  lo que corre la imprime `pnpm qa`.
+- **Docs:** se amplia el vocabulario de la **fila existente** del mapa de
+  `docs/README.md` ("como se que X no se rompio"), nunca se agrega una fila por
+  guard ni se convierte el mapa en inventario de tests: es vocabulario de
+  preguntas del usuario, no politica de agentes.
 - **Un guard muere con su invariante.** Si el comportamiento desaparece, el
-  guard se borra en la misma work unit. Un guard huerfano ensena a ignorar la
+  guard se borra en la misma work unit; un guard huerfano ensena a ignorar la
   salida.
 - **El contexto de cada guard vive en su cabecera de codigo** (que regresion,
   contra que build previo se calibro). El documento de tarea se cierra con el
-  track; no es archivo de consulta.
+  track y no es archivo de consulta.
 
 ## 6. Como crece `icons`
 
-El invariante de hoy (existe el hermano WebP) no cubre el caso real: **reemplazar**
-un SVG y olvidar `pnpm icons:build`. Ademas la idempotencia por mtime no
-sobrevive a un clon fresco, donde todos los archivos comparten el timestamp del
-checkout.
+El invariante de hoy (existe el hermano WebP) no cubre el caso real:
+**reemplazar** un SVG y no reconstruir. La fuente de verdad pasa de mtime a hash.
 
-Plan: cambiar la fuente de verdad de mtime a hash.
+**Manifiesto.** `scripts/brand-icons.manifest.json`, commiteado, junto al script
+que lo escribe. NO va bajo `public/`: ese directorio se sirve, y esto es un
+registro de build, no un asset.
 
-- `public/brands/manifest.json` con
-  `{ version: 1, icons: [{ name, svgSha256, webpSha256 }] }`.
-- `scripts/brand-icons.mjs`: rasteriza cuando falta la entrada o cuando el
-  `svgSha256` del manifiesto no coincide con el archivo; escribe el manifiesto.
-  Sobra toda la logica de mtime.
-- `scripts/brand-icons.test.mjs` (T2, ya existe): extiende el invariante a
-  "cada SVG tiene su WebP **y** su entrada de manifiesto con el hash correcto",
-  y ademas verifica el `webpSha256` para detectar un binario cambiado a mano.
-  Sigue siendo lectura barata: hashes, sin rasterizar.
-- CI **no** ejecuta `icons:build`. Rasterizar con `sharp`/libvips puede emitir
-  bytes distintos por plataforma y version: regenerar y diffear daria rojo
-  permanente por motivos ajenos al codigo.
+```json
+{
+  "version": 1,
+  "icons": [
+    { "name": "blender", "svgSha256": "...", "webpSha256": "..." }
+  ]
+}
+```
 
-## 7. Que no entra a CI (ni ahora ni cuando crezca)
+- `name`: basename sin extension. `icons` ordenado por `name` (orden de bytes),
+  claves en el orden `name`, `svgSha256`, `webpSha256`, indentacion de 2 espacios
+  y salto de linea final: el archivo no genera ruido de diff.
+- `version: 1`. El test falla ante cualquier otro valor; sube solo si cambia la
+  forma, y un bump reescribe el archivo entero.
+
+**Script.** Rasteriza cuando falta la entrada, cuando `svgSha256` no coincide,
+cuando falta el WebP o cuando `webpSha256` no coincide (binario cambiado a mano).
+La primera corrida **adopta** lo existente: registra los hashes actuales sin
+re-rasterizar, de modo que el registro arranca verdadero y desde ahi la frescura
+es detectable.
+
+**Borrados.** Un SVG eliminado se poda: el script borra su entrada y el WebP
+huerfano. El test falla si queda un WebP sin SVG o una entrada sin SVG, asi que
+esto no depende de que alguien corra el script.
+
+**Test** (`scripts/brand-icons.test.mjs`, GATE): reemplaza el invariante de
+hermanos por cinco aserciones.
+
+1. Hay al menos un SVG (guarda al guard: una carpeta vacia pasaria todo lo demas).
+2. Cada SVG tiene entrada de manifiesto con `svgSha256` correcto.
+3. Cada entrada tiene su SVG y su WebP, y `webpSha256` coincide.
+4. No hay WebP sin SVG.
+5. `version` es 1.
+
+**CI no ejecuta `icons:build`.** Rasterizar con `sharp`/libvips puede emitir
+bytes distintos por plataforma y version: regenerar y diffear daria rojo
+permanente por motivos ajenos al codigo.
+
+Consecuencia asumida: reconstruir en otra maquina cambia los bytes, asi que el
+WebP y el manifiesto se commitean juntos; el test falla si se commitea uno solo.
+
+## 7. Lo que nunca entra a CI
 
 - Mediciones de timing o de cadencia de frames.
 - Diffs visuales y snapshots de pagina.
 - Cualquier cosa que dependa de WebKit, de un binario extra o de la red.
-- Sondas de una sola vez: si merecen quedarse, se promueven a T2 o a T3 con su
-  calibracion escrita.
+- Sondas de una sola vez: si merecen quedarse, se promueven a GATE o a DRIVER
+  con su calibracion escrita.
 
-## 8. Decisiones abiertas
+## 8. Esta politica no propone gates nuevos
 
-- **CI filtrado por paths** (`components/navbar.tsx`,
-  `components/about-section.tsx`): correria `pnpm qa` solo cuando el riesgo
-  existe. No se toma ahora; es la salida si el checklist se saltea dos veces
-  seguidas.
-- **Gatear un invariante que hoy es T3** exige primero expresarlo como dato.
-  Si no se puede, no se gatea: se acepta el costo de T3.
+Ninguna seccion de este documento agrega un gate ni modifica `verify.yml`. Si
+alguna vez hiciera falta un gate nuevo —por ejemplo CI filtrado por paths para
+los dos componentes mas fragiles— eso es decision aparte y merece su propio RFC,
+porque toca `verify.yml` y `AGENTS.md`, no esta politica.
 
-## 9. Orden de trabajo propuesto
+La senal que lo justificaria esta escrita: la casilla del checklist de
+`iteration-guide.md` 12 salteada dos veces seguidas.
 
-1. **icons-manifest** (T2): manifiesto, script sin mtime, test extendido. Un
-   work unit chico y autocontenido.
-2. **qa glob + harness**: solo cuando aparezca el tercer guard. Escrito el
-   disparador, el trabajo es mecanico.
-3. **CI filtrado por paths**: solo si el checklist falla dos veces.
+## 9. Orden de trabajo
 
-## 10. Cuando se revisa este RFC
+1. **icons-manifest** (GATE): manifiesto, script sin mtime, test extendido. Un
+   work unit chico, autocontenido, y viaja con este RFC.
+2. **qa glob o harness**: solo si aparece el tercer driver. Escrito el disparador,
+   el trabajo es mecanico.
+3. **RFC de CI filtrado**: solo con la senal de §8.
 
-Se reabre si: entra un guard nuevo, se borra un driver, se propone un gate
-nuevo, o el checklist de `iteration-guide.md` 12 se saltea dos veces seguidas.
-Ese ultimo es el unico que diria que la capa manual fallo y que hay que pagar el
-peaje de CI.
+## 10. Cuando este RFC se supera
+
+Este documento es una DECISION (`docs/README.md`): no se edita despues de
+aprobado. Pierde vigencia y se supera con otro RFC cuando:
+
+- aparece un tipo de verificacion que no encaja en GATE, DRIVER ni PROBE;
+- se propone un gate nuevo con impacto en `verify.yml`;
+- la capa manual falla dos veces seguidas (ver §8), o sea el costo de DRIVER
+  deja de ser aceptable.
