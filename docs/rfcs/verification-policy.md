@@ -81,9 +81,11 @@ como dato.
   reporte, exit code): se extrae `scripts/lib/guard-harness.mjs`. Antes de eso es
   abstraccion sin evidencia.
 - **Docs:** se amplia el vocabulario de la **fila existente** del mapa de
-  `docs/README.md` ("como se que X no se rompio"), nunca se agrega una fila por
-  guard ni se convierte el mapa en inventario de tests: es vocabulario de
-  preguntas del usuario, no politica de agentes.
+  `docs/README.md` ("se rompio algo en silencio en alguna entrada"), nunca se
+  agrega una fila por guard ni se convierte el mapa en inventario de tests: es
+  vocabulario de preguntas del usuario, no politica de agentes. La pregunta puede
+  sumar ejemplos ("navbar, About, ..."); la respuesta nombra el comando y no los
+  guards, y el comando es el que imprime la lista.
 - **Un guard muere con su invariante.** Si el comportamiento desaparece, el
   guard se borra en la misma work unit; un guard huerfano ensena a ignorar la
   salida.
