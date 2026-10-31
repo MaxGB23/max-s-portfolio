@@ -93,6 +93,24 @@
   `takeHomeScroll`/`ScrollRestorer` en el retorno. Sin pin no hay pin-spacer que
   esperar: el restorer recalcula el limite de Lenis (`lenis.resize()`) y hace
   `scrollTo(target, { immediate: true })`.
+- **F5 dentro de una seccion: el ancla de la URL se aplica y la restauracion
+  la pisa. Comportamiento conocido, NO se corrige.** El hash lo escribe
+  `announceArrival` al ATERRIZAR, y no hay ningun spy que lo actualice al
+  scrollear, asi que la URL conserva la ULTIMA ancla pulsada, no la seccion
+  visible. En una recarga el navegador aplica primero el fragmento y acto
+  seguido la posicion restaurada de la sesion: medido el 2026-10-30 (sonda
+  Playwright que muestrea `window.scrollY` por frame con `addInitScript` y
+  luego `page.reload()`; 1600x900, hash `#sobre-mi` con la pagina en
+  `#contacto`) da `53ms -> 742` y `61ms -> 5693`. El estado final SIEMPRE es el
+  correcto; el transitorio dura ~8ms y se lee como un parpadeo de la seccion
+  equivocada. NO se sincroniza el hash con `use-active-section.ts` para
+  eliminarlo: el pago es un frame y el precio es un tercer escritor de la URL
+  justo donde `a5a45dc` ya mato una navegacion en vuelo
+  (`docs/issues/navigation-race.md`). Si se retoma, las guardas no negociables
+  son `replaceState(window.history.state, ...)`, solo en `pathname === "/"`, y
+  solo si `document.getElementById(id)` existe. **Prueba de aceptacion**: la
+  sonda de arriba debe mostrar UNA sola meseta de `scrollY` en el F5, sin el
+  valor intermedio.
 - **Gate de 768px: decision consciente, NO tocar.** `syncTouch = false` es el
   default de Lenis y el codigo no lo overridea, asi que en touch Lenis es
   pasivo: `onVirtualScroll` retorna temprano (lenis.mjs:649-655, sin
