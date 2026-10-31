@@ -13,6 +13,10 @@ const guards = ["navbar-deep-link-bg.mjs", "about-reveal-order.mjs"];
 const flags = process.argv.slice(2);
 const failed = [];
 
+// Names what it is about to run: the docs point at this command instead of
+// keeping an inventory of guards that would rot as soon as a third one lands.
+console.log(`qa: ${guards.length} guards -> ${guards.map((g) => g.replace(/\.mjs$/, "")).join(", ")}`);
+
 for (const guard of guards) {
   const result = spawnSync(process.execPath, [`scripts/${guard}`, ...flags], {
     stdio: "inherit",
