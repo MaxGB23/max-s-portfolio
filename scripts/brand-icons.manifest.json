@@ -1,0 +1,175 @@
+{
+  "version": 1,
+  "icons": [
+    {
+      "name": "blender",
+      "svgSha256": "70a2ff96609ddcc6b612a80bdf8d1ac54bdd641dce799be034784615a6fee5cd",
+      "webpSha256": "ab99eb30647abeffd7aed95d68afa1911a964328a7217f3c436f3c802665377c"
+    },
+    {
+      "name": "bootstrap",
+      "svgSha256": "6f24e48f7d351bdcf7f59d58fa4b850b0dcad0abb64953ec9c11a388a41ec7c8",
+      "webpSha256": "43e6dac5b8c1f3c0b23da195166d03b7ca7d29f34faddd5b94905ee78690746a"
+    },
+    {
+      "name": "cli",
+      "svgSha256": "4b051bf0514da7122b3fb9557fec5f6ca6f6d2e107c4ff21daf43fc050570a20",
+      "webpSha256": "a6e9f827f054695fe2e8bf655471ed831b13f03838e9b2ca7a12baf2b4ffefa4"
+    },
+    {
+      "name": "csharp",
+      "svgSha256": "ea63a14bb254ad3b32e567be85696b7b2e368c27ff1a75661ebc60dbc1496f4b",
+      "webpSha256": "fb31529fb9d4775aec645cb7b9eae79eccc77f5e037681ff36e9d5f0c3f93bd4"
+    },
+    {
+      "name": "css3",
+      "svgSha256": "3950d31acf666b89ad9f417f983f85083dea7a73cb950a39a710955dba40d8b1",
+      "webpSha256": "5b7f7592dad702ddfc0dfae52470c38b7d14487538cb6b744d30fcd6ca5ffdf1"
+    },
+    {
+      "name": "esbuild",
+      "svgSha256": "5cd51bd9ed7b3300f5e03f7079a87cd8073f914b80b963091eab78403a760cdd",
+      "webpSha256": "456b2e73fdb87f75de888d249d6a03c583183f84139b32170d32bb63cb0b416a"
+    },
+    {
+      "name": "github",
+      "svgSha256": "b3bdf7de4b15d58bd312c317645a817e0a87a6fe0cababf85d4ed72ec6b10f25",
+      "webpSha256": "f4ad399dce5f71cdc8d200e2d52625d1270fb87ed86cbce902a343a856ff6d3a"
+    },
+    {
+      "name": "github-actions",
+      "svgSha256": "42b3bda77bcb5708f81ed0e94831390443fb35a8e873a234a949d05e00019cc3",
+      "webpSha256": "7bf12617107495896f292cb1972a532d65f6277b0c7acb92692e4d14e9a9d518"
+    },
+    {
+      "name": "html5",
+      "svgSha256": "e1e4ccb3400317187599c8e5551f9d5f3e68a7c67e23994fa1d179eb7a3648f2",
+      "webpSha256": "163396812f035eda2e6a5c222c4b786f5044cd9647da7a79797c9a5ba487964d"
+    },
+    {
+      "name": "inertia",
+      "svgSha256": "1f038485a1f7c06040352840e0a5602114aa917128ce73cd4973553beea19c6a",
+      "webpSha256": "fe82695d2dcc96e4f0c1582d950b689019c6bb41e13cb608fcc87d8360a52b98"
+    },
+    {
+      "name": "javascript",
+      "svgSha256": "e4f7047f07674b84711b2340e58efdf21d19f17dc6140a9e47918b6791ccdb21",
+      "webpSha256": "64ae6e561a91953cdc9b0a9c7c794f404cfe114309cd17538f98bda52ebec7c8"
+    },
+    {
+      "name": "laravel",
+      "svgSha256": "a7126e504e755b58c2707e23a4b44298dde348f486d2d2da57b7c9990215c8cb",
+      "webpSha256": "c855b53e3971b3fbbf37ad3ef0791c383124484e931ba52c8e74afaad563924c"
+    },
+    {
+      "name": "laravel-breeze",
+      "svgSha256": "a7126e504e755b58c2707e23a4b44298dde348f486d2d2da57b7c9990215c8cb",
+      "webpSha256": "c855b53e3971b3fbbf37ad3ef0791c383124484e931ba52c8e74afaad563924c"
+    },
+    {
+      "name": "linkedin",
+      "svgSha256": "971d829aa70b88b535cb64c82a1422f98fce0598fe7aefd7a02ddf0156026102",
+      "webpSha256": "51aeb2b641f7b07c20e8e6bc282d57eba7addea1539636966db097002a9815bb"
+    },
+    {
+      "name": "ml-agents",
+      "svgSha256": "8a08a669c92c5f01d7d9962fe66d56e34d5b8220288056fe572150f62e99f996",
+      "webpSha256": "8fdab188fa53315bb9e3b1691776be2ade466ce5e7c2acde373dfaa6e1b49073"
+    },
+    {
+      "name": "mysql",
+      "svgSha256": "f8f3a3413b29e9cae6afe24b4bf7b389a35b0aa7f38b230160961866109aa071",
+      "webpSha256": "c113f8b52307c8e6949470c5fcea3aceb9bbef2da2fb8a633f8411003de99b64"
+    },
+    {
+      "name": "nextjs",
+      "svgSha256": "7fca1f00f9856daceb91983f297c80ef405dfa50614997de54510ef5e26a3bcc",
+      "webpSha256": "3a8eb9fb53c41c1489434661b9b3a84df204f8e82a5ccc931cd517e46d3b94ca"
+    },
+    {
+      "name": "nodejs",
+      "svgSha256": "ed52c8a7a748acbb1befff986a5800e54c990531e124bd06e427860bec6e630a",
+      "webpSha256": "5ec5c434b308d29c52753ce396a9b97d88d8090103a35b6948fc21c3676f2879"
+    },
+    {
+      "name": "open-vsx",
+      "svgSha256": "5f3adfcad06625970b5ee50b5236e26ab737247df2aba67a04d4b49cfe62b878",
+      "webpSha256": "7b491586ef47ceb7c96d821afcd3ec9c8be6a44d7b2bf893dc870144613b3e8f"
+    },
+    {
+      "name": "php",
+      "svgSha256": "661eb25771dd0479a8958c8b1185313989232b753eb5926c40d6592eed9866cc",
+      "webpSha256": "4d3bedd66b30a5ffe88aaaedd249ce93c908605e9e7da1b3ede7f2ed8359c6b5"
+    },
+    {
+      "name": "pnpm",
+      "svgSha256": "42b7a0547d8bc14167ba64bab668fd4b1034e9a18bc18c56855c143a73938c54",
+      "webpSha256": "f88a03e6118d0b7a37bb0bbd005abe54b15d08791759aa734c5977ea287e5615"
+    },
+    {
+      "name": "postgres",
+      "svgSha256": "0f4d2cd58e5219bdd153a54dab03a9ff5d2c767163f5295d3be72e1326348c66",
+      "webpSha256": "44e44859ec81f046184321b1f5119481ac9dc06f6ec2813713b7175daa72d78a"
+    },
+    {
+      "name": "prisma",
+      "svgSha256": "fc10531d8ed6b9cdc09f958c9043499efec486178a97b34672fa6470180e3df1",
+      "webpSha256": "1b1f13548df4e36cb96d97bd622d657d7b53af0e1414f121f890ffd967bfc5d3"
+    },
+    {
+      "name": "react",
+      "svgSha256": "56311bed177ba9a038c9d3f510600ffea374ab6958e2856bea3d9fcd6401dad1",
+      "webpSha256": "fd72bd3abb96386e9528b02018dbbe362346a9bf6038d3e4573157a1facb8b0a"
+    },
+    {
+      "name": "tailwind",
+      "svgSha256": "d9011701823845cab3a08d3806a56e475119eced675309bd62ae4312d4bd30d4",
+      "webpSha256": "ae6927b7b5c663d90420197a15a34832024986f61b32a69d8bbb8094196f5afc"
+    },
+    {
+      "name": "terminal",
+      "svgSha256": "4b051bf0514da7122b3fb9557fec5f6ca6f6d2e107c4ff21daf43fc050570a20",
+      "webpSha256": "a6e9f827f054695fe2e8bf655471ed831b13f03838e9b2ca7a12baf2b4ffefa4"
+    },
+    {
+      "name": "token-colors",
+      "svgSha256": "2dd1f9fc45db8e68d4d51c00188e5e224e580d1e61f5a6dbb386c7fafff7ea9c",
+      "webpSha256": "d9f69a226544f652b59f70d24965714bfd7b55e6349a67eb44d9fbc7d54e6eb9"
+    },
+    {
+      "name": "typescript",
+      "svgSha256": "c92aaa76941b6492d1338bc4436ec3ee943153a56e5fab49665ad7d1d7167e36",
+      "webpSha256": "51c535e238fafc68511b4e1002771071851d175db06f8138f9c0b0bf213193de"
+    },
+    {
+      "name": "unity",
+      "svgSha256": "63ebe89059b7d64137ba381450583518ebe10b122973e0e54c981147cf504492",
+      "webpSha256": "9f2b9821d877d79941a8f8d74b04204b07d1e4c9872ea72f937875ce0b4c03db"
+    },
+    {
+      "name": "verified",
+      "svgSha256": "7e88285eb8e76daa54a92223fb71242a74b9fd4d5f31cb04af32cab87cf6a396",
+      "webpSha256": "ff800b4c09f61029c5855fcfb3b41feb74b92803c5e31d4376bfb303a589858b"
+    },
+    {
+      "name": "vitest",
+      "svgSha256": "f9a7e18e5fd0e2ca77144b041618eace0758414d43158a3f37198d6985d9d669",
+      "webpSha256": "0d5f225076c18ad4cc1bf4036cfd4107c27eb6f9413151da18319f3a14736679"
+    },
+    {
+      "name": "vscode",
+      "svgSha256": "4c7c670d1601599749c3493293da266a1398d9a55ebdd3333cfdffaf5712faf8",
+      "webpSha256": "5545d34dc4239cbfb8d5afa1bfa0006893c313f8b2b9ccb6be4f2486da86baf7"
+    },
+    {
+      "name": "vue",
+      "svgSha256": "2367ae20c4a1fe95fea9b03def3b11097bcebaf60ebb744eb96667990599153a",
+      "webpSha256": "0e79ae75baf48f68476964de4f85ea382ffc3d3aeca013e3dd384aca1724f927"
+    },
+    {
+      "name": "zed",
+      "svgSha256": "462fa5fa81e61f269321265f09c3d01c9a45f17c0aa674fa5723d04389546c92",
+      "webpSha256": "9c8d4fd68df950e2894598d42cde87e050e181325e4049ef9bfd5eab004995b3"
+    }
+  ]
+}
