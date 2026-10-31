@@ -54,7 +54,7 @@ docs duenos de `AGENTS.md`.
 | De donde sale el espejo del tema? | se extrae de `app/globals.css`, no se edita a mano | [tailwind-v4-theme.css](design/tailwind-v4-theme.css) |
 | Como se comporta el lightbox con teclado? | trap de foco, lecciones de siete rondas de QA | [pointer-gestures.md](design/pointer-gestures.md) |
 | Como se anima cada seccion y por que? | patron unificado y excepciones | [section-animations.md](design/section-animations.md) |
-| Como se que el navbar y la entrada de About no se rompieron? | guards manuales con `pnpm qa` sobre un server; su logica de veredicto corre en `pnpm test` | [iteration-guide.md](design/iteration-guide.md) 12 |
+| Se rompio en silencio alguna entrada de la pagina (navbar, About, ...)? | `pnpm qa` lista y corre los guards manuales sobre un server; cada veredicto vive en `pnpm test` | [iteration-guide.md](design/iteration-guide.md) 12 |
 | Por que se tomo esta decision y no otra? | RFC fechado; se congela al aprobar | [docs/rfcs/](rfcs/) |
 | Por que pasaba este bug? | auditoria o incidencia fechada con su metodo (rendimiento, navegacion, telefono vs devtools) | [docs/issues/](issues/) |
 | Que se esta trabajando ahora? | tarea ODD abierta, cierra al mergear | [odd/tasks/](../odd/tasks/) |
