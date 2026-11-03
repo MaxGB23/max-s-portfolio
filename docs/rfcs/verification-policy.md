@@ -1,9 +1,8 @@
 # RFC: Politica de verificacion - que gatea CI, que corre local y como crece
 
-> **STATUS: PROPUESTO (2026-10-30), en la rama `docs/verification-policy`
-> (PR #19, sin mergear).** Viaja junto con su primera implementacion, el
-> manifiesto de `pnpm icons:build`. Se congela al mergear y se supera con otro
-> RFC, segun la tabla de vida de `docs/README.md`.
+> **STATUS: APROBADO (2026-10-30), PR #19.** Viajo junto con su primera
+> implementacion, el manifiesto de `pnpm icons:build`. Queda congelado: se supera
+> con otro RFC, segun la tabla de vida de `docs/README.md`.
 
 ## 1. Contexto
 

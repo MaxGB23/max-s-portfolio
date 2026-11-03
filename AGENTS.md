@@ -24,7 +24,8 @@ Código, comentarios, commits, ramas, README, issues y PRs en inglés; este arch
 
 ### Dependencias
 - Siempre usar pnpm.
-- No hay linter ni formatter: el "lint" de este repo es `pnpm lint:docs` + `pnpm audit:i18n`, y la verificacion completa antes de pushear es `pnpm typecheck`, `pnpm test`, `pnpm lint:docs`, `pnpm audit:i18n` y `pnpm build`.
+- No hay linter ni formatter: el "lint" de este repo es `pnpm lint:docs` + `pnpm audit:i18n`. Antes de pushear: `pnpm typecheck`, `pnpm test`, `pnpm lint:docs`, `pnpm audit:i18n` y `pnpm build`; son herméticos y son exactamente lo que corre CI.
+- Esa lista no es toda la verificación: la capa de navegador (`pnpm qa`) y los scripts de `scripts/` que miden layout, timeline o scroll son manuales a propósito, necesitan un server y CI no los corre. Su dueño es `docs/design/iteration-guide.md` 12.
 - CI corre en cada push a main y en cada PR: un push directo sin PR tambien se verifica, pero despues de publicar, asi que esa corrida local va antes del push. El hook local es mas chico a proposito: valida el gate de docs (solo si se toca `docs/` o este archivo) y el rastro `Docs:`/`Risk:`, no typecheck ni tests.
 
 ### Dev servers (bajo demanda; el pase visual es del usuario)
@@ -62,7 +63,7 @@ Código, comentarios, commits, ramas, README, issues y PRs en inglés; este arch
   | proceso y checklist de iteración | `docs/design/iteration-guide.md` |
 - Todo commit que toque `docs/` o `AGENTS.md` pasa por el gate: lo corre el hook `pre-commit` (una vez por clon, `pnpm hooks:install`); si editaste un doc de mas de 120 lineas, `pnpm docs:toc --write` en el mismo commit. El detalle operativo vive en `docs/README.md`.
 - Al cerrar un track, antes del push: las tres preguntas del gate y `git diff --diff-filter=D --name-only <base>...HEAD`.
-- El estado de una tarea o un RFC se escribe como hecho verificable (rama, commit, merge), no como adjetivo.
+- El estado de una tarea o un RFC se escribe como hecho verificable (rama y PR, con fecha), no como adjetivo; nunca el hash del merge, que aun no existe.
 - Al retirar un símbolo o técnica, añade su fila a `docs/design/DEAD.md` en el mismo work unit (solo símbolos que ya no existen).
 - Punto de entrada, vida de cada carpeta, reglas de tamaño e índice del canon: `docs/README.md`.
 - Este archivo no pasa de 80 líneas: si crece, el detalle se muda a `docs/README.md`, donde el gate lo puede ver.
