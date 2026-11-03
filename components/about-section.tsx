@@ -9,7 +9,7 @@ export function AboutSection() {
   const { t } = useLanguage();
 
   // GSAP timeline: sequences all elements when scrolled into view.
-  const containerRef = useGsapAnimation<HTMLElement>((gsap) => {
+  const containerRef = useGsapAnimation<HTMLElement>((gsap, ScrollTrigger) => {
     // One set of tween vars per element, and TWO sequences: the desktop row
     // puts the portrait on the left (it enters first, read left to right) while
     // the mobile column is `flex-col-reverse`, so the portrait sits BELOW the
@@ -90,11 +90,21 @@ export function AboutSection() {
         // so this trigger always fires after the section one. Desktop keeps the
         // shared trigger, where the portrait is inside the revealed band.
         if (ownPortraitTrigger) {
-          gsap.to(".about-portrait", {
-            ...steps.portrait,
-            scrollTrigger: {
-              trigger: ".about-portrait",
-              start: "top 85%",
+          // The entrance is built BY the trigger, not before it. A standalone
+          // tween created inside a matchMedia context that is born on a media
+          // change (a rotate) was already dead when its trigger ran: measured
+          // with a throwaway probe, onEnter fired at scroll 720 and the trigger
+          // completed, while gsap.getTweensOf(".about-portrait") was empty and
+          // the tween sat at progress 0, leaving the image at opacity 0 with
+          // visibility hidden for good. The ScrollTrigger survives that switch,
+          // so the animation is created where it actually plays.
+          gsap.set(".about-portrait", { x: -40 });
+          ScrollTrigger.create({
+            trigger: ".about-portrait",
+            start: "top 85%",
+            once: true,
+            onEnter: () => {
+              gsap.to(".about-portrait", { autoAlpha: 1, x: 0, duration: 0.5 });
             },
           });
         }
