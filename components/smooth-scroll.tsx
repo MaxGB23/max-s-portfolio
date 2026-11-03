@@ -48,8 +48,29 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
     // Disable GSAP's standard lag smoothing to prevent animation jumps during fast scrolling
     gsap.ticker.lagSmoothing(0);
 
+    // Adopt a foreign native scroll while a glide is running. Lenis's own
+    // onNativeScroll only takes the native position when isScrolling is false
+    // or "native" (lenis 1.3.18-dev.1, dist/lenis.mjs:701), so a scrollbar
+    // drag, PageDown, find-in-page or middle-click autoscroll during a wheel
+    // glide is discarded and the rAF loop keeps writing the stale
+    // animatedScroll until the velocity reset: the page moves against the
+    // drag and snaps back on release. scrollTo(..., { immediate: true }) is
+    // the public path that adopts it: it sets animatedScroll = targetScroll =
+    // target, writes the position, then reset() clears isScrolling and stops
+    // the animation. The 2px filter drops Lenis's own per-frame echo, which
+    // differs from the reported scrollY only by sub-pixel rounding. Measured
+    // with scripts/scroll-guard.mjs: 25 direction reversals and 3092px of
+    // pull-back without it, 0 and 0px with it.
+    const onForeignScroll = () => {
+      if (lenisInstance.isScrolling !== "smooth") return;
+      if (Math.abs(window.scrollY - lenisInstance.animatedScroll) < 2) return;
+      lenisInstance.scrollTo(window.scrollY, { immediate: true });
+    };
+    window.addEventListener("scroll", onForeignScroll, { passive: true });
+
     // Cleanup on unmount
     return () => {
+      window.removeEventListener("scroll", onForeignScroll);
       cancelAnimationFrame(rafId);
       lenisInstance.off("scroll", ScrollTrigger.update);
       lenisInstance.destroy();

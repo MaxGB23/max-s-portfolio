@@ -52,6 +52,16 @@
   0.6`, `lerp 0.1` y `lerp 0.2` (~108 en valor absoluto en las cuatro). Es el frame en que el
   evento nuevo re-apunta la animacion sin que la posicion avance, y ocurre
   justo cuando la mano se mueve: no se percibe como frenazo y NO es ajustable.
+- **Un scroll nativo ajeno durante un glide se adopta.** Arrastrar la barra
+  nativa, PageDown, buscar en la pagina o el autoscroll del click central
+  escribe la posicion mientras Lenis anima: su `onNativeScroll` ignora el
+  evento con `isScrolling` en "smooth" y el rAF reescribe la vieja hasta
+  400ms despues (upstream #107 abierto, #168 y #365 cerrados sin fix).
+  `smooth-scroll.tsx` escucha `scroll` en `window` y adopta con
+  `scrollTo(y, { immediate: true })`; el widget de la barra nativa no emite
+  evento DOM (solo se ve el resultado) y el repo no consume `scrollend`.
+  Medido con `scripts/scroll-guard.mjs`: 25 reversiones y -3092px sin el guard,
+  0 y 0px con el.
 - `useScrollToAnchor(64)`: `lerp: 0.1` (sin duracion fija, ver
   `useScrollToTop`); aterriza con el CONTENIDO del
   target bajo el navbar (compensa la suma de `padding-top` de 2 niveles:
