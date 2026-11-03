@@ -172,6 +172,28 @@ un numero nuevo. El orden visual se mantiene porque el retrato esta debajo del
 texto: su trigger siempre dispara despues del de la seccion. En desktop no
 cambia nada: ahi el retrato cae dentro de la banda que ya revela `top 80%`.
 
+### Entradas creadas dentro de `gsap.matchMedia`
+
+Regla: una entrada NO puede ser un tween con `scrollTrigger` propio creado
+dentro de un callback de `gsap.matchMedia` que nace de un cambio de media (una
+rotacion). Ese tween ya esta muerto cuando su trigger dispara y no escribe nada.
+
+Medido con una sonda desechable (Playwright/Chromium, `844x390` -> `390x844`,
+dpr 2) contra un build de produccion del arbol base, cargando en landscape y
+rotando a portrait: el contexto `(max-width: 767px)` SI se creaba al rotar y su
+`ScrollTrigger` SI disparaba (`onEnter` en scroll 720, `progress` 1), pero
+`gsap.getTweensOf(".about-portrait")` devolvia 0 en ese `onEnter` y el tween se
+quedo en `progress` 0 durante las 400 muestras. Resultado para el visitante: la
+imagen en `opacity` 0 con `visibility: hidden` para siempre. La timeline
+hermana creada en el mismo callback (label, title, description) si sobrevivia y
+se reproducia, asi que el fallo es del tween suelto, no del contexto.
+
+Por eso la entrada se construye DENTRO del `onEnter` del trigger con
+`once: true`, que es lo que sobrevive al cambio de media, en vez de pasarle un
+`scrollTrigger` a un `gsap.to`. El estado inicial sale del `gsap.set` de
+siempre. Guarda: `scripts/about-orientation.mjs` (driver, carga en landscape y
+rota) contra `evaluateAboutOrientation` en `scripts/lib/reveal-guards.mjs`.
+
 **About usa el ease de Hero (`power3.out`), no el `power2.out` de las otras
 secciones con scroll.** Las dos secciones son contiguas en la lectura: si Hero
 frena con una curva y About con otra, About se siente mas lento aunque su

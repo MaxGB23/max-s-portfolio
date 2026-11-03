@@ -2,18 +2,21 @@
  * scripts/lib/reveal-guards.mjs
  *
  * Pure verdicts for the DOM guards. No browser and no page here: the drivers
- * (scripts/navbar-deep-link-bg.mjs, scripts/about-reveal-order.mjs) collect
- * samples and hand them over, so scripts/reveal-guards.test.mjs can prove the
- * verdict flips with fixtures instead of a live page.
+ * (scripts/navbar-deep-link-bg.mjs, scripts/about-reveal-order.mjs,
+ * scripts/about-orientation.mjs) collect samples and hand them over, so
+ * scripts/reveal-guards.test.mjs can prove the verdict flips with fixtures
+ * instead of a live page.
  *
  * Why the split: a guard that cannot fail is worse than no guard. The fixtures
  * feed the exact shape of both regressions, so `pnpm test` catches a guard that
  * quietly always passes, while the browser run stays manual on purpose.
  *
- * Both scenarios were calibrated against the pre-fix deployments, not guessed:
+ * Every scenario was calibrated against the pre-fix deployments, not guessed:
  * the navbar case has to be a deep LINK (a plain reload fires a scroll event and
- * hides the bug) and the About case has to scroll slowly (a fast scroll brings
- * the portrait on screen before its tween starts and hides it too).
+ * hides the bug), the About case has to scroll slowly (a fast scroll brings the
+ * portrait on screen before its tween starts and hides it too) and the
+ * orientation case has to LOAD in landscape (a fresh portrait load never builds
+ * the matchMedia context from a media change, which is the whole defect).
  */
 
 const TRANSPARENT_CLASS = "bg-transparent";
@@ -21,6 +24,7 @@ const SCROLL_THRESHOLD_PX = 20;
 const PORTRAIT_START_OPACITY = 0.02;
 const PORTRAIT_DONE_OPACITY = 0.99;
 const PORTRAIT_MIN_VISIBLE_RATIO = 0.3;
+const PORTRAIT_REGRESSION_OPACITY = 0.5;
 
 const check = (ok, label, detail = "") => ({ ok, label, detail });
 const verdict = (checks) => ({ ok: checks.every((c) => c.ok), checks });
@@ -116,9 +120,58 @@ export function evaluateAboutReveal({ samples }) {
   ]);
 }
 
+/**
+ * About portrait after a landscape-to-portrait rotation.
+ *
+ * Regression (measured on a real Android): loading the portfolio in landscape
+ * and rotating to portrait left the portrait at opacity 0 with visibility
+ * hidden FOREVER. The `(max-width: 767px)` matchMedia context WAS created on the
+ * rotation and its own ScrollTrigger DID fire (onEnter at scroll 720, trigger
+ * progress 1), but the standalone `gsap.to(..., { scrollTrigger })` built inside
+ * that callback was already dead when the trigger ran:
+ * gsap.getTweensOf(".about-portrait") returned 0 at onEnter and the tween sat
+ * at progress 0 for every sampled frame, while the sibling timeline built in the
+ * same callback played. The invariant measured here is the outcome: the entrance
+ * completes, it starts with part of the image on screen, and it does not fall
+ * back afterwards.
+ *
+ * @param {{ samples: { y: number, opacity: number, visibility: string, top: number, vh: number }[] }} input
+ */
+export function evaluateAboutOrientation({ samples }) {
+  const maxOpacity = samples.length ? Math.max(...samples.map((s) => s.opacity)) : 0;
+  const startIndex = samples.findIndex((s) => s.opacity > PORTRAIT_START_OPACITY);
+  const start = startIndex === -1 ? null : samples[startIndex];
+  const doneIndex = samples.findIndex((s) => s.opacity >= PORTRAIT_DONE_OPACITY);
+  const after = doneIndex === -1 ? [] : samples.slice(doneIndex + 1);
+  const relapseIndex = after.findIndex((s) => s.opacity < PORTRAIT_REGRESSION_OPACITY);
+
+  return verdict([
+    check(
+      maxOpacity >= PORTRAIT_DONE_OPACITY,
+      "(a) the portrait finished its entrance after the rotation",
+      `maxOpacity=${Number(maxOpacity.toFixed(3))}, frames=${samples.length}`
+    ),
+    check(
+      start !== null && start.top < start.vh,
+      "(b) the entrance starts while the portrait is on screen",
+      start
+        ? `top=${start.top}, vh=${start.vh}, frame=${startIndex}`
+        : `the portrait never became visible, frames=${samples.length}`
+    ),
+    check(
+      relapseIndex === -1,
+      "(c) the portrait stays visible after the entrance",
+      relapseIndex === -1
+        ? `frames after the plateau=${after.length}`
+        : `frame=${doneIndex + 1 + relapseIndex}, opacity=${after[relapseIndex].opacity}`
+    ),
+  ]);
+}
+
 export const GUARD_CONSTANTS = {
   TRANSPARENT_CLASS,
   SCROLL_THRESHOLD_PX,
   PORTRAIT_START_OPACITY,
   PORTRAIT_MIN_VISIBLE_RATIO,
+  PORTRAIT_REGRESSION_OPACITY,
 };

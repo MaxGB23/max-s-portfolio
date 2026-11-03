@@ -13,6 +13,7 @@ import assert from "node:assert/strict";
 import {
   evaluateNavbarDeepLink,
   evaluateAboutReveal,
+  evaluateAboutOrientation,
 } from "./lib/reveal-guards.mjs";
 
 const surfaces = {
@@ -121,4 +122,70 @@ test("About guard: fails when no reveal was observed at all", () => {
   const result = evaluateAboutReveal({ samples: [frame(0, 0, 1200), frame(0, 0, 1100)] });
   assert.equal(result.ok, false);
   assert.equal(result.checks[0].ok, false);
+});
+
+// ---------------------------------------------------------- orientation ---
+
+const rotated = (opacity, top, visibility = "visible", vh = 844) => ({
+  y: 0,
+  opacity,
+  visibility,
+  top,
+  vh,
+});
+
+test("orientation guard: passes after a landscape-to-portrait rotation", () => {
+  const result = evaluateAboutOrientation({
+    samples: [
+      rotated(0, 1200), // measured on the fixed build: entrance runs while entering
+      rotated(0, 800),
+      rotated(0.05, 707),
+      rotated(0.45, 640),
+      rotated(0.85, 470),
+      rotated(1, 430),
+      rotated(1, 300),
+    ],
+  });
+  assert.equal(result.ok, true, failing(result).join("; "));
+});
+
+test("orientation guard: fails when the portrait never becomes visible", () => {
+  const result = evaluateAboutOrientation({
+    samples: [
+      // measured on the pre-fix deployment: dead tween, opacity 0 forever
+      rotated(0, 1200, "hidden"),
+      rotated(0, 900, "hidden"),
+      rotated(0, 640, "hidden"),
+      rotated(0, 430, "hidden"),
+    ],
+  });
+  assert.equal(result.ok, false);
+  assert.deepEqual(failing(result), [
+    "(a) the portrait finished its entrance after the rotation",
+    "(b) the entrance starts while the portrait is on screen",
+  ]);
+});
+
+test("orientation guard: fails when the entrance never finishes", () => {
+  const result = evaluateAboutOrientation({
+    samples: [rotated(0, 800), rotated(0.05, 707), rotated(0.5, 600), rotated(0.5, 500)],
+  });
+  assert.equal(result.ok, false);
+  assert.deepEqual(failing(result), ["(a) the portrait finished its entrance after the rotation"]);
+});
+
+test("orientation guard: fails when the entrance starts offscreen", () => {
+  const result = evaluateAboutOrientation({
+    samples: [rotated(0, 1001), rotated(0.03, 1001), rotated(0.9, 900), rotated(1, 600)],
+  });
+  assert.equal(result.ok, false);
+  assert.deepEqual(failing(result), ["(b) the entrance starts while the portrait is on screen"]);
+});
+
+test("orientation guard: fails when the portrait falls back after the plateau", () => {
+  const result = evaluateAboutOrientation({
+    samples: [rotated(0, 800), rotated(0.05, 707), rotated(1, 600), rotated(1, 500), rotated(0.2, 430)],
+  });
+  assert.equal(result.ok, false);
+  assert.deepEqual(failing(result), ["(c) the portrait stays visible after the entrance"]);
 });
