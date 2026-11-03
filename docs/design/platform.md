@@ -146,6 +146,13 @@
   curva propia, `onComplete` para el aviso de llegada y `lerp` por distancia, que
   el nativo no expone. El argumento "el nativo ya alcanza" solo es cierto con la
   animacion del SO encendida, y la pagina no puede saber en cual esta.
+- **Alcance deliberado:** el dueno del producto corre un Windows sin animaciones
+  (instantaneo por rendimiento, no por accesibilidad) y aun asi quiere scroll
+  autorado AQUI, no en el sistema. La razon es estetica y de superficie: un SO es
+  una herramienta y lo instantaneo se siente correcto en ella; la animacion
+  nativa de los controles se percibe falsa; una landing es una superficie de
+  presentacion y ahi el movimiento es el producto. Por eso la animacion se autora
+  en el sitio en vez de delegarse al SO, y por eso no se "restaura" el nativo.
 
 ## 10. Debug overlay
 
