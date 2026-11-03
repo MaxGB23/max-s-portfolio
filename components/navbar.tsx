@@ -310,7 +310,7 @@ export function Navbar() {
             aria-expanded={mobileOpen}
             aria-controls="mobile-menu"
             aria-label={mobileOpen ? t("nav.aria.closeMenu") : t("nav.aria.openMenu")}
-            className="p-2 rounded-lg text-foreground transition-colors hover:bg-secondary active:bg-secondary aria-expanded:bg-secondary [-webkit-tap-highlight-color:transparent]"
+            className="p-2 rounded-lg text-foreground transition-colors active:bg-secondary aria-expanded:bg-secondary [-webkit-tap-highlight-color:transparent]"
           >
             <AnimatePresence mode="wait" initial={false}>
               <motion.span
