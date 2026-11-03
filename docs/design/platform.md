@@ -30,11 +30,24 @@
 
 ## 8. Infraestructura de scroll
 
-- `SmoothScroll` (`smooth-scroll.tsx`): Lenis SOLO desktop (`window.innerWidth
-  >= 768`); config `duration: 0.6`, easing expo-out, `smoothWheel: true`,
-  `wheelMultiplier: 1`; `gsap.registerPlugin(ScrollTrigger)`,
+- `SmoothScroll` (`smooth-scroll.tsx`): Lenis SOLO desktop (gate reactivo
+  sobre `(min-width: 768px)`); config `duration: 0.6`, easing expo-out,
+  `smoothWheel: true`, `wheelMultiplier: 1`;
+  `gsap.registerPlugin(ScrollTrigger)`,
   `lenisInstance.on("scroll", ScrollTrigger.update)` con rAF nativo y
   `gsap.ticker.lagSmoothing(0)`.
+- **El gate de Lenis es reactivo, no una lectura unica al montar.**
+  `smooth-scroll.tsx` escucha `matchMedia("(min-width: 768px)")` y arranca o
+  destruye Lenis en cada cambio de media. Antes el gate era un
+  `window.innerWidth < 768` leido una sola vez en el montaje: un telefono que
+  cargaba en landscape (844px) creaba Lenis y lo mantenia VIVO despues de rotar
+  a portrait, donde el resto de la app asume `lenis === null`
+  (`pointer-gestures.md` 7: en mobile el overflow es el unico scroll lock). El
+  teardown devuelve ademas `gsap.ticker.lagSmoothing(500, 33)`, para no dejar al
+  mobile con el ajuste que Lenis le puso a GSAP en desktop. Es un defecto
+  INDEPENDIENTE del retrato de About: con el gate ya reactivo el retrato seguia
+  roto, y esa causa vive en `section-animations.md` ("Entradas creadas dentro de
+  `gsap.matchMedia`").
 - **`duration` 0.6, no 1: medido.** Con `scripts/audit-projects.mjs` (desktop
   2048x1280 dpr1.25, gesto `--wheel`, iGPU) la animacion de 1s deja 7.8% de
   frames avanzando menos de la mitad del paso y la pagina llega tarde respecto
@@ -141,8 +154,9 @@
   `project-detail.tsx:126,196`, y `ScrollProgress` se renderiza en todas las
   rutas (`app/page.tsx:16`, `app/proyectos/[id]/page.tsx:48`). Solo moveria el
   fetch a un chunk async.
-- El 768 es un literal en `smooth-scroll.tsx:14`, NO vive en
-  `lib/breakpoints.ts` (seccion 3): no lo centralices sin releer esta seccion.
+- El 768 es un literal en `smooth-scroll.tsx` (la media query del gate), NO
+  vive en `lib/breakpoints.ts` (seccion 3): no lo centralices sin releer esta
+  seccion.
   `ScrollTrigger` no depende de que Lenis este vivo, asi que el gate no puede
   romper animaciones de scroll. Nota: `import gsap from "gsap"` resuelve por
   `module: index.js` (bundle completo, 71.1 KB), no a un core minimo.
