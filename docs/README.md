@@ -80,7 +80,7 @@ ese archivo es el indice de archivos, no de contenido.
 | Carpeta | Vida | Obligacion |
 |---|---|---|
 | `docs/design/` | VIVO | debe ser verdad hoy |
-| `docs/rfcs/` | DECISION | se congela al aprobar; se supera con otro |
+| `docs/rfcs/` | DECISION | se congela al aprobar; se supera con otro; el STATUS se escribe antes del merge |
 | `docs/issues/` | INSTANTANEA | fechada; nunca finge ser actual |
 | `docs/projects/` | DECISION o TRABAJO | segun el doc; si no se sabe, no es canon |
 | `odd/tasks/` | TRABAJO | cierra al mergear |
@@ -96,6 +96,12 @@ algo que ya no es cierto, no se reescribe: dejaria de ser el registro de lo que 
 decidio. Lo que siga siendo verdad se muda al canon; lo que murio, a
 `docs/design/DEAD.md`. El linter no los lee como verdad, asi que nunca te va a
 pedir que los toques.
+
+Por eso un bloque `STATUS` no afirma nada que ocurra despues del merge: lleva
+fecha y numero de PR (`APROBADO (2026-10-30), PR #19`), que existen cuando se
+escribe, y nunca el hash del merge, que se descubre con `git log -- <rfc>`. Un
+bloque que promete algo posterior al merge solo se cumple rompiendo la regla de
+arriba.
 
 ## La regla que sustituye a "esto requiere docs?"
 
