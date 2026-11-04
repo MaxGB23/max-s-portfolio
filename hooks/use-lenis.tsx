@@ -81,6 +81,11 @@ const MOBILE_SCROLL_MS = 560;
 const MOBILE_SCROLL_SHORT_MS = 320;
 /** Distance at which the trip is considered long: full `MOBILE_SCROLL_MS`. */
 const MOBILE_SCROLL_RAMP_PX = 400;
+/** Delay between the landing and the arrival cue. At 560ms from the tap, a cue
+ *  on the landing frame reads as part of the deceleration instead of as the
+ *  answer to the click (owner feedback on a real phone), so the two beats are
+ *  separated. This is a beat, not a distance: it does not scale. */
+const MOBILE_CUE_DELAY_MS = 180;
 
 /** Cancels the in-flight mobile jump: a newer one owns the scroll. */
 let cancelMobileScroll: (() => void) | null = null;
@@ -211,7 +216,17 @@ export function useScrollToAnchor(navbarHeight = 64) {
         // Chrome Android cuando hay cambios de layout concurrentes (cierre del
         // menú móvil) — el scroll se cancela y el link parece muerto; el salto
         // propio no depende de esa animación del navegador.
-        animateScrollTo(y, () => announceArrival(href));
+        // El aviso espera `MOBILE_CUE_DELAY_MS` tras el aterrizaje, y el token
+        // invalida el aviso pendiente si mientras tanto se pulso otra ancla: es
+        // el mismo `arrivalToken` que protege el backstop de desktop, y evita
+        // que un hash viejo se escriba 180ms tarde.
+        const token = ++arrivalToken;
+        animateScrollTo(y, () => {
+          window.setTimeout(() => {
+            if (token !== arrivalToken) return;
+            announceArrival(href);
+          }, MOBILE_CUE_DELAY_MS);
+        });
       }
       return true;
     },

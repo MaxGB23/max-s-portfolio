@@ -113,14 +113,17 @@
   salto — el nativo tambien cede al dedo — y un salto nuevo cancela el anterior;
   y el aviso de llegada pasa a ser una senal real, asi que el `setTimeout(1000)`
   que habia se elimino, porque podia anunciar la llegada antes de aterrizar.
-  Contrato verificado por el script: el anillo dispara a +12..53 ms del ultimo
-  movimiento previo y nunca antes en los dos destinos, y **tambien dispara si el
-  salto se interrumpe con un toque** — el viaje cede al dedo, pero el ancla se
+  Contrato verificado por el script: el anillo dispara `MOBILE_CUE_DELAY_MS`
+  (180 ms) DESPUES del ultimo movimiento — en el mismo frame se leia como parte
+  del frenado y no como la respuesta al click (feedback del dueno en telefono
+  real) —, nunca antes, en los dos destinos, y **tambien dispara si el salto se
+  interrumpe con un toque** — el viaje cede al dedo, pero el ancla se
   pulso y el aviso se debe; es la misma regla que sostiene el backstop de
   desktop, porque un aviso perdido es peor que uno sobre un destino del que el
   visitante se aparto. Lo unico que no anuncia es un salto reemplazado por otro:
   ahi el aviso escribiria el hash del destino viejo un frame antes de que arranque
-  el nuevo. No esta en `pnpm qa` (`verification-policy.md` 5);
+  el nuevo, y el mismo `arrivalToken` invalida el aviso pendiente de un salto
+  reemplazado, para que el hash viejo no se escriba 180 ms tarde. No esta en `pnpm qa` (`verification-policy.md` 5);
   `PW_ENGINE=chromium` existe solo para separar "el tween pinta pocos frames" de
   "este rig no tiene GPU".
 - `useScrollToTop`: `lerp: 0.1`, sin duracion fija. El viaje converge en
