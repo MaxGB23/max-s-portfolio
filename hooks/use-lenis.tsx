@@ -91,8 +91,10 @@ function easeOutCubic(t: number) {
 
 /**
  * Animates `window.scrollY` to `y` on the mobile path (Lenis absent).
- * `onDone` runs only when the trip lands: an interrupted jump announces
- * nothing, because the visitor is no longer at the target the anchor named.
+ * `onDone` runs when the trip lands OR when the visitor interrupts it with a
+ * gesture: the tap on the link was registered, so the arrival cue is owed. It is
+ * skipped only when a NEWER jump supersedes this one, because that announcement
+ * would write the outdated target's hash one frame before the new jump starts.
  */
 function animateScrollTo(y: number, onDone?: () => void) {
   cancelMobileScroll?.();
@@ -119,13 +121,19 @@ function animateScrollTo(y: number, onDone?: () => void) {
     if (settled) return;
     settled = true;
     cancelAnimationFrame(frame);
-    window.removeEventListener("touchstart", cancel);
-    window.removeEventListener("wheel", cancel);
-    window.removeEventListener("keydown", cancel);
-    if (cancelMobileScroll === cancel) cancelMobileScroll = null;
+    window.removeEventListener("touchstart", interrupt);
+    window.removeEventListener("wheel", interrupt);
+    window.removeEventListener("keydown", interrupt);
+    if (cancelMobileScroll === supersede) cancelMobileScroll = null;
     if (announce) onDone?.();
   }
-  const cancel = () => settle(false);
+  // A finger, wheel or key ends the trip where it was left — native smooth
+  // scrolling yields exactly like that — but the cue still fires: a missing
+  // arrival cue is worse than one for a target the visitor nudged away from
+  // (the same rule that drives the desktop `ARRIVAL_FALLBACK_MS` backstop).
+  const interrupt = () => settle(true);
+  // A newer jump ends the older one silently; see the contract above.
+  const supersede = () => settle(false);
 
   function step(now: number) {
     const t = Math.min((now - startedAt) / duration, 1);
@@ -137,10 +145,10 @@ function animateScrollTo(y: number, onDone?: () => void) {
     frame = requestAnimationFrame(step);
   }
 
-  cancelMobileScroll = cancel;
-  window.addEventListener("touchstart", cancel, { passive: true });
-  window.addEventListener("wheel", cancel, { passive: true });
-  window.addEventListener("keydown", cancel);
+  cancelMobileScroll = supersede;
+  window.addEventListener("touchstart", interrupt, { passive: true });
+  window.addEventListener("wheel", interrupt, { passive: true });
+  window.addEventListener("keydown", interrupt);
   frame = requestAnimationFrame(step);
 }
 

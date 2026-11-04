@@ -203,6 +203,24 @@ for (const target of TARGETS) {
   }
 }
 
+// C: an accidental touch during the jump. The trip yields where the finger
+// left it, but the arrival cue is STILL owed: the tap on the link registered,
+// and losing the cue on a stray touch was the reported defect.
+{
+  const target = TARGETS[0];
+  if (!(await reset())) failures.push(`${target.label}: la pagina no volvio a scrollY 0 (interrupted)`);
+  await page.evaluate(arm, target.id);
+  await page.click('button[aria-controls="mobile-menu"]');
+  await page.waitForTimeout(500);
+  await page.click(`#mobile-menu a[href="#${target.id}"]`);
+  await page.waitForTimeout(250);
+  await page.touchscreen.tap(VIEWPORT.width / 2, VIEWPORT.height / 2);
+  await page.waitForTimeout(1200);
+  const stats = analyze(await page.evaluate(readSamples));
+  rows.push({ target: target.label, mode: "interrupted", ...stats });
+  if (!stats.ringFired) failures.push(`${target.label}: el toque corto el viaje y el anillo no se disparo`);
+}
+
 const ratio = (mode) => {
   const times = rows.filter((r) => r.mode === mode && r.travel > 0).map((r) => r.travelMs);
   if (times.length < 2) return "n/a";
