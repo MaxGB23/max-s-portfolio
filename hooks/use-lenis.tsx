@@ -56,11 +56,99 @@ function announceArrival(href: string) {
   window.setTimeout(() => target.classList.remove("arrive"), 2200);
 }
 
+// --- Mobile programmatic scroll (no Lenis) ---------------------------------
+// `lenis.scrollTo(y, { lerp: 0.1 })` advances a FRACTION of the remaining
+// distance per frame, so a 300px hop and a 3000px trip feel the same. The
+// native `window.scrollTo({ behavior: "smooth" })` the mobile path fell back to
+// does not: the UA owns the duration, caps the velocity, and derives one from
+// the distance — so a near anchor crawls and the farthest one blurs past.
+//
+// So the jump is authored here, with the same arrival contract as desktop and a
+// REAL completion signal: the fixed 1000ms timer it replaces could announce the
+// arrival before a long trip had landed. Only the tap is animated — touch drag,
+// wheel and keys keep the browser's scrolling, and all three cancel the jump,
+// the same way native smooth scrolling yields to the visitor.
+//
+// **Duration does NOT scale with distance.** Measured on WebKit at 390x844: the
+// UA takes ~200ms for a 995px trip and ~172ms for a 7904px one, so the far
+// target travels 11x faster (108,357 px/s, 2145px in a single frame) — it reads
+// as a teleport, while the near one reads as a scroll. Lenis has the opposite
+// profile: `lerp` covers ~95% of the trip in ~0.5s at ANY distance, which is the
+// feel being restored. A long trip must therefore still spend its distance, not
+// compress it into the near-trip budget.
+const MOBILE_SCROLL_MS = 560;
+/** Short hops ramp down to this, so a 60px correction is not a 560ms creep. */
+const MOBILE_SCROLL_SHORT_MS = 320;
+/** Distance at which the trip is considered long: full `MOBILE_SCROLL_MS`. */
+const MOBILE_SCROLL_RAMP_PX = 400;
+
+/** Cancels the in-flight mobile jump: a newer one owns the scroll. */
+let cancelMobileScroll: (() => void) | null = null;
+
+function easeOutCubic(t: number) {
+  return 1 - (1 - t) ** 3;
+}
+
+/**
+ * Animates `window.scrollY` to `y` on the mobile path (Lenis absent).
+ * `onDone` runs only when the trip lands: an interrupted jump announces
+ * nothing, because the visitor is no longer at the target the anchor named.
+ */
+function animateScrollTo(y: number, onDone?: () => void) {
+  cancelMobileScroll?.();
+
+  const start = window.scrollY;
+  const delta = y - start;
+  // Already there (a repeated tap, or a target a pixel off): the arrival cue is
+  // the whole answer, so fire it now instead of animating nothing.
+  if (Math.abs(delta) < 1) {
+    window.scrollTo({ top: y });
+    onDone?.();
+    return;
+  }
+
+  const duration =
+    MOBILE_SCROLL_SHORT_MS +
+    (MOBILE_SCROLL_MS - MOBILE_SCROLL_SHORT_MS) *
+      Math.min(Math.abs(delta) / MOBILE_SCROLL_RAMP_PX, 1);
+  const startedAt = performance.now();
+  let frame = 0;
+  let settled = false;
+
+  function settle(announce: boolean) {
+    if (settled) return;
+    settled = true;
+    cancelAnimationFrame(frame);
+    window.removeEventListener("touchstart", cancel);
+    window.removeEventListener("wheel", cancel);
+    window.removeEventListener("keydown", cancel);
+    if (cancelMobileScroll === cancel) cancelMobileScroll = null;
+    if (announce) onDone?.();
+  }
+  const cancel = () => settle(false);
+
+  function step(now: number) {
+    const t = Math.min((now - startedAt) / duration, 1);
+    window.scrollTo({ top: start + delta * easeOutCubic(t) });
+    if (t >= 1) {
+      settle(true);
+      return;
+    }
+    frame = requestAnimationFrame(step);
+  }
+
+  cancelMobileScroll = cancel;
+  window.addEventListener("touchstart", cancel, { passive: true });
+  window.addEventListener("wheel", cancel, { passive: true });
+  window.addEventListener("keydown", cancel);
+  frame = requestAnimationFrame(step);
+}
+
 /**
  * Scroll to a hash target using Lenis, compensating for the fixed navbar height
  * and the target's own padding-top (so its content, not its box, lands under
  * the navbar).
- * Falls back to native scrollIntoView when Lenis is unavailable.
+ * Falls back to the authored mobile jump when Lenis is unavailable.
  * Reflects the target hash on arrival (see reflectHashInUrl).
  */
 export function useScrollToAnchor(navbarHeight = 64) {
@@ -110,15 +198,12 @@ export function useScrollToAnchor(navbarHeight = 64) {
         lenis.scrollTo(y, { lerp: 0.1, onComplete: fire });
         window.setTimeout(fire, ARRIVAL_FALLBACK_MS);
       } else {
-        // Mobile real (sin Lenis): el mismo cálculo de offset que desktop.
-        // scrollIntoView({smooth}) es flaky en Chrome Android cuando hay
-        // cambios de layout concurrentes (cierre del menú móvil) — el scroll
-        // se cancela y el link parece muerto.
-        window.scrollTo({ top: y, behavior: "smooth" });
-        // Native smooth scroll has no completion signal; schedule the arrival
-        // just past the typical landing (mobile is not the broken perception
-        // case — that is desktop — so a close approximation is fine).
-        window.setTimeout(() => announceArrival(href), 1000);
+        // Mobile real (sin Lenis): el mismo cálculo de offset que desktop y el
+        // mismo aviso al aterrizar. `scrollIntoView({smooth})` es flaky en
+        // Chrome Android cuando hay cambios de layout concurrentes (cierre del
+        // menú móvil) — el scroll se cancela y el link parece muerto; el salto
+        // propio no depende de esa animación del navegador.
+        animateScrollTo(y, () => announceArrival(href));
       }
       return true;
     },
@@ -141,7 +226,9 @@ export function useScrollToTop() {
       // sensacion a cualquier distancia.
       lenis.scrollTo(0, { lerp: 0.1 });
     } else {
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      // Same authored jump as the anchor path: "Inicio" must answer like an
+      // anchor tap, not at whatever speed the UA picks for the distance.
+      animateScrollTo(0);
     }
   }, [lenis]);
 }

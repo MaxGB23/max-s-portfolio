@@ -87,8 +87,38 @@
   `null` borra el estado de navegacion de Next y mata la transicion en vuelo,
   ver `docs/issues/navigation-race.md`; aborta si el ancla no existe en el
   documento actual, y aplica la clase `arrive` con reflow forzado; mobile:
-  `window.scrollTo` + timeout 1000ms). NO usa `:target`
+  salto propio, ver el bullet siguiente). NO usa `:target`
   (replaceState no lo actualiza, ver seccion 9).
+- **El salto de ancla en mobile es propio (`animateScrollTo`), no
+  `window.scrollTo({ behavior: "smooth" })`.** Medido el 2026-11-03 sobre build
+  de produccion 390x844 dpr2 (`node scripts/mobile-anchor-jump.mjs`). El defecto,
+  en WebKit (el unico motor que anima el nativo: Chromium headless resuelve el
+  viaje en UN frame de 6 ms, el mismo enmascaramiento que ya describe
+  `docs/issues/mobile-menu-scroll-cancelled.md` 3): el nativo tarda 249 ms en
+  1022 px y 222 ms en 9865 px — la duracion la fija el motor y NO crece con la
+  distancia, asi que el viaje lejano cruza 8998 px en un solo frame y se lee como
+  teletransporte, mientras el cercano se lee como scroll. Es la misma trampa que
+  `useScrollToTop` evita en desktop al no usar `duration`: una duracion que no
+  mira la distancia. `animateScrollTo` escribe el viaje con
+  `requestAnimationFrame` + `easeOutCubic` y una banda de duracion
+  (`MOBILE_SCROLL_SHORT_MS` 320 ms, que sube a `MOBILE_SCROLL_MS` 560 ms al
+  alcanzar `MOBILE_SCROLL_RAMP_PX` 400 px). La distancia NO entra en la duracion:
+  comprimir 9865 px en el presupuesto de un salto corto es exactamente el efecto
+  que se quita, asi que el tramo lejano gasta su recorrido. Medido en Chromium
+  (cadencia real): 533 ms / 1022 px en 90 frames y 552 ms / 9866 px en 49 frames,
+  o sea spread x1.04 entre el destino cercano y el lejano. Medido en WebKit: los
+  mismos dos viajes en 8 frames y 441/855 ms — ahi el numero largo es coste de
+  pintura del rig (huecos de hasta 424 ms), no la curva, porque el tween escribe
+  una vez por frame. Dos efectos buscados: un toque, rueda o tecla cancelan el
+  salto — el nativo tambien cede al dedo — y un salto nuevo cancela el anterior;
+  y el aviso de llegada pasa a ser una senal real, asi que el `setTimeout(1000)`
+  que habia se elimino, porque podia anunciar la llegada antes de aterrizar.
+  Contrato verificado por el script en los dos destinos: el anillo dispara a
+  +12..53 ms del ultimo movimiento previo, nunca antes, y si el salto se
+  interrumpe no hay aviso, porque el visitante ya no esta en el destino que el
+  ancla nombraba. No esta en `pnpm qa` (`verification-policy.md` 5);
+  `PW_ENGINE=chromium` existe solo para separar "el tween pinta pocos frames" de
+  "este rig no tiene GPU".
 - `useScrollToTop`: `lerp: 0.1`, sin duracion fija. El viaje converge en
   `ln(distancia)/6` segundos: ~0,9s a 300px, ~1,2s a 1200px, ~1,5s a 8000px
   (medido: 1241px -> 1260ms; con `duration` fija eran 2s para cualquier
@@ -100,13 +130,16 @@
   URL igual queda sin ancla.
 - **Contrato de los dos caminos de navegación (`closeMenuThenScroll`)**: el
   scroll programático NUNCA arranca en la misma tarea que cierra el menú móvil.
-  En mobile el scroll es nativo (`window.scrollTo({ behavior: "smooth" })`, sin
-  Lenis) y el navegador lo cancela si el exit del menú (`height: auto -> 0`)
-  empieza en el mismo frame: el link parece muerto. Se cierra primero y se
-  espera el cierre commiteado (doble rAF); con el menú ya cerrado (desktop) el
-  scroll sale en el acto, sin rAF. Ancla e Inicio comparten UNA implementación a
-  propósito: cuando cada camino llevaba su propio orden, el que quedó fuera se
-  rompió dos veces (`docs/issues/mobile-menu-scroll-cancelled.md`).
+  Hoy el salto mobile es propio (`animateScrollTo`, bullet anterior), así que el
+  motor ya no puede cancelarlo a mitad; el doble rAF se conserva porque el
+  contrato es UNO solo para ancla e Inicio (cuando cada camino llevaba su propio
+  orden, el que quedó fuera se rompió dos veces) y porque la posición de partida
+  se muestrea con el panel ya cerrando. Histórico, y la razón del orden actual:
+  con el `window.scrollTo({ behavior: "smooth" })` de entonces el navegador
+  cancelaba el scroll si el exit del menú (`height: auto -> 0`) empezaba en el
+  mismo frame, y el link parecía muerto. Con el menú ya cerrado (desktop) el
+  scroll sale en el acto, sin rAF. El relato completo del defecto y las dos
+  mitades que se arreglaron por separado: `docs/issues/mobile-menu-scroll-cancelled.md`.
   **Verificación**: no se reproduce en Chromium ni en el emulador mobile de
   DevTools (ahí los smooth scroll programáticos se resuelven sin animación, o
   sea sin la ventana donde ocurre la cancelación). La aserción que distingue los
