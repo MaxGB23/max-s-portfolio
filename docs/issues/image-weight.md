@@ -1,6 +1,7 @@
 # Peso de las imágenes iniciales: hero sin cambios, About con una compresión menos
 
 > [!NOTE] Estado: CERRADO el 2026-11-04. Hero: no se toca. About: asset reescalado a 1080 px.
+> Rastro: issue #33, PR #34, merge `05356fb` en `main`.
 
 La pregunta era si el hero y About pueden pesar menos en mobile, que son las dos imágenes que
 cargan al inicio. La respuesta es distinta para cada una: **el hero no tiene margen sin perder
