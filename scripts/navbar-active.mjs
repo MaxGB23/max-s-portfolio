@@ -8,8 +8,9 @@
 //       are 0; hovering the active link keeps the underline (D1: no flicker);
 //       back to top -> the hero clears again
 //   (c) 390px, menu open -> link label axis = 44px, CTA label = 44px, CTA
-//       spans the full content width, gap links->CTA ~ 40px vs 24px between
-//       links; the open menu mirrors the same active state (T3)
+//       spans the full content width, CTA target = 44px, gap links->CTA =
+//       24px vs 12px between links; the open menu mirrors the same active
+//       state (T3)
 //   (d) hovering an INACTIVE desktop link: exactly ONE underline (hover takes
 //       the single channel at full strength and the active line collapses —
 //       D10); aria-current persists on the active link; pointer away restores
@@ -234,10 +235,10 @@ console.log("\n==== mobile 390x844 - menu geometry ====");
     const container = document.querySelector("#mobile-menu > div");
     if (!container) return null;
     // Button asChild renderiza el <a> del CTA como hijo directo (Slot no crea
-    // wrapper): los links de navegación son los <a> SIN data-slot.
-    const links = [...container.children].filter(
-      (el) => el.tagName === "A" && !el.hasAttribute("data-slot")
-    );
+    // wrapper): los links de navegación son los <a> SIN data-slot. Se consulta
+    // por descendencia, no por hijos directos: los links viven en su propio
+    // grupo para que el gap de la lista no componga la separación del CTA.
+    const links = [...container.querySelectorAll('a:not([data-slot])')];
     const cta = container.querySelector('[data-slot="button"]');
     // Left edge del label: primer rect de contenido (Range) — excluye bordes
     // y paddings, mide el eje REAL del texto.
@@ -316,7 +317,8 @@ console.log("\n==== mobile 390x844 - menu geometry ====");
 
       // (c3) targets y ritmo: link box = 44px (py-2.5, Apple HIG), gap entre
       // targets = 12px (gap-3 >= 8dp Material) → ritmo texto-a-texto = 56px =
-      // idéntico al gap-8 histórico; 40px de separación al CTA (gap-3 + mt-7).
+      // idéntico al gap-8 histórico; CTA box = 44px (text-base + py-2.5) y
+      // 24px de separación (mt-6, un solo token: nunca gap + margen).
       for (const l of geo.links) {
         const h = l.box.bottom - l.box.top;
         check(
@@ -335,9 +337,15 @@ console.log("\n==== mobile 390x844 - menu geometry ====");
       }
       const ctaGap = geo.cta.box.top - geo.links[geo.links.length - 1].box.bottom;
       check(
-        Math.abs(ctaGap - 40) <= 2,
-        "(c) gap last link -> CTA = 40px (gap-3 + mt-7)",
+        Math.abs(ctaGap - 24) <= 2,
+        "(c) gap last link -> CTA = 24px (mt-6)",
         `measured=${r1Print(ctaGap)}px`
+      );
+      const ctaH = geo.cta.box.bottom - geo.cta.box.top;
+      check(
+        Math.abs(ctaH - 44) <= 2,
+        "(c) CTA target height = 44px (text-base + py-2.5)",
+        `measured=${r1Print(ctaH)}px`
       );
     } else {
       check(false, "(c) CTA button found in menu", "missing [data-slot=button]");
@@ -363,11 +371,7 @@ console.log("\n==== mobile 390x844 - menu geometry ====");
   const menuState = await page.evaluate(() => {
     const r1 = (n) => Math.round(n * 10) / 10;
     const container = document.querySelector("#mobile-menu > div");
-    const links = container
-      ? [...container.children].filter(
-          (el) => el.tagName === "A" && !el.hasAttribute("data-slot")
-        )
-      : [];
+    const links = container ? [...container.querySelectorAll('a:not([data-slot])')] : [];
     return links.map((a) => {
       const u = a.querySelector("span span");
       const r = u?.getBoundingClientRect();
@@ -440,11 +444,7 @@ console.log("\n==== tablet 768x1024 portrait - anchor landing spy ====");
 
     const state = await page.evaluate(() => {
       const container = document.querySelector("#mobile-menu > div");
-      const links = container
-        ? [...container.children].filter(
-            (el) => el.tagName === "A" && !el.hasAttribute("data-slot")
-          )
-        : [];
+      const links = container ? [...container.querySelectorAll('a:not([data-slot])')] : [];
       return links.map((a) => ({
         href: a.getAttribute("href"),
         aria: a.getAttribute("aria-current"),
