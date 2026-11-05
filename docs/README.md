@@ -55,6 +55,7 @@ docs duenos de `AGENTS.md`.
 | Como se comporta el lightbox con teclado? | trap de foco, lecciones de siete rondas de QA | [pointer-gestures.md](design/pointer-gestures.md) |
 | Como se anima cada seccion y por que? | patron unificado y excepciones | [section-animations.md](design/section-animations.md) |
 | Se rompio en silencio alguna entrada de la pagina (navbar, About, ...)? | `pnpm qa` lista y corre los guards manuales sobre un server; cada veredicto vive en `pnpm test` | [iteration-guide.md](design/iteration-guide.md) 12 |
+| Que capa de verificacion atrapa cada error y por que esta ahi? | hooks, CI, mediciones, qa y revision, de lo barato a lo caro | [verification-layers.md](verification-layers.md) |
 | Por que se tomo esta decision y no otra? | RFC fechado; se congela al aprobar | [docs/rfcs/](rfcs/) |
 | Por que pasaba este bug? | auditoria o incidencia fechada con su metodo (rendimiento, navegacion, telefono vs devtools) | [docs/issues/](issues/) |
 | Que se esta trabajando ahora? | tarea ODD abierta, cierra al mergear | [odd/tasks/](../odd/tasks/) |
