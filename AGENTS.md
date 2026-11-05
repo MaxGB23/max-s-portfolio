@@ -11,7 +11,8 @@ Código, comentarios, commits, ramas, README, issues y PRs en inglés; este arch
 - Si el árbol ya coincide con la decisión y la comprobación pasa, cierra: no re-audites, no repitas `git diff` ni vuelvas a preguntar lo ya respondido.
 
 ### Git
-- **Push = deploy.** Un push a `main` publica en producción y un push a una rama crea una preview en Vercel: se pide aprobación y se agrupa (un push por lote de work units, nunca uno por commit). Commitear es local y libre; pushear es entregar.
+- **Push = deploy.** Un push a `main` publica en producción; uno a una rama crea una preview en Vercel. Se pide aprobación y se agrupa por lote de work units, nunca uno por commit.
+- Commitear es local y libre; pushear es entregar.
 - Si el lote incluye commits que no deben publicarse todavía, dilo antes de pushear: `git log origin/main..HEAD --oneline` es la prueba de qué viaja en ese push.
 - Antes de operaciones destructivas de git (`git checkout --`, `git reset --hard`, force-push): ejecuta `git status` y revisa el diff. Si el archivo tiene cambios no commiteados, confirma explícitamente qué se pierde antes de revertir.
 
