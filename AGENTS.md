@@ -26,12 +26,12 @@ Código, comentarios, commits, ramas, README, issues y PRs en inglés; este arch
 - Siempre usar pnpm.
 - No hay linter ni formatter: el "lint" de este repo es `pnpm lint:docs` + `pnpm audit:i18n`. Antes de pushear: `pnpm typecheck`, `pnpm test`, `pnpm lint:docs`, `pnpm audit:i18n` y `pnpm build`; son herméticos y son exactamente lo que corre CI.
 - Esa lista no es toda la verificación: la capa de navegador (`pnpm qa`) y los scripts de `scripts/` que miden layout, timeline o scroll son manuales a propósito, necesitan un server y CI no los corre. Su dueño es `docs/design/iteration-guide.md` 12.
-- CI corre en cada push a main y en cada PR: un push directo sin PR tambien se verifica, pero despues de publicar, asi que esa corrida local va antes del push. El hook local es mas chico a proposito: valida el gate de docs (solo si se toca `docs/` o este archivo) y el rastro `Docs:`/`Risk:`, no typecheck ni tests.
+- CI corre en cada push a main y en cada PR: un push directo sin PR también se verifica, pero después de publicar, así que esa corrida local va antes del push. El hook local es más chico a propósito: valida el gate de docs (solo si se toca `docs/` o este archivo) y el rastro `Docs:`/`Risk:`, no typecheck ni tests.
 - Un bug que solo aparece en un telefono real no se cierra con Chromium ni con el emulador mobile de DevTools: se verifica en WebKit (`npx playwright install webkit`; `scripts/navbar-active.mjs` ya lo usa) o en el dispositivo.
 
 ### Dev servers (bajo demanda; el pase visual es del usuario)
 - Se levanta uno solo cuando una medicion lo necesita (los scripts de `scripts/` que miden layout o timeline exigen build de produccion); la lectura visual sigue siendo del usuario. Detalle en `iteration-guide.md` 8.
-- Puerto por defecto `3000` (scripts de QA incluidos, via `scripts/audit-base.mjs`: no hardcodear URLs); si esta ocupado, el siguiente libre. UN solo server por defecto; dos en paralelo solo si el usuario pide comparacion A/B.
+- Puerto por defecto `3000` (scripts de QA incluidos, vía `scripts/audit-base.mjs`: no hardcodear URLs); si está ocupado, el siguiente libre. UN solo server por defecto; dos en paralelo solo si el usuario pide comparación A/B.
 - Lo que arrancas, lo cierras: sondear el puerto antes de asumir, nunca matar una instancia que responde, y tratar `Unable to acquire lock` sin respuesta como zombie (matar solo esa).
 - Un comando con timeout largo no reporta progreso: no encadenar arranque + build sin necesidad.
 
@@ -42,7 +42,8 @@ Código, comentarios, commits, ramas, README, issues y PRs en inglés; este arch
 - **Copias entre worktrees/ramas:** Antes de copiar archivos entre worktrees o ramas, verificar con `git diff <origen> <destino> -- <archivo>` que la versión de origen no sea más antigua que la del destino. Si hay diferencias a favor del destino, no copiar — aplicar los cambios manualmente en el destino.
 
 ### Código fuente y sintaxis
-- Usar siempre caracteres ASCII estándar para sintaxis y operadores. Nunca sustituir caracteres ASCII por caracteres Unicode visualmente similares.
+- El texto en español lleva sus acentos y signos: los archivos son UTF-8 y node, el gate, git y las herramientas del asistente los manejan bien. No se escribe `documentacion` por miedo al encoding.
+- La prohibición es solo en sintaxis y operadores: nunca un carácter Unicode parecido a uno ASCII (`-` no es `–` ni `−`, las comillas son `"` y no las tipográficas, y el espacio es U+0020, no el no separable). Rompe parsers y crea bugs que no se ven.
 
 ### Internacionalización
 - Todo texto visible va como clave en `data/translations.ts` (ES + EN) y se renderiza con `t()`; nunca hardcodear. Mini guía: `docs/i18n.md`.
@@ -63,9 +64,10 @@ Código, comentarios, commits, ramas, README, issues y PRs en inglés; este arch
   | familias, escala, tracking, OpenType | `docs/design/typography-families.md` |
   | botones, gestos de puntero | `docs/design/buttons.md`, `docs/design/pointer-gestures.md` |
   | proceso y checklist de iteración | `docs/design/iteration-guide.md` |
-- Todo commit que toque `docs/` o `AGENTS.md` pasa por el gate: lo corre el hook `pre-commit` (una vez por clon, `pnpm hooks:install`); si editaste un doc de mas de 120 lineas, `pnpm docs:toc --write` en el mismo commit. El detalle operativo vive en `docs/README.md`.
+  | hooks, CI, qa, scripts de medición, orden de las capas | `docs/verification-layers.md` |
+- Todo commit que toque `docs/` o `AGENTS.md` pasa por el gate: lo corre el hook `pre-commit` (una vez por clon, `pnpm hooks:install`); si editaste un doc de más de 120 líneas, `pnpm docs:toc --write` en el mismo commit. El detalle operativo vive en `docs/README.md`.
 - Al cerrar un track, antes del push: las tres preguntas del gate y `git diff --diff-filter=D --name-only <base>...HEAD`.
-- El estado de una tarea o un RFC se escribe como hecho verificable (rama y PR, con fecha), no como adjetivo; nunca el hash del merge, que aun no existe.
+- El estado de una tarea o un RFC se escribe como hecho verificable (rama y PR, con fecha), no como adjetivo; nunca el hash del merge, que aún no existe.
 - Al retirar un símbolo o técnica, añade su fila a `docs/design/DEAD.md` en el mismo work unit (solo símbolos que ya no existen).
 - Punto de entrada, vida de cada carpeta, reglas de tamaño e índice del canon: `docs/README.md`.
 - Este archivo no pasa de 80 líneas: si crece, el detalle se muda a `docs/README.md`, donde el gate lo puede ver.
