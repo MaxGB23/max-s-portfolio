@@ -46,10 +46,17 @@ export function StackIcon({ name, className, labelClassName }: StackIconProps) {
   if (brandFile) {
     return (
       <img
-        src={`/brands/${brandFile}`}
+        src={`/brands/${brandFile.replace(/\.svg$/, ".webp")}`}
         alt=""
         aria-hidden="true"
         draggable={false}
+        // Explicit intrinsic size and async decode: the previous markup had
+        // neither, and the SVGs declared 800x800 while being painted at 20
+        // device px. See the header of scripts/brand-icons.mjs for why these
+        // are bitmaps and not SVG any more.
+        width={20}
+        height={20}
+        decoding="async"
         className={className}
       />
     )

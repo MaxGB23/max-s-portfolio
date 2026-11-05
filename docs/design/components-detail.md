@@ -44,6 +44,22 @@
   group-hover:text-foreground`.
 - Link overlay `z-10` con `aria-label`; `saveHomeScroll(scrollY)` en click
   (handoff de scroll, ver seccion 8).
+- **Iconos de marca (`components/icons/stack-icon.tsx`):** se sirven como WebP
+  64x64 desde `public/brands/*.webp`, generados desde los `.svg` con
+  `pnpm icons:build` (`scripts/brand-icons.mjs`). NO volver a `<img src="*.svg">`:
+  Chromium no cachea el raster de un SVG usado como imagen, replayea su
+  `SkPicture` en cada pintado, y las ~28 instancias de un grid metian cientos de
+  ops en el tile, que se volcaba entero en `DoEndRasterCHROMIUM`. Medido en la
+  entrada a AllProjects: 60,8-72,8 ms -> 18,1 ms de frame maximo y `GPUTask`
+  67,7 -> 9,6 ms. Los `.svg` se quedan como fuente; los `.webp` se commitean
+  porque el deploy no ejecuta el generador, junto con
+  `scripts/brand-icons.manifest.json` (el registro de hashes que detecta un SVG
+  reemplazado sin reconstruir). Detalle en
+  `docs/issues/all-projects-entry-jank.md` 6.3. Un guard
+  (`scripts/brand-icons.test.mjs`, dentro de `pnpm test`) falla si un `.svg` no
+  tiene su entrada de manifiesto con el hash correcto, si un `.webp` quedo
+  rancio o si sobra un `.webp` sin `.svg`, porque un icono roto o desactualizado
+  no lo detecta ni `build` ni `typecheck`.
 
 ### 4.7 Pricing (`pricing-section.tsx`)
 

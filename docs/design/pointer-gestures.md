@@ -67,6 +67,20 @@ Si los botones ◀ ▶ recorren el contenido, `←`/`→` deben hacer lo mismo: 
 
 ---
 
+### 11. Hover es de puntero; el estado táctil es otro
+
+Un control en móvil no tiene tres estados sino cuatro, y solo uno puede quedarse encendido:
+
+- **`hover:`** = hay un puntero que flota. Tailwind v4 ya lo envuelve en `@media (hover: hover)`, así que en un teléfono no existe; no lo gatees a mano, condicionarlo no le quita el hover a nadie.
+- **`active:`** = el dedo está apoyado. Aparece al tocar y se va al levantar: es el único feedback de presión propio.
+- **El estado persistente sale de un atributo**, nunca de un hover que el navegador dejó pegado: `aria-expanded` en el toggle de un menú, `aria-current` en el link de la sección activa. Tailwind los expone como variants (`aria-expanded:bg-secondary`), así que no hace falta JS ni estado de React.
+- **El tap highlight del navegador no lo toca ninguna media query.** Chrome Android pinta un velo sobre la caja del elemento tocado y lo mantiene hasta el toque siguiente; sobre un navbar transparente se lee como un estado pegado. Se apaga en el elemento que ya trae su propio feedback, con `[-webkit-tap-highlight-color:transparent]`, y no en todo el sitio: global deja sin feedback a los elementos que no definen `active:`.
+- **Un control que solo existe bajo un tipo de entrada no necesita `hover:`.** El toggle del menú mobile vive en `flex nav:hidden`: con mouse real no se renderiza, así que su hover no tiene consumidor legítimo. Si igual se pinta, es porque el navegador se declara con puntero siendo un táctil (sitio en modo escritorio, o un mouse o lápiz conectado), y ese es el caso donde el estado se queda pegado. El feedback propio es `active:` y el estado abierto, `aria-expanded:`.
+
+Caso medido en el toggle del navbar: el residuo tenía dos capas. El tap highlight era una; la otra era el `hover:` del propio botón, que solo puede aplicar en un dispositivo que miente sobre su tipo de puntero. Se verifica en un dispositivo táctil real: el emulador de DevTools no reproduce el tap highlight ni el estado que el navegador mantiene.
+
+---
+
 ## Caso canónico: lightbox del detalle de proyecto (2026-09-16 → 2026-10-02)
 
 Bug reportado por QA en 4 rondas; cada una fue una de las cancelaciones de arriba:

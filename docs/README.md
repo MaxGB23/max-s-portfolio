@@ -54,6 +54,7 @@ docs duenos de `AGENTS.md`.
 | De donde sale el espejo del tema? | se extrae de `app/globals.css`, no se edita a mano | [tailwind-v4-theme.css](design/tailwind-v4-theme.css) |
 | Como se comporta el lightbox con teclado? | trap de foco, lecciones de siete rondas de QA | [pointer-gestures.md](design/pointer-gestures.md) |
 | Como se anima cada seccion y por que? | patron unificado y excepciones | [section-animations.md](design/section-animations.md) |
+| Se rompio en silencio alguna entrada de la pagina (navbar, About, ...)? | `pnpm qa` lista y corre los guards manuales sobre un server; cada veredicto vive en `pnpm test` | [iteration-guide.md](design/iteration-guide.md) 12 |
 | Por que se tomo esta decision y no otra? | RFC fechado; se congela al aprobar | [docs/rfcs/](rfcs/) |
 | Por que pasaba este bug? | auditoria o incidencia fechada con su metodo (rendimiento, navegacion, telefono vs devtools) | [docs/issues/](issues/) |
 | Que se esta trabajando ahora? | tarea ODD abierta, cierra al mergear | [odd/tasks/](../odd/tasks/) |
@@ -79,7 +80,7 @@ ese archivo es el indice de archivos, no de contenido.
 | Carpeta | Vida | Obligacion |
 |---|---|---|
 | `docs/design/` | VIVO | debe ser verdad hoy |
-| `docs/rfcs/` | DECISION | se congela al aprobar; se supera con otro |
+| `docs/rfcs/` | DECISION | se congela al aprobar; se supera con otro; el STATUS se escribe antes del merge |
 | `docs/issues/` | INSTANTANEA | fechada; nunca finge ser actual |
 | `docs/projects/` | DECISION o TRABAJO | segun el doc; si no se sabe, no es canon |
 | `odd/tasks/` | TRABAJO | cierra al mergear |
@@ -95,6 +96,12 @@ algo que ya no es cierto, no se reescribe: dejaria de ser el registro de lo que 
 decidio. Lo que siga siendo verdad se muda al canon; lo que murio, a
 `docs/design/DEAD.md`. El linter no los lee como verdad, asi que nunca te va a
 pedir que los toques.
+
+Por eso un bloque `STATUS` no afirma nada que ocurra despues del merge: lleva
+fecha y numero de PR (`APROBADO (2026-10-30), PR #19`), que existen cuando se
+escribe, y nunca el hash del merge, que se descubre con `git log -- <rfc>`. Un
+bloque que promete algo posterior al merge solo se cumple rompiendo la regla de
+arriba.
 
 ## La regla que sustituye a "esto requiere docs?"
 

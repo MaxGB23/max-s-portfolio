@@ -30,11 +30,24 @@
 
 ## 8. Infraestructura de scroll
 
-- `SmoothScroll` (`smooth-scroll.tsx`): Lenis SOLO desktop (`window.innerWidth
-  >= 768`); config `duration: 0.6`, easing expo-out, `smoothWheel: true`,
-  `wheelMultiplier: 1`; `gsap.registerPlugin(ScrollTrigger)`,
+- `SmoothScroll` (`smooth-scroll.tsx`): Lenis SOLO desktop (gate reactivo
+  sobre `(min-width: 768px)`); config `duration: 0.6`, easing expo-out,
+  `smoothWheel: true`, `wheelMultiplier: 1`;
+  `gsap.registerPlugin(ScrollTrigger)`,
   `lenisInstance.on("scroll", ScrollTrigger.update)` con rAF nativo y
   `gsap.ticker.lagSmoothing(0)`.
+- **El gate de Lenis es reactivo, no una lectura unica al montar.**
+  `smooth-scroll.tsx` escucha `matchMedia("(min-width: 768px)")` y arranca o
+  destruye Lenis en cada cambio de media. Antes el gate era un
+  `window.innerWidth < 768` leido una sola vez en el montaje: un telefono que
+  cargaba en landscape (844px) creaba Lenis y lo mantenia VIVO despues de rotar
+  a portrait, donde el resto de la app asume `lenis === null`
+  (`pointer-gestures.md` 7: en mobile el overflow es el unico scroll lock). El
+  teardown devuelve ademas `gsap.ticker.lagSmoothing(500, 33)`, para no dejar al
+  mobile con el ajuste que Lenis le puso a GSAP en desktop. Es un defecto
+  INDEPENDIENTE del retrato de About: con el gate ya reactivo el retrato seguia
+  roto, y esa causa vive en `section-animations.md` ("Entradas creadas dentro de
+  `gsap.matchMedia`").
 - **`duration` 0.6, no 1: medido.** Con `scripts/audit-projects.mjs` (desktop
   2048x1280 dpr1.25, gesto `--wheel`, iGPU) la animacion de 1s deja 7.8% de
   frames avanzando menos de la mitad del paso y la pagina llega tarde respecto
@@ -52,6 +65,16 @@
   0.6`, `lerp 0.1` y `lerp 0.2` (~108 en valor absoluto en las cuatro). Es el frame en que el
   evento nuevo re-apunta la animacion sin que la posicion avance, y ocurre
   justo cuando la mano se mueve: no se percibe como frenazo y NO es ajustable.
+- **Un scroll nativo ajeno durante un glide se adopta.** Arrastrar la barra
+  nativa, PageDown, buscar en la pagina o el autoscroll del click central
+  escribe la posicion mientras Lenis anima: su `onNativeScroll` ignora el
+  evento con `isScrolling` en "smooth" y el rAF reescribe la vieja hasta
+  400ms despues (upstream #107 abierto, #168 y #365 cerrados sin fix).
+  `smooth-scroll.tsx` escucha `scroll` en `window` y adopta con
+  `scrollTo(y, { immediate: true })`; el widget de la barra nativa no emite
+  evento DOM (solo se ve el resultado) y el repo no consume `scrollend`.
+  Medido con `scripts/scroll-guard.mjs`: 25 reversiones y -3092px sin el guard,
+  0 y 0px con el.
 - `useScrollToAnchor(64)`: `lerp: 0.1` (sin duracion fija, ver
   `useScrollToTop`); aterriza con el CONTENIDO del
   target bajo el navbar (compensa la suma de `padding-top` de 2 niveles:
@@ -64,8 +87,45 @@
   `null` borra el estado de navegacion de Next y mata la transicion en vuelo,
   ver `docs/issues/navigation-race.md`; aborta si el ancla no existe en el
   documento actual, y aplica la clase `arrive` con reflow forzado; mobile:
-  `window.scrollTo` + timeout 1000ms). NO usa `:target`
+  salto propio, ver el bullet siguiente). NO usa `:target`
   (replaceState no lo actualiza, ver seccion 9).
+- **El salto de ancla en mobile es propio (`animateScrollTo`), no
+  `window.scrollTo({ behavior: "smooth" })`.** Medido el 2026-11-03 sobre build
+  de produccion 390x844 dpr2 (`node scripts/mobile-anchor-jump.mjs`). El defecto,
+  en WebKit (el unico motor que anima el nativo: Chromium headless resuelve el
+  viaje en UN frame de 6 ms, el mismo enmascaramiento que ya describe
+  `docs/issues/mobile-menu-scroll-cancelled.md` 3): el nativo tarda 249 ms en
+  1022 px y 222 ms en 9865 px — la duracion la fija el motor y NO crece con la
+  distancia, asi que el viaje lejano cruza 8998 px en un solo frame y se lee como
+  teletransporte, mientras el cercano se lee como scroll. Es la misma trampa que
+  `useScrollToTop` evita en desktop al no usar `duration`: una duracion que no
+  mira la distancia. `animateScrollTo` escribe el viaje con
+  `requestAnimationFrame` + `easeOutCubic` y una banda de duracion
+  (`MOBILE_SCROLL_SHORT_MS` 320 ms, que sube a `MOBILE_SCROLL_MS` 560 ms al
+  alcanzar `MOBILE_SCROLL_RAMP_PX` 400 px). La distancia NO entra en la duracion:
+  comprimir 9865 px en el presupuesto de un salto corto es exactamente el efecto
+  que se quita, asi que el tramo lejano gasta su recorrido. Medido en Chromium
+  (cadencia real): 533 ms / 1022 px en 90 frames y 552 ms / 9866 px en 49 frames,
+  o sea spread x1.04 entre el destino cercano y el lejano. Medido en WebKit: los
+  mismos dos viajes en 8 frames y 441/855 ms — ahi el numero largo es coste de
+  pintura del rig (huecos de hasta 424 ms), no la curva, porque el tween escribe
+  una vez por frame. Dos efectos buscados: un toque, rueda o tecla cancelan el
+  salto — el nativo tambien cede al dedo — y un salto nuevo cancela el anterior;
+  y el aviso de llegada pasa a ser una senal real, asi que el `setTimeout(1000)`
+  que habia se elimino, porque podia anunciar la llegada antes de aterrizar.
+  Contrato verificado por el script: el anillo dispara `MOBILE_CUE_DELAY_MS`
+  (180 ms) DESPUES del ultimo movimiento — en el mismo frame se leia como parte
+  del frenado y no como la respuesta al click (feedback del dueno en telefono
+  real) —, nunca antes, en los dos destinos, y **tambien dispara si el salto se
+  interrumpe con un toque** — el viaje cede al dedo, pero el ancla se
+  pulso y el aviso se debe; es la misma regla que sostiene el backstop de
+  desktop, porque un aviso perdido es peor que uno sobre un destino del que el
+  visitante se aparto. Lo unico que no anuncia es un salto reemplazado por otro:
+  ahi el aviso escribiria el hash del destino viejo un frame antes de que arranque
+  el nuevo, y el mismo `arrivalToken` invalida el aviso pendiente de un salto
+  reemplazado, para que el hash viejo no se escriba 180 ms tarde. No esta en `pnpm qa` (`verification-policy.md` 5);
+  `PW_ENGINE=chromium` existe solo para separar "el tween pinta pocos frames" de
+  "este rig no tiene GPU".
 - `useScrollToTop`: `lerp: 0.1`, sin duracion fija. El viaje converge en
   `ln(distancia)/6` segundos: ~0,9s a 300px, ~1,2s a 1200px, ~1,5s a 8000px
   (medido: 1241px -> 1260ms; con `duration` fija eran 2s para cualquier
@@ -77,13 +137,16 @@
   URL igual queda sin ancla.
 - **Contrato de los dos caminos de navegación (`closeMenuThenScroll`)**: el
   scroll programático NUNCA arranca en la misma tarea que cierra el menú móvil.
-  En mobile el scroll es nativo (`window.scrollTo({ behavior: "smooth" })`, sin
-  Lenis) y el navegador lo cancela si el exit del menú (`height: auto -> 0`)
-  empieza en el mismo frame: el link parece muerto. Se cierra primero y se
-  espera el cierre commiteado (doble rAF); con el menú ya cerrado (desktop) el
-  scroll sale en el acto, sin rAF. Ancla e Inicio comparten UNA implementación a
-  propósito: cuando cada camino llevaba su propio orden, el que quedó fuera se
-  rompió dos veces (`docs/issues/mobile-menu-scroll-cancelled.md`).
+  Hoy el salto mobile es propio (`animateScrollTo`, bullet anterior), así que el
+  motor ya no puede cancelarlo a mitad; el doble rAF se conserva porque el
+  contrato es UNO solo para ancla e Inicio (cuando cada camino llevaba su propio
+  orden, el que quedó fuera se rompió dos veces) y porque la posición de partida
+  se muestrea con el panel ya cerrando. Histórico, y la razón del orden actual:
+  con el `window.scrollTo({ behavior: "smooth" })` de entonces el navegador
+  cancelaba el scroll si el exit del menú (`height: auto -> 0`) empezaba en el
+  mismo frame, y el link parecía muerto. Con el menú ya cerrado (desktop) el
+  scroll sale en el acto, sin rAF. El relato completo del defecto y las dos
+  mitades que se arreglaron por separado: `docs/issues/mobile-menu-scroll-cancelled.md`.
   **Verificación**: no se reproduce en Chromium ni en el emulador mobile de
   DevTools (ahí los smooth scroll programáticos se resuelven sin animación, o
   sea sin la ventana donde ocurre la cancelación). La aserción que distingue los
@@ -93,6 +156,24 @@
   `takeHomeScroll`/`ScrollRestorer` en el retorno. Sin pin no hay pin-spacer que
   esperar: el restorer recalcula el limite de Lenis (`lenis.resize()`) y hace
   `scrollTo(target, { immediate: true })`.
+- **F5 dentro de una seccion: el ancla de la URL se aplica y la restauracion
+  la pisa. Comportamiento conocido, NO se corrige.** El hash lo escribe
+  `announceArrival` al ATERRIZAR, y no hay ningun spy que lo actualice al
+  scrollear, asi que la URL conserva la ULTIMA ancla pulsada, no la seccion
+  visible. En una recarga el navegador aplica primero el fragmento y acto
+  seguido la posicion restaurada de la sesion: medido el 2026-10-30 (sonda
+  Playwright que muestrea `window.scrollY` por frame con `addInitScript` y
+  luego `page.reload()`; 1600x900, hash `#sobre-mi` con la pagina en
+  `#contacto`) da `53ms -> 742` y `61ms -> 5693`. El estado final SIEMPRE es el
+  correcto; el transitorio dura ~8ms y se lee como un parpadeo de la seccion
+  equivocada. NO se sincroniza el hash con `use-active-section.ts` para
+  eliminarlo: el pago es un frame y el precio es un tercer escritor de la URL
+  justo donde `a5a45dc` ya mato una navegacion en vuelo
+  (`docs/issues/navigation-race.md`). Si se retoma, las guardas no negociables
+  son `replaceState(window.history.state, ...)`, solo en `pathname === "/"`, y
+  solo si `document.getElementById(id)` existe. **Prueba de aceptacion**: la
+  sonda de arriba debe mostrar UNA sola meseta de `scrollY` en el F5, sin el
+  valor intermedio.
 - **Gate de 768px: decision consciente, NO tocar.** `syncTouch = false` es el
   default de Lenis y el codigo no lo overridea, asi que en touch Lenis es
   pasivo: `onVirtualScroll` retorna temprano (lenis.mjs:649-655, sin
@@ -113,8 +194,9 @@
   `project-detail.tsx:126,196`, y `ScrollProgress` se renderiza en todas las
   rutas (`app/page.tsx:16`, `app/proyectos/[id]/page.tsx:48`). Solo moveria el
   fetch a un chunk async.
-- El 768 es un literal en `smooth-scroll.tsx:14`, NO vive en
-  `lib/breakpoints.ts` (seccion 3): no lo centralices sin releer esta seccion.
+- El 768 es un literal en `smooth-scroll.tsx` (la media query del gate), NO
+  vive en `lib/breakpoints.ts` (seccion 3): no lo centralices sin releer esta
+  seccion.
   `ScrollTrigger` no depende de que Lenis este vivo, asi que el gate no puede
   romper animaciones de scroll. Nota: `import gsap from "gsap"` resuelve por
   `module: index.js` (bundle completo, 71.1 KB), no a un core minimo.
@@ -153,6 +235,17 @@
   nativa de los controles se percibe falsa; una landing es una superficie de
   presentacion y ahi el movimiento es el producto. Por eso la animacion se autora
   en el sitio en vez de delegarse al SO, y por eso no se "restaura" el nativo.
+- **Presupuesto de frame y gate de la entrada de seccion.** A 165 Hz el
+  presupuesto es 6,06 ms por frame (8,33 a 120 Hz, 16,7 a 60 Hz): el MISMO
+  trabajo de 65 ms son 11 frames perdidos a 165 y 4 a 60, asi que un tiron puede
+  depender de la tasa de refresco sin que cambie el coste ni una linea de codigo.
+  La entrada a `#all-projects` se mide con `node scripts/audit-projects.mjs
+  --profile desktop --viewport 2048x1280 --dpr 1.25 --net off --wheel --headed
+  --trace` sobre build de produccion (dev falsifica next/image): la ventana
+  `fade de la grid (700ms)` debe quedar con maximo <= 16,7 ms y 0 frames > 32 ms,
+  y el `GPUTask` mayor < 10 ms. Estado 2026-10: 18,1 ms y 9,6 ms. Matriz de
+  variantes falsificadas, atribucion y metodo en
+  `docs/issues/all-projects-entry-jank.md` 6.3.
 
 ## 10. Debug overlay
 
@@ -194,6 +287,17 @@
   amortiguaria cada escritura (ademas la red de seguridad de 2s cae en mitad de
   su timeline).
 - `DarkModeToggle` desmontado: no reintroducir sin plan.
+- El navbar deriva su fondo tambien de `window.scrollY` **al montar**, no solo
+  de eventos `scroll` (`navbar.tsx:118-132`). Al recargar dentro de una seccion
+  el navegador restaura el scroll antes de hidratar y despues no se mueve nada:
+  sin esa lectura inicial el navbar se quedaba transparente sobre el contenido.
+  El valor NO puede ir en `useState`, porque el HTML del servidor no conoce la
+  posicion del cliente y el primer render divergiria (mismatch de hidratacion).
+  Guard: `pnpm qa:navbar-deep-link` sobre un server levantado (ver
+  `odd/tasks/qa-guards.md`); la logica del veredicto corre en `pnpm test`.
+  El escenario tiene que ser un ENLACE profundo (`/#precios`), no una recarga:
+  recargar una pagina ya scrolleada dispara un evento `scroll` y esconde el bug
+  (verificado contra el deployment previo, que pasa ese caso y falla el enlace).
 
 ## 13. Deuda
 

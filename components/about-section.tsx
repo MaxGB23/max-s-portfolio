@@ -9,51 +9,107 @@ export function AboutSection() {
   const { t } = useLanguage();
 
   // GSAP timeline: sequences all elements when scrolled into view.
-  const containerRef = useGsapAnimation<HTMLElement>((gsap) => {
-    const elements = [
-      ".about-portrait",
-      ".about-label",
-      ".about-title",
-      ".about-description",
+  const containerRef = useGsapAnimation<HTMLElement>((gsap, ScrollTrigger) => {
+    // One set of tween vars per element, and TWO sequences: the desktop row
+    // puts the portrait on the left (it enters first, read left to right) while
+    // the mobile column is `flex-col-reverse`, so the portrait sits BELOW the
+    // text and the reading order is text first, portrait last. The cascade
+    // follows the visual order: same rule as EARLY_MOBILE_ORDER_DELAY in
+    // components/reveal.tsx (a block below never wins the race against what is
+    // above it). Mobile runs the text on an even 0.12s cadence; the portrait
+    // keeps its own 0.5s entrance but on its OWN trigger (see ownPortraitTrigger
+    // below), because one section trigger cannot fit both.
+    //
+    // Ease is Hero's `power3.out`, not the `power2.out` of the other scroll
+    // sections: both sections are read back to back, and with the softer curve
+    // About feels slower even though its window (0.85s) is SHORTER than Hero's
+    // (1.1s). Its calm comes from having four steps, not from a softer curve.
+    const steps = {
+      portrait: { autoAlpha: 1, x: 0, duration: 0.5, startAt: { x: -40 } },
+      label: { autoAlpha: 1, y: 0, duration: 0.5, startAt: { y: 12 } },
+      title: { autoAlpha: 1, y: 0, duration: 0.55, startAt: { y: 24 } },
+      description: { autoAlpha: 1, y: 0, duration: 0.2, startAt: { y: 10 } },
+    };
+    type Step = keyof typeof steps;
+    type Sequence = [Step, number | string][];
+
+    // Desktop keeps the relative offsets it always had (portrait first).
+    const desktop: Sequence = [
+      ["portrait", 0],
+      ["label", "-=0.4"],
+      ["title", "-=0.3"],
+      ["description", "-=0.2"],
+    ];
+    // No portrait here: on mobile it is the block closest to the fold, so it
+    // is animated by its own ScrollTrigger instead of this chain.
+    const mobile: Sequence = [
+      ["label", 0],
+      ["title", 0.12],
+      ["description", 0.24],
     ];
 
-    // Set initial hidden state synchronously BEFORE the timeline starts, so the
-    // timeline is deterministic even if the reveal gate never armed (no
+    // Set initial hidden state synchronously BEFORE any timeline starts, so the
+    // timelines are deterministic even if the reveal gate never armed (no
     // IntersectionObserver). Before paint the hiding comes from the gate CSS,
     // not from the markup: these nodes used to carry inline
     // `opacity:0; visibility:hidden`, which kept them out of the a11y tree and
     // invisible forever when the JS never ran.
-    gsap.set(elements, { autoAlpha: 0 });
+    gsap.set(
+      Object.keys(steps).map((name) => `.about-${name}`),
+      { autoAlpha: 0 }
+    );
 
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: containerRef.current,
-        start: "top 80%",
-      },
-      defaults: { ease: "power2.out" },
-    });
+    // gsap.matchMedia (not a one-time window.matchMedia read): rotating the
+    // phone changes which sequence is active, and GSAP reverts the previous
+    // context on its own.
+    const media = gsap.matchMedia();
+    for (const [query, sequence, ownPortraitTrigger] of [
+      ["(min-width: 768px)", desktop, false],
+      ["(max-width: 767px)", mobile, true],
+    ] as const) {
+      media.add(query, () => {
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: "top 80%",
+          },
+          defaults: { ease: "power3.out" },
+        });
+        for (const [name, at] of sequence) {
+          tl.to(`.about-${name}`, steps[name], at);
+        }
 
-    tl.to(".about-portrait", {
-      autoAlpha: 1,
-      x: 0,
-      duration: 0.5,
-      startAt: { x: -40 },
-    })
-      .to(
-        ".about-label",
-        { autoAlpha: 1, y: 0, duration: 0.5, startAt: { y: 12 } },
-        "-=0.4"
-      )
-      .to(
-        ".about-title",
-        { autoAlpha: 1, y: 0, duration: 0.55, startAt: { y: 24 } },
-        "-=0.3"
-      )
-      .to(
-        ".about-description",
-        { autoAlpha: 1, y: 0, duration: 0.2, startAt: { y: 10 } },
-        "-=0.2"
-      );
+        // On mobile the portrait is the LAST block, roughly a screen below the
+        // section top, so the section trigger fires while the image is still
+        // offscreen and its entrance finishes unseen (measured on a real
+        // Android: by the time you scroll to it, it is already fully visible).
+        // Anchoring it to its own position starts the tween with its top edge
+        // at 85% of the viewport, so it runs while the image is entering. The
+        // 85% value is the one sections used before 2026-10-01, not a new
+        // magic number. Order is preserved: the portrait sits below the text,
+        // so this trigger always fires after the section one. Desktop keeps the
+        // shared trigger, where the portrait is inside the revealed band.
+        if (ownPortraitTrigger) {
+          // The entrance is built BY the trigger, not before it. A standalone
+          // tween created inside a matchMedia context that is born on a media
+          // change (a rotate) was already dead when its trigger ran: measured
+          // with a throwaway probe, onEnter fired at scroll 720 and the trigger
+          // completed, while gsap.getTweensOf(".about-portrait") was empty and
+          // the tween sat at progress 0, leaving the image at opacity 0 with
+          // visibility hidden for good. The ScrollTrigger survives that switch,
+          // so the animation is created where it actually plays.
+          gsap.set(".about-portrait", { x: -40 });
+          ScrollTrigger.create({
+            trigger: ".about-portrait",
+            start: "top 85%",
+            once: true,
+            onEnter: () => {
+              gsap.to(".about-portrait", { autoAlpha: 1, x: 0, duration: 0.5 });
+            },
+          });
+        }
+      });
+    }
   });
 
   return (

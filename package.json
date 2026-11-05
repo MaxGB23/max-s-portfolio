@@ -12,8 +12,12 @@
     "shots": "node scripts/shots.mjs",
     "lint:docs": "node scripts/docs.mjs check",
     "docs:toc": "node scripts/docs.mjs toc --write",
+    "icons:build": "node scripts/brand-icons.mjs",
     "test": "node --test \"scripts/*.test.mjs\" \"lib/*.test.ts\"",
-    "hooks:install": "node scripts/hooks-install.mjs"
+    "hooks:install": "node scripts/hooks-install.mjs",
+    "qa": "node scripts/qa.mjs",
+    "qa:about-reveal": "node scripts/about-reveal-order.mjs",
+    "qa:navbar-deep-link": "node scripts/navbar-deep-link-bg.mjs"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",

@@ -44,68 +44,76 @@ export function HeroSection() {
 
   // GSAP timeline: sequences all hero elements on load.
   const containerRef = useGsapAnimation<HTMLElement>((gsap) => {
-    const elements = [
-      ".hero-portrait",
-      ".hero-badge",
-      ".hero-label",
-      ".hero-title",
-      ".hero-description",
-      ".hero-chips",
-      ".hero-cta",
-      ".hero-scroll",
+    // One set of tween vars per element, and TWO sequences. The desktop row is
+    // `md:flex-row` (portrait on the left, enters first: read left to right);
+    // the mobile column is `flex-col`, so the portrait is the LAST thing on
+    // screen and the cascade has to follow the visual order instead of jumping
+    // to the bottom and walking up. Same rule as EARLY_MOBILE_ORDER_DELAY in
+    // components/reveal.tsx. Mobile cadence is an even 0.1s, which keeps the
+    // same 1.1s total as the desktop chain.
+    const steps = {
+      portrait: { autoAlpha: 1, x: 0, duration: 0.5, startAt: { x: 40 } },
+      badge: { autoAlpha: 1, scale: 1, duration: 0.4, ease: "back.out(1.4)", startAt: { scale: 0.6 } },
+      label: { autoAlpha: 1, y: 0, duration: 0.5, startAt: { y: 12 } },
+      title: { autoAlpha: 1, x: 0, duration: 0.4, startAt: { x: -20 } },
+      description: { autoAlpha: 1, y: 0, duration: 0.2, startAt: { y: 10 } },
+      chips: { autoAlpha: 1, y: 0, duration: 0.1, startAt: { y: 10 } },
+      cta: { autoAlpha: 1, y: 0, duration: 0.3, startAt: { y: 10 } },
+      scroll: { autoAlpha: 1, duration: 0.4 },
+    };
+    type Step = keyof typeof steps;
+    type Sequence = [Step, number | string][];
+
+    // Desktop keeps the relative offsets it always had (portrait first).
+    const desktop: Sequence = [
+      ["portrait", 0],
+      ["badge", "-=0.4"],
+      ["label", "-=0.4"],
+      ["title", "-=0.3"],
+      ["description", "-=0.2"],
+      ["chips", "-=0.2"],
+      ["cta", "-=0.2"],
+      ["scroll", "-=0.1"],
+    ];
+    // Mobile order = measured top-to-bottom order at 390px: the badge is an
+    // overlay inside the portrait's box, so it lands right after it.
+    const mobile: Sequence = [
+      ["label", 0],
+      ["title", 0.1],
+      ["description", 0.2],
+      ["portrait", 0.3],
+      ["badge", 0.4],
+      ["cta", 0.5],
+      ["chips", 0.6],
+      ["scroll", 0.7],
     ];
 
-    // Set initial hidden state synchronously BEFORE the timeline starts, so the
-    // timeline is deterministic even if the reveal gate never armed (no
+    // Set initial hidden state synchronously BEFORE any timeline starts, so the
+    // timelines are deterministic even if the reveal gate never armed (no
     // IntersectionObserver). Before paint the hiding comes from the gate CSS,
     // not from the markup: these nodes used to carry inline
     // `opacity:0; visibility:hidden`, which kept them out of the a11y tree and
     // invisible forever when the JS never ran.
-    gsap.set(elements, { autoAlpha: 0 });
+    gsap.set(
+      Object.keys(steps).map((name) => `.hero-${name}`),
+      { autoAlpha: 0 }
+    );
 
-    const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
-
-    tl.to(".hero-portrait", {
-      autoAlpha: 1,
-      x: 0,
-      duration: 0.5,
-      startAt: { x: 40 },
-    })
-      .to(
-        ".hero-badge",
-        { autoAlpha: 1, scale: 1, duration: 0.4, ease: "back.out(1.4)", startAt: { scale: 0.6 } },
-        "-=0.4"
-      )
-      .to(
-        ".hero-label",
-        { autoAlpha: 1, y: 0, duration: 0.5, startAt: { y: 12 } },
-        "-=0.4"
-      )
-      .to(
-        ".hero-title",
-        { autoAlpha: 1, x: 0, duration: 0.4, startAt: { x: -20 } },
-        "-=0.3"
-      )
-      .to(
-        ".hero-description",
-        { autoAlpha: 1, y: 0, duration: 0.2, startAt: { y: 10 } },
-        "-=0.2"
-      )
-      .to(
-        ".hero-chips",
-        { autoAlpha: 1, y: 0, duration: 0.1, startAt: { y: 10 } },
-        "-=0.2"
-      )
-      .to(
-        ".hero-cta",
-        { autoAlpha: 1, y: 0, duration: 0.3, startAt: { y: 10 } },
-        "-=0.2"
-      )
-      .to(
-        ".hero-scroll",
-        { autoAlpha: 1, duration: 0.4 },
-        "-=0.1"
-      );
+    // gsap.matchMedia (not a one-time window.matchMedia read): rotating the
+    // phone changes which sequence is active, and GSAP reverts the previous
+    // context on its own.
+    const media = gsap.matchMedia();
+    for (const [query, sequence] of [
+      ["(min-width: 768px)", desktop],
+      ["(max-width: 767px)", mobile],
+    ] as const) {
+      media.add(query, () => {
+        const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+        for (const [name, at] of sequence) {
+          tl.to(`.hero-${name}`, steps[name], at);
+        }
+      });
+    }
   });
 
   return (

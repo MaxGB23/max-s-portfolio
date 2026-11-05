@@ -131,7 +131,7 @@ Resumen operativo:
 
 ## 7. Que NO copiamos de las marcas de referencia
 
-Las marcas de referencia (`docs/design/ejemplos/`) ilustran FORMA, no son
+Las marcas de referencia (`docs/design/archive/ejemplos/`) ilustran FORMA, no son
 prescripcion:
 
 - Bugatti: oscuridad + tipografia editorial (forma); NO copiar su nav
@@ -230,6 +230,19 @@ prescripcion:
 - [ ] Respecto de reglas de blancos y brightness (ver iteration-guide).
 - [ ] Correr audit de ritmo (`scripts/rhythm-contract.mjs`,
       `scripts/section-spacing.mjs`) antes de commitear layout.
+- [ ] Correr los guards DOM con un server levantado: `pnpm qa` (o
+      `pnpm qa -- --url http://localhost:<puerto>`). El comando imprime que
+      guards corre y falla con codigo distinto de cero si alguno falla; su logica
+      de veredicto vive en `pnpm test`. Son manuales a proposito (no estan en CI),
+      asi que esta casilla es su unico dueno. Como agregar uno al array:
+      `docs/rfcs/verification-policy.md` 5.
+- [ ] Antes de escribir un guard nuevo, elegir el nivel. **GATE** = `pnpm test`:
+      el veredicto es una funcion pura sobre datos, determinista, sin red, sin
+      navegador, sin reloj. **DRIVER** = `pnpm qa`: necesita navegador y server
+      para observar lo mismo. **PROBE** = una medicion de una sola vez, no se
+      commitea. El desempate: si el invariante se puede expresar como dato, es
+      GATE y no driver. Principio y alternativas descartadas:
+      `docs/rfcs/verification-policy.md` 2-4.
 
 ## 13. Deuda
 
