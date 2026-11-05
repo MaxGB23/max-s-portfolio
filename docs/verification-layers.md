@@ -20,9 +20,11 @@
 
 ## 1. El orden no es casual
 
-De lo barato a lo caro, y una sola puerta por tipo de error. Repetir un chequeo
-en dos capas cuesta dos veces y no atrapa más: solo crea dos lugares donde
-arreglarlo, y el día que uno cambia el otro miente.
+De lo barato a lo caro, y un solo dueño por tipo de error: el criterio vive en
+una capa, la que no se puede saltar. Que el hook y CI corran el mismo
+`docs.mjs` no es duplicar: es el mismo criterio dos veces, una cerca del commit y
+otra donde ya no se puede esquivar. Duplicar sería tener dos implementaciones
+parecidas, porque el día que una cambia la otra miente.
 
 | # | Capa | Corre | Atrapa |
 |---|---|---|---|
@@ -114,9 +116,9 @@ escritura convierte una acción comprometida en un push.
 
 `pnpm qa` es la puerta única a los guards de DOM: un runner chico
 (`scripts/qa.mjs`) con una lista de guards, que reenvía `--url` a todos y agrega
-el veredicto en un solo resultado. Hoy son dos. Guardar esa lista en el código y
-no en el doc es deliberado: un inventario en la documentación envejece en cuanto
-entra el tercero.
+el veredicto en un solo resultado. Guardar esa lista en el código y no en el doc
+es deliberado: un inventario en la documentación envejece en cuanto entra el
+tercer guard.
 
 Los guards nacen de bugs reales: cada uno reproduce un fallo que solo existe en
 un navegador, con build de producción y un server (navegación, orden de entrada,
