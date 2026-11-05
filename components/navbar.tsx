@@ -338,42 +338,47 @@ export function Navbar() {
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
           >
-            <div className="debug-l2 max-w-6xl mx-auto px-6 py-4 flex flex-col gap-3">
-              {navLinks.map((link) => {
-                const active = isActiveLink(link.href);
-                return (
-                  <Link
-                    key={link.key}
-                    href={link.href}
-                    aria-current={active ? "page" : undefined}
-                    onClick={(e) => {
-                      handleAnchorClick(e, link.href);
-                      handleHomeClick(e, link.href);
-                    }}
-                    onMouseEnter={() => setHovered(link.href)}
-                    onMouseLeave={() => setHovered((h) => (h === link.href ? null : h))}
-                    className="group text-base pl-5 py-2.5 text-foreground font-medium hover:text-foreground transition-colors"
-                  >
-                    {/* Wrapper que abraza SOLO el label: es el contexto de
-                        posicionamiento del underline, así el marker cae en el
-                        eje 44px (px-6 + pl-5) con el ancho del texto — mismo
-                        lenguaje visual que desktop (D3). `py-2.5` amplía el
-                        target táctil a 44px (Apple HIG); con `gap-3` el ritmo
-                        texto-a-texto queda en 56px = el `gap-8` histórico. */}
-                    <span className="relative inline-block">
-                      {t(link.key)}
-                      <span className={underlineClass(active, link.href)} />
-                    </span>
-                  </Link>
-                );
-              })}
+            <div className="debug-l2 max-w-6xl mx-auto px-6 pt-4 pb-6">
+              {/* Los links viven en su propio grupo: el `gap-3` es el ritmo del
+                  listado y nada más, así la separación del CTA no se compone
+                  con él (un token, `mt-6`, en vez de sumar gap + margen). */}
+              <div className="flex flex-col gap-3">
+                {navLinks.map((link) => {
+                  const active = isActiveLink(link.href);
+                  return (
+                    <Link
+                      key={link.key}
+                      href={link.href}
+                      aria-current={active ? "page" : undefined}
+                      onClick={(e) => {
+                        handleAnchorClick(e, link.href);
+                        handleHomeClick(e, link.href);
+                      }}
+                      onMouseEnter={() => setHovered(link.href)}
+                      onMouseLeave={() => setHovered((h) => (h === link.href ? null : h))}
+                      className="group text-base pl-5 py-2.5 text-foreground font-medium hover:text-foreground transition-colors"
+                    >
+                      {/* Wrapper que abraza SOLO el label: es el contexto de
+                          posicionamiento del underline, así el marker cae en el
+                          eje 44px (px-6 + pl-5) con el ancho del texto — mismo
+                          lenguaje visual que desktop (D3). `py-2.5` amplía el
+                          target táctil a 44px (Apple HIG); con `gap-3` el ritmo
+                          texto-a-texto queda en 56px = el `gap-8` histórico. */}
+                      <span className="relative inline-block">
+                        {t(link.key)}
+                        <span className={underlineClass(active, link.href)} />
+                      </span>
+                    </Link>
+                  );
+                })}
+              </div>
               <Button
                 asChild
                 variant="primary"
                 shape="pill"
                 size="sm"
                 fullWidth
-                className="py-2.5 mt-7"
+                className="text-base py-2.5 mt-6"
               >
                 <Link
                   href="#contacto"

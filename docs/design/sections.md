@@ -126,14 +126,16 @@ pagina, `scripts/section-spacing.mjs` compensa el padding propio de
   `all-projects` enciende "Proyectos" via `SECTION_ALIAS`; `contacto` y
   `footer` (sin link en navLinks) no encienden ninguno.
 - Mobile: menu hamburguesa auto-ocultable (`hover:bg-secondary`), links en
-  `flex-col gap-3` (12px) con `py-2.5` → target de 44px (Apple HIG) y ritmo
-  texto-a-texto de 56px (= el gap-8 historico, decision revisada); CTA abajo
-  con `mt-7` (12+28 = 40px visual de separacion, spacing puro — sin divider).
+  su propio grupo `flex-col gap-3` (12px) con `py-2.5` → target de 44px
+  (Apple HIG) y ritmo texto-a-texto de 56px (= el gap-8 historico, decision
+  revisada); CTA abajo con `mt-6` (24px = un solo token, el gap de la lista
+  no participa; spacing puro, sin divider) y `pb-6` propio en el panel.
   Eje de alineacion 44px intacto (`px-6` + `pl-5`); el underline del marker
   vive dentro del eje via un wrapper `relative inline-block` que abraza solo
   el label.
 - CTA "Contacto": `variant="primary" shape="pill" size="sm"` desktop;
-  `size="sm" fullWidth className="py-2.5 mt-7"` mobile (ancho completo,
+  `size="sm" fullWidth className="text-base py-2.5 mt-6"` mobile (target de
+  44px, igual que los links; ancho completo,
   label CENTRADO — es un action, no un item de la lista; el eje 44px es
   contrato de la lista de links — ver buttons.md).
 - LanguageToggle (`language-toggle.tsx`): outline pill con icono `Globe` +
