@@ -7,11 +7,11 @@ Código, comentarios, commits, ramas, README, issues y PRs en inglés; este arch
 ### Requests y tokens (IMPORTANTE)
 - **Agrupa comandos y tools en una sola llamada.** El free tier se mide en requests diarias, no en tokens: cada llamada cuenta como una. Lo independiente va junto: varias lecturas, varios greps, `git status` + `git diff --stat` + conteo de líneas.
 - **El lote es solo para lo independiente y de solo lectura.** Nunca en la misma llamada una escritura con su verificación, ni un paso que dependa de la salida del anterior: si falla a medias, no sabes qué se aplicó.
-- Presupuesto de referencia: un fix de 1-5 líneas cuesta 3-4 requests (ver el estado, editar, commitear). Si pasa de cinco, la causa suele ser que no sabes dónde está lo que buscas; arregla eso, no acumules comandos.
+- Presupuesto de referencia: un fix de 1-5 líneas cuesta 3-4 requests (ver el estado, editar, comprobar, commitear si está autorizado). Si pasa de cinco, la causa suele ser que no sabes dónde está lo que buscas; arregla eso, no acumules comandos.
 - Si el árbol ya coincide con la decisión y la comprobación pasa, cierra: no re-audites, no repitas `git diff` ni vuelvas a preguntar lo ya respondido.
 
 ### Git
-- **Push = deploy.** Un push a `main` publica en producción y un push a una rama crea una preview en Vercel: se pide aprobación y se agrupa (un push por lote de work units —una unidad de comportamiento, fix o docs—, nunca uno por commit). Commitear es local y libre; pushear es entregar.
+- **Push = deploy.** Un push a `main` publica en producción y un push a una rama crea una preview en Vercel: se pide aprobación y se agrupa (un push por lote de work units, nunca uno por commit). Commitear es local y libre; pushear es entregar.
 - Si el lote incluye commits que no deben publicarse todavía, dilo antes de pushear: `git log origin/main..HEAD --oneline` es la prueba de qué viaja en ese push.
 - Antes de operaciones destructivas de git (`git checkout --`, `git reset --hard`, force-push): ejecuta `git status` y revisa el diff. Si el archivo tiene cambios no commiteados, confirma explícitamente qué se pierde antes de revertir.
 
