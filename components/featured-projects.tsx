@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { FeaturedProjectPanel, type FeaturedProject } from "@/components/featured-project-panel";
 import { Reveal } from "@/components/reveal";
 import { getFeaturedProjects, localizeProject } from "@/data/projects";
+import type { LiveMetricValues } from "@/lib/live-metrics";
+import { withLiveMetric } from "@/lib/live-metrics";
 import { Section } from "@/components/section";
 import { useLanguage } from "@/contexts/language-context";
 
@@ -52,7 +54,7 @@ function SectionHeading() {
 // useReducedMotion(): an SSR/client branch over a media query causes hydration
 // mismatches (ReactHydrationError).
 // ---------------------------------------------------------------------------
-export function FeaturedProjects() {
+export function FeaturedProjects({ liveMetrics }: { liveMetrics?: LiveMetricValues }) {
   const { lang } = useLanguage();
 
   // Data - single source of truth: data/projects.ts. El mapeo se resuelve aqui y
@@ -67,7 +69,9 @@ export function FeaturedProjects() {
         index: index + 1,
         title: localized.title,
         description: localized.hook,
-        metric: localized.metric,
+        metric: liveMetrics?.[localized.id]
+          ? withLiveMetric(localized.metric, liveMetrics[localized.id])
+          : localized.metric,
         tags: localized.tags,
         image: localized.image,
         imageAlt: localized.imageAlt,

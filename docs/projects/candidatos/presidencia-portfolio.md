@@ -17,7 +17,7 @@
 | `tags` | Next.js · React · TypeScript · PostgreSQL · Prisma · Tailwind CSS |
 | `image` | `/images/projects/presidencia-acambaro/presidencia-demo.webp` |
 | `imageAlt` | Dashboard de métricas y gestión de solicitudes del Sistema de Apoyos Sociales |
-| `links` | Repo: [Presidencia-Municipal-Acambaro](https://github.com/MaxGB23/Presidencia-Municipal-Acambaro) (público) |
+| `links` | Repo: [Presidencia-Municipal-Acambaro](https://github.com/MaxGB23/Presidencia-Municipal-Acambaro) (público) · App: [presidencia-municipal-acambaro.vercel.app](https://presidencia-municipal-acambaro.vercel.app) (deploy real, abre en "Iniciar Sesión") |
 
 ---
 

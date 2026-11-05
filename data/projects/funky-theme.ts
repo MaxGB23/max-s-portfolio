@@ -51,6 +51,13 @@ export const funkyTheme: ProjectL = {
     en: "Screenshot of VS Code with the funky-theme theme applied to an editor",
   },
   featured: true,
+  // La cifra de descargas se lee del registry (cache de 24 h); el valor de
+  // `detail.metrics[0]` queda como respaldo si la API no responde.
+  liveMetric: {
+    index: 0,
+    kind: "openvsx",
+    url: "https://open-vsx.org/api/MaxGB23/funky-theme-vscode",
+  },
   links: [
     {
       label: linkLabelCode,
@@ -117,8 +124,8 @@ export const funkyTheme: ProjectL = {
           en: "4.4k",
         },
         label: {
-          es: "descargas acumuladas en Open VSX (4,450 medidas el 22 oct 2026)",
-          en: "cumulative downloads on Open VSX (4,450 measured on Oct 22, 2026)",
+          es: "descargas acumuladas en Open VSX (en vivo)",
+          en: "cumulative downloads on Open VSX (live)",
         },
       },
       {
@@ -240,8 +247,8 @@ export const funkyTheme: ProjectL = {
       },
       {
         // Esta hoja concentra los 5 pares `**` del ES: mismo numero, misma posicion.
-        es: "**Tracción validada:** **Verified Open VSX Publisher**; **4.4k descargas acumuladas** en Open VSX (4,450 medidas el 22 oct 2026); **191 adquisiciones/30d** en VS Code Marketplace con **funnel 97.45%** (page views → installs) — posicionamiento SEO orgánico demostrado.",
-        en: "**Traction validated:** **Verified Open VSX Publisher**; **4.4k cumulative downloads** on Open VSX (4,450 measured on Oct 22, 2026); **191 acquisitions/30d** on VS Code Marketplace with **97.45% funnel** (page views → installs) — organic SEO positioning demonstrated.",
+        es: "**Tracción validada:** **Verified Open VSX Publisher**; **4,450 descargas medidas el 22 oct 2026** en Open VSX; **191 adquisiciones/30d** en VS Code Marketplace con **funnel 97.45%** (page views → installs) — posicionamiento SEO orgánico demostrado.",
+        en: "**Traction validated:** **Verified Open VSX Publisher**; **4,450 downloads measured on Oct 22, 2026** on Open VSX; **191 acquisitions/30d** on VS Code Marketplace with **97.45% funnel** (page views → installs) — organic SEO positioning demonstrated.",
       },
       {
         es: "**Cross-editor:** soporte **Zed** publicado en el registry oficial (zed.dev/extensions/funky-theme), instalable en un clic (misma paleta de editores).",

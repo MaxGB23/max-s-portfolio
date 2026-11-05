@@ -14,7 +14,7 @@
 // "PDF legal" describen una propiedad del sistema, asi que el EN traduce el
 // significado ("Traceable", "Legal PDF") en vez de traducir la palabra suelta.
 
-import { linkLabelCode, type ProjectL } from "./types";
+import { linkLabelApp, linkLabelCode, type ProjectL } from "./types";
 
 export const presidencia: ProjectL = {
   id: "presidencia",
@@ -56,6 +56,17 @@ export const presidencia: ProjectL = {
       label: linkLabelCode,
       kind: "code",
       url: "https://github.com/MaxGB23/Presidencia-Municipal-Acambaro",
+      external: true,
+    },
+    // Deploy real del sistema (URL `homepage` del repo). Va como `app` y NO
+    // como `demo`, igual que el entorno de pruebas de `caf.ts:69`: el panel
+    // arranca en "Iniciar Sesión" porque es software de gobierno con RBAC y
+    // datos de ciudadanos, asi que "Probar la app" describe lo que hay y
+    // "Ver demo" prometeria un recorrido sin credenciales que no existe.
+    {
+      label: linkLabelApp,
+      kind: "app",
+      url: "https://presidencia-municipal-acambaro.vercel.app",
       external: true,
     },
   ],

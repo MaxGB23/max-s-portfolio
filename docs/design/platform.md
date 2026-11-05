@@ -200,6 +200,41 @@
   `ScrollTrigger` no depende de que Lenis este vivo, asi que el gate no puede
   romper animaciones de scroll. Nota: `import gsap from "gsap"` resuelve por
   `module: index.js` (bundle completo, 71.1 KB), no a un core minimo.
+- **El navegador puede tener la animacion de scroll APAGADA por el SO.**
+  Verificado el 2026-11-02 en el worktree sin Lenis: con "Animar los controles y
+  elementos dentro de las ventanas" activada (`systempropertiesperformance`,
+  Windows) un click del navbar anima el scroll; con la casilla apagada, el mismo
+  click salta seco. El interruptor es
+  `gfx::Animation::ScrollAnimationsEnabledBySystem()`
+  (`ui/gfx/animation/animation_win.cc`, `animation_linux.cc`, `animation_mac.mm`
+  en Chromium). Por plataforma: Windows devuelve `ShouldRenderRichAnimation()`,
+  que lee `SystemParametersInfo(SPI_GETCLIENTAREAANIMATION)` — **la misma casilla
+  que decide `prefers-reduced-motion: reduce`**; Linux devuelve
+  `ui::LinuxUi::AnimationsEnabled()` (el ajuste global del toolkit: *Animaciones*
+  de GNOME, `gtk-enable-animations`); macOS NO usa Reduce Motion, lee el default
+  privado `NSScrollAnimationEnabled`. O sea: en Windows y Linux "animaciones del
+  SO apagadas" implica scroll nativo escalonado; en macOS no.
+- **El suave de un click sin Lenis es NUESTRO, y es condicional.** `html` fija
+  `scroll-behavior: auto` (globals.css:200), asi que la navegacion por fragmento
+  es instantanea a proposito; lo que anima es el fallback nativo
+  `window.scrollTo({ top, behavior: "smooth" })` (`hooks/use-lenis.tsx:117` en el
+  camino mobile, `:144` en `useScrollToTop`). Con la animacion del SO apagada ese
+  `behavior: "smooth"` se resuelve como salto — el fallback se degrada en
+  silencio, sin error ni log. No hay API web para leer ese interruptor.
+- **Decision: Lenis es load-bearing, no decoracion.** Para el perfil Windows o
+  GNOME con animaciones del SO apagadas por rendimiento (el mismo perfil que
+  dispara `prefers-reduced-motion: reduce` sin intencion de accesibilidad), sin
+  Lenis el scroll no queda "menos pulido": queda escalonado. Ademas Lenis da
+  curva propia, `onComplete` para el aviso de llegada y `lerp` por distancia, que
+  el nativo no expone. El argumento "el nativo ya alcanza" solo es cierto con la
+  animacion del SO encendida, y la pagina no puede saber en cual esta.
+- **Alcance deliberado:** el dueno del producto corre un Windows sin animaciones
+  (instantaneo por rendimiento, no por accesibilidad) y aun asi quiere scroll
+  autorado AQUI, no en el sistema. La razon es estetica y de superficie: un SO es
+  una herramienta y lo instantaneo se siente correcto en ella; la animacion
+  nativa de los controles se percibe falsa; una landing es una superficie de
+  presentacion y ahi el movimiento es el producto. Por eso la animacion se autora
+  en el sitio en vez de delegarse al SO, y por eso no se "restaura" el nativo.
 - **Presupuesto de frame y gate de la entrada de seccion.** A 165 Hz el
   presupuesto es 6,06 ms por frame (8,33 a 120 Hz, 16,7 a 60 Hz): el MISMO
   trabajo de 65 ms son 11 frames perdidos a 165 y 4 a 60, asi que un tiron puede

@@ -187,7 +187,14 @@ function KpiGrid({ metrics }: { metrics: ProjectMetric[] }) {
 const FOCUSABLE_IN_LIGHTBOX =
   'button:not([disabled]), [href], input:not([disabled]), select, textarea, [tabindex]:not([tabindex="-1"])';
 
-export function ProjectDetail({ project }: { project: ProjectL }) {
+export function ProjectDetail({
+  project,
+  liveMetric,
+}: {
+  project: ProjectL;
+  /** Cifra viva ya formateada para `project.liveMetric.index`, si se pudo leer. */
+  liveMetric?: { index: number; value: string };
+}) {
   const rootRef = useRef<HTMLDivElement>(null);
   const { t, lang } = useLanguage();
 
@@ -195,7 +202,20 @@ export function ProjectDetail({ project }: { project: ProjectL }) {
   // que `project`, solo con las hojas `{es,en}` resueltas a `lang`. Se resuelve
   // una vez y TODAS las lecturas de abajo leen de aqui — cambiar `lang` cambia
   // el texto sin tocar una sola lectura.
-  const localized = localizeProject(project, lang);
+  const base = localizeProject(project, lang);
+  // Una metrica puede venir de un registry (`project.liveMetric`): la cifra
+  // viva reemplaza al valor escrito, que queda como respaldo si la API falla.
+  const localized = liveMetric
+    ? {
+        ...base,
+        detail: {
+          ...base.detail,
+          metrics: base.detail.metrics.map((metric, index) =>
+            index === liveMetric.index ? { ...metric, value: liveMetric.value } : metric,
+          ),
+        },
+      }
+    : base;
 
   const router = useRouter();
 

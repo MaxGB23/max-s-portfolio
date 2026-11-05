@@ -21,7 +21,8 @@ to feel engineered rather than templated:
 - Bilingual by the server: ES or EN is decided from the `lang` cookie and then
   `Accept-Language` before the first paint, so there is no flash and no swap
 - Keyboard-first detail views: the gallery lightbox is a real dialog with a focus
-  trap, and reduced-motion visitors keep only opacity and short rises
+  trap, and the site already lives inside what reduced motion asks for: opacity
+  and short rises, never parallax
 
 Sections, in the site's own language: Hero, "Sobre mí", featured projects,
 all projects, "Precios", "Contacto" - plus `/proyectos/[id]` detail pages

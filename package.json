@@ -13,7 +13,7 @@
     "lint:docs": "node scripts/docs.mjs check",
     "docs:toc": "node scripts/docs.mjs toc --write",
     "icons:build": "node scripts/brand-icons.mjs",
-    "test": "node --test \"scripts/*.test.mjs\"",
+    "test": "node --test \"scripts/*.test.mjs\" \"lib/*.test.ts\"",
     "hooks:install": "node scripts/hooks-install.mjs",
     "qa": "node scripts/qa.mjs",
     "qa:about-reveal": "node scripts/about-reveal-order.mjs",

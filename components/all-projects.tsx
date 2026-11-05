@@ -4,6 +4,8 @@ import { ProjectCard, type Project } from "@/components/project-card";
 import { Reveal } from "@/components/reveal";
 import { Section } from "@/components/section";
 import { projects, localizeProject } from "@/data/projects";
+import type { LiveMetricValues } from "@/lib/live-metrics";
+import { withLiveMetric } from "@/lib/live-metrics";
 import { useLanguage } from "@/contexts/language-context";
 
 // ---------------------------------------------------------------------------
@@ -11,7 +13,7 @@ import { useLanguage } from "@/contexts/language-context";
 //
 // Data - single source of truth: data/projects.ts
 // ---------------------------------------------------------------------------
-export function AllProjects() {
+export function AllProjects({ liveMetrics }: { liveMetrics?: LiveMetricValues }) {
   const { t, lang } = useLanguage();
 
   // El mapeo se resuelve aqui y no a module scope porque depende de `lang`: el
@@ -25,7 +27,9 @@ export function AllProjects() {
         id: localized.id,
         title: localized.title,
         description: localized.hook,
-        metric: localized.metric,
+        metric: liveMetrics?.[localized.id]
+          ? withLiveMetric(localized.metric, liveMetrics[localized.id])
+          : localized.metric,
         image: localized.image,
         imageAlt: localized.imageAlt,
         category: localized.category,
