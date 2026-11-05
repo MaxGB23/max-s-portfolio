@@ -4,23 +4,16 @@ Cuando respondas en español, usa siempre español neutro. Evita el voseo y los 
 ### Idioma (artefactos)
 Código, comentarios, commits, ramas, README, issues y PRs en inglés; este archivo, `docs/` y las tareas ODD en español.
 
-### Evitar vueltas, requests y tokens innecesarios (IMPORTANTE)
-- Una vez verificado que el estado del árbol coincide con la decisión del usuario (los cambios pedidos por el usuario) y que la comprobación (build/tsc/tests) pasa, CIERRA. No re-audites, no re-verifiques lo ya verificado, no preguntes de nuevo preguntas ya respondidas y no sigas consumiendo tokens en confirmaciones redundantes.
-- Si no hay nada que editar, dilo en una línea y para. No juegues al "no puedo creer que no haya cambios" repitiendo git diff / diff --stat cada turno.
-- No "verifiques" pidiendo permiso una y otra vez para lo ya aplicado: cuando el usuario ya eligió una opción, ejecútala una vez y confirma en una línea.
+### Requests y tokens (IMPORTANTE)
 - **Agrupa comandos y tools en una sola llamada.** El free tier se mide en requests diarias, no en tokens: cada llamada cuenta como una. Lo independiente va junto: varias lecturas, varios greps, `git status` + `git diff --stat` + conteo de líneas.
 - **El lote es solo para lo independiente y de solo lectura.** Nunca en la misma llamada una escritura con su verificación, ni un paso que dependa de la salida del anterior: si falla a medias, no sabes qué se aplicó.
 - Presupuesto de referencia: un fix de 1-5 líneas cuesta 3-4 requests (ver el estado, editar, commitear). Si pasa de cinco, la causa suele ser que no sabes dónde está lo que buscas; arregla eso, no acumules comandos.
+- Si el árbol ya coincide con la decisión y la comprobación pasa, cierra: no re-audites, no repitas `git diff` ni vuelvas a preguntar lo ya respondido.
 
-### Commits
-- Conventional commits siempre en inglés.
-- Un commit = una work unit (behavior, fix o docs). Nunca separar por tipo de archivo. Consultar la skill `work-unit-commits` para planificar los commits.
-- **Commitea al terminar cada work unit.** No acumules cambios sin commitear durante la sesión: un cambio no commiteado es trabajo sin punto de recuperación.
-- **El agente nunca asume que debe commitear.** Tras cualquier cambio (aunque sea mínimo), PREGUNTA al usuario antes de hacer commit — siempre hay ajustes pendientes.
-- **Push = deploy.** Un push a `main` publica en producción y un push a una rama crea una preview en Vercel: se pide aprobación y se agrupa (un push por lote de work units, nunca uno por commit). Commitear es local y libre; pushear es entregar.
+### Git
+- **Push = deploy.** Un push a `main` publica en producción y un push a una rama crea una preview en Vercel: se pide aprobación y se agrupa (un push por lote de work units —una unidad de comportamiento, fix o docs—, nunca uno por commit). Commitear es local y libre; pushear es entregar.
 - Si el lote incluye commits que no deben publicarse todavía, dilo antes de pushear: `git log origin/main..HEAD --oneline` es la prueba de qué viaja en ese push.
 - Antes de operaciones destructivas de git (`git checkout --`, `git reset --hard`, force-push): ejecuta `git status` y revisa el diff. Si el archivo tiene cambios no commiteados, confirma explícitamente qué se pierde antes de revertir.
-- PowerShell no es seguro con UTF-8 en PS 5.1: no escribir archivos fuente con `Set-Content`/`Out-File` (corrompe acentos y em dash), y no leerlos con `Get-Content` para COMPARAR (lee UTF-8 como Windows-1252: una raya `—` U+2014 se ve como guion). Para editar, las herramientas del asistente; para inspeccionar caracteres, `[System.IO.File]::ReadAllText($p, [System.Text.Encoding]::UTF8)` y `[int]$c`.
 
 ### Dependencias
 - Siempre usar pnpm.
@@ -42,7 +35,7 @@ Código, comentarios, commits, ramas, README, issues y PRs en inglés; este arch
 - **Copias entre worktrees/ramas:** Antes de copiar archivos entre worktrees o ramas, verificar con `git diff <origen> <destino> -- <archivo>` que la versión de origen no sea más antigua que la del destino. Si hay diferencias a favor del destino, no copiar — aplicar los cambios manualmente en el destino.
 
 ### Código fuente y sintaxis
-- El texto en español lleva sus acentos y signos: los archivos son UTF-8 y node, el gate, git y las herramientas del asistente los manejan bien. No se escribe `documentacion` por miedo al encoding.
+- El texto en español lleva sus acentos y signos: los archivos son UTF-8 y node, el gate, git y las herramientas del asistente los manejan bien. No se escribe `documentacion` por miedo al encoding. El aviso del global sobre acentos habla de la salida de CLIs nativos (mojibake al leer), no del contenido de los archivos.
 - La prohibición es solo en sintaxis y operadores: nunca un carácter Unicode parecido a uno ASCII (`-` no es `–` ni `−`, las comillas son `"` y no las tipográficas, y el espacio es U+0020, no el no separable). Rompe parsers y crea bugs que no se ven.
 
 ### Internacionalización
