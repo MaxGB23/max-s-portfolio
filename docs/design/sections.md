@@ -129,7 +129,8 @@ pagina, `scripts/section-spacing.mjs` compensa el padding propio de
   su propio grupo `flex-col gap-3` (12px) con `py-2.5` → target de 44px
   (Apple HIG) y ritmo texto-a-texto de 56px (= el gap-8 historico, decision
   revisada); CTA abajo con `mt-6` (24px = un solo token, el gap de la lista
-  no participa; spacing puro, sin divider) y `pb-6` propio en el panel.
+  no participa; spacing puro, sin divider) y `pb-6` propio en el panel; desde el
+  texto el CTA queda a 32px del ultimo link contra 34px del ritmo (tokens.md 5.1).
   Eje de alineacion 44px intacto (`px-6` + `pl-5`); el underline del marker
   vive dentro del eje via un wrapper `relative inline-block` que abraza solo
   el label.

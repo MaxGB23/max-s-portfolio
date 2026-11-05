@@ -214,6 +214,17 @@ Las variantes arbitrarias ganan por orden CSS: el ultimo variant ordenado
 resuelve el layout. NO reescribir estos valores a mano: editar `lib/rhythm.ts`
 y correr `scripts/rhythm-contract.mjs`.
 
+### 5.1 Marco de referencia del espaciado
+
+Un espaciado vale dentro de su marco: borde de caja, caja de linea del texto o
+glifo visible, separados por el `padding`, el half-leading del `line-height` y el
+offset de un marker. Aplica solo si los elementos comparados no comparten padding
+ni leading. Playwright mide cajas: para afirmar igualdad visual, declarar el marco.
+
+Caso medido (menu mobile, 2026-11-05): el CTA separa 24px de caja contra 12px
+entre links, el doble; desde el texto son 32px contra 34px. La distincion la lleva
+la forma del boton, no el margen. El borde de caja se ve con `layout-debug`.
+
 ## 6. Elevacion
 
 Decision del sistema: NO existen tokens `--shadow-*`. Las sombras son

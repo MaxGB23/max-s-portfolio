@@ -97,7 +97,7 @@ duration-200` (outline, inverted).
 | Seccion | Uso | Variante / shape / size | Notas |
 |---|---|---|---|
 | Navbar desktop | Contacto | `primary pill sm` | Sin shadow; hover opacidad |
-| Navbar mobile | Contacto | `primary pill sm fullWidth text-base py-2.5 mt-6` | Ancho completo con label CENTRADO (es un action, no un item de la lista: el eje 44px es contrato de la lista de links); target de 44px igual que los links (`text-base` + `py-2.5`); `mt-6` = 24px de separacion vs 12px entre links, un solo token (nunca `gap` + margen); el bloque del CTA lleva su propio `pb-6` (24px) para que la zona quede simetrica |
+| Navbar mobile | Contacto | `primary pill sm fullWidth text-base py-2.5 mt-6` | Ancho completo con label CENTRADO (es un action, no un item de la lista: el eje 44px es contrato de la lista de links); target de 44px igual que los links (`text-base` + `py-2.5`); `mt-6` = 24px de caja vs 12px de caja entre links, un solo token (nunca `gap` + margen); desde el texto son 32px vs 34px, asi que la distincion la lleva la forma y no el margen (tokens.md 5.1); el bloque del CTA lleva su propio `pb-6` (24px) |
 | Hero | Ver Proyectos | `primary pill md` + `shadow-md` | shadow heredada (deuda 10.1) |
 | Hero | Descargar CV | `outline pill md glow` | Firma morada; `href` de `data/cv.ts` (mismo PDF por idioma que contacto); EN dice "Resume" |
 | Detalle | Volver | `primary pill md` + `back-btn hover:bg-foreground/80 transition-colors` | Excepcion: hover de fondo, NUNCA opacity (GSAP lo controla) |
