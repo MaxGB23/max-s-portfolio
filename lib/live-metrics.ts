@@ -2,12 +2,15 @@
  * Metricas que se leen de un registry en vez de una medicion fija.
  *
  * El valor se consulta al servidor de Next con cache de 24 h: la pagina sigue
- * siendo barata y la cifra deja de envejecer a mano. Si la API no responde o
+ * siendo barata y la cifra deja de envejecer a mano. Si una API no responde o
  * devuelve algo que no es un numero, se devuelve `null` y el llamador conserva
  * la constante escrita en `data/projects/*.ts` como respaldo.
+ *
+ * Una metrica puede venir de varios registries (hoy Open VSX y Zed): la cifra
+ * visible es la suma y solo se publica cuando todas las fuentes respondieron.
  */
 
-import type { ProjectL } from "@/data/projects";
+import type { LiveMetricSource, ProjectL } from "@/data/projects";
 
 /** Ventana de cache de la respuesta del registry (24 h). */
 export const LIVE_METRIC_REVALIDATE_SECONDS = 24 * 60 * 60;
@@ -52,6 +55,59 @@ export async function getOpenVsxDownloads(url: string): Promise<number | null> {
 /** Valores vivos ya formateados, indexados por id de proyecto. */
 export type LiveMetricValues = Record<string, string>;
 
+/** Descargas acumuladas del endpoint de Zed, o `null` si no se pudo leer. */
+export async function getZedDownloads(url: string): Promise<number | null> {
+  try {
+    const response = await fetch(url, {
+      next: { revalidate: LIVE_METRIC_REVALIDATE_SECONDS },
+      signal: AbortSignal.timeout(LIVE_METRIC_TIMEOUT_MS),
+    });
+    if (!response.ok) return null;
+    const payload: unknown = await response.json();
+    const rows = (payload as { data?: unknown } | null)?.data;
+    // Un id inexistente en Zed responde 200 con `data: []`, no 404: una lista
+    // vacia es "no disponible", nunca cero descargas.
+    if (!Array.isArray(rows) || rows.length === 0) return null;
+    // Zed devuelve una fila por version publicada. `download_count` es acumulado
+    // y viene igual en todas, pero la fila de la version mas reciente es la que
+    // representa la extension hoy.
+    const publishedAt = (row: unknown) => (row as { published_at?: unknown } | null)?.published_at;
+    const latest = rows.reduce((best: unknown, row: unknown) => {
+      const candidate = publishedAt(row);
+      const current = publishedAt(best);
+      if (typeof candidate !== "string") return best;
+      if (typeof current !== "string") return row;
+      return candidate > current ? row : best;
+    }, rows[0] as unknown);
+    const count = (latest as { download_count?: unknown } | null)?.download_count;
+    return typeof count === "number" && Number.isFinite(count) && count >= 0 ? count : null;
+  } catch {
+    // Un registry caido no puede tumbar la ficha: se cae al valor estatico.
+    return null;
+  }
+}
+
+/**
+ * Suma las descargas de todos los registries declarados.
+ *
+ * Si una sola fuente falla devuelve `null`: una suma parcial omitiria una
+ * plataforma y publicaria una traccion mas baja que la real sin avisar. El
+ * llamador cae entonces a la cifra escrita y fechada.
+ */
+export async function sumDownloads(sources: LiveMetricSource[]): Promise<number | null> {
+  const counts = await Promise.all(
+    sources.map((source) =>
+      source.kind === "zed" ? getZedDownloads(source.url) : getOpenVsxDownloads(source.url),
+    ),
+  );
+  let total = 0;
+  for (const count of counts) {
+    if (count === null) return null;
+    total += count;
+  }
+  return total;
+}
+
 /**
  * Sustituye la cifra inicial de una metrica de card por su valor vivo.
  *
@@ -76,9 +132,9 @@ export function withLiveMetric(metric: string, live: string): string {
 export async function getLiveMetrics(projects: ProjectL[]): Promise<LiveMetricValues> {
   const entries = await Promise.all(
     projects.map(async (project) => {
-      const source = project.liveMetric;
-      if (!source || source.kind !== "openvsx") return null;
-      const count = await getOpenVsxDownloads(source.url);
+      const live = project.liveMetric;
+      if (!live) return null;
+      const count = await sumDownloads(live.sources);
       return count === null ? null : ([project.id, formatDownloads(count)] as const);
     }),
   );

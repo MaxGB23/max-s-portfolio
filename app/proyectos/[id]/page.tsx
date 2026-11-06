@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { cookies } from "next/headers";
 import { projects, getProjectById, localizeProject } from "@/data/projects";
-import { formatDownloads, getOpenVsxDownloads } from "@/lib/live-metrics";
+import { formatDownloads, sumDownloads } from "@/lib/live-metrics";
 import { ProjectDetail } from "@/components/project-detail";
 import { ScrollProgress } from "@/components/scroll-progress";
 import { translations, type Lang } from "@/data/translations";
@@ -51,11 +51,11 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
     notFound();
   }
 
-  // Una metrica puede venir de un registry: solo se consulta si el proyecto la
-  // declara. La respuesta se cachea 24 h y, si la API no responde, la ficha usa
-  // la cifra escrita en `data/projects` como respaldo.
-  const source = project.liveMetric;
-  const downloads = source && source.kind === "openvsx" ? await getOpenVsxDownloads(source.url) : null;
+  // Una metrica puede venir de varios registries: solo se consultan si el
+  // proyecto los declara. La respuesta se cachea 24 h y, si alguna API no
+  // responde, la ficha usa la cifra escrita en `data/projects` como respaldo.
+  const live = project.liveMetric;
+  const downloads = live ? await sumDownloads(live.sources) : null;
 
   return (
     <main className="min-h-screen bg-background text-foreground">
@@ -63,8 +63,8 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
       <ProjectDetail
         project={project}
         liveMetric={
-          source && downloads !== null
-            ? { index: source.index, value: formatDownloads(downloads) }
+          live && downloads !== null
+            ? { index: live.index, value: formatDownloads(downloads) }
             : undefined
         }
       />

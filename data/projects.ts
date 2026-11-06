@@ -20,6 +20,7 @@ import { funkyTheme } from "./projects/funky-theme";
 
 export type {
   ProjectL,
+  LiveMetricSource,
   MetricL,
   NodeL,
   LinkL,

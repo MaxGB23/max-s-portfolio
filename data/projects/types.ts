@@ -33,6 +33,12 @@ export interface ProjectImageL {
 export interface MetricL {
   value: L;
   label: L;
+  /**
+   * Etiqueta alternativa para cuando la cifra se lee de un registry. Existe para
+   * que el respaldo escrito pueda FECHARSE: una cifra estatica con la etiqueta
+   * "(en vivo)" afirmaria estar actualizada sin serlo.
+   */
+  labelLive?: L;
 }
 
 /** Nodo del grafo de arquitectura. `children` es recursivo por diseno: la
@@ -73,6 +79,17 @@ export const linkLabelDemo: L = { es: "Ver demo", en: "View demo" };
 export const linkLabelLanding: L = { es: "Ver landing", en: "View landing page" };
 export const linkLabelApp: L = { es: "Probar la app", en: "Try the app" };
 
+/**
+ * Registry que publica su propio conteo de descargas.
+ *
+ * `kind` decide el parser (la forma del JSON cambia de un registry a otro) y
+ * `url` es el endpoint publico concreto de la extension.
+ */
+export type LiveMetricSource = {
+  kind: "openvsx" | "zed";
+  url: string;
+};
+
 export interface ProjectL {
   id: string;
   title: L;
@@ -86,17 +103,19 @@ export interface ProjectL {
   links: LinkL[];
   featured?: boolean;
   /**
-   * Metrica que se lee de un registry en vez de una medicion fija: la ficha
+   * Metrica que se lee de registries en vez de una medicion fija: la ficha
    * muestra la cifra viva y este bloque dice de donde sale. El valor escrito en
-   * `detail.metrics` queda como respaldo si la API no responde.
+   * `detail.metrics` queda como respaldo si alguna API no responde.
    */
   liveMetric?: {
-    /** Indice dentro de `detail.metrics` — por convencion, 0 es la raiz. */
+    /** Indice dentro de `detail.metrics` (por convencion, 0 es la raiz). */
     index: number;
-    /** Fuente de la cifra: hoy solo Open VSX. */
-    kind: "openvsx";
-    /** Endpoint publico del registry. */
-    url: string;
+    /**
+     * Registries que publican su propio conteo: la ficha muestra la SUMA de
+     * todos, y solo la muestra si TODOS responden. Una suma parcial omitiria
+     * una plataforma y publicaria menos traccion que la real.
+     */
+    sources: LiveMetricSource[];
   };
   detail: {
     headline: L;

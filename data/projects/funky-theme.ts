@@ -16,10 +16,17 @@
 // mantiene la misma granularidad — no se abrevia ni se resume ningun nodo, para
 // que la topologia se lea igual en los dos idiomas.
 //
-// CIFRAS INTACTAS: `4.4k`, `4,450`, `22 oct 2026`, `191/30d`, `97.45%`, `5`,
-// `30` (limite de keywords) se traducen sin alterar un solo digito. El ES
-// escribe el limite de keywords con coma de miles por error ("30") y con flecha
-// (->) que el EN debe respetar tal cual para no divergir del dato upstream.
+// CIFRAS INTACTAS: `6.8k`, `6 nov 2026`, `191/30d`, `97.45%`, `5`, `30` (limite
+// de keywords) se traducen sin alterar un solo digito. El ES escribe el limite
+// de keywords con coma de miles por error ("30") y con flecha (->) que el EN
+// debe respetar tal cual para no divergir del dato upstream.
+//
+// La cifra de descargas NO vive en la prosa: se publica viva desde los
+// registries y solo el respaldo escrito la repite, en DOS literales (la `metric`
+// de la card y el `value` de `metrics[0]`) que deben moverse juntos. El gate
+// `audit:i18n` exige literales en toda hoja `L`, asi que no puede unificarse en
+// una constante. El desglose fechado por registry vive en
+// docs/projects/candidatos/funky-theme-portfolio.md.
 
 import { linkLabelCode, type ProjectL } from "./types";
 
@@ -39,9 +46,12 @@ export const funkyTheme: ProjectL = {
     es: "Tema oscuro semántico original compatible en cualquier VSCode-based editor y Terminales: 5 variantes derivadas de una paleta jerárquica definida en un único config (SSOT).",
     en: "Original semantic dark theme compatible with any VSCode-based editor and terminal: 5 variants derived from a hierarchical palette defined in a single config (SSOT).",
   },
+  // La cifra inicial la reescribe `withLiveMetric` con la suma viva; si las APIs
+  // no responden, este literal es lo que se publica. Debe coincidir con
+  // `detail.metrics[0].value`.
   metric: {
-    es: "4.4k descargas en Open VSX",
-    en: "4.4k downloads on Open VSX",
+    es: "6.8k descargas en Open VSX y Zed",
+    en: "6.8k downloads on Open VSX and Zed",
   },
   // Tags APROBADOS por el usuario: no se tocan.
   tags: ["VS Code", "Verified", "Open VSX", "Zed", "Token Colors", "Terminal UI"],
@@ -51,12 +61,15 @@ export const funkyTheme: ProjectL = {
     en: "Screenshot of VS Code with the funky-theme theme applied to an editor",
   },
   featured: true,
-  // La cifra de descargas se lee del registry (cache de 24 h); el valor de
-  // `detail.metrics[0]` queda como respaldo si la API no responde.
+  // La cifra de descargas se lee de los registries (cache de 24 h) y se publica
+  // como SUMA: 5,104 en Open VSX + 1,711 en Zed (medidas el 6 nov 2026). El
+  // valor de `detail.metrics[0]` queda como respaldo si alguna API no responde.
   liveMetric: {
     index: 0,
-    kind: "openvsx",
-    url: "https://open-vsx.org/api/MaxGB23/funky-theme-vscode",
+    sources: [
+      { kind: "openvsx", url: "https://open-vsx.org/api/MaxGB23/funky-theme-vscode" },
+      { kind: "zed", url: "https://api.zed.dev/extensions/funky-theme" },
+    ],
   },
   links: [
     {
@@ -120,12 +133,21 @@ export const funkyTheme: ProjectL = {
         // metrics[0] = metrica RAIZ del detail (nodo raiz de la topologia).
         value: {
           // Cifra pura: se traduce por identidad (no hay palabra que traducir).
-          es: "4.4k",
-          en: "4.4k",
+          // Debe coincidir con `metric`, el otro literal del respaldo escrito.
+          es: "6.8k",
+          en: "6.8k",
         },
         label: {
-          es: "descargas acumuladas en Open VSX (en vivo)",
-          en: "cumulative downloads on Open VSX (live)",
+          // Etiqueta del RESPALDO: la cifra escrita es una foto de ese dia, y lo
+          // dice. Si ambas APIs fallan, el lector ve una cifra fechada y no una
+          // que se hace pasar por actualizada.
+          es: "descargas acumuladas en Open VSX y Zed (medidas el 6 nov 2026)",
+          en: "cumulative downloads on Open VSX and Zed (measured on Nov 6, 2026)",
+        },
+        // Solo se muestra cuando la cifra viene de los registries.
+        labelLive: {
+          es: "descargas acumuladas en Open VSX y Zed (en vivo)",
+          en: "cumulative downloads on Open VSX and Zed (live)",
         },
       },
       {
@@ -247,8 +269,10 @@ export const funkyTheme: ProjectL = {
       },
       {
         // Esta hoja concentra los 5 pares `**` del ES: mismo numero, misma posicion.
-        es: "**Tracción validada:** **Verified Open VSX Publisher**; **4,450 descargas medidas el 22 oct 2026** en Open VSX; **191 adquisiciones/30d** en VS Code Marketplace con **funnel 97.45%** (page views → installs) — posicionamiento SEO orgánico demostrado.",
-        en: "**Traction validated:** **Verified Open VSX Publisher**; **4,450 downloads measured on Oct 22, 2026** on Open VSX; **191 acquisitions/30d** on VS Code Marketplace with **97.45% funnel** (page views → installs) — organic SEO positioning demonstrated.",
+        // Sin cifras de descargas: la metrica raiz ya las publica vivas, y una
+        // frase fechada la contradiria en cuanto el registry se moviera.
+        es: "**Tracción validada:** **Verified Open VSX Publisher**; **descargas acumuladas en Open VSX y Zed, actualizadas a diario**; **191 adquisiciones/30d** en VS Code Marketplace con **funnel 97.45%** (page views → installs) — posicionamiento SEO orgánico demostrado.",
+        en: "**Traction validated:** **Verified Open VSX Publisher**; **cumulative downloads on Open VSX and Zed, refreshed daily**; **191 acquisitions/30d** on VS Code Marketplace with **97.45% funnel** (page views → installs) — organic SEO positioning demonstrated.",
       },
       {
         es: "**Cross-editor:** soporte **Zed** publicado en el registry oficial (zed.dev/extensions/funky-theme), instalable en un clic (misma paleta de editores).",
