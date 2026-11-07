@@ -1,0 +1,28 @@
+{
+  "title": "Catálogo de proyectos y familia Funky AI",
+  "brief": "Fase 0 de projects-catalog: las tres piezas que siguen vivas. El catálogo /proyectos real en escritorio y en móvil, y el tablero de decisión del enlace «Ver todos los proyectos» de la home. Decide agrupación por linaje, densidad, y la forma del acceso al catálogo; no es código.",
+  "feature": "odd/tasks/projects-catalog.md",
+  "artboards": [
+    {
+      "file": "06-proyectos-desktop.html",
+      "title": "/proyectos real · escritorio (las 11 fichas)",
+      "tradeoff": "Compone la página real solo con el card del sistema en su grilla de 3 columnas: navbar y footer en contexto y las 11 fichas completas. El precio es la altura —3374 px— y que la familia Funky AI se lee por orden, chip y cue de linaje, no comparando datos entre fichas; Forge y Secure quedan sin metric ni tags porque esos datos todavía no existen.",
+      "width": 1440,
+      "height": 3374
+    },
+    {
+      "file": "07-proyectos-movil.html",
+      "title": "/proyectos real · móvil (una columna)",
+      "tradeoff": "La misma ficha y las mismas cabeceras de grupo en 390 px: el linaje sobrevive como cue de una línea dentro del card. Pierde la comparación en paralelo de la familia, y como la ficha de Forge y Secure no tiene metric ni tags, cada una queda 74 px más corta que sus vecinas en la misma lista.",
+      "width": 390,
+      "height": 6283
+    },
+    {
+      "file": "08-cta-ver-todos.html",
+      "title": "Home · el enlace «Ver todos los proyectos», tres tratamientos",
+      "tradeoff": "Pone los tres tratamientos del enlace sobre la misma fila final de la grilla y el mismo ritmo, así que se juzgan en contexto: el discreto compite con el «Caso de estudio» del pie de cada ficha, la franja agrega la única caja llena de la sección y el del encabezado deja de verse al bajar. El precio es que la grilla se repite tres veces —3666 px, sin la fila de arriba ni la sección siguiente—, así que el enlace no se mide contra «Precios».",
+      "width": 1440,
+      "height": 3666
+    }
+  ]
+}

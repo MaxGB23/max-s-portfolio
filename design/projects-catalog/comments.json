@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "comments": [
+    {
+      "id": "7p18f4r1",
+      "file": "06-proyectos-desktop.html",
+      "selector": "#proyectos > div:nth-of-type(1) > div > p",
+      "excerpt": "11 PROYECTOS",
+      "comment": "creo que mencionar la cantidad solo mete ruido.",
+      "createdAt": "2026-11-07T05:07:01.243Z",
+      "status": "resolved",
+      "sentAt": "2026-11-07T05:07:01.283Z",
+      "resolvedAt": "2026-11-07T05:11:27.615Z"
+    },
+    {
+      "id": "xbnomjpk",
+      "file": "08-cta-ver-todos.html",
+      "selector": "body > main > section:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(3) > div > a",
+      "excerpt": "Ver todos los proyectos",
+      "comment": "creo que centrarlo sería mejor, y no sé si darle algun efecto de purple accent, tal vez no",
+      "createdAt": "2026-11-07T05:40:31.213Z",
+      "status": "resolved",
+      "sentAt": "2026-11-07T05:40:31.278Z",
+      "resolvedAt": "2026-11-07T05:43:48.012Z"
+    }
+  ]
+}

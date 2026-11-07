@@ -28,3 +28,5 @@ shots/
 # Dev server log (worktree)
 dev3001.log
 dev-server.log
+# Design board generated from design/system.md (regenerable)
+design/system.html
