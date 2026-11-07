@@ -50,7 +50,7 @@ export const presidencia: ProjectL = {
     es: "Dashboard de métricas y gestión de solicitudes del Sistema de Apoyos Sociales",
     en: "Metrics dashboard and request management of the Social Assistance System",
   },
-  featured: true,
+  home: "featured",
   links: [
     {
       label: linkLabelCode,

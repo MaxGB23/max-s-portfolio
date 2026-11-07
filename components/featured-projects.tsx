@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { FeaturedProjectPanel, type FeaturedProject } from "@/components/featured-project-panel";
 import { Reveal } from "@/components/reveal";
-import { getFeaturedProjects, localizeProject } from "@/data/projects";
+import { getHomeFeatured, localizeProject } from "@/data/projects";
 import type { LiveMetricValues } from "@/lib/live-metrics";
 import { withLiveMetric } from "@/lib/live-metrics";
 import { Section } from "@/components/section";
@@ -61,7 +61,7 @@ export function FeaturedProjects({ liveMetrics }: { liveMetrics?: LiveMetricValu
   // no a module scope porque depende de `lang`: el toggle tiene que cambiar el
   // CONTENIDO, no solo el chrome. El orden (y por tanto `index`) no depende del
   // locale, asi que la geometria del one-slide rule queda intacta.
-  const featuredProjects: FeaturedProject[] = getFeaturedProjects().map(
+  const featuredProjects: FeaturedProject[] = getHomeFeatured().map(
     (project, index) => {
       const localized = localizeProject(project, lang);
       return {

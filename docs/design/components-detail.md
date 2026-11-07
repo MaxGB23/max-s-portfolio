@@ -25,7 +25,7 @@
 - Entrada con `Reveal`: UN `Reveal delayEnter` para el heading y UNO para todo
   el grid (sin stagger por card; antes `FadeInStagger` + `FadeInItemFade`). En
   mobile el grid usa `earlyOnMobile`.
-- Fuente de datos: `data/projects.ts` (`getFeaturedProjects`, categorias).
+- Fuente de datos: `data/projects.ts` (`getHomeFeatured`, `getHomeGrid`, `getCatalog`; la selección de la home se declara con `home` en cada ficha, no con un booleano `featured`).
 
 ### 4.6 ProjectCard (`project-card.tsx`)
 

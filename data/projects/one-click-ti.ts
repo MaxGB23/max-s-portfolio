@@ -44,6 +44,7 @@ export const oneClickTi: ProjectL = {
     es: "Catálogo de servicios publicado en la landing, con precio y categoría",
     en: "Service catalog published on the landing page, with price and category",
   },
+  home: "grid",
   links: [
     {
       label: linkLabelCode,

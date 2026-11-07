@@ -18,6 +18,8 @@ export interface Project {
   category: string;
   tags?: string[];
   links?: ProjectLink[];
+  /** API PROPIA de la card (borde destacado). Quien la pase la deriva de la
+      superficie de la ficha (`home === "featured"`), no de un flag del modelo. */
   featured?: boolean;
 }
 

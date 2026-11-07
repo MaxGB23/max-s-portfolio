@@ -8,6 +8,7 @@
 // desde aqui para que ningun consumidor tenga que bajar a la carpeta interna.
 
 import type { ProjectL } from "./projects/types";
+import { HOME_FEATURED, HOME_GRID } from "./projects/types";
 import { caf } from "./projects/caf";
 import { presidencia } from "./projects/presidencia";
 import { funkyAi } from "./projects/funky-ai";
@@ -34,6 +35,7 @@ export type {
 } from "./projects/types";
 
 export { localizeProject } from "./projects/types";
+export { HOME_FEATURED, HOME_GRID } from "./projects/types";
 
 // Alias sin sufijo hacia los tipos YA LOCALIZADOS. Los componentes de render
 // reciben la ficha despues de `localizeProject`, asi que el tipo que necesitan
@@ -61,6 +63,28 @@ export function getProjectById(id: string): ProjectL | undefined {
   return projects.find((project) => project.id === id);
 }
 
-export function getFeaturedProjects(): ProjectL[] {
-  return projects.filter((project) => project.featured);
+// ---------------------------------------------------------------------------
+// Selectores derivados de la superficie
+//
+// El array `projects` es contrato de layout (ver arriba): la seleccion de la
+// home se expresa SOLO con el campo `home`, nunca reordenando ni recortando
+// ese array. Los tres selectores conservan el orden del array.
+// ---------------------------------------------------------------------------
+
+/** Proyectos de la home en la pila de destacados. */
+export function getHomeFeatured(): ProjectL[] {
+  return projects.filter((project) => project.home === HOME_FEATURED);
+}
+
+/** Proyectos de la home en la grilla de "Todos los Proyectos". */
+export function getHomeGrid(): ProjectL[] {
+  return projects.filter((project) => project.home === HOME_GRID);
+}
+
+/**
+ * Catalogo completo: TODAS las fichas, incluidas las 3 destacadas. El catalogo
+ * no es "lo que no entra en la home".
+ */
+export function getCatalog(): ProjectL[] {
+  return projects;
 }

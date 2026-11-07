@@ -16,7 +16,8 @@
  *     (docs/i18n.md:25: los pares `**` se preservan al traducir).
  *  3. `outside-leaf` — string visible fuera de una hoja `L` donde una es
  *     obligatoria. Solo se permiten literales en props no traducibles
- *     (`id`, `tags`, `image`, `src`, `url`, `kind`, `price`) y los module
+ *     (`id`, `tags`, `image`, `src`, `url`, `kind`, `price`, `home`,
+ *     `lineage`, `status`) y los module
  *     specifiers de los imports. `data/projects/types.ts` se excluye de ESTE
  *     chequeo: contiene tipos + maquinaria `localize` cuyos strings de codigo
  *     ("object", "es", "en") no son copy visible; sus hojas `L` (las 4
@@ -48,6 +49,11 @@ const NON_TRANSLATABLE_PROPS = new Set([
   "url",
   "kind",
   "price",
+  // Eje de superficie, linaje y ciclo de vida del modelo de proyectos: son
+  // identificadores del modelo, no copy visible al usuario.
+  "home",
+  "lineage",
+  "status",
 ]);
 
 // Strings donde `en === es` es el estado terminal CORRECTO, no una traduccion

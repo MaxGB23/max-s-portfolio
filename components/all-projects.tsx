@@ -3,7 +3,7 @@
 import { ProjectCard, type Project } from "@/components/project-card";
 import { Reveal } from "@/components/reveal";
 import { Section } from "@/components/section";
-import { projects, localizeProject } from "@/data/projects";
+import { getHomeGrid, localizeProject } from "@/data/projects";
 import type { LiveMetricValues } from "@/lib/live-metrics";
 import { withLiveMetric } from "@/lib/live-metrics";
 import { useLanguage } from "@/contexts/language-context";
@@ -19,25 +19,27 @@ export function AllProjects({ liveMetrics }: { liveMetrics?: LiveMetricValues })
   // El mapeo se resuelve aqui y no a module scope porque depende de `lang`: el
   // toggle tiene que cambiar el CONTENIDO, no solo el chrome. El server render
   // con el lang del provider inicial, asi que no hay mismatch de hidratacion.
-  const allProjects: Project[] = projects
-    .filter((project) => !project.featured)
-    .map((project) => {
-      const localized = localizeProject(project, lang);
-      return {
-        id: localized.id,
-        title: localized.title,
-        description: localized.hook,
-        metric: liveMetrics?.[localized.id]
-          ? withLiveMetric(localized.metric, liveMetrics[localized.id])
-          : localized.metric,
-        image: localized.image,
-        imageAlt: localized.imageAlt,
-        category: localized.category,
-        tags: localized.tags,
-        links: localized.links,
-        featured: localized.featured,
-      };
-    });
+  // La grilla sale del selector de superficie (`home: "grid"`), no de filtrar
+  // un flag: el eje es uno solo y el orden del array sigue siendo el visible.
+  const allProjects: Project[] = getHomeGrid().map((project) => {
+    const localized = localizeProject(project, lang);
+    return {
+      id: localized.id,
+      title: localized.title,
+      description: localized.hook,
+      metric: liveMetrics?.[localized.id]
+        ? withLiveMetric(localized.metric, liveMetrics[localized.id])
+        : localized.metric,
+      image: localized.image,
+      imageAlt: localized.imageAlt,
+      category: localized.category,
+      tags: localized.tags,
+      links: localized.links,
+      // El `featured` de la card es su PROPIA API (borde destacado): se
+      // deriva de la superficie de la ficha, no del flag viejo del modelo.
+      featured: localized.home === "featured",
+    };
+  });
   return (
     <>
       {/* Section heading — previously the transition bridge after the featured

@@ -46,6 +46,7 @@ export const colorHighlightV2: ProjectL = {
     es: "Mockup de Color Highlight v2: logo, eslogan y una ventana de VS Code resaltando colores en CSS y SCSS",
     en: "Color Highlight v2 mockup: logo, tagline and a VS Code window highlighting colors in CSS and SCSS",
   },
+  home: "grid",
   links: [
     {
       label: linkLabelCode,
