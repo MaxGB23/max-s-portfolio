@@ -30,6 +30,12 @@ secciones con foto propia usan `px-6 md:px-8 lg:px-12` (tres ladders
 distintas para acercar la foto al borde); el detalle de proyecto usa
 `lg:px-20`.
 
+Ruta de indice (`/proyectos`): monta `Navbar` + `Footer` + `ScrollProgress` y
+usa `Section` dos veces (encabezado y catalogo) con `insetClassName="px-6"`,
+que son los 24px del board. La ficha `/proyectos/[id]` sigue sin navbar ni
+footer: la regla es la funcion (un indice conserva el chrome; una superficie de
+lectura lo esconde), no la profundidad de la ruta.
+
 ## 2. Contrato de ritmo
 
 Fuente unica: `lib/rhythm.ts`. QA espejo: `scripts/rhythm-contract.mjs`.
@@ -81,7 +87,12 @@ pagina, `scripts/section-spacing.mjs` compensa el padding propio de
 `#contacto` (`PADDING_OWNED_PAIRS`) al asertarlos — los valores del contrato
 (`scripts/rhythm-contract.mjs`) no cambiaron.
 
+La ruta `/proyectos` no consume `PAGE_SPACER_CLASSES`: esos seis pares describen
+la home. Su ritmo es el de su board (48/72px bajo los 64px de la navbar y
+48-96px alrededor del catalogo) y vive en `components-detail.md` 4.5b.
+
 ## 4. Geometria por componente (4.1-4.4)
+
 
 ### 4.1 Navbar (`navbar.tsx`)
 

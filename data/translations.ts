@@ -55,6 +55,12 @@ const es = {
   'section.allProjects.title.first': 'Todos los',
   'section.allProjects.title.second': 'Proyectos',
 
+  // Catalogue page (/proyectos): solo las etiquetas de grupo. El encabezado de
+  // la pagina reusa las claves de `allProjects` y el grupo del medio reusa su
+  // segunda palabra, asi que aqui no se duplica ese texto. Sin conteos (S3).
+  'section.catalog.group.family': 'Familia Funky AI',
+  'section.catalog.group.earlier': 'Trabajo anterior',
+
   // Products
   'section.products.eyebrow': 'Lo que construyo',
   'section.products.title': 'Productos y Herramientas',
@@ -175,6 +181,11 @@ const en = {
   // All projects
   'section.allProjects.title.first': 'All',
   'section.allProjects.title.second': 'Projects',
+
+  // Catalogue page (/proyectos): the page heading reuses `allProjects` and the
+  // middle group reuses its second word, so only the two new labels live here.
+  'section.catalog.group.family': 'Funky AI family',
+  'section.catalog.group.earlier': 'Earlier work',
 
   // Products
   'section.products.eyebrow': 'What I build',

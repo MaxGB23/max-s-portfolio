@@ -27,6 +27,26 @@
   mobile el grid usa `earlyOnMobile`.
 - Fuente de datos: `data/projects.ts` (`getHomeFeatured`, `getHomeGrid`, `getCatalog`; la selección de la home se declara con `home` en cada ficha, no con un booleano `featured`).
 
+### 4.5b Catalogo de proyectos (`app/proyectos/page.tsx` + `components/projects-catalog.tsx`)
+
+- Pagina de INDICE: `getCatalog()` completo en tres bloques que calcula
+  `lib/projects-catalog.ts` (familia, activos, `finished`); un grupo vacio no se
+  pinta.
+- Encabezado: `Section as="div"`, `insetClassName="px-6"`, `className="relative
+  pt-28 md:pt-34 text-center"` (navbar fija + los 48/72px del board). Es un `h1`
+  (titulo del documento) con el patron de dos spans de la home, `text-fluid-
+  section`, `gap-2 md:gap-3` y acento `text-purple-accent brightness-110`; las
+  cabeceras de grupo son `h2`.
+- Catalogo: `Section insetClassName="px-6" className="pt-12 pb-16 md:pt-16
+  md:pb-24"`. Cabecera de grupo `flex items-center gap-3 md:gap-4 mb-5 md:mb-6`
+  con etiqueta `text-[13px] font-semibold uppercase tracking-[0.12em]` y regla
+  `flex-1 h-px bg-border`; 48/56px entre grupos; "Trabajo anterior" con
+  `mt-16 pt-7 md:mt-20 md:pt-8 border-t`; grid `1/2/3` con `gap-6`.
+- Entrada: `Reveal delayEnter` para el `h1` y cada cabecera, `earlyOnMobile` por
+  grid. Sin movimiento propio, sin metricas vivas (S3), sin chip de estado (T2b)
+  y sin conteos. Monta `Navbar` y `Footer` porque es un indice; la ficha no los
+  monta (4.10).
+
 ### 4.6 ProjectCard (`project-card.tsx`)
 
 - `article h-full bg-card border rounded-2xl overflow-hidden cursor-pointer`
