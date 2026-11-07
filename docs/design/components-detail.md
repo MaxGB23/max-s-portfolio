@@ -26,6 +26,12 @@
   el grid (sin stagger por card; antes `FadeInStagger` + `FadeInItemFade`). En
   mobile el grid usa `earlyOnMobile`.
 - Fuente de datos: `data/projects.ts` (`getHomeFeatured`, `getHomeGrid`, `getCatalog`; la selección de la home se declara con `home` en cada ficha, no con un booleano `featured`).
+- Enlace al catalogo: dentro del mismo `Reveal` del grid, `flex justify-center`
+  con `pt-8` (32px bajo el ultimo borde). Es navegacion, no conversion: texto en
+  `--foreground` con flecha `ArrowRight` de 16px, sin relleno y sin
+  `--accent-purple` (en reposo el morado es jerarquia de encabezado); subrayado
+  solo en hover y `:focus-visible`, y la flecha se desplaza 3px con
+  `motion-reduce` anulado. La etiqueta no lleva conteo.
 
 ### 4.5b Catalogo de proyectos (`app/proyectos/page.tsx` + `components/projects-catalog.tsx`)
 

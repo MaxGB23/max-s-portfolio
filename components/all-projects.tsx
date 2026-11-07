@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { ProjectCard, type Project } from "@/components/project-card";
 import { Reveal } from "@/components/reveal";
 import { Section } from "@/components/section";
@@ -81,6 +83,25 @@ export function AllProjects({ liveMetrics }: { liveMetrics?: LiveMetricValues })
             {allProjects.map((project) => (
               <ProjectCard key={project.id} project={project} />
             ))}
+          </div>
+
+          {/* Entrada al catalogo. Es navegacion, no conversion: por eso no es
+              un boton relleno (el blanco lleno es el peso de pricing y
+              contacto) y por eso el morado no aparece aqui: en reposo el sitio
+              lo reserva a la jerarquia de encabezado. Centrada bajo la grilla,
+              a 32px del ultimo borde, y dentro del mismo `Reveal` del grid — no
+              suma un punto de observacion ni toca la coreografia del scroll. */}
+          <div className="flex justify-center pt-8">
+            <Link
+              href="/proyectos"
+              className="group inline-flex items-center gap-2 text-base font-medium text-foreground transition-colors duration-100 hover:underline hover:underline-offset-4 focus-visible:underline focus-visible:underline-offset-4"
+            >
+              {t("section.allProjects.link")}
+              <ArrowRight
+                aria-hidden="true"
+                className="h-4 w-4 transition-transform duration-200 ease-out group-hover:translate-x-[3px] motion-reduce:transition-none motion-reduce:group-hover:translate-x-0"
+              />
+            </Link>
           </div>
         </Reveal>
       </Section>
