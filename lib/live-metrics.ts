@@ -36,10 +36,13 @@ export function formatDownloads(count: number): string {
 }
 
 /** Descargas acumuladas del endpoint de Open VSX, o `null` si no se pudo leer. */
-export async function getOpenVsxDownloads(url: string): Promise<number | null> {
+export async function getOpenVsxDownloads(
+  url: string,
+  revalidateSeconds: number = LIVE_METRIC_REVALIDATE_SECONDS,
+): Promise<number | null> {
   try {
     const response = await fetch(url, {
-      next: { revalidate: LIVE_METRIC_REVALIDATE_SECONDS },
+      next: { revalidate: revalidateSeconds },
       signal: AbortSignal.timeout(LIVE_METRIC_TIMEOUT_MS),
     });
     if (!response.ok) return null;
@@ -56,10 +59,13 @@ export async function getOpenVsxDownloads(url: string): Promise<number | null> {
 export type LiveMetricValues = Record<string, string>;
 
 /** Descargas acumuladas del endpoint de Zed, o `null` si no se pudo leer. */
-export async function getZedDownloads(url: string): Promise<number | null> {
+export async function getZedDownloads(
+  url: string,
+  revalidateSeconds: number = LIVE_METRIC_REVALIDATE_SECONDS,
+): Promise<number | null> {
   try {
     const response = await fetch(url, {
-      next: { revalidate: LIVE_METRIC_REVALIDATE_SECONDS },
+      next: { revalidate: revalidateSeconds },
       signal: AbortSignal.timeout(LIVE_METRIC_TIMEOUT_MS),
     });
     if (!response.ok) return null;
