@@ -48,6 +48,7 @@ export const grinchmasKart: ProjectL = {
     en: "Grinchmas Kart gameplay: 3D kart on a Christmas track with a rival AI",
   },
   home: "grid",
+  status: "finished",
   links: [
     {
       label: linkLabelCode,

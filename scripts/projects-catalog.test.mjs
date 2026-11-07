@@ -116,6 +116,103 @@ test("linaje y ciclo de vida se escriben como literales no traducibles", () => {
   );
 });
 
+test('lineage: "funky-ai" es exactamente 2 y son funky-forge y funky-secure', () => {
+  const family = topLevelStringProps(fichaFiles(), "lineage").filter(
+    (entry) => entry.value === "funky-ai",
+  );
+  assert.deepEqual(
+    family.map((entry) => entry.file),
+    ["data/projects/funky-forge.ts", "data/projects/funky-secure.ts"],
+  );
+});
+
+test('status: "finished" es exactamente 2 y son Grinchmas Kart y Cumyxel', () => {
+  const finished = topLevelStringProps(fichaFiles(), "status").filter(
+    (entry) => entry.value === "finished",
+  );
+  assert.deepEqual(
+    finished.map((entry) => entry.file),
+    ["data/projects/cumyxel.ts", "data/projects/grinchmas-kart.ts"],
+  );
+});
+
+test('status: "pre-release" solo lo declaran las 2 fichas nuevas de la familia', () => {
+  const preRelease = topLevelStringProps(fichaFiles(), "status").filter(
+    (entry) => entry.value === "pre-release",
+  );
+  assert.deepEqual(
+    preRelease.map((entry) => entry.file),
+    ["data/projects/funky-forge.ts", "data/projects/funky-secure.ts"],
+  );
+});
+
+/**
+ * Fichas que NO declaran `home`: viven solo en el catalogo, nunca en la home
+ * (S2). Se lee el AST para no ejecutar `data/projects.ts`.
+ */
+test("solo funky-forge y funky-secure viven solo en el catalogo (sin home)", () => {
+  const withHome = new Set(topLevelStringProps(fichaFiles(), "home").map((entry) => entry.file));
+  const catalogOnly = fichaFiles().filter((file) => !withHome.has(file));
+  assert.deepEqual(catalogOnly, [
+    "data/projects/funky-forge.ts",
+    "data/projects/funky-secure.ts",
+  ]);
+});
+
+/**
+ * `getCatalog()` cubre TODAS las fichas: el array `projects` de
+ * `data/projects.ts` lista las 11 y cada entrada es el import de su ficha, asi
+ * que ninguna queda fuera del catalogo por olvido de registro.
+ */
+test("getCatalog() cubre las 11 fichas del data layer", () => {
+  const source = parse("data/projects.ts");
+
+  const imports = new Map();
+  for (const statement of source.statements) {
+    if (!ts.isImportDeclaration(statement)) continue;
+    const bindings = statement.importClause?.namedBindings;
+    if (!bindings || !ts.isNamedImports(bindings)) continue;
+    for (const element of bindings.elements) {
+      imports.set(element.name.text, statement.moduleSpecifier.text);
+    }
+  }
+
+  const declaration = source.statements
+    .filter((statement) => ts.isVariableStatement(statement))
+    .flatMap((statement) => statement.declarationList.declarations)
+    .find((decl) => ts.isIdentifier(decl.name) && decl.name.text === "projects");
+  assert.ok(declaration, "data/projects.ts debe declarar el array `projects`");
+  assert.ok(
+    ts.isArrayLiteralExpression(declaration.initializer),
+    "`projects` debe inicializarse con un array literal",
+  );
+  const entries = declaration.initializer.elements.map((element) => {
+    assert.ok(ts.isIdentifier(element), "cada entrada de `projects` es el import de una ficha");
+    return element.text;
+  });
+
+  assert.equal(entries.length, 11);
+  const modules = entries.map((name) => {
+    const specifier = imports.get(name);
+    assert.ok(specifier, `${name} debe importarse desde ./projects/<id>`);
+    return specifier;
+  });
+  // Comparacion como CONJUNTO: el orden del array es contrato de layout (S1)
+  // y no es asunto de este invariante, que solo exige que no falte ninguna.
+  assert.deepEqual(
+    [...modules].sort(),
+    fichaFiles()
+      .map((file) => file.replace(/^data\/projects\//, "./projects/").replace(/\.ts$/, ""))
+      .sort(),
+  );
+
+  const getCatalog = source.statements.find(
+    (statement) => ts.isFunctionDeclaration(statement) && statement.name?.text === "getCatalog",
+  );
+  assert.ok(getCatalog, "data/projects.ts debe exportar getCatalog()");
+  assert.match(getCatalog.body.getText(), /return projects;/);
+});
+
 // ---------------------------------------------------------------------------
 // Gate i18n: los props nuevos del modelo son identificadores, no copy visible.
 // Se ejecuta el mismo CLI que corre en CI contra un fixture aislado, y se

@@ -12,6 +12,8 @@ import { HOME_FEATURED, HOME_GRID } from "./projects/types";
 import { caf } from "./projects/caf";
 import { presidencia } from "./projects/presidencia";
 import { funkyAi } from "./projects/funky-ai";
+import { funkyForge } from "./projects/funky-forge";
+import { funkySecure } from "./projects/funky-secure";
 import { grinchmasKart } from "./projects/grinchmas-kart";
 import { cumyxel } from "./projects/cumyxel";
 import { oneClickTi } from "./projects/one-click-ti";
@@ -51,6 +53,9 @@ export const projects: ProjectL[] = [
   caf,
   presidencia,
   funkyAi,
+  // La familia Funky AI se lee junta: el hub y sus dos productos (S3).
+  funkyForge,
+  funkySecure,
   grinchmasKart,
   cumyxel,
   oneClickTi,
