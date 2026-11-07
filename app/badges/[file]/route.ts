@@ -1,4 +1,4 @@
-import { BADGE_CACHE_SECONDS, findBadge, renderBadge } from "@/lib/badge-svg";
+import { BADGES, BADGE_CACHE_SECONDS, findBadge, renderBadge } from "@/lib/badge-svg";
 import { getOpenVsxDownloads, getZedDownloads } from "@/lib/live-metrics";
 
 /**
@@ -9,7 +9,20 @@ import { getOpenVsxDownloads, getZedDownloads } from "@/lib/live-metrics";
  * Se sirve en cache de CDN, y si el registry no responde se publica el respaldo
  * escrito del badge: una cifra con fecha es preferible a una imagen rota.
  */
-export const dynamic = "force-dynamic";
+export const dynamicParams = false;
+
+/**
+ * Revalidacion de la ruta: coincide con `BADGE_CACHE_SECONDS` (1 h). Va como
+ * literal porque Next la lee de forma estatica; si cambia la constante, cambia
+ * esta linea. Con esto el dibujo se sirve prerenderizado desde el CDN y solo se
+ * regenera una vez por hora, en vez de ejecutar el handler en cada visita.
+ */
+export const revalidate = 3600;
+
+/** Los badges son un conjunto cerrado: se prerenderizan los dos y el resto no existe. */
+export function generateStaticParams(): Array<{ file: string }> {
+  return Object.values(BADGES).map((badge) => ({ file: badge.file }));
+}
 
 export async function GET(
   _request: Request,
@@ -35,9 +48,9 @@ export async function GET(
   return new Response(svg, {
     headers: {
       "content-type": "image/svg+xml; charset=utf-8",
-      // El CDN guarda el dibujo; `stale-while-revalidate` evita que un visitante
-      // espere el refresco. La ventana coincide con la del fetch del registry.
-      "cache-control": `public, max-age=300, s-maxage=${BADGE_CACHE_SECONDS}, stale-while-revalidate=86400`,
+      // El navegador puede guardarlo 5 min; el CDN lo sirve prerenderizado y lo
+      // regenera segun `revalidate`.
+      "cache-control": "public, max-age=300",
     },
   });
 }
