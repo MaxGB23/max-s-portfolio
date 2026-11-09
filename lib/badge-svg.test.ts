@@ -119,6 +119,23 @@ test("el azul cielo declara su excepcion y el numero declarado es el medido", ()
   assert.match(renderTenureBadge(BADGES.uptime, at("2026-11-09")), /fill="#2f7cf6"/);
 });
 
+test("sin etiqueta el badge es una sola pildora con las palabras dentro", () => {
+  const svg = renderTenureBadge(BADGES["uptime-only"], at("2026-11-09"));
+
+  assert.match(svg, />[+]11 MONTHS IN PRODUCTION</);
+  assert.doesNotMatch(svg, /fill="#555555"/, "sin etiqueta no hay segmento gris");
+  assert.match(svg, /fill="#2f7cf6"/);
+});
+
+test("una fecha ilegible conserva las palabras del badge sin etiqueta", () => {
+  const roto: BadgeSpec = {
+    ...BADGES["uptime-only"],
+    value: { kind: "tenure", start: "sin fecha", fallbackText: "+11 MONTHS", qualifier: "IN PRODUCTION" },
+  };
+
+  assert.match(renderTenureBadge(roto, at("2026-11-09")), />[+]11 MONTHS IN PRODUCTION</);
+});
+
 test("el badge de tiempo no dibuja un badge de descargas", () => {
   assert.throws(() => renderTenureBadge(BADGES.zed, at("2026-11-09")), RangeError);
 });
