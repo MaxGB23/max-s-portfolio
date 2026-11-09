@@ -18,6 +18,11 @@ export default async function Home() {
   // cards reciben la cifra ya formateada, para que la home y la ficha del
   // proyecto no muestren numeros distintos. La respuesta se cachea 24 h.
   const liveMetrics = await getLiveMetrics(projects);
+  // El tiempo en produccion se mide con UN reloj por render, en el servidor, y
+  // viaja a las cards como dato (igual que `liveMetrics`). Si cada componente
+  // cliente leyera el reloj local, el HTML servido (hasta 24 h viejo) y el
+  // render de hidratacion podrian cruzar un cambio de mes y discrepar.
+  const productionClock = new Date().toISOString();
 
   return (
     <main className="min-h-screen bg-background text-foreground overflow-x-hidden">
@@ -30,10 +35,10 @@ export default async function Home() {
       <AboutSection />
       <PageSpacing pair="about-projects" />
 
-      <FeaturedProjects liveMetrics={liveMetrics} />
+      <FeaturedProjects liveMetrics={liveMetrics} productionClock={productionClock} />
       <PageSpacing pair="projects-all-projects" />
 
-      <AllProjects liveMetrics={liveMetrics} />
+      <AllProjects liveMetrics={liveMetrics} productionClock={productionClock} />
       <PageSpacing pair="all-projects-pricing" />
 
       <PricingSection />

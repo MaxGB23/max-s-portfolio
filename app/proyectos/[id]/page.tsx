@@ -56,12 +56,16 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
   // responde, la ficha usa la cifra escrita en `data/projects` como respaldo.
   const live = project.liveMetric;
   const downloads = live ? await sumDownloads(live.sources) : null;
+  // Un solo reloj por render, resuelto en el servidor y pasado como dato: la
+  // ficha cliente no debe calcular el tiempo en produccion con su propio reloj.
+  const productionClock = new Date().toISOString();
 
   return (
     <main className="min-h-screen bg-background text-foreground">
       <ScrollProgress />
       <ProjectDetail
         project={project}
+        productionClock={productionClock}
         liveMetric={
           live && downloads !== null
             ? { index: live.index, value: formatDownloads(downloads) }

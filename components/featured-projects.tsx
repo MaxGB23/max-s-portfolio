@@ -54,8 +54,18 @@ function SectionHeading() {
 // useReducedMotion(): an SSR/client branch over a media query causes hydration
 // mismatches (ReactHydrationError).
 // ---------------------------------------------------------------------------
-export function FeaturedProjects({ liveMetrics }: { liveMetrics?: LiveMetricValues }) {
+export function FeaturedProjects({
+  liveMetrics,
+  productionClock,
+}: {
+  liveMetrics?: LiveMetricValues;
+  /** ISO resuelto en el servidor; sin el, `localizeProject` usa su reloj por defecto. */
+  productionClock?: string;
+}) {
   const { lang } = useLanguage();
+  // Se parsea una vez por render; la fuente del tiempo es el prop, no el reloj
+  // del cliente (eso rompia la hidratacion en un cambio de mes).
+  const now = productionClock ? new Date(productionClock) : undefined;
 
   // Data - single source of truth: data/projects.ts. El mapeo se resuelve aqui y
   // no a module scope porque depende de `lang`: el toggle tiene que cambiar el
@@ -63,7 +73,7 @@ export function FeaturedProjects({ liveMetrics }: { liveMetrics?: LiveMetricValu
   // locale, asi que la geometria del one-slide rule queda intacta.
   const featuredProjects: FeaturedProject[] = getFeaturedProjects().map(
     (project, index) => {
-      const localized = localizeProject(project, lang);
+      const localized = localizeProject(project, lang, now);
       // Precedencia: tiempo en produccion CALCULADO > cifra viva del registry >
       // cifra escrita. El escrito solo se publica cuando no hay nada mas nuevo.
       const live = liveMetrics?.[localized.id];

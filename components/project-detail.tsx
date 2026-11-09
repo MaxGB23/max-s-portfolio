@@ -190,10 +190,13 @@ const FOCUSABLE_IN_LIGHTBOX =
 export function ProjectDetail({
   project,
   liveMetric,
+  productionClock,
 }: {
   project: ProjectL;
   /** Cifra viva ya formateada para `project.liveMetric.index`, si se pudo leer. */
   liveMetric?: { index: number; value: string };
+  /** ISO resuelto en el servidor; sin el, `localizeProject` usa su reloj por defecto. */
+  productionClock?: string;
 }) {
   const rootRef = useRef<HTMLDivElement>(null);
   const { t, lang } = useLanguage();
@@ -202,7 +205,14 @@ export function ProjectDetail({
   // que `project`, solo con las hojas `{es,en}` resueltas a `lang`. Se resuelve
   // una vez y TODAS las lecturas de abajo leen de aqui — cambiar `lang` cambia
   // el texto sin tocar una sola lectura.
-  const base = localizeProject(project, lang);
+  // El tiempo en produccion se mide con el reloj del servidor que llega como
+  // prop: leer el reloj del cliente aqui hacia que el HTML servido y la
+  // hidratacion discreparan si la pagina cruzaba un cambio de mes.
+  const base = localizeProject(
+    project,
+    lang,
+    productionClock ? new Date(productionClock) : undefined,
+  );
   // Una metrica puede venir de un registry (`project.liveMetric`): la cifra
   // viva reemplaza al valor escrito, que queda como respaldo si la API falla.
   // La etiqueta cambia con ella: la escrita esta FECHADA (es una foto) y solo la
