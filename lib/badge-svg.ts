@@ -114,12 +114,15 @@ export const BADGES: Record<BadgeId, BadgeSpec> = {
   },
   uptime: {
     file: "uptime.svg",
-    // El dato es de CAF, no del sitio: la etiqueta lo dice para que el README no
-    // lo lea como tiempo de vida del portafolio.
-    label: "CAF IN PRODUCTION",
-    // Verde de estado, con contraste 5.08:1: no necesita excepcion escrita.
-    color: "#1a7f37",
+    // Estado, no sustantivo: el badge se ve fuera de contexto (una captura, un
+    // enlace directo a la imagen) y ahi "PRODUCTION" a secas no dice de que.
+    label: "IN PRODUCTION",
+    // Azul cielo. Con texto blanco alcanza 3.94:1, por debajo de AA: la
+    // excepcion de abajo lo dice y el test comprueba que el numero declarado sea
+    // el medido, no uno escrito a mano.
+    color: "#2f7cf6",
     ariaLabel: "CAF time in production",
+    contrastException: "azul cielo, 3.94:1 medido con texto blanco",
     value: {
       kind: "tenure",
       // Misma fecha que la ficha del proyecto: una sola constante.

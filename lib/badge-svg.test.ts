@@ -76,7 +76,7 @@ test("una cifra imposible no se dibuja", () => {
 const at = (iso: string): Date => new Date(`${iso}T00:00:00.000Z`);
 
 test("el badge de tiempo en produccion se resuelve por su archivo", () => {
-  assert.equal(findBadge("uptime.svg")?.label, "CAF IN PRODUCTION");
+  assert.equal(findBadge("uptime.svg")?.label, "IN PRODUCTION");
   assert.match(renderTenureBadge(BADGES.uptime, at("2026-11-09")), />\+11 MONTHS</);
 });
 
@@ -111,10 +111,12 @@ test("una fecha ilegible publica el respaldo escrito, no una imagen rota", () =>
   assert.match(renderTenureBadge(futuro, at("2026-11-09")), />\+1 YEAR</);
 });
 
-test("el verde de estado pasa AA sin excepcion escrita", () => {
-  assert.equal(BADGES.uptime.contrastException, undefined);
-  assert.ok(contrastRatio("#ffffff", BADGES.uptime.color) >= BADGE_MIN_CONTRAST);
-  assert.match(renderTenureBadge(BADGES.uptime, at("2026-11-09")), /fill="#1a7f37"/);
+test("el azul cielo declara su excepcion y el numero declarado es el medido", () => {
+  const ratio = contrastRatio("#ffffff", BADGES.uptime.color);
+
+  assert.ok(ratio < BADGE_MIN_CONTRAST, "si algun dia cumple AA, sobra la excepcion");
+  assert.ok(BADGES.uptime.contrastException?.includes(ratio.toFixed(2)), BADGES.uptime.contrastException);
+  assert.match(renderTenureBadge(BADGES.uptime, at("2026-11-09")), /fill="#2f7cf6"/);
 });
 
 test("el badge de tiempo no dibuja un badge de descargas", () => {
