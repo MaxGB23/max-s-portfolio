@@ -117,12 +117,12 @@ export const BADGES: Record<BadgeId, BadgeSpec> = {
     // El dato es de CAF, no del sitio: la etiqueta lo dice para que el README no
     // lo lea como tiempo de vida del portafolio.
     label: "CAF IN PRODUCTION",
-    // Azul claro de prueba. Con texto blanco alcanza 2.54:1, por debajo de AA:
-    // la excepcion de abajo lo dice y el test comprueba que el numero declarado
-    // sea el medido, no uno escrito a mano.
-    color: "#60a5fa",
+    // Azul cielo. Con texto blanco alcanza 3.94:1, por debajo de AA: la
+    // excepcion de abajo lo dice y el test comprueba que el numero declarado sea
+    // el medido, no uno escrito a mano.
+    color: "#2f7cf6",
     ariaLabel: "CAF time in production",
-    contrastException: "azul claro, 2.54:1 medido con texto blanco",
+    contrastException: "azul cielo, 3.94:1 medido con texto blanco",
     value: {
       kind: "tenure",
       // Misma fecha que la ficha del proyecto: una sola constante.
