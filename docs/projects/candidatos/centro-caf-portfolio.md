@@ -28,7 +28,7 @@
 
 ### Summary
 
-Plataforma web full-stack construida desde cero que reemplaza el uso de Excel y agendas manuales en un centro real de fisioterapia y rehabilitación. En uso diario por el staff médico con más de **10 meses en producción sin una sola caída**, incluso durante major releases con cambios críticos en la base de datos.
+Plataforma web full-stack construida desde cero que reemplaza el uso de Excel y agendas manuales en un centro real de fisioterapia y rehabilitación. En uso diario por el staff médico **desde noviembre de 2025**, sin una sola caída incluso durante major releases con cambios críticos en la base de datos.
 
 ### Metrics
 
@@ -54,7 +54,7 @@ Las clínicas pequeñas y medianas dependen de herramientas genéricas, procesos
 - Blindé la UX ante fallos: los boundaries traducen errores de auth a pantallas accionables y los 404 contextuales devuelven al dashboard, nunca una pantalla en blanco.
 - Migré los nombres y precios que vivían hardcodeados en un combobox a una UI de paquetes CRUD que los actualiza, con migraciones de Prisma sobre datos existentes. El cliente necesitaba subir precios por la inflación del país y los valores hardcodeados lo impedían. Las migraciones se aplicaron en producción sin un solo incidente de datos: ningún paquete legacy se rompió.
 - En paralelo descarté una branch completa que no cumplía los estándares del proyecto, antes de que llegara a producción.
-- Desplegué y mantengo la plataforma en Vercel con NeonDB (PostgreSQL) hace más de 10 meses, sin que el cliente haya reportado una sola caída.
+- Desplegué y mantengo la plataforma en Vercel con NeonDB (PostgreSQL) desde noviembre de 2025, sin que el cliente haya reportado una sola caída.
 - Desarrollé la landing page pública integrada con el sistema interno; estable en uptime y generando contactos de nuevos pacientes.
 
 ### Solution
