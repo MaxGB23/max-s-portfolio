@@ -6,6 +6,7 @@
 
 import assert from "node:assert/strict";
 import test from "node:test";
+import { CAF_PRODUCTION_SINCE } from "./production-since.ts";
 import {
   BADGE_HEIGHT,
   BADGE_MIN_CONTRAST,
@@ -75,8 +76,16 @@ test("una cifra imposible no se dibuja", () => {
 const at = (iso: string): Date => new Date(`${iso}T00:00:00.000Z`);
 
 test("el badge de tiempo en produccion se resuelve por su archivo", () => {
-  assert.equal(findBadge("uptime.svg")?.label, "IN PRODUCTION");
+  assert.equal(findBadge("uptime.svg")?.label, "CAF IN PRODUCTION");
   assert.match(renderTenureBadge(BADGES.uptime, at("2026-11-09")), />11 MONTHS</);
+});
+
+test("el badge y la ficha leen la misma fecha de arranque", () => {
+  assert.equal(BADGES.uptime.value.kind, "tenure");
+  assert.equal(
+    BADGES.uptime.value.kind === "tenure" ? BADGES.uptime.value.start : null,
+    CAF_PRODUCTION_SINCE,
+  );
 });
 
 test("el tiempo en produccion crece solo, sin que nadie edite nada", () => {

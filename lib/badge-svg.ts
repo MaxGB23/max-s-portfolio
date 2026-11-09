@@ -15,6 +15,7 @@
  * que cambia es el texto del segmento de color.
  */
 
+import { CAF_PRODUCTION_SINCE } from "./production-since.ts";
 import { formatDownloads } from "./live-metrics.ts";
 import { tenureText } from "./tenure.ts";
 
@@ -113,16 +114,18 @@ export const BADGES: Record<BadgeId, BadgeSpec> = {
   },
   uptime: {
     file: "uptime.svg",
-    label: "IN PRODUCTION",
+    // El dato es de CAF, no del sitio: la etiqueta lo dice para que el README no
+    // lo lea como tiempo de vida del portafolio.
+    label: "CAF IN PRODUCTION",
     // Verde de estado, con contraste 5.08:1: no necesita excepcion escrita.
     color: "#1a7f37",
-    ariaLabel: "Time in production",
+    ariaLabel: "CAF time in production",
     value: {
       kind: "tenure",
-      // Primera publicacion del portafolio: coincide con su primer commit.
-      start: "2025-11-22",
-      // Lo que se publica si la fecha se vuelve ilegible: un año cumplido.
-      fallbackText: "1 YEAR",
+      // Misma fecha que la ficha del proyecto: una sola constante.
+      start: CAF_PRODUCTION_SINCE,
+      // Lo que se publica si la fecha se vuelve ilegible: once meses cumplidos.
+      fallbackText: "11 MONTHS",
     },
   },
 };

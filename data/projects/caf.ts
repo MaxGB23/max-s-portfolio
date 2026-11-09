@@ -12,6 +12,7 @@
 // contrato de layout (KpiGrid de 2 columnas, nodo raiz de la topologia). No
 // reordenar al anadir el `en`.
 
+import { CAF_PRODUCTION_SINCE } from "../../lib/production-since.ts";
 import { linkLabelApp, linkLabelCode, linkLabelLanding, type ProjectL } from "./types";
 
 export const caf: ProjectL = {
@@ -30,11 +31,12 @@ export const caf: ProjectL = {
     es: "Plataforma web full-stack en producción para la gestión integral de citas, pacientes y control de pagos en clínica de fisioterapia y rehabilitación.",
     en: "Production full-stack web platform for end-to-end management of appointments, patients and payments in a physiotherapy and rehabilitation clinic.",
   },
-  // La cifra viva de tiempo en produccion se activa sola en cuanto se complete
-  // `productionSince` (primera publicacion real): el texto calculado reemplaza a
-  // este escrito en la card y en `metrics[0]`. Mientras la fecha no exista, se
-  // publica lo escrito aqui. Un proyecto con periodo CERRADO nunca lleva la
-  // fecha: una cifra que crece cada mes afirmaria algo falso.
+  // El tiempo en produccion NO se escribe aqui: sale de la fecha de abajo, y el
+  // texto calculado reemplaza a este escrito en la card y en `metrics[0]`. Este
+  // literal es el respaldo del build y de los datos, no la cifra publicada.
+  // Un proyecto con periodo CERRADO nunca lleva fecha: una cifra que crece cada
+  // mes afirmaria algo falso.
+  productionSince: CAF_PRODUCTION_SINCE,
   metric: {
     es: "+10 meses en producción sin caídas",
     en: "+10 months in production with zero outages",
