@@ -111,10 +111,10 @@ test("una fecha ilegible publica el respaldo escrito, no una imagen rota", () =>
   assert.match(renderTenureBadge(futuro, at("2026-11-09")), />\+1 YEAR</);
 });
 
-test("el verde de estado pasa AA sin excepcion escrita", () => {
+test("el azul de estado pasa AA sin excepcion escrita", () => {
   assert.equal(BADGES.uptime.contrastException, undefined);
   assert.ok(contrastRatio("#ffffff", BADGES.uptime.color) >= BADGE_MIN_CONTRAST);
-  assert.match(renderTenureBadge(BADGES.uptime, at("2026-11-09")), /fill="#1a7f37"/);
+  assert.match(renderTenureBadge(BADGES.uptime, at("2026-11-09")), /fill="#1f6feb"/);
 });
 
 test("el badge de tiempo no dibuja un badge de descargas", () => {
