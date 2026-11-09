@@ -57,6 +57,7 @@ Código, comentarios, commits, ramas, README, issues y PRs en inglés; este arch
   | color, spacing, radio, sombra, z-index | `docs/design/tokens.md` |
   | familias, escala, tracking, OpenType | `docs/design/typography-families.md` |
   | botones, gestos de puntero | `docs/design/buttons.md`, `docs/design/pointer-gestures.md` |
+  | cifras vivas (descargas, tiempo en producción), badges del README | `docs/live-data.md` |
   | proceso y checklist de iteración | `docs/design/iteration-guide.md` |
   | hooks, CI, qa, scripts de medición, orden de las capas | `docs/verification-layers.md` |
 - Todo commit que toque `docs/` o `AGENTS.md` pasa por el gate: lo corre el hook `pre-commit` (una vez por clon, `pnpm hooks:install`); si editaste un doc de más de 120 líneas, `pnpm docs:toc --write` en el mismo commit. El detalle operativo vive en `docs/README.md`.

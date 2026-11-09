@@ -24,7 +24,7 @@ Atajo de lectura para no abrir `projects.ts` ni los candidatos. No es canon: el 
 
 | Proyecto | Qué es | Stack | Dato |
 |---|---|---|---|
-| Sistema de Gestión Clínica | Plataforma en producción con agenda, pacientes, pagos y dashboard | Next.js, React, TypeScript, PostgreSQL, Prisma | +10 meses en producción sin caídas |
+| Sistema de Gestión Clínica | Plataforma en producción con agenda, pacientes, pagos y dashboard | Next.js, React, TypeScript, PostgreSQL, Prisma | en producción desde noviembre de 2025, sin caídas |
 | Gestión de Apoyos Sociales | Plataforma con solicitudes, PDFs legales y dashboards en tiempo real | Next.js, React, TypeScript, PostgreSQL, Prisma | 100% digitalización del flujo |
 | Funky AI | CLI modular con 10 comandos para planificar y endurecer proyectos | Node.js, TypeScript, CLI, Vitest, pnpm | 443 tests en verde |
 | Grinchmas Kart | Kart racing 3D con IA rival y físicas arcade | Unity, C#, Blender, ML-Agents | IA rival con Reinforcement Learning |

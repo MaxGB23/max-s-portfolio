@@ -1,10 +1,10 @@
 // Ficha `caf` (Clinical Management System) en el shape bilingue `ProjectL`.
 //
 // Copy ES VERBATIM: es el copy editorial ya auditado contra el repo real
-// (docs/projects/candidatos/caf.md). No se reescribe ni se "mejora": la hoja
+// (docs/projects/candidatos/centro-caf-portfolio.md). No se reescribe ni se "mejora": la hoja
 // `en` va al lado, nunca dentro del texto de origen.
 //
-// Fuente editorial ES: docs/projects/candidatos/caf.md
+// Fuente editorial ES: docs/projects/candidatos/centro-caf-portfolio.md
 // Repos: github.com/MaxGB23/centro-caf, github.com/MaxGB23/centro-caf-landing-page
 //
 // CONTRATO DE ORDEN (ver ProjectL.detail.metrics): `metrics[0]` es la metrica
@@ -12,6 +12,7 @@
 // contrato de layout (KpiGrid de 2 columnas, nodo raiz de la topologia). No
 // reordenar al anadir el `en`.
 
+import { CAF_PRODUCTION_SINCE } from "../../lib/production-since.ts";
 import { linkLabelApp, linkLabelCode, linkLabelLanding, type ProjectL } from "./types";
 
 export const caf: ProjectL = {
@@ -30,6 +31,12 @@ export const caf: ProjectL = {
     es: "Plataforma web full-stack en producción para la gestión integral de citas, pacientes y control de pagos en clínica de fisioterapia y rehabilitación.",
     en: "Production full-stack web platform for end-to-end management of appointments, patients and payments in a physiotherapy and rehabilitation clinic.",
   },
+  // El tiempo en produccion NO se escribe aqui: sale de la fecha de abajo, y el
+  // texto calculado reemplaza a este escrito en la card y en `metrics[0]`. Este
+  // literal es el respaldo del build y de los datos, no la cifra publicada.
+  // Un proyecto con periodo CERRADO nunca lleva fecha: una cifra que crece cada
+  // mes afirmaria algo falso.
+  productionSince: CAF_PRODUCTION_SINCE,
   metric: {
     es: "+10 meses en producción sin caídas",
     en: "+10 months in production with zero outages",
@@ -77,9 +84,9 @@ export const caf: ProjectL = {
       en: "Smart, Scalable Clinical Management",
     },
     summary: {
-      es: "Plataforma web full-stack construida desde cero que reemplaza el uso de Excel y agendas manuales en un centro real de fisioterapia y rehabilitación. En uso diario por el staff médico con más de **10 meses en producción sin una sola caída**, incluso durante major releases con cambios críticos en la base de datos.",
+      es: "Plataforma web full-stack construida desde cero que reemplaza el uso de Excel y agendas manuales en un centro real de fisioterapia y rehabilitación. En uso diario por el staff médico **desde noviembre de 2025**, sin una sola caída incluso durante major releases con cambios críticos en la base de datos.",
       // Un par `**` que abre y cierra la MISMA claim que en el ES (docs/i18n.md:25).
-      en: "Full-stack web platform built from scratch that replaced Excel and manual calendars in a real physiotherapy and rehabilitation center. Used daily by clinical staff for over **10 months in production with zero outages**, including through major releases with critical database changes.",
+      en: "Full-stack web platform built from scratch that replaced Excel and manual calendars in a real physiotherapy and rehabilitation center. Used daily by clinical staff **since November 2025**, with zero outages including through major releases with critical database changes.",
     },
     metrics: [
       {
@@ -170,8 +177,8 @@ export const caf: ProjectL = {
         en: "In parallel I discarded an entire branch that did not meet the project standards, before it reached production.",
       },
       {
-        es: "Desplegué y mantengo la plataforma en Vercel con NeonDB (PostgreSQL) hace más de 10 meses, sin que el cliente haya reportado una sola caída.",
-        en: "Deployed and maintain the platform on Vercel with NeonDB (PostgreSQL) for over 10 months, without the client reporting a single outage.",
+        es: "Desplegué y mantengo la plataforma en Vercel con NeonDB (PostgreSQL) desde noviembre de 2025, sin que el cliente haya reportado una sola caída.",
+        en: "Deployed and maintain the platform on Vercel with NeonDB (PostgreSQL) since November 2025, without the client reporting a single outage.",
       },
       {
         es: "Desarrollé la landing page pública integrada con el sistema interno; estable en uptime y generando contactos de nuevos pacientes.",

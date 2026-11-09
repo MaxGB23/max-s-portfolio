@@ -1,13 +1,16 @@
-import { BADGES, BADGE_CACHE_SECONDS, findBadge, renderBadge } from "@/lib/badge-svg";
+import { BADGES, BADGE_CACHE_SECONDS, findBadge, renderBadge, renderTenureBadge } from "@/lib/badge-svg";
 import { getOpenVsxDownloads, getZedDownloads } from "@/lib/live-metrics";
 
 /**
- * Endpoint de los badges de descargas que pinta el README del perfil.
+ * Endpoint de los badges que pinta el README del perfil.
  *
  * El README apunta aqui en vez de a un SVG versionado: GitHub solo sirve
- * archivos y no ejecuta codigo, asi que un numero en vivo necesita un endpoint.
- * Se sirve en cache de CDN, y si el registry no responde se publica el respaldo
- * escrito del badge: una cifra con fecha es preferible a una imagen rota.
+ * archivos y no ejecuta codigo, asi que un dato en vivo necesita un endpoint.
+ * Son dos familias: las descargas de los registries, y el tiempo en produccion,
+ * que se calcula desde una fecha de arranque y no depende de nadie.
+ *
+ * Se sirve en cache de CDN, y si el origen no responde se publica el respaldo
+ * escrito del badge: un dato con fecha es preferible a una imagen rota.
  */
 export const dynamicParams = false;
 
@@ -19,7 +22,7 @@ export const dynamicParams = false;
  */
 export const revalidate = 3600;
 
-/** Los badges son un conjunto cerrado: se prerenderizan los dos y el resto no existe. */
+/** Los badges son un conjunto cerrado: se prerenderizan todos y el resto no existe. */
 export function generateStaticParams(): Array<{ file: string }> {
   return Object.values(BADGES).map((badge) => ({ file: badge.file }));
 }
@@ -38,12 +41,16 @@ export async function GET(
     });
   }
 
-  const count =
-    badge.source.kind === "zed"
-      ? await getZedDownloads(badge.source.url, BADGE_CACHE_SECONDS)
-      : await getOpenVsxDownloads(badge.source.url, BADGE_CACHE_SECONDS);
-
-  const svg = renderBadge(badge, count ?? badge.fallbackCount);
+  const value = badge.value;
+  const svg =
+    value.kind === "tenure"
+      ? renderTenureBadge(badge)
+      : renderBadge(
+          badge,
+          (value.source.kind === "zed"
+            ? await getZedDownloads(value.source.url, BADGE_CACHE_SECONDS)
+            : await getOpenVsxDownloads(value.source.url, BADGE_CACHE_SECONDS)) ?? value.fallbackCount,
+        );
 
   return new Response(svg, {
     headers: {

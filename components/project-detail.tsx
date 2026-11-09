@@ -190,10 +190,13 @@ const FOCUSABLE_IN_LIGHTBOX =
 export function ProjectDetail({
   project,
   liveMetric,
+  productionClock,
 }: {
   project: ProjectL;
   /** Cifra viva ya formateada para `project.liveMetric.index`, si se pudo leer. */
   liveMetric?: { index: number; value: string };
+  /** ISO resuelto en el servidor; sin el, `localizeProject` usa su reloj por defecto. */
+  productionClock?: string;
 }) {
   const rootRef = useRef<HTMLDivElement>(null);
   const { t, lang } = useLanguage();
@@ -202,12 +205,19 @@ export function ProjectDetail({
   // que `project`, solo con las hojas `{es,en}` resueltas a `lang`. Se resuelve
   // una vez y TODAS las lecturas de abajo leen de aqui — cambiar `lang` cambia
   // el texto sin tocar una sola lectura.
-  const base = localizeProject(project, lang);
+  // El tiempo en produccion se mide con el reloj del servidor que llega como
+  // prop: leer el reloj del cliente aqui hacia que el HTML servido y la
+  // hidratacion discreparan si la pagina cruzaba un cambio de mes.
+  const base = localizeProject(
+    project,
+    lang,
+    productionClock ? new Date(productionClock) : undefined,
+  );
   // Una metrica puede venir de un registry (`project.liveMetric`): la cifra
   // viva reemplaza al valor escrito, que queda como respaldo si la API falla.
   // La etiqueta cambia con ella: la escrita esta FECHADA (es una foto) y solo la
   // viva puede decir "en vivo".
-  const localized = liveMetric
+  const withRegistryMetric = liveMetric
     ? {
         ...base,
         detail: {
@@ -224,6 +234,26 @@ export function ProjectDetail({
         },
       }
     : base;
+
+  // Tiempo en produccion calculado desde `productionSince`: reemplaza la cifra
+  // de la metrica RAIZ (`metrics[0]`) y conserva su etiqueta, que ya describe el
+  // periodo ("tiempo en produccion"), igual que la cifra escrita que sustituye.
+  // Se aplica DESPUES del registry: `productionTenure ?? escrito` es la misma
+  // precedencia que en las cards. Sin fecha legible el campo no existe y la
+  // metrica queda como estaba.
+  const productionTenure = withRegistryMetric.productionTenure;
+  const localized =
+    productionTenure === undefined
+      ? withRegistryMetric
+      : {
+          ...withRegistryMetric,
+          detail: {
+            ...withRegistryMetric.detail,
+            metrics: withRegistryMetric.detail.metrics.map((metric, index) =>
+              index === 0 ? { ...metric, value: productionTenure } : metric,
+            ),
+          },
+        };
 
   const router = useRouter();
 

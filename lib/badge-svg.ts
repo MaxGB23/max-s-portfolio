@@ -9,9 +9,15 @@
  * La geometria copia la de shields `for-the-badge`: alto 28, Verdana bold de
  * 10 px en mayusculas, 12 px de padding por segmento y un estiramiento de 1.16x
  * sobre el ancho natural del texto, que es su espaciado entre letras.
+ *
+ * El dibujo es el mismo para las dos familias de badge: descargas (una cifra que
+ * llega de un registry) y tiempo en produccion (una fecha de arranque). Lo unico
+ * que cambia es el texto del segmento de color.
  */
 
+import { CAF_PRODUCTION_SINCE } from "./production-since.ts";
 import { formatDownloads } from "./live-metrics.ts";
+import { tenureText } from "./tenure.ts";
 
 export const BADGE_HEIGHT = 28;
 /** AA para texto chico: la etiqueta del badge son 10 px en negrita. */
@@ -41,29 +47,44 @@ const GLYPH_WIDTH: Record<string, number> = {
   " ": 3.418, ",": 3.613, ".": 3.613,
 };
 
-export type BadgeId = "open-vsx" | "zed";
+export type DownloadSource = "open-vsx" | "zed";
+export type BadgeId = DownloadSource | "uptime";
+
+/** De donde sale el texto del badge. */
+export type BadgeValue =
+  | {
+      kind: "downloads";
+      source: { kind: DownloadSource; url: string };
+      /**
+       * Respaldo escrito: lo que se publica si el registry no responde. Son las
+       * cifras medidas el 6 nov 2026, las mismas que documenta
+       * `data/projects/funky-theme.ts` como respaldo de la ficha.
+       */
+      fallbackCount: number;
+    }
+  | {
+      kind: "tenure";
+      /** Fecha de arranque en produccion, `YYYY-MM-DD`. */
+      start: string;
+      /** Respaldo escrito en mayusculas: si la fecha no se puede leer se publica esto. */
+      fallbackText: string;
+    };
 
 export type BadgeSpec = {
   /** Nombre del archivo que se pide al endpoint, con extension. */
   file: string;
   /** Etiqueta del segmento gris. */
   label: string;
-  /** Color del segmento que lleva la cifra. */
+  /** Color del segmento que lleva el dato. */
   color: string;
   /** Texto que lee un lector de pantalla cuando la imagen no se ve. */
   ariaLabel: string;
   /**
-   * Razon escrita para publicar una cifra por debajo de AA. Sin este campo el
+   * Razon escrita para publicar un color por debajo de AA. Sin este campo el
    * dibujo falla: un color nuevo no puede bajar el contraste sin decirlo.
    */
   contrastException?: string;
-  source: { kind: BadgeId; url: string };
-  /**
-   * Respaldo escrito: lo que se publica si el registry no responde. Son las
-   * cifras medidas el 6 nov 2026, las mismas que documenta
-   * `data/projects/funky-theme.ts` como respaldo de la ficha.
-   */
-  fallbackCount: number;
+  value: BadgeValue;
 };
 
 export const BADGES: Record<BadgeId, BadgeSpec> = {
@@ -74,16 +95,38 @@ export const BADGES: Record<BadgeId, BadgeSpec> = {
     color: "#7aa800",
     ariaLabel: "Open VSX downloads",
     contrastException: "verde de marca",
-    source: { kind: "open-vsx", url: "https://open-vsx.org/api/MaxGB23/funky-theme-vscode" },
-    fallbackCount: 5104,
+    value: {
+      kind: "downloads",
+      source: { kind: "open-vsx", url: "https://open-vsx.org/api/MaxGB23/funky-theme-vscode" },
+      fallbackCount: 5104,
+    },
   },
   zed: {
     file: "zed.svg",
     label: "ZED",
     color: "#6e56cf",
     ariaLabel: "Zed downloads",
-    source: { kind: "zed", url: "https://api.zed.dev/extensions/funky-theme" },
-    fallbackCount: 1711,
+    value: {
+      kind: "downloads",
+      source: { kind: "zed", url: "https://api.zed.dev/extensions/funky-theme" },
+      fallbackCount: 1711,
+    },
+  },
+  uptime: {
+    file: "uptime.svg",
+    // El dato es de CAF, no del sitio: la etiqueta lo dice para que el README no
+    // lo lea como tiempo de vida del portafolio.
+    label: "CAF IN PRODUCTION",
+    // Verde de estado, con contraste 5.08:1: no necesita excepcion escrita.
+    color: "#1a7f37",
+    ariaLabel: "CAF time in production",
+    value: {
+      kind: "tenure",
+      // Misma fecha que la ficha del proyecto: una sola constante.
+      start: CAF_PRODUCTION_SINCE,
+      // Lo que se publica si la fecha se vuelve ilegible: once meses cumplidos.
+      fallbackText: "+11 MONTHS",
+    },
   },
 };
 
@@ -117,19 +160,15 @@ export function contrastRatio(colorA: string, colorB: string): number {
 type Segment = { text: string; color: string };
 
 /**
- * Dibuja el SVG del badge para una cifra concreta.
+ * Dibuja el badge con el texto ya resuelto del segmento de color.
  *
- * Falla si el texto del segmento de color no llega a AA y el badge no declara
- * una excepcion escrita: el contraste es una decision, no un accidente.
+ * Falla si ese texto no llega a AA y el badge no declara una excepcion escrita:
+ * el contraste es una decision, no un accidente.
  */
-export function renderBadge(spec: BadgeSpec, count: number): string {
-  if (!Number.isFinite(count) || count < 0) {
-    throw new RangeError(`descargas invalidas: ${count}`);
-  }
-
+function drawBadge(spec: BadgeSpec, valueText: string): string {
   const segments: Segment[] = [
     { text: spec.label, color: LABEL_COLOR },
-    { text: `${formatDownloads(count).toUpperCase()} DOWNLOADS`, color: spec.color },
+    { text: valueText, color: spec.color },
   ];
 
   const rects: string[] = [];
@@ -167,4 +206,29 @@ export function renderBadge(spec: BadgeSpec, count: number): string {
     "</svg>",
     "",
   ].join("\n");
+}
+
+/** Dibuja el badge de descargas para una cifra concreta. */
+export function renderBadge(spec: BadgeSpec, count: number): string {
+  if (!Number.isFinite(count) || count < 0) {
+    throw new RangeError(`descargas invalidas: ${count}`);
+  }
+
+  return drawBadge(spec, `${formatDownloads(count).toUpperCase()} DOWNLOADS`);
+}
+
+/**
+ * Dibuja el badge de tiempo en produccion.
+ *
+ * Si la fecha de arranque no se puede leer se publica el respaldo escrito: el
+ * endpoint nunca devuelve una imagen rota.
+ */
+export function renderTenureBadge(spec: BadgeSpec, now: Date = new Date()): string {
+  if (spec.value.kind !== "tenure") {
+    throw new RangeError(`${spec.file}: no es un badge de tiempo en produccion`);
+  }
+
+  const text = tenureText(spec.value.start, "en", now) ?? spec.value.fallbackText;
+
+  return drawBadge(spec, text.toUpperCase());
 }

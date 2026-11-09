@@ -60,6 +60,7 @@ docs dueños de `AGENTS.md`.
 | Por qué pasaba este bug? | auditoría o incidencia fechada con su método (rendimiento, navegación, teléfono vs devtools) | [docs/issues/](issues/) |
 | Qué se está trabajando ahora? | tarea ODD abierta, cierra al mergear | [odd/tasks/](../odd/tasks/) |
 | Cómo se dice esto en inglés? | clave en `data/translations.ts` y `t()` | [i18n.md](i18n.md) |
+| De dónde sale la cifra de descargas o el tiempo en producción? | cifra viva del registry y duración calculada desde una fecha, con respaldo escrito | [live-data.md](live-data.md) 2 |
 | Dónde vivía el canon anterior? | snapshot byte-igual, congelado | [INDEX.md](design/archive/2026-09-21-pre-designmd/INDEX.md) |
 | Qué símbolo se retiró y qué lo sustituye? | tabla de nombres muertos, verifica el gate | [DEAD.md](design/DEAD.md) |
 

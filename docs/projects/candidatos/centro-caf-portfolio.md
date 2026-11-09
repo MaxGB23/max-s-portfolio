@@ -13,7 +13,7 @@
 | `title` | Sistema de Gestión Clínica |
 | `category` | Full Stack / HealthTech |
 | `hook` | Plataforma web full-stack en producción para la gestión integral de citas, pacientes y control de pagos en centros de salud. |
-| `metric` | +10 meses en producción sin caídas |
+| `metric` | en producción desde noviembre de 2025, sin caídas |
 | `tags` | Next.js · React · TypeScript · PostgreSQL · Prisma · Tailwind CSS |
 | `image` | `/images/projects/caf/caf-demo.webp` |
 | `imageAlt` | Dashboard principal y agenda del Sistema de Gestión Clínica |
@@ -28,13 +28,13 @@
 
 ### Summary
 
-Plataforma web full-stack construida desde cero que reemplaza el uso de Excel y agendas manuales en un centro real de fisioterapia y rehabilitación. En uso diario por el staff médico con más de **10 meses en producción sin una sola caída**, incluso durante major releases con cambios críticos en la base de datos.
+Plataforma web full-stack construida desde cero que reemplaza el uso de Excel y agendas manuales en un centro real de fisioterapia y rehabilitación. En uso diario por el staff médico **desde noviembre de 2025**, sin una sola caída incluso durante major releases con cambios críticos en la base de datos.
 
 ### Metrics
 
 | Value | Label |
 | --- | --- |
-| +10 meses | en producción sin caídas, incluyendo major releases |
+| desde noviembre de 2025 | en producción sin caídas, incluyendo major releases |
 | 100% | uptime: el cliente nunca ha reportado una caída |
 | -40% | latencia de recuperación de registros de pacientes (estimada sobre el salto a índice + cache()) |
 | En uso diario | por staff real en clínica en producción (admin + fisios) |
@@ -54,7 +54,7 @@ Las clínicas pequeñas y medianas dependen de herramientas genéricas, procesos
 - Blindé la UX ante fallos: los boundaries traducen errores de auth a pantallas accionables y los 404 contextuales devuelven al dashboard, nunca una pantalla en blanco.
 - Migré los nombres y precios que vivían hardcodeados en un combobox a una UI de paquetes CRUD que los actualiza, con migraciones de Prisma sobre datos existentes. El cliente necesitaba subir precios por la inflación del país y los valores hardcodeados lo impedían. Las migraciones se aplicaron en producción sin un solo incidente de datos: ningún paquete legacy se rompió.
 - En paralelo descarté una branch completa que no cumplía los estándares del proyecto, antes de que llegara a producción.
-- Desplegué y mantengo la plataforma en Vercel con NeonDB (PostgreSQL) hace más de 10 meses, sin que el cliente haya reportado una sola caída.
+- Desplegué y mantengo la plataforma en Vercel con NeonDB (PostgreSQL) desde noviembre de 2025, sin que el cliente haya reportado una sola caída.
 - Desarrollé la landing page pública integrada con el sistema interno; estable en uptime y generando contactos de nuevos pacientes.
 
 ### Solution
@@ -116,7 +116,7 @@ Estos puntos son **hechos verificados**. No reintroducirlos sin volver a comprob
 
 - **NeonDB es la base de datos real**, no Supabase. El README de `centro-caf` dice Supabase y está mal; el portfolio dice bien. El README lo actualiza el dueño al final, no este repo.
 - **`-40%` es una estimación, no una medición.** El mecanismo sí es real y verificable: migración `20260220200602_add_session_date_index` (`CREATE INDEX session_records_sessionDate_idx`) + `cache()` de React en `core/auth/guards.ts`. La magnitud es una estimación conservadora del salto de seq scan a index scan. Se conserva el número porque ya figura en el CV del dueño y la cifra va acompañada de su base. **No presentarlo como medición en producción.**
-- **`100%` de uptime y ~10 meses son reales.** El cliente nunca ha reportado que la página esté caída. La cifra no viene de un SLO medido sino de la ausencia de reportes de caída del cliente — por eso el copy dice "el cliente nunca ha reportado una caída" y no "100% uptime" a secas.
+- **El arranque en noviembre de 2025 y la ausencia de caídas son reales.** El cliente nunca ha reportado que la página esté caída. La cifra no viene de un SLO medido sino de la ausencia de reportes de caída del cliente — por eso el copy dice "el cliente nunca ha reportado una caída" y no "100% uptime" a secas.
 - **La migración de paquetes CRUD SÍ ocurrió y es verificable.** Evidencia en el repo: `prisma/migrations/20260209033856_add_package_definitions_and_string_type`, `prisma/migrations/20260209040259_update_positions_and_package_status`, el módulo `src/modules/package-definitions/` (create/update/delete/archive) y el modelo `PackageDefinition`. Sustituyó nombres y precios hardcodeados en un combobox.
 - **La migración llegó a producción y funciona.** `docs/poduction-fails/feature-package-defs.md` registra un fallo de deploy *posterior*, ya clonado el repo en otra máquina: las dos migraciones se aplicaron correctamente (`All migrations have been successfully applied`) y lo que falló fue el **build** — Turbopack no resolvía `@/core/db/generated/prisma` porque el Prisma Client se generaba en una ruta personalizada. Al ser un fallo de build, el deploy quedó **bloqueado**: nada defectuoso llegó a producción. **No mencionarlo en el portfolio.** Un deploy bloqueado es el gate funcionando, no un incidente de producción, y lo que sí llegó a producción no ha fallado según los reportes del cliente. Decisión del dueño, 2026-10-05.
 - **Cal.com NO está implementado.** 0 referencias a `cal` en `src/`, sin dependencia en `package.json`, `src/app/api/` solo contiene `auth` (sin webhooks) y el roadmap del README lo tiene sin marcar (`- [ ] Calendario de citas sincronizado con Cal.com`). La sección "Integraciones / Cal.com" del README es aspiracional → **no añadir Cal.com a `tags` ni a `stack`**.
