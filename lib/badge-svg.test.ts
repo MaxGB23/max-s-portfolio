@@ -13,6 +13,7 @@ import {
   contrastRatio,
   findBadge,
   renderBadge,
+  renderTenureBadge,
   type BadgeSpec,
 } from "./badge-svg.ts";
 
@@ -69,4 +70,44 @@ test("el contraste se calcula sobre los extremos conocidos", () => {
 test("una cifra imposible no se dibuja", () => {
   assert.throws(() => renderBadge(BADGES.zed, Number.NaN), RangeError);
   assert.throws(() => renderBadge(BADGES.zed, -1), RangeError);
+});
+
+const at = (iso: string): Date => new Date(`${iso}T00:00:00.000Z`);
+
+test("el badge de tiempo en produccion se resuelve por su archivo", () => {
+  assert.equal(findBadge("uptime.svg")?.label, "IN PRODUCTION");
+  assert.match(renderTenureBadge(BADGES.uptime, at("2026-11-09")), />11 MONTHS</);
+});
+
+test("el tiempo en produccion crece solo, sin que nadie edite nada", () => {
+  assert.match(renderTenureBadge(BADGES.uptime, at("2026-11-21")), />11 MONTHS</);
+  assert.match(renderTenureBadge(BADGES.uptime, at("2026-11-22")), />1 YEAR</);
+  assert.match(renderTenureBadge(BADGES.uptime, at("2027-03-22")), />1 YEAR 4 MONTHS</);
+  assert.match(renderTenureBadge(BADGES.uptime, at("2027-11-22")), />2 YEARS</);
+});
+
+test("una fecha ilegible publica el respaldo escrito, no una imagen rota", () => {
+  const roto: BadgeSpec = {
+    ...BADGES.uptime,
+    value: { kind: "tenure", start: "sin fecha", fallbackText: "1 YEAR" },
+  };
+
+  assert.match(renderTenureBadge(roto, at("2026-11-09")), />1 YEAR</);
+
+  const futuro: BadgeSpec = {
+    ...BADGES.uptime,
+    value: { kind: "tenure", start: "2027-01-01", fallbackText: "1 YEAR" },
+  };
+
+  assert.match(renderTenureBadge(futuro, at("2026-11-09")), />1 YEAR</);
+});
+
+test("el verde de estado pasa AA sin excepcion escrita", () => {
+  assert.equal(BADGES.uptime.contrastException, undefined);
+  assert.ok(contrastRatio("#ffffff", BADGES.uptime.color) >= BADGE_MIN_CONTRAST);
+  assert.match(renderTenureBadge(BADGES.uptime, at("2026-11-09")), /fill="#1a7f37"/);
+});
+
+test("el badge de tiempo no dibuja un badge de descargas", () => {
+  assert.throws(() => renderTenureBadge(BADGES.zed, at("2026-11-09")), RangeError);
 });
