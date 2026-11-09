@@ -80,22 +80,27 @@ function unit(lang: TenureLang, name: UnitName, count: number): string {
 }
 
 /**
- * Texto del tiempo transcurrido: "1 year 4 months", "11 months", "12 days".
+ * Texto del tiempo transcurrido: "+1 year 4 months", "+11 months", "+12 days".
+ *
+ * Lleva `+` porque el valor es un piso: trunca, nunca redondea hacia arriba, de
+ * modo que "+11 meses" significa "once meses cumplidos o mas" y es literalmente
+ * cierto. Sin el signo, la cifra se lee como medicion exacta y no lo es.
  *
  * Cuando hay años solo se añaden meses si aportan algo, y los dias se omiten en
- * cuanto la unidad mayor es el mes: "1 year 4 months" se lee, "1 year 4 months 9
- * days" no.
+ * cuanto la unidad mayor es el mes: "+1 year 4 months" se lee, "+1 year 4 months
+ * 9 days" no.
  */
 export function formatTenure(tenure: Tenure, lang: TenureLang): string {
   if (tenure.years > 0) {
     const years = unit(lang, "year", tenure.years);
-    return tenure.months > 0 ? `${years} ${unit(lang, "month", tenure.months)}` : years;
+    const text = tenure.months > 0 ? `${years} ${unit(lang, "month", tenure.months)}` : years;
+    return `+${text}`;
   }
 
-  if (tenure.months > 0) return unit(lang, "month", tenure.months);
+  if (tenure.months > 0) return `+${unit(lang, "month", tenure.months)}`;
 
   // El dia de salida a produccion ya cuenta como un dia cumplido.
-  return unit(lang, "day", Math.max(1, tenure.days));
+  return `+${unit(lang, "day", Math.max(1, tenure.days))}`;
 }
 
 /** Texto listo para pintar, o `null` para que el llamador use el respaldo escrito. */

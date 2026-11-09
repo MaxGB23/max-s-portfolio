@@ -55,8 +55,8 @@ function fixture(overrides: { productionSince?: string } = {}): ProjectL {
   };
 }
 
-const TENURE_ES = "1 año 4 meses";
-const TENURE_EN = "1 year 4 months";
+const TENURE_ES = "+1 año 4 meses";
+const TENURE_EN = "+1 year 4 months";
 
 describe("localizeProject - tiempo en produccion", () => {
   it("calcula el texto en los dos idiomas desde productionSince", () => {
@@ -100,11 +100,11 @@ describe("productionMetricValue - precedencia en la card", () => {
   it("sustituye solo la duracion inicial y conserva la afirmacion que sigue", () => {
     assert.equal(
       productionMetricValue(TENURE_ES, "+10 meses en producción sin caídas"),
-      "1 año 4 meses en producción sin caídas",
+      "+1 año 4 meses en producción sin caídas",
     );
     assert.equal(
-      productionMetricValue("1 year 4 months", "+10 months in production with zero outages"),
-      "1 year 4 months in production with zero outages",
+      productionMetricValue("+1 year 4 months", "+10 months in production with zero outages"),
+      "+1 year 4 months in production with zero outages",
     );
   });
 

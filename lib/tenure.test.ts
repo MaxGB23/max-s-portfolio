@@ -51,33 +51,33 @@ describe("measureTenure", () => {
 
 describe("formatTenure", () => {
   it("compone años y meses", () => {
-    assert.equal(formatTenure({ years: 1, months: 4, days: 9 }, "en"), "1 year 4 months");
-    assert.equal(formatTenure({ years: 1, months: 4, days: 9 }, "es"), "1 año 4 meses");
+    assert.equal(formatTenure({ years: 1, months: 4, days: 9 }, "en"), "+1 year 4 months");
+    assert.equal(formatTenure({ years: 1, months: 4, days: 9 }, "es"), "+1 año 4 meses");
   });
 
   it("omite los meses cuando son cero", () => {
-    assert.equal(formatTenure({ years: 2, months: 0, days: 40 }, "en"), "2 years");
+    assert.equal(formatTenure({ years: 2, months: 0, days: 40 }, "en"), "+2 years");
   });
 
   it("bajo el año usa meses y omite los dias", () => {
-    assert.equal(formatTenure({ years: 0, months: 11, days: 18 }, "en"), "11 months");
-    assert.equal(formatTenure({ years: 0, months: 1, days: 1 }, "es"), "1 mes");
+    assert.equal(formatTenure({ years: 0, months: 11, days: 18 }, "en"), "+11 months");
+    assert.equal(formatTenure({ years: 0, months: 1, days: 1 }, "es"), "+1 mes");
   });
 
   it("bajo el mes usa dias, con singular y plural", () => {
-    assert.equal(formatTenure({ years: 0, months: 0, days: 12 }, "en"), "12 days");
-    assert.equal(formatTenure({ years: 0, months: 0, days: 1 }, "es"), "1 día");
+    assert.equal(formatTenure({ years: 0, months: 0, days: 12 }, "en"), "+12 days");
+    assert.equal(formatTenure({ years: 0, months: 0, days: 1 }, "es"), "+1 día");
   });
 
   it("el dia de salida cuenta como un dia cumplido", () => {
-    assert.equal(formatTenure({ years: 0, months: 0, days: 0 }, "en"), "1 day");
+    assert.equal(formatTenure({ years: 0, months: 0, days: 0 }, "en"), "+1 day");
   });
 });
 
 describe("tenureText", () => {
   it("devuelve el texto listo para pintar", () => {
-    assert.equal(tenureText("2025-11-22", "en", at("2027-03-22")), "1 year 4 months");
-    assert.equal(tenureText("2025-11-22", "es", at("2026-11-09")), "11 meses");
+    assert.equal(tenureText("2025-11-22", "en", at("2027-03-22")), "+1 year 4 months");
+    assert.equal(tenureText("2025-11-22", "es", at("2026-11-09")), "+11 meses");
   });
 
   it("devuelve null para que el llamador publique el respaldo", () => {

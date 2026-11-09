@@ -125,7 +125,7 @@ export const BADGES: Record<BadgeId, BadgeSpec> = {
       // Misma fecha que la ficha del proyecto: una sola constante.
       start: CAF_PRODUCTION_SINCE,
       // Lo que se publica si la fecha se vuelve ilegible: once meses cumplidos.
-      fallbackText: "11 MONTHS",
+      fallbackText: "+11 MONTHS",
     },
   },
 };
