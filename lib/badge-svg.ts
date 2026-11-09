@@ -114,10 +114,9 @@ export const BADGES: Record<BadgeId, BadgeSpec> = {
   },
   uptime: {
     file: "uptime.svg",
-    // Solo nombra QUE mide: la viñeta del README ya dice CAF, y "CAF IN
-    // PRODUCTION" lo repetia. El formato queda igual que los de descargas:
-    // etiqueta corta + cifra.
-    label: "PRODUCTION",
+    // Estado, no sustantivo: el badge se ve fuera de contexto (una captura, un
+    // enlace directo a la imagen) y ahi "PRODUCTION" a secas no dice de que.
+    label: "IN PRODUCTION",
     // Azul cielo. Con texto blanco alcanza 3.94:1, por debajo de AA: la
     // excepcion de abajo lo dice y el test comprueba que el numero declarado sea
     // el medido, no uno escrito a mano.

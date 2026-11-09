@@ -76,7 +76,7 @@ test("una cifra imposible no se dibuja", () => {
 const at = (iso: string): Date => new Date(`${iso}T00:00:00.000Z`);
 
 test("el badge de tiempo en produccion se resuelve por su archivo", () => {
-  assert.equal(findBadge("uptime.svg")?.label, "PRODUCTION");
+  assert.equal(findBadge("uptime.svg")?.label, "IN PRODUCTION");
   assert.match(renderTenureBadge(BADGES.uptime, at("2026-11-09")), />\+11 MONTHS</);
 });
 
