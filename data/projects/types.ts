@@ -8,6 +8,7 @@
 // campos: lo que cambia es de donde sale el valor, no como se llama.
 
 import type { Lang } from "@/data/translations";
+import { tenureText } from "../../lib/tenure.ts";
 
 // ---------------------------------------------------------------------------
 // La hoja traducida
@@ -117,6 +118,17 @@ export interface ProjectL {
      */
     sources: LiveMetricSource[];
   };
+  /**
+   * Primera publicacion en produccion, en ISO `YYYY-MM-DD`.
+   *
+   * Con esta fecha la cifra de tiempo en produccion se CALCULA al renderizar
+   * (`tenureText`) en vez de envejecer escrita a mano: la card y `metrics[0]`
+   * del detail publican el texto calculado. Cuando falta, se publica la metrica
+   * escrita tal cual; una fecha ilegible o futura tambien cae al texto escrito.
+   * Un proyecto con periodo CERRADO no la lleva: si ya no esta en produccion,
+   * una cifra que crece cada mes afirmaria algo falso.
+   */
+  productionSince?: string;
   detail: {
     headline: L;
     summary: L;
@@ -212,12 +224,52 @@ function localizeValue(value: unknown, lang: Lang): unknown {
  *
  * El deep-walk es por eso puramente estructural: agregar `en` a una hoja nueva
  * no requiere tocar ni el localize ni ningun consumidor.
+ *
+ * Ademas calcula `productionTenure` cuando la ficha declara `productionSince`:
+ * es el unico campo que NO sale de una hoja `L` sino de una fecha, y por eso se
+ * anade aqui y no en el deep-walk. `now` existe para que un test fije el reloj.
  */
 export function localizeProject<T extends ProjectL>(
   entry: T,
   lang: Lang,
-): Localized<T> {
-  return localizeValue(entry, lang) as Localized<T>;
+  now: Date = new Date(),
+): LocalizedProject<T> {
+  const localized = localizeValue(entry, lang) as Localized<T>;
+  // `tenureText` devuelve `null` si la fecha no se puede leer o cae en el futuro:
+  // ahi el campo queda ausente y el consumidor publica el respaldo escrito.
+  const productionTenure =
+    entry.productionSince === undefined
+      ? undefined
+      : tenureText(entry.productionSince, lang, now) ?? undefined;
+
+  // Sin tiempo calculado se devuelve el objeto tal cual: no se anade una clave
+  // `undefined` que luego aparezca en un `Object.keys` o en un diff.
+  return productionTenure === undefined
+    ? (localized as LocalizedProject<T>)
+    : { ...localized, productionTenure };
+}
+
+/**
+ * Valor publicado de una metrica: la duracion calculada sustituye a la escrita.
+ *
+ * Sustituye solo el tramo inicial, no la frase entera: en «+10 meses en
+ * produccion sin caidas» cambia «+10 meses» y deja intacta la afirmacion que
+ * viene detras. Una sola regla de precedencia para las dos cards y para el
+ * override de `metrics[0]` en el detail: si cada consumidor la escribiera a
+ * mano, un cambio de prioridad quedaria a medias.
+ */
+export function productionMetricValue(
+  productionTenure: string | undefined,
+  written: string,
+): string {
+  if (productionTenure === undefined) return written;
+
+  // La cifra escrita empieza por la duracion: "+10 meses", "10 months",
+  // "1 año". Si no empieza asi, la ficha no sigue el contrato y se publica el
+  // texto calculado en lugar de inventar una sustitucion a ciegas.
+  const leadingDuration = /^\+?\s*\d+\s*(?:mes|meses|año|años|month|months|year|years|día|días|day|days)\b/i;
+
+  return leadingDuration.test(written) ? written.replace(leadingDuration, productionTenure) : productionTenure;
 }
 
 // ---------------------------------------------------------------------------
@@ -233,3 +285,14 @@ export type LocalizedProjectImage = Localized<ProjectImageL>;
 export type LocalizedMetric = Localized<MetricL>;
 export type LocalizedLink = Localized<LinkL>;
 export type LocalizedNode = Localized<NodeL>;
+
+/**
+ * Ficha ya localizada mas el tiempo en produccion calculado.
+ *
+ * `productionTenure` es el unico campo que no viene de una hoja `L`: se calcula
+ * para el idioma activo desde `productionSince`, y su ausencia significa "publica
+ * la metrica escrita". Por eso es opcional y no una hoja mas.
+ */
+export type LocalizedProject<T extends ProjectL = ProjectL> = Localized<T> & {
+  productionTenure?: string;
+};

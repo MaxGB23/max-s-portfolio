@@ -207,7 +207,7 @@ export function ProjectDetail({
   // viva reemplaza al valor escrito, que queda como respaldo si la API falla.
   // La etiqueta cambia con ella: la escrita esta FECHADA (es una foto) y solo la
   // viva puede decir "en vivo".
-  const localized = liveMetric
+  const withRegistryMetric = liveMetric
     ? {
         ...base,
         detail: {
@@ -224,6 +224,26 @@ export function ProjectDetail({
         },
       }
     : base;
+
+  // Tiempo en produccion calculado desde `productionSince`: reemplaza la cifra
+  // de la metrica RAIZ (`metrics[0]`) y conserva su etiqueta, que ya describe el
+  // periodo ("tiempo en produccion"), igual que la cifra escrita que sustituye.
+  // Se aplica DESPUES del registry: `productionTenure ?? escrito` es la misma
+  // precedencia que en las cards. Sin fecha legible el campo no existe y la
+  // metrica queda como estaba.
+  const productionTenure = withRegistryMetric.productionTenure;
+  const localized =
+    productionTenure === undefined
+      ? withRegistryMetric
+      : {
+          ...withRegistryMetric,
+          detail: {
+            ...withRegistryMetric.detail,
+            metrics: withRegistryMetric.detail.metrics.map((metric, index) =>
+              index === 0 ? { ...metric, value: productionTenure } : metric,
+            ),
+          },
+        };
 
   const router = useRouter();
 

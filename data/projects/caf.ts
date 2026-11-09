@@ -30,6 +30,11 @@ export const caf: ProjectL = {
     es: "Plataforma web full-stack en producción para la gestión integral de citas, pacientes y control de pagos en clínica de fisioterapia y rehabilitación.",
     en: "Production full-stack web platform for end-to-end management of appointments, patients and payments in a physiotherapy and rehabilitation clinic.",
   },
+  // La cifra viva de tiempo en produccion se activa sola en cuanto se complete
+  // `productionSince` (primera publicacion real): el texto calculado reemplaza a
+  // este escrito en la card y en `metrics[0]`. Mientras la fecha no exista, se
+  // publica lo escrito aqui. Un proyecto con periodo CERRADO nunca lleva la
+  // fecha: una cifra que crece cada mes afirmaria algo falso.
   metric: {
     es: "+10 meses en producción sin caídas",
     en: "+10 months in production with zero outages",

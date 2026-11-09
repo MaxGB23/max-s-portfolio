@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { FeaturedProjectPanel, type FeaturedProject } from "@/components/featured-project-panel";
 import { Reveal } from "@/components/reveal";
-import { getFeaturedProjects, localizeProject } from "@/data/projects";
+import { getFeaturedProjects, localizeProject, productionMetricValue } from "@/data/projects";
 import type { LiveMetricValues } from "@/lib/live-metrics";
 import { withLiveMetric } from "@/lib/live-metrics";
 import { Section } from "@/components/section";
@@ -64,14 +64,18 @@ export function FeaturedProjects({ liveMetrics }: { liveMetrics?: LiveMetricValu
   const featuredProjects: FeaturedProject[] = getFeaturedProjects().map(
     (project, index) => {
       const localized = localizeProject(project, lang);
+      // Precedencia: tiempo en produccion CALCULADO > cifra viva del registry >
+      // cifra escrita. El escrito solo se publica cuando no hay nada mas nuevo.
+      const live = liveMetrics?.[localized.id];
       return {
         id: localized.id,
         index: index + 1,
         title: localized.title,
         description: localized.hook,
-        metric: liveMetrics?.[localized.id]
-          ? withLiveMetric(localized.metric, liveMetrics[localized.id])
-          : localized.metric,
+        metric: productionMetricValue(
+          localized.productionTenure,
+          live ? withLiveMetric(localized.metric, live) : localized.metric,
+        ),
         tags: localized.tags,
         image: localized.image,
         imageAlt: localized.imageAlt,

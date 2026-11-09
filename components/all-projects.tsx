@@ -3,7 +3,7 @@
 import { ProjectCard, type Project } from "@/components/project-card";
 import { Reveal } from "@/components/reveal";
 import { Section } from "@/components/section";
-import { projects, localizeProject } from "@/data/projects";
+import { projects, localizeProject, productionMetricValue } from "@/data/projects";
 import type { LiveMetricValues } from "@/lib/live-metrics";
 import { withLiveMetric } from "@/lib/live-metrics";
 import { useLanguage } from "@/contexts/language-context";
@@ -23,13 +23,17 @@ export function AllProjects({ liveMetrics }: { liveMetrics?: LiveMetricValues })
     .filter((project) => !project.featured)
     .map((project) => {
       const localized = localizeProject(project, lang);
+      // Precedencia: tiempo en produccion CALCULADO > cifra viva del registry >
+      // cifra escrita. El escrito solo se publica cuando no hay nada mas nuevo.
+      const live = liveMetrics?.[localized.id];
       return {
         id: localized.id,
         title: localized.title,
         description: localized.hook,
-        metric: liveMetrics?.[localized.id]
-          ? withLiveMetric(localized.metric, liveMetrics[localized.id])
-          : localized.metric,
+        metric: productionMetricValue(
+          localized.productionTenure,
+          live ? withLiveMetric(localized.metric, live) : localized.metric,
+        ),
         image: localized.image,
         imageAlt: localized.imageAlt,
         category: localized.category,

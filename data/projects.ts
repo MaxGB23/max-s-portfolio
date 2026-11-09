@@ -27,13 +27,14 @@ export type {
   ProjectImageL,
   L,
   Localized,
+  LocalizedProject,
   LocalizedProjectImage,
   LocalizedMetric,
   LocalizedLink,
   LocalizedNode,
 } from "./projects/types";
 
-export { localizeProject } from "./projects/types";
+export { localizeProject, productionMetricValue } from "./projects/types";
 
 // Alias sin sufijo hacia los tipos YA LOCALIZADOS. Los componentes de render
 // reciben la ficha despues de `localizeProject`, asi que el tipo que necesitan
