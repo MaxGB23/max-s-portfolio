@@ -23,11 +23,11 @@ export const BADGE_HEIGHT = 28;
 /** AA para texto chico: la etiqueta del badge son 10 px en negrita. */
 export const BADGE_MIN_CONTRAST = 4.5;
 /**
- * Ventana de cache del SVG. Es mas corta que la de la ficha del proyecto
- * (`LIVE_METRIC_REVALIDATE_SECONDS`) porque el badge se pide muchas menos veces
- * y su unico proposito es no envejecer.
+ * Ventana de cache del SVG. La misma que la de la ficha del proyecto
+ * (`LIVE_METRIC_REVALIDATE_SECONDS`): dos veces al dia es suficiente para un dato
+ * que se mueve de a unidades, y una sola cadencia es una regla menos que recordar.
  */
-export const BADGE_CACHE_SECONDS = 60 * 60;
+export const BADGE_CACHE_SECONDS = 12 * 60 * 60;
 
 const PADDING = 12;
 const STRETCH = 1.16;
