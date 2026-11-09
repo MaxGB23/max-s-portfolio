@@ -48,7 +48,7 @@ const GLYPH_WIDTH: Record<string, number> = {
 };
 
 export type DownloadSource = "open-vsx" | "zed";
-export type BadgeId = DownloadSource | "uptime" | "uptime-only";
+export type BadgeId = DownloadSource | "uptime";
 
 /** De donde sale el texto del badge. */
 export type BadgeValue =
@@ -68,21 +68,12 @@ export type BadgeValue =
       start: string;
       /** Respaldo escrito en mayusculas: si la fecha no se puede leer se publica esto. */
       fallbackText: string;
-      /**
-       * Texto que sigue al dato, en mayusculas: "IN PRODUCTION". Sirve para el
-       * badge de un solo segmento, donde la etiqueta gris desaparece y las
-       * palabras tienen que viajar dentro de la pildora de color.
-       */
-      qualifier?: string;
     };
 
 export type BadgeSpec = {
   /** Nombre del archivo que se pide al endpoint, con extension. */
   file: string;
-  /**
-   * Etiqueta del segmento gris. Vacia significa que no hay segmento gris: el
-   * badge es una sola pildora con el dato dentro.
-   */
+  /** Etiqueta del segmento gris. */
   label: string;
   /** Color del segmento que lleva el dato. */
   color: string;
@@ -123,9 +114,10 @@ export const BADGES: Record<BadgeId, BadgeSpec> = {
   },
   uptime: {
     file: "uptime.svg",
-    // El dato es de CAF, no del sitio: la etiqueta lo dice para que el README no
-    // lo lea como tiempo de vida del portafolio.
-    label: "CAF IN PRODUCTION",
+    // Solo nombra QUE mide: la viñeta del README ya dice CAF, y "CAF IN
+    // PRODUCTION" lo repetia. El formato queda igual que los de descargas:
+    // etiqueta corta + cifra.
+    label: "PRODUCTION",
     // Azul cielo. Con texto blanco alcanza 3.94:1, por debajo de AA: la
     // excepcion de abajo lo dice y el test comprueba que el numero declarado sea
     // el medido, no uno escrito a mano.
@@ -138,22 +130,6 @@ export const BADGES: Record<BadgeId, BadgeSpec> = {
       start: CAF_PRODUCTION_SINCE,
       // Lo que se publica si la fecha se vuelve ilegible: once meses cumplidos.
       fallbackText: "+11 MONTHS",
-    },
-  },
-  // Variante de un solo segmento, para comparar en el README: sin etiqueta gris
-  // porque la viñeta ya nombra el proyecto, y las palabras viajan dentro de la
-  // pildora. Existe solo mientras se decide el diseño.
-  "uptime-only": {
-    file: "uptime-only.svg",
-    label: "",
-    color: "#2f7cf6",
-    ariaLabel: "CAF time in production",
-    contrastException: "azul cielo, 3.94:1 medido con texto blanco",
-    value: {
-      kind: "tenure",
-      start: CAF_PRODUCTION_SINCE,
-      fallbackText: "+11 MONTHS",
-      qualifier: "IN PRODUCTION",
     },
   },
 };
@@ -194,10 +170,8 @@ type Segment = { text: string; color: string };
  * el contraste es una decision, no un accidente.
  */
 function drawBadge(spec: BadgeSpec, valueText: string): string {
-  // Una etiqueta vacia no dibuja segmento gris: el badge queda como una sola
-  // pildora de color con el dato y sus palabras dentro.
   const segments: Segment[] = [
-    ...(spec.label === "" ? [] : [{ text: spec.label, color: LABEL_COLOR }]),
+    { text: spec.label, color: LABEL_COLOR },
     { text: valueText, color: spec.color },
   ];
 
@@ -258,9 +232,7 @@ export function renderTenureBadge(spec: BadgeSpec, now: Date = new Date()): stri
     throw new RangeError(`${spec.file}: no es un badge de tiempo en produccion`);
   }
 
-  const { start, fallbackText, qualifier } = spec.value;
-  const measured = tenureText(start, "en", now) ?? fallbackText;
-  const text = qualifier === undefined ? measured : `${measured} ${qualifier}`;
+  const text = tenureText(spec.value.start, "en", now) ?? spec.value.fallbackText;
 
   return drawBadge(spec, text.toUpperCase());
 }

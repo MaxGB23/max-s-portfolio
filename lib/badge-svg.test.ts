@@ -76,7 +76,7 @@ test("una cifra imposible no se dibuja", () => {
 const at = (iso: string): Date => new Date(`${iso}T00:00:00.000Z`);
 
 test("el badge de tiempo en produccion se resuelve por su archivo", () => {
-  assert.equal(findBadge("uptime.svg")?.label, "CAF IN PRODUCTION");
+  assert.equal(findBadge("uptime.svg")?.label, "PRODUCTION");
   assert.match(renderTenureBadge(BADGES.uptime, at("2026-11-09")), />\+11 MONTHS</);
 });
 
@@ -117,23 +117,6 @@ test("el azul cielo declara su excepcion y el numero declarado es el medido", ()
   assert.ok(ratio < BADGE_MIN_CONTRAST, "si algun dia cumple AA, sobra la excepcion");
   assert.ok(BADGES.uptime.contrastException?.includes(ratio.toFixed(2)), BADGES.uptime.contrastException);
   assert.match(renderTenureBadge(BADGES.uptime, at("2026-11-09")), /fill="#2f7cf6"/);
-});
-
-test("sin etiqueta el badge es una sola pildora con las palabras dentro", () => {
-  const svg = renderTenureBadge(BADGES["uptime-only"], at("2026-11-09"));
-
-  assert.match(svg, />[+]11 MONTHS IN PRODUCTION</);
-  assert.doesNotMatch(svg, /fill="#555555"/, "sin etiqueta no hay segmento gris");
-  assert.match(svg, /fill="#2f7cf6"/);
-});
-
-test("una fecha ilegible conserva las palabras del badge sin etiqueta", () => {
-  const roto: BadgeSpec = {
-    ...BADGES["uptime-only"],
-    value: { kind: "tenure", start: "sin fecha", fallbackText: "+11 MONTHS", qualifier: "IN PRODUCTION" },
-  };
-
-  assert.match(renderTenureBadge(roto, at("2026-11-09")), />[+]11 MONTHS IN PRODUCTION</);
 });
 
 test("el badge de tiempo no dibuja un badge de descargas", () => {
