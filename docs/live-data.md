@@ -42,16 +42,16 @@ terminan como props de componentes cliente.
 
 | Capa | Constante | Valor literal | Archivo |
 |---|---|---|---|
-| Ventana del fetch del registry para card y ficha | `LIVE_METRIC_REVALIDATE_SECONDS` | `24 * 60 * 60` | `lib/live-metrics.ts` |
+| Ventana del fetch del registry para card y ficha | `LIVE_METRIC_REVALIDATE_SECONDS` | `12 * 60 * 60` | `lib/live-metrics.ts` |
 | Tope de espera del fetch | `LIVE_METRIC_TIMEOUT_MS` | `3000` | `lib/live-metrics.ts` |
-| Ventana corta que usa el badge | `BADGE_CACHE_SECONDS` | `60 * 60` | `lib/badge-svg.ts` |
-| Revalidate de la ruta del badge | `revalidate` | `3600` | `app/badges/[file]/route.ts` |
+| Ventana corta que usa el badge | `BADGE_CACHE_SECONDS` | `12 * 60 * 60` | `lib/badge-svg.ts` |
+| Revalidate de la ruta del badge | `revalidate` | `43200` | `app/badges/[file]/route.ts` |
 | Caché de navegador del badge | cabecera `cache-control` | `public, max-age=300` | `app/badges/[file]/route.ts` |
 
-El badge usa una ventana más corta porque se pide mucho menos que la página y su
-único propósito es no envejecer. `revalidate = 3600` va como literal porque Next
-la lee de forma estática: si cambia `BADGE_CACHE_SECONDS`, hay que cambiar esa
-línea también.
+El badge usa la misma ventana que la página: dos veces al día basta para un dato
+que se mueve de a unidades, y una sola cadencia es una regla menos que recordar.
+`revalidate = 43200` va como literal porque Next la lee de forma estática: si
+cambia `BADGE_CACHE_SECONDS`, hay que cambiar esa línea también.
 
 **Modo de render que reporta el build** (`pnpm build`, Next 16.1.6):
 
@@ -93,7 +93,7 @@ para pasárselo a `localizeProject(project, lang, now)`. `localizeProject` calcu
 `productionTenure` con `tenureText(entry.productionSince, lang, now)`.
 
 **El fallo que esto evita.** Si ese reloj se leyera dentro del componente cliente,
-el HTML servido (hasta 24 h viejo) y el render de hidratación podían caer en meses
+el HTML servido (hasta 12 h viejo) y el render de hidratación podían caer en meses
 distintos: el mes de arranque cumplido cambia a medianoche UTC, y entonces React
 encontraba un texto distinto al del HTML. El resultado era un *hydration
 mismatch* y una reescritura silenciosa del texto en pantalla. Con el reloj como
@@ -162,9 +162,9 @@ Reglas que hacen que el respaldo funcione:
 
 | Qué ve el lector | Quién lo refresca | Peor caso de obsolescencia |
 |---|---|---|
-| Cifra de descargas en la card (home) y en la ficha | fetch con `revalidate: 86400` en el render del servidor | 24 h |
+| Cifra de descargas en la card (home) y en la ficha | fetch con `revalidate: 43200` en el render del servidor | 12 h |
 | Tiempo en producción en la card y en la ficha | `productionClock` de cada render (ruta `ƒ`) | 0: se recalcula en cada request |
-| Badge de descargas o de tiempo en el README del perfil | endpoint `/badges/<file>.svg`: `●` con `revalidate = 3600` en el CDN | 1 h en el CDN, más `max-age=300` de caché de navegador |
+| Badge de descargas o de tiempo en el README del perfil | endpoint `/badges/<file>.svg`: `●` con `revalidate = 43200` en el CDN | 12 h en el CDN, más `max-age=300` de caché de navegador |
 
 Nada de esto necesita un cron ni un commit. Los badges se dibujan en el endpoint
 porque GitHub solo sirve archivos y no ejecuta código; el precio es una ruta
@@ -178,11 +178,11 @@ Cuando una cifra parece vieja, el orden es de fuera hacia dentro:
 1. **Cabeceras del badge**: `curl -sI https://<host>/badges/uptime.svg` y mirar
    `cache-control` (`public, max-age=300`) y `X-Vercel-Cache` (`HIT`, `MISS`,
    `STALE`). Un `HIT` con `age` alto dice que el CDN todavía no revalidó.
-2. **La ruta**: `app/badges/[file]/route.ts`. `revalidate = 3600` manda en el CDN;
+2. **La ruta**: `app/badges/[file]/route.ts`. `revalidate = 43200` manda en el CDN;
    si se cambió `BADGE_CACHE_SECONDS` y no esta línea, ganan las dos ventanas que
    estén escritas.
 3. **La constante del sitio**: `LIVE_METRIC_REVALIDATE_SECONDS` en
-   `lib/live-metrics.ts` (24 h). La fuente puede cambiar antes, pero la página no
+   `lib/live-metrics.ts` (12 h). La fuente puede cambiar antes, pero la página no
    la vuelve a leer hasta que expira esa ventana: una cifra de hace unas horas no
    es un bug.
 4. **El respaldo**: si el registry devuelve error o no responde en

@@ -1,7 +1,7 @@
 /**
  * Metricas que se leen de un registry en vez de una medicion fija.
  *
- * El valor se consulta al servidor de Next con cache de 24 h: la pagina sigue
+ * El valor se consulta al servidor de Next con cache de 12 h: la pagina sigue
  * siendo barata y la cifra deja de envejecer a mano. Si una API no responde o
  * devuelve algo que no es un numero, se devuelve `null` y el llamador conserva
  * la constante escrita en `data/projects/*.ts` como respaldo.
@@ -12,8 +12,8 @@
 
 import type { LiveMetricSource, ProjectL } from "@/data/projects";
 
-/** Ventana de cache de la respuesta del registry (24 h). */
-export const LIVE_METRIC_REVALIDATE_SECONDS = 24 * 60 * 60;
+/** Ventana de cache de la respuesta del registry (12 h). */
+export const LIVE_METRIC_REVALIDATE_SECONDS = 12 * 60 * 60;
 
 /** Tope de espera del registry: un endpoint colgado cae al respaldo, no espera. */
 export const LIVE_METRIC_TIMEOUT_MS = 3000;
@@ -133,7 +133,7 @@ export function withLiveMetric(metric: string, live: string): string {
  *
  * Un proyecto cuya API no responde queda FUERA del mapa: quien consume el
  * resultado cae entonces a la cifra escrita en `data/projects`. El mapa se arma
- * en el servidor una vez por render y comparte la cache de 24 h del fetch.
+ * en el servidor una vez por render y comparte la cache de 12 h del fetch.
  */
 export async function getLiveMetrics(projects: ProjectL[]): Promise<LiveMetricValues> {
   const entries = await Promise.all(

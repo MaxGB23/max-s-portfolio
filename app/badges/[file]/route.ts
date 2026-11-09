@@ -15,12 +15,12 @@ import { getOpenVsxDownloads, getZedDownloads } from "@/lib/live-metrics";
 export const dynamicParams = false;
 
 /**
- * Revalidacion de la ruta: coincide con `BADGE_CACHE_SECONDS` (1 h). Va como
+ * Revalidacion de la ruta: coincide con `BADGE_CACHE_SECONDS` (12 h). Va como
  * literal porque Next la lee de forma estatica; si cambia la constante, cambia
  * esta linea. Con esto el dibujo se sirve prerenderizado desde el CDN y solo se
  * regenera una vez por hora, en vez de ejecutar el handler en cada visita.
  */
-export const revalidate = 3600;
+export const revalidate = 43200;
 
 /** Los badges son un conjunto cerrado: se prerenderizan todos y el resto no existe. */
 export function generateStaticParams(): Array<{ file: string }> {
