@@ -1,8 +1,16 @@
 # Site identity: icons, metadata and machine-readable markup
 
 Rama `feat/site-identity`, worktree `M:\worktrees\maxgb23-portfolio\site-identity`.
+Base: `origin/main` @ c6cbded. El `main` local estaba 25 commits atrás, así que las
+métricas de slice se miden contra `origin/main`: contra `main` cuentan commits ajenos.
 El sitio ya aparece al buscar el nombre; falta lo que Google muestra alrededor del
 resultado y lo que se ve al compartir el link. No hay trabajo de posicionamiento.
+
+## Commits
+
+| # | Commit |
+|---|---|
+| T1 | `8f51116` |
 
 ## Specs
 
@@ -30,12 +38,18 @@ resultado y lo que se ve al compartir el link. No hay trabajo de posicionamiento
 
 | # | Tarea | Specs | Ruta | Commit |
 |---|---|---|---|---|
-| T1 | Iconos reales (192 PNG, 180 apple, ICO 16/32/48) y manifest | S1 | inline | — |
-| T2 | Metadata, `metadataBase` y título de la home | S3, S5 | inline | — |
-| T3 | `robots.txt` y `sitemap.xml` desde `data/projects.ts` | S2 | inline | — |
-| T4 | JSON-LD `Person` + `WebSite` con `sameAs` | S2 | inline | — |
+| T1 | Iconos reales (192 PNG, 180 apple, ICO 16/32/48) y manifest | S1 | inline | `8f51116` |
+| T2 | Metadata, `metadataBase` y título de la home | S3, S5 | inline | commit 2 |
+| T3 | `robots.txt` y `sitemap.xml` desde `data/projects.ts` | S2 | inline | commit 2 |
+| T4 | JSON-LD `Person` + `WebSite` con `sameAs` | S2 | inline | commit 2 |
 | T5 | Imagen Open Graph y sus etiquetas | S4 | inline | bloqueada por el PNG del owner |
-| T6 | `docs/site-identity.md`, corrección del cierre de SEO y verificación de CI | S2, S6 | inline | — |
+| T6 | `docs/site-identity.md`, corrección del cierre de SEO y verificación de CI | S2, S6 | inline | commit 2 (docs) + cierre |
+
+T2, T3 y T4 comparten un commit: son una sola unidad de comportamiento (lo que
+lee un crawler o una previsualización) y las tres invalidan la misma frase de
+`docs/issues/a11y-and-performance.md`, que se corrige en ese mismo commit. T5
+llega aparte porque depende del PNG del owner. T6 no añade código: cierra la
+verificación de CI y anota los commits en este documento.
 
 ## Log
 
