@@ -11,6 +11,7 @@ resultado y lo que se ve al compartir el link. No hay trabajo de posicionamiento
 | # | Commit |
 |---|---|
 | T1 | `8f51116` |
+| T2-T4 | `7706a0a` |
 
 ## Specs
 
@@ -39,9 +40,9 @@ resultado y lo que se ve al compartir el link. No hay trabajo de posicionamiento
 | # | Tarea | Specs | Ruta | Commit |
 |---|---|---|---|---|
 | T1 | Iconos reales (192 PNG, 180 apple, ICO 16/32/48) y manifest | S1 | inline | `8f51116` |
-| T2 | Metadata, `metadataBase` y título de la home | S3, S5 | inline | commit 2 |
-| T3 | `robots.txt` y `sitemap.xml` desde `data/projects.ts` | S2 | inline | commit 2 |
-| T4 | JSON-LD `Person` + `WebSite` con `sameAs` | S2 | inline | commit 2 |
+| T2 | Metadata, `metadataBase` y título de la home | S3, S5 | inline | `7706a0a` |
+| T3 | `robots.txt` y `sitemap.xml` desde `data/projects.ts` | S2 | inline | `7706a0a` |
+| T4 | JSON-LD `Person` + `WebSite` con `sameAs` | S2 | inline | `7706a0a` |
 | T5 | Imagen Open Graph y sus etiquetas | S4 | inline | bloqueada por el PNG del owner |
 | T6 | `docs/site-identity.md`, corrección del cierre de SEO y verificación de CI | S2, S6 | inline | commit 2 (docs) + cierre |
 
@@ -67,3 +68,13 @@ verificación de CI y anota los commits en este documento.
   un png o incluso hay paginas para configurar OG, aasí puedo ver la vista previa
   antes. 3- Se queda por ahora max-gonzalez-ballesteros.vercel.app, no pienso
   pagar dominio»
+- **L4 — decisión de título.** El owner pidió recomendación en lugar de elegir.
+  Se implementó la forma corta, `Max González Ballesteros — Software Engineer`:
+  coincide con la cadena que ya posiciona, cabe sin truncarse, y el nombre legal
+  vive en el JSON-LD y abre la descripción. Vetarla es una línea en
+  `lib/site.ts`.
+- **L5 — verificación (2026-11-10).** `pnpm build` en verde; en el servidor de
+  producción: título, descripción y canonical absolutos; JSON-LD parseable con
+  `Person` + `WebSite` y ambos perfiles en `sameAs`; `/robots.txt` correcto;
+  `/sitemap.xml` con 10 URLs; una ficha responde en inglés o español según
+  `Accept-Language`.
