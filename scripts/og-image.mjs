@@ -64,13 +64,16 @@ const html = `<!doctype html>
     font-family: 'Inter', system-ui, sans-serif;
     position: relative;
   }
+  /* One block, centred against the portrait. The owner's alignment: the URL
+     sits under the stack instead of pinned to the bottom edge, so the
+     background gradient is never asked to hide a moved element. */
   .frame {
     position: absolute;
     inset: 0;
-    padding: 76px 88px 74px;
+    padding: 0 88px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: center;
   }
   .eyebrow {
     font-size: 24px;
@@ -101,6 +104,7 @@ const html = `<!doctype html>
     font-weight: 400;
     letter-spacing: .01em;
     color: #868686;
+    margin-top: 36px;
   }
   .photo-wrap {
     position: absolute;
@@ -135,12 +139,10 @@ const html = `<!doctype html>
 </head>
 <body>
   <div class="frame">
-    <div>
-      <div class="eyebrow">${role}</div>
-      <div class="name">${firstLine}<br><span class="accent">${secondLine}</span></div>
-      <div class="stack">
-        ${STACK.map((name) => `<img src="${stackIcon(name)}" alt="">`).join('\n        ')}
-      </div>
+    <div class="eyebrow">${role}</div>
+    <div class="name">${firstLine}<br><span class="accent">${secondLine}</span></div>
+    <div class="stack">
+      ${STACK.map((name) => `<img src="${stackIcon(name)}" alt="">`).join('\n      ')}
     </div>
     <div class="url">${host}</div>
   </div>
