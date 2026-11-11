@@ -172,22 +172,24 @@ el ritmo visual es un contrato documentado en `lib/rhythm`.
 
 ---
 
-## Más adelante: SEO (no es urgente ahora)
+## SEO: reabierto y cerrado de otra forma (2026-11-10)
 
-Solo dos cosas, y solo si aparece la necesidad:
+La premisa de esta sección cambió: el sitio **sí** aparece al buscar el nombre,
+así que "no se busca" era falso. La decisión nueva está en
+`docs/site-identity.md`: identidad y presentación, sin perseguir posicionamiento.
 
-1. **Metadata + OpenGraph + título consistente** (~media hora). Es lo único que
-   se ve de forma inmediata: al compartir el link en LinkedIn o en una
-   postulación, hoy sale una URL desnuda. `layout.tsx:26-30` tiene un `title`
-   genérico y los detalles usan `"| MaxGB23"`.
-2. **El idioma está en una cookie** (`layout.tsx:36-43`), no en la URL. ES y EN
-   compiten por la misma dirección, así que no hay forma de indexar las dos
-   versiones, ni `hreflang`. Además, leer `cookies()` en el layout raíz hace que
-   la ruta dependa de la petición. Arreglarlo toca layout, contexto y todos los
-   anchors: barato hoy, caro dentro de un año.
+1. **Metadata + título + iconos — hecho** (rama `feat/site-identity`). El título
+   de la home lleva el nombre y el rol; los detalles heredan la plantilla y la
+   metadata ya no puede contradecir el idioma de la UI (`lib/lang.ts`). Open
+   Graph espera el PNG del owner; hasta entonces el link sigue saliendo desnudo
+   en LinkedIn, y es lo único abierto de este punto.
+2. **El idioma en la URL — sigue cerrado.** ES y EN comparten dirección, así que
+   no hay `hreflang`. El costo no cambió (layout, contexto y todos los anchors) y
+   no hay tráfico que lo justifique.
 
-No hacer ahora: `sitemap.xml` y `robots.txt` para 10 páginas, y JSON-LD. Son
-inútiles sin tráfico.
+`robots.txt`, `sitemap.xml` y JSON-LD — antes descartados por "inútiles sin
+tráfico" — se hicieron porque cuestan cero mantenimiento y corrigen lo que
+Google muestra: el icono y el nombre del sitio.
 
 ---
 
@@ -224,7 +226,7 @@ vuelva a proponer ni se re-audite desde cero.
 | **2.1** | Dividir `project-detail.tsx` (776 líneas) | Riesgo de regresión silenciosa — `gsap.context` resuelve los selectores por jerarquía DOM, no por árbol de React, así que un componente fuera del `rootRef` deja de animarse sin error. Cero valor para quien ve el sitio |
 | **P5** | Quitar `images.unoptimized` | **Reabierto y hecho (2026-10-20).** La decisión de mantenerlo apagado se revirtió al medirse la causa del tirón de entrada: dos `GPUTask` de 71,6 y 65,3 ms, por originales de hasta 4000x2800 en slots de ~430 px. Un móvil descargaba la captura a resolución completa. Ver `docs/issues/all-projects-entry-jank.md` §6.2 |
 | **Reduced motion** | — | Decisión ya auditada en `docs/issues/reduced-motion.md`. No es un hallazgo |
-| **SEO** | Metadata + OpenGraph; idioma en URL | Ver "Más adelante" arriba. No urgente: el link se comparte directo, no se busca |
+| **SEO** | Metadata + OpenGraph; idioma en URL | **Reabierto y hecho (2026-11-10).** La búsqueda por nombre existe; metadata, iconos, robots, sitemap y JSON-LD están en `feat/site-identity`. Idioma en URL sigue cerrado. Ver `docs/site-identity.md` |
 | **P1** | Pausar el bucle de Aurora | **Hecho** (pausa offscreen con reanudación barata; ver sección 3) |
 | **P2, P3, P4, P6** | Consolidar scroll, IntersectionObserver, code-splitting, unificar motores de animación | Tacan o arriesgan el comportamiento visual aprobado; P2/P3/P4 sin beneficio demostrable. Correcciones registradas en la sección 3 |
 | **Lint** | Instalar ESLint | Fuera del alcance original de esta auditoría (a11y / archivos / rendimiento). Ver nota abajo |

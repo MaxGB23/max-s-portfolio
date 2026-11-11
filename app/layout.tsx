@@ -1,10 +1,11 @@
 import type { Metadata } from 'next'
-import { cookies, headers } from 'next/headers'
 import { Inter, Space_Grotesk } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { LanguageProvider } from '@/contexts/language-context'
-import type { Lang } from '@/data/translations'
+import { resolveLang } from '@/lib/lang'
+import { SITE, SITE_URL } from '@/lib/site'
 import { SmoothScroll } from '@/components/smooth-scroll'
+import { StructuredData } from '@/components/structured-data'
 import './globals.css'
 
 const inter = Inter({
@@ -37,22 +38,38 @@ const debugAttrs = Object.fromEntries(
 )
 
 export const metadata: Metadata = {
-  title: "Max's Portfolio",
-  description:
-    'Personal portfolio of Max, a MX-based Full Stack Developer specializing in building polished, performant web experiences.'
-}
-
-// Initial language decided on the SERVER (zero flash):
-// 1. Cookie 'lang' → honors a previous choice
-// 2. Accept-Language → browser preference on first visit
-// 3. Fallback: 'es'
-async function getInitialLang(): Promise<Lang> {
-  const store = await cookies()
-  const cookieLang = store.get('lang')?.value
-  if (cookieLang === 'es' || cookieLang === 'en') return cookieLang
-
-  const accept = (await headers()).get('accept-language') ?? ''
-  return accept.startsWith('en') ? 'en' : 'es'
+  metadataBase: new URL(SITE_URL),
+  // The title line is the most valuable space in a search result: it carries
+  // the name a query types and the role a recruiter filters by. Child routes
+  // append the name through the template.
+  title: {
+    default: SITE.title,
+    template: `%s | ${SITE.name}`,
+  },
+  // The legal name leads the description, so a search for it still matches.
+  description: SITE.description,
+  openGraph: {
+    type: 'website',
+    siteName: SITE.name,
+    locale: 'es_MX',
+    alternateLocale: ['en_US'],
+    title: SITE.title,
+    description: SITE.description,
+    url: SITE_URL,
+  },
+  // `twitter:image` is not declared here: Next emits it from
+  // `app/opengraph-image.png`, with its dimensions, alongside `og:image`.
+  twitter: {
+    card: 'summary_large_image',
+    title: SITE.title,
+    description: SITE.description,
+  },
+  // Search Console verification for the URL prefix. The token is public by
+  // design: Google reads it from this page's head, and it is not a secret.
+  verification: {
+    google: 'yHlm-OtKW3lNycRteuPTiFIJMt_Ao3xVSvQEpZOM_Mg',
+  },
+  alternates: { canonical: '/' },
 }
 
 /**
@@ -93,7 +110,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const initialLang = await getInitialLang()
+  const initialLang = await resolveLang()
 
   return (
     // `dark` is rendered by the server instead of being applied by a
@@ -101,6 +118,7 @@ export default async function RootLayout({
     // is a constant. Without JS the page is dark too, and there is no flash.
     <html lang={initialLang} className="dark" suppressHydrationWarning {...debugAttrs}>
       <body className={`${inter.variable} ${spaceGrotesk.variable} font-sans antialiased`}>
+        <StructuredData />
         <script dangerouslySetInnerHTML={{ __html: REVEAL_GATE_SCRIPT }} />
         <LanguageProvider initialLang={initialLang}>
           <SmoothScroll>{children}</SmoothScroll>

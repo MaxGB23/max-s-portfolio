@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { cookies } from "next/headers";
+import { resolveLang } from "@/lib/lang";
 import { projects, getProjectById, localizeProject } from "@/data/projects";
 import { formatDownloads, sumDownloads } from "@/lib/live-metrics";
 import { ProjectDetail } from "@/components/project-detail";
 import { ScrollProgress } from "@/components/scroll-progress";
-import { translations, type Lang } from "@/data/translations";
+import { translations } from "@/data/translations";
 
 interface ProjectPageProps {
   params: Promise<{ id: string }>;
@@ -19,10 +19,10 @@ export async function generateMetadata({ params }: ProjectPageProps): Promise<Me
   const { id } = await params;
   const project = getProjectById(id);
 
-  // Server-side language resolution (no hook available here): the cookie is
-  // the same source the layout uses, so metadata matches the UI language.
-  const store = await cookies();
-  const lang: Lang = store.get("lang")?.value === "en" ? "en" : "es";
+  // The same resolver the root layout uses, so metadata can never disagree
+  // with the UI language. This used to read only the cookie while the layout
+  // also honored Accept-Language.
+  const lang = await resolveLang();
 
   if (!project) {
     return {
@@ -38,7 +38,7 @@ export async function generateMetadata({ params }: ProjectPageProps): Promise<Me
   const localized = localizeProject(project, lang);
 
   return {
-    title: `${localized.title} | MaxGB23`,
+    title: localized.title,
     description: localized.hook,
   };
 }
