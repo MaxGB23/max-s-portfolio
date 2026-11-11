@@ -48,6 +48,22 @@ export const metadata: Metadata = {
   },
   // The legal name leads the description, so a search for it still matches.
   description: SITE.description,
+  openGraph: {
+    type: 'website',
+    siteName: SITE.name,
+    locale: 'es_MX',
+    alternateLocale: ['en_US'],
+    title: SITE.title,
+    description: SITE.description,
+    url: SITE_URL,
+  },
+  // `twitter:image` is not declared here: Next emits it from
+  // `app/opengraph-image.png`, with its dimensions, alongside `og:image`.
+  twitter: {
+    card: 'summary_large_image',
+    title: SITE.title,
+    description: SITE.description,
+  },
   // Search Console verification for the URL prefix. The token is public by
   // design: Google reads it from this page's head, and it is not a secret.
   verification: {

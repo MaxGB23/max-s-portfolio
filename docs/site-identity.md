@@ -22,6 +22,9 @@ es presentación verificable.
 | `app/robots.ts` | permite todo y apunta al sitemap absoluto | — |
 | `app/sitemap.ts` | home + un entry por proyecto, desde `data/projects` | — |
 | `components/structured-data.tsx` | JSON-LD `Person` + `WebSite` con `sameAs` | — |
+| `scripts/og-image.mjs` | renderiza la tarjeta Open Graph desde HTML con las fuentes reales | `pnpm og:image` |
+| `app/opengraph-image.png` | tarjeta 1200×630; Next emite `og:image` y `twitter:image` | `pnpm og:image` |
+| `app/opengraph-image.alt.txt` | alt de la tarjeta | a mano |
 
 ## Reglas que no son obvias
 
@@ -40,6 +43,12 @@ es presentación verificable.
   en build es frágil y Google ignora los otros dos.
 - **El JSON-LD escapa `<`.** El grafo es estático, pero un valor con `<` no debe
   poder cerrar el `<script>`.
+- **La tarjeta OG se renderiza con Chromium, no con SVG.** librsvg resuelve las
+  fuentes por fontconfig y caería a una sans del sistema sin avisar; el script
+  verifica que Space Grotesk e Inter cargaron antes de capturar. Se renderiza a
+  2× y se reduce a 1200×630 para que el eyebrow y la URL no salgan blandos.
+- **El nombre de la tarjeta sale de `lib/site.ts`.** Cambiar el título o el rol
+  obliga a correr `pnpm og:image`; el PNG está commiteado.
 
 ## Pasos manuales
 
@@ -49,8 +58,10 @@ es presentación verificable.
 2. **El favicon en Google no es inmediato.** Google cachea el icono y puede
    tardar semanas; ninguna API lo fuerza. Se comprueba en Search Console o en el
    resultado, no en el código.
-3. **Imagen Open Graph.** Espera un PNG de 1200×630 del owner. Hasta que exista,
-   no se declaran `openGraph.images`.
+3. **Imagen Open Graph.** Ya no es manual: `pnpm og:image` la renderiza desde
+   `lib/site.ts` y la foto del hero, a 1200×630. Se corre tras cambiar el
+   nombre, el rol o la foto. Requiere Chrome instalado o el Chromium de
+   Playwright.
 
 ## Lo que no se hace
 

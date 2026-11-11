@@ -24,9 +24,9 @@ resultado y lo que se ve al compartir el link. No hay trabajo de posicionamiento
   ejecutarlo, y me digas qué pasos son manuales, cuáles tú no podrías hacer».
 - **S3** — El título de la home lleva el nombre corto y el rol, y el rol
   coincide con el hero: `Max González Ballesteros — Full Stack Developer`.
-- **S4** — La imagen Open Graph la aporta el owner y quiere previsualizarla
-  antes. Cita: «Yo te paso un png o incluso hay paginas para configurar OG, aasí
-  puedo ver la vista previa antes».
+- **S4** — La tarjeta Open Graph se genera dentro del repo, a 1200×630, con la
+  foto del hero y las fuentes reales, siguiendo la dirección que el owner aportó
+  como referencia. Se regenera con `pnpm og:image`.
 - **S5** — El dominio canónico se queda como está. Cita: «Se queda por ahora
   max-gonzalez-ballesteros.vercel.app, no pienso pagar dominio».
 - **S6** — No se persigue SEO genérico: sin contenido, sin keywords, sin
@@ -41,7 +41,7 @@ resultado y lo que se ve al compartir el link. No hay trabajo de posicionamiento
 | T2 | Metadata, `metadataBase` y título de la home | S3, S5 | inline | `7706a0a` |
 | T3 | `robots.txt` y `sitemap.xml` desde `data/projects.ts` | S2 | inline | `7706a0a` |
 | T4 | JSON-LD `Person` + `WebSite` con `sameAs` | S2 | inline | `7706a0a` |
-| T5 | Imagen Open Graph y sus etiquetas | S4 | inline | bloqueada por el PNG del owner |
+| T5 | Tarjeta Open Graph y sus etiquetas | S4 | inline | commit 5 |
 | T6 | `docs/site-identity.md`, corrección del cierre de SEO y verificación de CI | S2, S6 | inline | commit 2 (docs) + cierre |
 
 T2, T3 y T4 comparten un commit: son una sola unidad de comportamiento (lo que
@@ -81,3 +81,8 @@ verificación de CI y anota los commits en este documento.
   El título pasa a `Max González Ballesteros — Full Stack Developer`; hero,
   título, CV y LinkedIn dicen lo mismo. El `jobTitle` del JSON-LD y las dos
   descripciones siguen el mismo cambio.
+- **L7 — la tarjeta OG se construye en el repo.** El owner presentó un mockup
+  generado con Gemini (1537×751, eyebrow "SOFTWARE ENGINEER", foto de
+  marcador). Se adopta su composición y se corrige: 1200×630 exactos, eyebrow
+  alineado al rol, foto real del hero, fuentes del sitio. La genera
+  `pnpm og:image`.
