@@ -15,7 +15,7 @@ resultado y lo que se ve al compartir el link. No hay trabajo de posicionamiento
 | Search Console | `b1cf44f` |
 | Rol "Full Stack Developer" (L6) | `7c8f652` |
 | T5 | `8441100` |
-| Ajuste de la tarjeta (foto y stack) | por el commit siguiente |
+| Ajuste de la tarjeta (foto y stack) | `d58ce22` |
 
 ## Specs
 
