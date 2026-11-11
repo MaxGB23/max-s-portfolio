@@ -14,7 +14,6 @@
     "docs:toc": "node scripts/docs.mjs toc --write",
     "icons:build": "node scripts/brand-icons.mjs",
     "icons:site": "node scripts/site-icons.mjs",
-    "og:image": "node --no-warnings scripts/og-image.mjs",
     "test": "node --test \"scripts/*.test.mjs\" \"lib/*.test.ts\" \"data/*.test.ts\"",
     "hooks:install": "node scripts/hooks-install.mjs",
     "qa": "node scripts/qa.mjs",

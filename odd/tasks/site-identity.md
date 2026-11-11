@@ -28,9 +28,9 @@ resultado y lo que se ve al compartir el link. No hay trabajo de posicionamiento
   ejecutarlo, y me digas qué pasos son manuales, cuáles tú no podrías hacer».
 - **S3** — El título de la home lleva el nombre corto y el rol, y el rol
   coincide con el hero: `Max González Ballesteros — Full Stack Developer`.
-- **S4** — La tarjeta Open Graph se genera dentro del repo, a 1200×630, con la
-  foto del hero y las fuentes reales, siguiendo la dirección que el owner aportó
-  como referencia. Se regenera con `pnpm og:image`.
+- **S4** — La tarjeta Open Graph es un asset diseñado por el owner, a 1200×630,
+  adoptado como definitivo. No hay generador: se rehace a mano si cambia el
+  nombre, el rol o la foto.
 - **S5** — El dominio canónico se queda como está. Cita: «Se queda por ahora
   max-gonzalez-ballesteros.vercel.app, no pienso pagar dominio».
 - **S6** — No se persigue SEO genérico: sin contenido, sin keywords, sin
@@ -88,5 +88,11 @@ verificación de CI y anota los commits en este documento.
 - **L7 — la tarjeta OG se construye en el repo.** El owner presentó un mockup
   generado con Gemini (1537×751, eyebrow "SOFTWARE ENGINEER", foto de
   marcador). Se adopta su composición y se corrige: 1200×630 exactos, eyebrow
-  alineado al rol, foto real del hero, fuentes del sitio. La genera
-  `pnpm og:image`.
+  alineado al rol, foto real del hero, fuentes del sitio. Se generó con
+  `scripts/og-image.mjs`.
+- **L8 — la tarjeta final es del owner.** «mi imagen es la mejor. Yo tengo OLED y
+  el escalonado no es notorio. copia la imagen a /app y el resto de pasos».
+  Decisión: se adopta `og-definitiva.png` (1200×630) como
+  `app/opengraph-image.png`; se retira el generador para que ningún comando
+  sobrescriba su diseño. La cuantización de paleta queda aceptada por el owner
+  tras verificarla en su pantalla.
