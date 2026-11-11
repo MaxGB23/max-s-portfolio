@@ -19,7 +19,9 @@ export const SITE_URL = (
 export const PERSON = {
   name: 'Maximiliano González Ballesteros',
   alternateName: 'Max González Ballesteros',
-  jobTitle: 'Software Engineer',
+  // The hero eyebrow says FULL STACK DEVELOPER; the CV and LinkedIn say the
+  // same. The title follows them rather than the other way around.
+  jobTitle: 'Full Stack Developer',
   locality: 'Acámbaro',
   region: 'Guanajuato',
   country: 'MX',
@@ -30,11 +32,11 @@ export const SITE = {
   // Owner's choice: the short form is the exact string a name search types and
   // fits the result line without truncation. The legal name opens the
   // description instead, so that query still matches.
-  title: 'Max González Ballesteros — Software Engineer',
+  title: 'Max González Ballesteros — Full Stack Developer',
   // What Google may use as the site name instead of the hosting provider's.
   name: PERSON.alternateName,
   description:
-    'Maximiliano González Ballesteros (Max) is a software engineer in México building polished, performant web experiences with React, Next.js and TypeScript.',
+    'Maximiliano González Ballesteros (Max) is a full stack developer in México building polished, performant web experiences with React, Next.js and TypeScript.',
 } as const
 
 export const PROFILES = [

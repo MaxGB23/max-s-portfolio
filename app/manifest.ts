@@ -14,7 +14,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: 'Max González Ballesteros',
     short_name: 'Max',
-    description: 'Portfolio of Max González Ballesteros, software engineer.',
+    description: 'Portfolio of Max González Ballesteros, full stack developer.',
     start_url: '/',
     display: 'standalone',
     background_color: '#000000',

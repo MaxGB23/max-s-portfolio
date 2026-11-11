@@ -22,10 +22,8 @@ resultado y lo que se ve al compartir el link. No hay trabajo de posicionamiento
   Graph, JSON-LD, `robots.txt` y `sitemap.xml`, y distingue lo manual de lo
   automatizable. Cita: «Quiero que me armes el plan con todos los puntos, para
   ejecutarlo, y me digas qué pasos son manuales, cuáles tú no podrías hacer».
-- **S3** — El título de la home es una decisión del owner, pendiente de
-  recomendación. Cita: «"Max González Ballesteros — Software Engineer" o
-  "Maximiliano..." o no sé si mantener "portfolio". necesito tus
-  recomendaciones».
+- **S3** — El título de la home lleva el nombre corto y el rol, y el rol
+  coincide con el hero: `Max González Ballesteros — Full Stack Developer`.
 - **S4** — La imagen Open Graph la aporta el owner y quiere previsualizarla
   antes. Cita: «Yo te paso un png o incluso hay paginas para configurar OG, aasí
   puedo ver la vista previa antes».
@@ -78,3 +76,8 @@ verificación de CI y anota los commits en este documento.
   `Person` + `WebSite` y ambos perfiles en `sameAs`; `/robots.txt` correcto;
   `/sitemap.xml` con 10 URLs; una ficha responde en inglés o español según
   `Accept-Language`.
+- **L6 — el rol se alinea con el hero.** «no quiero cambiar el texto del hero
+  por ahora. El title se puede cambiar a full stack developer?» Decisión: sí.
+  El título pasa a `Max González Ballesteros — Full Stack Developer`; hero,
+  título, CV y LinkedIn dicen lo mismo. El `jobTitle` del JSON-LD y las dos
+  descripciones siguen el mismo cambio.
