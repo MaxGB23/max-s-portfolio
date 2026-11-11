@@ -29,6 +29,10 @@ import { PERSON, SITE_URL } from '../lib/site.ts'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const PHOTO = join(ROOT, 'public/images/max-gb-pfp.webp')
+// The hero's "STACK PRINCIPAL" row, same four marks. They fill the space under
+// the name with shapes instead of a sentence nobody can read at thumbnail size.
+const STACK = ['nextjs', 'react', 'typescript', 'tailwind']
+const stackIcon = (name) => pathToFileURL(join(ROOT, `public/brands/${name}.webp`)).href
 const OUT = join(ROOT, 'app/opengraph-image.png')
 
 const WIDTH = 1200
@@ -84,6 +88,14 @@ const html = `<!doctype html>
     white-space: nowrap;
   }
   .name .accent { color: #5674ff; }
+  .stack { display: flex; gap: 22px; margin-top: 44px; }
+  .stack img {
+    width: 52px;
+    height: 52px;
+    object-fit: contain;
+    filter: grayscale(1);
+    opacity: .55;
+  }
   .url {
     font-size: 20px;
     font-weight: 400;
@@ -101,7 +113,7 @@ const html = `<!doctype html>
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: 50% 16%;
+    object-position: 50% 0%;
     border-radius: 28px;
     display: block;
   }
@@ -126,6 +138,9 @@ const html = `<!doctype html>
     <div>
       <div class="eyebrow">${role}</div>
       <div class="name">${firstLine}<br><span class="accent">${secondLine}</span></div>
+      <div class="stack">
+        ${STACK.map((name) => `<img src="${stackIcon(name)}" alt="">`).join('\n        ')}
+      </div>
     </div>
     <div class="url">${host}</div>
   </div>

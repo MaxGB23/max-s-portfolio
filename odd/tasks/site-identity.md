@@ -12,6 +12,10 @@ resultado y lo que se ve al compartir el link. No hay trabajo de posicionamiento
 |---|---|
 | T1 | `8f51116` |
 | T2-T4 | `7706a0a` |
+| Search Console | `b1cf44f` |
+| Rol "Full Stack Developer" (L6) | `7c8f652` |
+| T5 | `8441100` |
+| Ajuste de la tarjeta (foto y stack) | por el commit siguiente |
 
 ## Specs
 
@@ -41,7 +45,7 @@ resultado y lo que se ve al compartir el link. No hay trabajo de posicionamiento
 | T2 | Metadata, `metadataBase` y título de la home | S3, S5 | inline | `7706a0a` |
 | T3 | `robots.txt` y `sitemap.xml` desde `data/projects.ts` | S2 | inline | `7706a0a` |
 | T4 | JSON-LD `Person` + `WebSite` con `sameAs` | S2 | inline | `7706a0a` |
-| T5 | Tarjeta Open Graph y sus etiquetas | S4 | inline | commit 5 |
+| T5 | Tarjeta Open Graph y sus etiquetas | S4 | inline | `8441100` |
 | T6 | `docs/site-identity.md`, corrección del cierre de SEO y verificación de CI | S2, S6 | inline | commit 2 (docs) + cierre |
 
 T2, T3 y T4 comparten un commit: son una sola unidad de comportamiento (lo que
