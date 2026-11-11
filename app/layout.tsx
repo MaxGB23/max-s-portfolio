@@ -54,7 +54,7 @@ export const metadata: Metadata = {
     locale: 'es_MX',
     alternateLocale: ['en_US'],
     title: SITE.title,
-    description: SITE.description,
+    description: SITE.socialDescription,
     url: SITE_URL,
   },
   // `twitter:image` is not declared here: Next emits it from
@@ -62,7 +62,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: SITE.title,
-    description: SITE.description,
+    description: SITE.socialDescription,
   },
   // Search Console verification for the URL prefix. The token is public by
   // design: Google reads it from this page's head, and it is not a secret.
