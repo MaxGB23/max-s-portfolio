@@ -48,6 +48,11 @@ export const metadata: Metadata = {
   },
   // The legal name leads the description, so a search for it still matches.
   description: SITE.description,
+  // Search Console verification for the URL prefix. The token is public by
+  // design: Google reads it from this page's head, and it is not a secret.
+  verification: {
+    google: 'yHlm-OtKW3lNycRteuPTiFIJMt_Ao3xVSvQEpZOM_Mg',
+  },
   alternates: { canonical: '/' },
 }
 
