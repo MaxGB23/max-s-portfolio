@@ -11,7 +11,7 @@ es presentación verificable.
 
 | Archivo | Qué hace | Se regenera con |
 |---|---|---|
-| `lib/site.ts` | origen canónico, nombre legal, nombre corto, perfiles | a mano |
+| `lib/site.ts` | origen canónico, nombre, perfiles y las dos descripciones | a mano |
 | `lib/lang.ts` | resuelve es/en en el servidor: cookie → `Accept-Language` → `es` | — |
 | `public/images/m_logo.png` | fuente única del icono (círculo con la M, 192×192) | a mano |
 | `scripts/site-icons.mjs` | rasteriza la fuente a los tres iconos | `pnpm icons:site` |
@@ -42,6 +42,9 @@ es presentación verificable.
   en build es frágil y Google ignora los otros dos.
 - **El JSON-LD escapa `<`.** El grafo es estático, pero un valor con `<` no debe
   poder cerrar el `<script>`.
+- **Dos descripciones, no una.** La de búsqueda mide 155 caracteres, al límite
+  de lo que Google muestra; la de Open Graph y Twitter mide 121, porque las
+  previsualizaciones cortan cerca de 125 y el corte caía en "…experiences with".
 - **La tarjeta OG es un asset diseñado, no generado.** Se edita a mano a
   1200×630 y se commitea. Si cambia el nombre, el rol o la foto, se rehace. No
   hay comando: un generador producía otra composición y habría sobrescrito esta.

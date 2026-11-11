@@ -35,8 +35,16 @@ export const SITE = {
   title: 'Max González Ballesteros — Full Stack Developer',
   // What Google may use as the site name instead of the hosting provider's.
   name: PERSON.alternateName,
+  // What the site actually is, in the words the hero and the about section use:
+  // web apps in production plus self-built products with thousands of
+  // downloads. 155 characters, inside the snippet Google shows (~155).
   description:
-    'Maximiliano González Ballesteros (Max) is a full stack developer in México building polished, performant web experiences with React, Next.js and TypeScript.',
+    'Maximiliano González Ballesteros, full stack developer in México. Web apps in production with React and Next.js, plus products with thousands of downloads.',
+  // Social previews cut around 125 characters on mobile, so this one is shorter
+  // on purpose: 121. The previous single description was 156 and truncated on
+  // "…experiences with".
+  socialDescription:
+    'Full stack developer in México. Web apps in production with React and Next.js, plus products with thousands of downloads.',
 } as const
 
 export const PROFILES = [
