@@ -16,6 +16,8 @@ resultado y lo que se ve al compartir el link. No hay trabajo de posicionamiento
 | Rol "Full Stack Developer" (L6) | `7c8f652` |
 | T5 | `8441100` |
 | Ajuste de la tarjeta (foto y stack) | `d58ce22` |
+| Alineación centrada | `b11d7b3` |
+| Tarjeta final del owner | `7c15076` |
 
 ## Specs
 
@@ -45,7 +47,7 @@ resultado y lo que se ve al compartir el link. No hay trabajo de posicionamiento
 | T2 | Metadata, `metadataBase` y título de la home | S3, S5 | inline | `7706a0a` |
 | T3 | `robots.txt` y `sitemap.xml` desde `data/projects.ts` | S2 | inline | `7706a0a` |
 | T4 | JSON-LD `Person` + `WebSite` con `sameAs` | S2 | inline | `7706a0a` |
-| T5 | Tarjeta Open Graph y sus etiquetas | S4 | inline | `8441100` |
+| T5 | Tarjeta Open Graph y sus etiquetas | S4 | inline | `7c15076` |
 | T6 | `docs/site-identity.md`, corrección del cierre de SEO y verificación de CI | S2, S6 | inline | commit 2 (docs) + cierre |
 
 T2, T3 y T4 comparten un commit: son una sola unidad de comportamiento (lo que
@@ -96,3 +98,16 @@ verificación de CI y anota los commits en este documento.
   `app/opengraph-image.png`; se retira el generador para que ningún comando
   sobrescriba su diseño. La cuantización de paleta queda aceptada por el owner
   tras verificarla en su pantalla.
+
+## Estado de entrega
+
+El código está completo y verificado en local: `typecheck`, `test`,
+`lint:docs`, `audit:i18n` y `build` en verde. Lo que falta depende del owner:
+
+1. Push de la rama y PR. El push crea la preview de Vercel.
+2. Merge a `main`: publica en producción.
+3. Search Console: verificar la propiedad (el token ya viaja en el head),
+   inspeccionar la URL y pedir indexación. Todo después del deploy.
+4. Rich Results Test contra la URL de producción.
+5. Comprobar la tarjeta compartiendo el link y el icono en pestaña y teléfono.
+6. Esperar la adopción del favicon: días o semanas, sin API para forzarla.
