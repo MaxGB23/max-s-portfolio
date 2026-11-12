@@ -100,3 +100,48 @@ export function groupCatalog<T extends CatalogEntry>(projects: readonly T[]): Ca
   }
   return groups;
 }
+
+// ---------------------------------------------------------------------------
+// Sello de la tarjeta (`components/project-card.tsx`, T2b)
+//
+// El sello vive sobre la media de la card y dice solo lo que el contexto no
+// dice. Por eso es una regla y no un condicional dentro del JSX: se prueba sin
+// navegador y sin importar `data/projects.ts`.
+// ---------------------------------------------------------------------------
+
+/** Los dos sellos posibles. Orden de prioridad: `pre-release` gana. */
+export type ProjectSeal = "pre-release" | "featured";
+
+/**
+ * Lo minimo que la regla del sello lee de una tarjeta.
+ *
+ * `featured` es la API PROPIA de la card (borde destacado, sello que dice que
+ * la ficha tambien vive en la home); quien la pasa la deriva de la superficie
+ * de la ficha (`home === "featured"`), nunca de un flag del modelo. Por eso la
+ * entrada es el shape de la tarjeta y no el de `ProjectL`.
+ */
+export interface SealEntry {
+  /** Ciclo de vida. Ausente = activo. */
+  status?: "active" | "pre-release" | "finished";
+  /** Superficie destacada de la ficha, ya resuelta por el consumidor. */
+  featured?: boolean;
+}
+
+/**
+ * Que sello corresponde a una tarjeta, o `null` si no lleva ninguno.
+ *
+ *   1. `status === "pre-release"` -> se sella como pre-release, aunque la ficha
+ *      tambien sea destacada: lo que esta por salir pesa mas que la superficie.
+ *   2. `featured === true`        -> se sella como destacada. Estas fichas
+ *      tambien viven en la home, y el catalogo es el unico lugar donde eso no
+ *      es obvio.
+ *   3. resto                      -> sin sello. `finished` no lleva: ya lo dice
+ *      el grupo "Trabajo anterior".
+ *
+ * Nunca dos sellos y nunca un conteo: uno o ninguno.
+ */
+export function projectSeal(entry: SealEntry): ProjectSeal | null {
+  if (entry.status === "pre-release") return "pre-release";
+  if (entry.featured === true) return "featured";
+  return null;
+}

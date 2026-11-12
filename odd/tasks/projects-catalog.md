@@ -468,6 +468,58 @@ D13 (decisión de entrega): un solo PR. El tamaño authored real —269 adicione
 cuales 125 eliminaciones son el CSS muerto— queda bajo el presupuesto de ~400, así que
 no se abre cadena de PRs.
 
-D14 (pendiente): qué parte de `design/` se commitea. Propuesta: `design/system.md` y
-`design/projects-catalog/` sí; `design/system.html` fuera (344 KB de fuentes base64,
-artefacto regenerable) con una línea de `.gitignore` local.
+D14 (decidida, L15): `design/system.md` y `design/projects-catalog/` se commitean;
+`design/system.html` queda fuera con su línea en `.gitignore`, porque se regenera
+desde `system.md`. Los boards sí entran: no son regenerables —son el registro de
+la fase 0— aunque pesen 804 KB con las fuentes embebidas.
+
+L15 (usuario, verbatim): "fuera system.html, tal como recomendaste, sigamos" y
+"fuera system.html, tal como recomendaste, sigamos con t2".
+
+### Estado de los commits
+
+| Tarea | Commit |
+|---|---|
+| T0 — boards + sistema + spec | `842ba15` |
+| T1 — modelo `home`/`lineage`/`status` | `3fc0da2` |
+| T5a — fichas forge/secure + `finished` | `7790535` |
+| T9 — navbar route-aware | `cd80200` |
+| T2 — ruta `/proyectos` | `9110cb5` |
+| T3 — enlace en la home | esta slice |
+| Fuera de tarea — CSS muerto | `528a1cc` |
+
+E12 (evidencia, `9110cb5`): `/proyectos` sale del build como `ƒ` (dynamic) igual
+que `/`, porque el layout raíz usa `cookies()`. La agrupación vive en
+`lib/projects-catalog.ts` como regla pura con 6 casos en `node:test`; el total
+quedó en 85/85. Sin conteos en la interfaz, verificado por grep.
+
+L16 (usuario, verbatim): "tuve que usar 'pt-6 md:pt-12 lg:pt-14' para que tuviera
+el mismo espaciado que el resto de secciones, lo medi con layout debug y con esas
+clases va casi preciso, mobile, tablet y desktop, este tipo de cosas no las
+consideramos y podrían haber mas incongruencias en tamaños de fonts, etc. Sobre
+la navegacion tengo muchos puntos que debatir, pero los dejamos para despues, ya
+que son muchos bugs que no contemplamos, recuerdas para no olvidarlos. Estoy
+recopilando data para forge y secure, ademas de imagenes, tenme paciencia. El
+diseño de las featured no me gusta, tal vez añadir algun tipo badge encima de la
+imagen por la esquina, no lo sé la verdad."
+
+### Pendientes que no se pueden perder
+
+1. **Ritmo vertical y escala tipografica** (E13): el board llevo una sola medida
+de escritorio (32px) sin rampa, y la implementacion no consumio `lib/rhythm.ts`,
+que ya codifica el ritmo (`SECTION_GAP`, `PAGE_SPACER_CLASSES`). El usuario midio
+con `debug-l3` y corrigio a `pt-6 md:pt-12 lg:pt-14`. Falta revisar si la pagina
+del catalogo consume o no las primitivas de `lib/rhythm.ts` —si no, es la misma
+incongruencia en el gap entre secciones— y revisar tamano de fuentes contra la
+home en los tres anchos. Regla nueva: toda distancia vertical se escribe con sus
+tres valores (mobile/tablet/desktop), medidos o tomados de `lib/rhythm.ts`.
+2. **Navegacion** (diferido por el usuario): hay "muchos puntos que debatir" y
+"muchos bugs que no contemplamos". No se resuelven en esta feature; quedan
+abiertos, pendientes de que el usuario los enumere.
+3. **Forge y Secure** (en curso por el usuario): esta recopilando data e imagenes
+(`docs/projects/candidatos/portfolio-npm-launch-forge.md` y
+`portfolio-npm-launch-secure.md`). T4 y T7 esperan eso; no inventar contenido
+mientras tanto.
+4. **Diseno de las featured**: al usuario no le gusta. Idea suya, sin confirmar:
+un badge de tipo encima de la imagen, en la esquina. Se cruza con T2b (chip de
+estado): una sola decision de diseno puede resolver los dos.

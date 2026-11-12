@@ -27,7 +27,9 @@
   mobile el grid usa `earlyOnMobile`.
 - Fuente de datos: `data/projects.ts` (`getHomeFeatured`, `getHomeGrid`, `getCatalog`; la selección de la home se declara con `home` en cada ficha, no con un booleano `featured`).
 - Enlace al catalogo: dentro del mismo `Reveal` del grid, `flex justify-center`
-  con `pt-8` (32px bajo el ultimo borde). Es navegacion, no conversion: texto en
+  con la rampa medida contra las secciones vecinas, `pt-6 md:pt-12 lg:pt-14`
+  (24/48/56px). El `pt-8` del board era UNA medida de escritorio: no servia en
+  mobile ni en tablet. Es navegacion, no conversion: texto en
   `--foreground` con flecha `ArrowRight` de 16px, sin relleno y sin
   `--accent-purple` (en reposo el morado es jerarquia de encabezado); subrayado
   solo en hover y `:focus-visible`, y la flecha se desplaza 3px con
@@ -62,7 +64,32 @@
   ring-1 ring-purple-accent/20` en lugar de `border-border`.
 - Imagen `aspect-16/10 bg-muted` con scale suave en hover. La imagen se pide
   con `loading="eager"` (no lazy): la politica y sus numeros estan en
-  `motion.md` 3.
+  `motion.md` 3. El fallback de media vacia (gradiente + `category` en mono)
+  sigue intacto cuando `image` esta vacio.
+- **Sello de estado sobre la media** (T2b, boards `09-badge-destacada.html`
+  tratamiento A y `10-destacada-sin-etiqueta.html` specimen 03): pill
+  `absolute top-3 left-3` (12px del borde superior e izquierdo, no 16px: el
+  board 09 lo dibuja en el panel destacado, el 10 sobre la card real de la
+  grilla), `rounded-full px-2.5 py-1 text-[10px] font-bold uppercase
+  leading-[1.6] tracking-[0.1em] text-white` con velo
+  `bg-[rgb(0_0_0_/_0.55)]` + `backdrop-blur-[6px]`, borde
+  `rgb(255 255 255 / .18)` y punto morado de 5px (`bg-purple-accent`,
+  decorativo). Blanco sobre el velo pasa con cualquier imagen: el sello no
+  depende de la media. Nunca dos sellos y nunca un conteo.
+- La regla del sello es una funcion pura, `projectSeal()` en
+  `lib/projects-catalog.ts`, probada en `scripts/projects-catalog-page.test.mjs`
+  sin navegador. Tres casos: `status: "pre-release"` sella `pre-release` y gana
+  aunque la ficha sea destacada; si no, `featured` sella "Destacado"/"Featured"
+  (esas fichas tambien viven en la home y el catalogo es el unico lugar donde
+  eso no es obvio); `finished` y un activo sin superficie destacada no llevan
+  nada - lo terminado ya lo dice el grupo "Trabajo anterior". Etiquetas:
+  `section.projects.seal.preRelease` y `section.projects.seal.featured`.
+- El sello lo enciende el catalogo: `components/projects-catalog.tsx` es el
+  unico consumidor que pasa `status` a la card, asi que la grilla de la home no
+  lo muestra.
+- **La card destacada NO cambia** (`featured-project-panel.tsx`,
+  `featured-projects.tsx`): conserva su pill de categoria y su indice
+  duplicado. El sello es de `ProjectCard`, no de esa superficie.
 - Cuerpo `p-5`: h3 `text-fluid-card-title font-semibold capitalize`; desc
   `text-fluid-card-desc text-muted-foreground line-clamp-3 max-h-[4.875em]`;
   chip metrica (etiqueta degradada `text-foreground/60`, excepcion acotada);

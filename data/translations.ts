@@ -62,6 +62,11 @@ const es = {
   'section.catalog.group.family': 'Familia Funky AI',
   'section.catalog.group.earlier': 'Trabajo anterior',
 
+  // Sello de la card del catalogo (T2b): solo dice lo que el contexto no dice.
+  // `pre-release` no se traduce (es el nombre del estado); el destacado si.
+  'section.projects.seal.preRelease': 'pre-release',
+  'section.projects.seal.featured': 'Destacado',
+
   // Products
   'section.products.eyebrow': 'Lo que construyo',
   'section.products.title': 'Productos y Herramientas',
@@ -188,6 +193,10 @@ const en = {
   // middle group reuses its second word, so only the two new labels live here.
   'section.catalog.group.family': 'Funky AI family',
   'section.catalog.group.earlier': 'Earlier work',
+
+  // Card seal (T2b): it only says what the context does not say.
+  'section.projects.seal.preRelease': 'pre-release',
+  'section.projects.seal.featured': 'Featured',
 
   // Products
   'section.products.eyebrow': 'What I build',
