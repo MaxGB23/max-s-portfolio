@@ -91,7 +91,7 @@ export function AllProjects({ liveMetrics }: { liveMetrics?: LiveMetricValues })
               lo reserva a la jerarquia de encabezado. Centrada bajo la grilla,
               a 32px del ultimo borde, y dentro del mismo `Reveal` del grid — no
               suma un punto de observacion ni toca la coreografia del scroll. */}
-          <div className="flex justify-center pt-8">
+          <div className="flex justify-center pt-6 md:pt-12 lg:pt-14">
             <Link
               href="/proyectos"
               className="group inline-flex items-center gap-2 text-base font-medium text-foreground transition-colors duration-100 hover:underline hover:underline-offset-4 focus-visible:underline focus-visible:underline-offset-4"
