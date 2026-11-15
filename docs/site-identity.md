@@ -48,6 +48,38 @@ es presentación verificable.
 - **La tarjeta OG es un asset diseñado, no generado.** Se edita a mano a
   1200×630 y se commitea. Si cambia el nombre, el rol o la foto, se rehace. No
   hay comando: un generador producía otra composición y habría sobrescrito esta.
+- **La miniatura de la búsqueda no es la tarjeta.** `og:image` alimenta
+  LinkedIn, WhatsApp y X; el recuadro que acompana al resultado de Google se
+  elige entre las imagenes de la pagina. Como priorizar una: seccion siguiente.
+
+## Cómo priorizar la imagen del resultado
+
+Google elige el recuadro que acompana al resultado de busqueda de forma
+**automatica**, entre las imagenes de la pagina. No existe un campo "usa esta".
+Si existen palancas documentadas, en orden de fuerza:
+
+1. `primaryImageOfPage` en el nodo `WebPage` del JSON-LD
+   (`components/structured-data.tsx`), con la URL absoluta de la imagen o un
+   `ImageObject`.
+2. Un `image` adjunto a la entidad principal (`mainEntityOfPage`).
+3. `og:image`, que es el que ya existe - y el que Google descarta antes, porque
+   su guia de imagenes recomienda no usar para esto una imagen con texto, y la
+   tarjeta es casi toda texto.
+
+La imagen elegida debe ser representativa de la pagina, **sin texto**, sin
+proporcion extrema y en buena resolucion: es lo que pide la guia de imagenes de
+Google. Es una influencia, no una orden: despues de rastrear, comprobar el
+resultado real.
+
+Hoy el recuadro lo gana la imagen del About (`public/images/about-max.webp`), que
+el owner decidio conservar. Si algun dia se anade una imagen definitiva, se
+declara con `primaryImageOfPage` y se deja la del About como esta.
+
+**Lo que no se usa para esto:** `max-image-preview: none` apaga la
+previsualizacion, pero su documentacion dice que aplica a "todas las formas de
+resultados de busqueda (Google web, Google Images, Discover, Assistant)", asi que
+arriesga vaciar la pestana Imagenes - justo lo que este sitio no quiere perder.
+`noimageindex` es peor: saca las imagenes del indice.
 
 ## Pasos manuales
 
