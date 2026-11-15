@@ -18,6 +18,7 @@ const es = {
   'hero.greeting': 'Hola, soy Max',
   'hero.role': 'Full Stack Developer',
   'hero.description': 'Desarrollo aplicaciones web con Next.js y React, activas en producción, con backend bien estructurado y herramientas de IA integradas en mi flujo de trabajo.',
+  'hero.imageAlt': 'Maximiliano "Max" González Ballesteros - Full Stack Developer, foto de perfil',
   'hero.cta': 'Ver proyectos',
   'hero.cta.projects': 'Ver Proyectos',
   'hero.cta.cv': 'Descargar CV',
@@ -45,7 +46,7 @@ const es = {
   'section.about.paragraph1': 'Soy desarrollador de software, con proyectos freelance en uso real y productos propios con miles de descargas. Me enfoco en interfaces claras, rendimiento y código mantenible.',
   'section.about.paragraph2': 'Combino herramientas de IA con pruebas automatizadas para desarrollar, validar, mantener y entregar software de forma consistente.',
   'section.about.ariaLabel': 'Sobre mí',
-  'section.about.imageAlt': 'Max González Ballesteros - Sobre Mí',
+  'section.about.imageAlt': 'Maximiliano "Max" González Ballesteros - Sobre Mí',
 
   // Featured projects
   'section.featured.title.first': 'Proyectos',
@@ -139,6 +140,7 @@ const en = {
   'hero.greeting': "Hi, I'm Max",
   'hero.role': 'Full Stack Developer',
   'hero.description': 'I build web applications with Next.js and React, live in production, with well-structured backend and AI tooling built into my workflow.',
+  'hero.imageAlt': 'Maximiliano "Max" González Ballesteros - Full Stack Developer, profile picture',
   'hero.cta': 'View projects',
   'hero.cta.projects': 'View Projects',
   'hero.cta.cv': 'Download Resume',
@@ -166,7 +168,7 @@ const en = {
   'section.about.paragraph1': 'I\'m a software developer with freelance projects in real use and self-built products with thousands of downloads. I focus on clear interfaces, performance and maintainable code.',
   'section.about.paragraph2': 'I combine AI tooling with automated tests to develop, validate and maintain software consistently across freelance and self-built projects.',
   'section.about.ariaLabel': 'About me',
-  'section.about.imageAlt': 'Max González Ballesteros - About Me',
+  'section.about.imageAlt': 'Maximiliano "Max" González Ballesteros - About Me',
 
   // Featured projects
   'section.featured.title.first': 'Featured',

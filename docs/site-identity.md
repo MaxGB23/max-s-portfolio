@@ -1,8 +1,19 @@
 # Identidad del sitio
 
+<!-- toc:start -->
+- [Archivos](#archivos)
+- [Reglas que no son obvias](#reglas-que-no-son-obvias)
+- [Cómo priorizar la imagen del resultado](#cómo-priorizar-la-imagen-del-resultado)
+- [Pasos manuales](#pasos-manuales)
+- [Lo que no se hace](#lo-que-no-se-hace)
+<!-- toc:end -->
+
 Qué ve un crawler, un lector de enlaces o un teléfono antes de abrir la página,
 y de dónde sale cada valor. Todo lo que necesita un nombre o una URL absoluta se
 lee de `lib/site.ts`.
+
+También registra lo que se deja fuera a propósito: la foto del hero no entra en
+Google Imágenes, aunque siga en la página.
 
 No es trabajo de posicionamiento: el sitio ya aparece al buscar el nombre. Esto
 es presentación verificable.
@@ -19,7 +30,7 @@ es presentación verificable.
 | `app/apple-icon.png` | 180×180, `<link rel="apple-touch-icon">` | `pnpm icons:site` |
 | `app/favicon.ico` | ICO real con 16/32/48 | `pnpm icons:site` |
 | `app/manifest.ts` | nombre e iconos para "añadir a inicio" en Android | — |
-| `app/robots.ts` | permite todo y apunta al sitemap absoluto | — |
+| `app/robots.ts` | permite todo, excluye la foto del hero de `Googlebot-Image` y apunta al sitemap absoluto | — |
 | `app/sitemap.ts` | home + un entry por proyecto, desde `data/projects` | — |
 | `components/structured-data.tsx` | JSON-LD `Person` + `WebSite` con `sameAs` | — |
 | `app/opengraph-image.png` | tarjeta 1200×630; Next emite `og:image` y `twitter:image` | a mano |
@@ -48,6 +59,51 @@ es presentación verificable.
 - **La tarjeta OG es un asset diseñado, no generado.** Se edita a mano a
   1200×630 y se commitea. Si cambia el nombre, el rol o la foto, se rehace. No
   hay comando: un generador producía otra composición y habría sobrescrito esta.
+- **La miniatura de la búsqueda no es la tarjeta.** `og:image` alimenta
+  LinkedIn, WhatsApp y X; el recuadro que acompana al resultado de Google se
+  elige entre las imagenes de la pagina. Como priorizar una: seccion siguiente.
+
+## Cómo priorizar la imagen del resultado
+
+Google elige el recuadro que acompana al resultado de busqueda de forma
+**automatica**, entre las imagenes de la pagina. No existe un campo "usa esta".
+Si existen palancas documentadas, en orden de fuerza:
+
+1. `primaryImageOfPage` en el nodo `WebPage` del JSON-LD
+   (`components/structured-data.tsx`), con la URL absoluta de la imagen o un
+   `ImageObject`.
+2. Un `image` adjunto a la entidad principal (`mainEntityOfPage`).
+3. `og:image`, que es el que ya existe - y el que Google descarta antes, porque
+   su guia de imagenes recomienda no usar para esto una imagen con texto, y la
+   tarjeta es casi toda texto.
+
+La imagen elegida debe ser representativa de la pagina, **sin texto**, sin
+proporcion extrema y en buena resolucion: es lo que pide la guia de imagenes de
+Google. Es una influencia, no una orden: despues de rastrear, comprobar el
+resultado real.
+
+Hoy el recuadro lo gana la imagen del About (`public/images/about-max.webp`), que
+el owner decidió conservar. Su `alt` lleva los dos nombres, `Maximiliano "Max"
+González Ballesteros`, así que la imagen que representa la página también
+describe a la persona entera. La foto del hero queda fuera de esta competencia a
+propósito: `app/robots.ts` la excluye de `Googlebot-Image`, y por eso no puede
+ganar el recuadro. Si algún día se añade una imagen definitiva, se declara con
+`primaryImageOfPage` y se deja la del About como está.
+
+**Lo que sí se usa, y solo para la foto del hero:** un `Disallow` de
+`Googlebot-Image` en `app/robots.ts`, con un comodín alrededor del nombre del
+archivo. Sirve para sacar esa imagen de Imágenes sin tocar el resto del sitio ni
+sus demás imágenes, y el patrón se deriva de `PERSON.image`: si la foto se
+renombra, la exclusión no se rompe en silencio.
+
+**Lo que no se usa para esto:** `max-image-preview: none` apaga la
+previsualización, pero su documentación dice que aplica a
+"todas las formas de resultados de búsqueda (Google web, Google Images,
+Discover, Assistant)", así que arriesga vaciar la pestaña Imágenes - justo lo que
+este sitio no quiere perder. `noimageindex` es peor: saca las imágenes del índice
+y contradice la decisión de conservar la del About. Ninguna de las dos se aplica
+aquí, y la tarjeta Open Graph tampoco se excluye: se sigue mostrando en LinkedIn,
+WhatsApp y X.
 
 ## Pasos manuales
 
@@ -59,6 +115,10 @@ es presentación verificable.
    resultado, no en el código.
 3. **Imagen Open Graph.** Es un asset diseñado (1200×630). Rehacerla a mano si
    cambia el nombre, el rol o la foto; no hay comando que la regenere.
+4. **Imágenes en Bing** (solo el owner). Bing tiene su propio índice y no aplica
+   el grupo `Googlebot-Image` de `app/robots.ts`, que es un token de Google: si
+   se quiere excluir allí esa foto, se gestiona desde Bing Webmaster Tools.
+   Queda pendiente y fuera de este cambio.
 
 ## Lo que no se hace
 
