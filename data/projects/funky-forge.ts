@@ -11,9 +11,9 @@
 // estimacion del autor no es una medicion, asi que `detail.metrics` va VACIO:
 // el array vacio es render-safe y honesto, un porcentaje sin medicion no.
 //
-// SIN `home` (S2): forge vive en el catalogo y no en la home. `image: ""` es
-// valido: la card y la ficha tienen fallback de media propio, y la captura del
-// producto se agrega despues (S8), nunca reusando la del hub (S7).
+// SIN `home` (S2): forge vive en el catalogo y no en la home. La media es el
+// diagrama del flujo de estimacion, dibujado para esta ficha; no es una captura
+// del producto y no reusa nada del hub (S7).
 
 import type { ProjectL } from "./types";
 
@@ -40,10 +40,10 @@ export const funkyForge: ProjectL = {
   },
   // Stack names: no se traducen.
   tags: ["Node.js", "TypeScript", "CLI", "pnpm", "Markdown"],
-  image: "",
+  image: "/images/projects/funky-forge/main.jpg",
   imageAlt: {
-    es: "Terminal del CLI de funky-forge con los comandos init, assess, estimate y pipeline",
-    en: "funky-forge CLI terminal with the init, assess, estimate and pipeline commands",
+    es: "Diagrama del flujo de estimacion de funky-forge: artefactos, revision por pares, checklist automatico y motor de precios PERT",
+    en: "Diagram of the funky-forge estimation workflow: artifacts, peer review, automated checklist and a PERT pricing engine",
   },
   status: "pre-release",
   lineage: "funky-ai",

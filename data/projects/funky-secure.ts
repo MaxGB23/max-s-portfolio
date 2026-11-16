@@ -12,9 +12,9 @@
 // Las cifras que si aparecen en el copy (las 72 h de cuarentena y las 7 claves
 // de la politica) son valores documentados del estandar, no estimaciones.
 //
-// SIN `home` (S2): secure vive en el catalogo y no en la home. `image: ""` es
-// valido: la card y la ficha tienen fallback de media propio, y la captura del
-// producto se agrega despues (S8), nunca reusando la del hub (S7).
+// SIN `home` (S2): secure vive en el catalogo y no en la home. La media es el
+// diagrama de la auditoria de cadena de suministro, dibujado para esta ficha; no
+// es una captura del producto y no reusa nada del hub (S7).
 
 import type { ProjectL } from "./types";
 
@@ -41,10 +41,10 @@ export const funkySecure: ProjectL = {
   },
   // Stack names: no se traducen.
   tags: ["Node.js", "TypeScript", "CLI", "pnpm"],
-  image: "",
+  image: "/images/projects/funky-secure/main.jpg",
   imageAlt: {
-    es: "Terminal del CLI de funky secure con los comandos doctor, init y check",
-    en: "funky secure CLI terminal with the doctor, init and check commands",
+    es: "Diagrama de la auditoria de cadena de suministro de funky-secure: las fuentes que lee, las reglas sin estado, el veredicto y el plan de hallazgos",
+    en: "Diagram of the funky-secure supply-chain audit: the sources it reads, the stateless rules, the verdict and the findings plan",
   },
   status: "pre-release",
   lineage: "funky-ai",
