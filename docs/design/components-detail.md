@@ -60,8 +60,7 @@
 - `article h-full bg-card border rounded-2xl overflow-hidden cursor-pointer`
   + hover `hover:-translate-y-1.5 hover:shadow-lg`
   (`duration-300 ease-out`; `shadow-black/8` retirado por codigo muerto en
-  dark mode). Featured: `border-purple-accent/40
-  ring-1 ring-purple-accent/20` en lugar de `border-border`.
+  dark mode). todas las cards usan `border-border`: la pertenencia a la home la dice el sello de estado, no el color.
 - Imagen `aspect-16/10 bg-muted` con scale suave en hover. La imagen se pide
   con `loading="eager"` (no lazy): la politica y sus numeros estan en
   `motion.md` 3. El fallback de media vacia (gradiente + `category` en mono)

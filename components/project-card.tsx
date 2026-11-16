@@ -87,7 +87,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
   return (
     <article
       className={`project-card group relative flex flex-col h-full bg-card border rounded-2xl overflow-hidden cursor-pointer duration-300 ease-out hover:-translate-y-1.5 hover:shadow-lg ${
-        project.featured ? "border-purple-accent/40 ring-1 ring-purple-accent/20" : "border-border"
+        "border-border"
       }`}
       aria-labelledby={`project-title-${project.id}`}
     >
