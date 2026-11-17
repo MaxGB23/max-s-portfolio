@@ -20,6 +20,7 @@ import { StackIcon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { takeHomeScroll, useLenis } from "@/hooks/use-lenis";
 import type { ProjectImage, ProjectMetric, ProjectL } from "@/data/projects";
+import { MEDIA_FIT_CONTAIN, MEDIA_FIT_COVER } from "@/data/projects/types";
 import { localizeProject } from "@/data/projects";
 import { ArchitectureEmptyState, ProjectArchitecture } from "@/components/project-architecture";
 import { useLanguage } from "@/contexts/language-context";
@@ -346,6 +347,13 @@ export function ProjectDetail({
   const words = title.trim().split(/\s+/);
   const lastWord = words.pop();
   const mainTitle = words.join(" ");
+
+  // Fit de la media de la ficha. Ausente = "cover", el default de las nueve
+  // capturas. "contain" es para la media cuyo contenido hay que leer entero
+  // (diagramas, infografias): se ajusta al marco con 12px de inset en vez de
+  // recortarse, sin tocar el `aspect` ni el fondo de cada bloque.
+  const mediaFit = localized.mediaFit ?? MEDIA_FIT_COVER;
+  const mediaFitClass = mediaFit === MEDIA_FIT_CONTAIN ? "object-contain p-3" : "object-cover";
 
   // Primary visual image - real screenshot or approved temporary placeholder.
   // Nunca usar un retrato/genérico como si fuera captura del producto (dato falso).
@@ -792,7 +800,7 @@ export function ProjectDetail({
                 src={visualImage}
                 alt={visualAlt}
                 fill
-                className="object-cover"
+                className={mediaFitClass}
                 sizes="(max-width: 1280px) 100vw, 1280px"
                 priority
               />
@@ -921,7 +929,7 @@ export function ProjectDetail({
                           alt={image.alt}
                           fill
                           draggable={false}
-                          className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+                          className={`${mediaFitClass} transition-transform duration-500 ease-out group-hover:scale-[1.03]`}
                           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                         />
                         <span className="absolute top-3 right-3 inline-flex items-center justify-center w-9 h-9 rounded-full bg-background/70 backdrop-blur-md text-foreground opacity-70 hover:opacity-100 transition-opacity duration-200">

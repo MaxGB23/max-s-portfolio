@@ -58,6 +58,7 @@ export function ProjectsCatalog() {
         metric: localized.metric,
         image: localized.image,
         imageAlt: localized.imageAlt,
+        mediaFit: localized.mediaFit,
         category: localized.category,
         tags: localized.tags,
         links: localized.links,

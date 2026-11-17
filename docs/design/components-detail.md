@@ -65,6 +65,20 @@
   con `loading="eager"` (no lazy): la politica y sus numeros estan en
   `motion.md` 3. El fallback de media vacia (gradiente + `category` en mono)
   sigue intacto cuando `image` esta vacio.
+- **Fit de la media: campo `mediaFit` de la ficha, opt-in por ficha.** Valores
+  `"cover"` y `"contain"`; **ausente = `"cover"`**, asi que las fichas con
+  captura de producto siguen llenando el marco y recortando como siempre.
+  `"contain"` existe para la media cuyo CONTENIDO hay que leer entero
+  (diagramas de flujo, infografias con texto), donde `cover` corta el texto que
+  toca el borde: la imagen se ajusta al marco con `object-contain p-3` (12px de
+  inset para que el diagrama no toque los bordes) sobre el `bg-muted` que la
+  card ya usa para la media. El zoom de hover, el `aspect-16/10`, el radio y el
+  sello NO cambian. Los dos valores viven como constantes en
+  `data/projects/types.ts` (`MEDIA_FIT_COVER`, `MEDIA_FIT_CONTAIN`), por la
+  misma razon que los de superficie: `audit:i18n` marca un literal fuera de hoja
+  `L` si una ficha lo escribe suelto. Hoy la usan funky-forge y funky-secure;
+  esos dos valores llegan a la card por el mapeo de `all-projects.tsx` y de
+  `projects-catalog.tsx`, que la reenvian campo a campo.
 - **Sello de estado sobre la media** (T2b, boards `09-badge-destacada.html`
   tratamiento A y `10-destacada-sin-etiqueta.html` specimen 03): pill
   `absolute top-3 left-3` (12px del borde superior e izquierdo, no 16px: el
@@ -240,11 +254,18 @@ margen vertical. Badge `px-3.5 py-1 text-xs 2xl:text-sm`: el `py-1` es
   deduplicar uno contra otro.
 - Visual principal: `max-w-5xl aspect-video rounded-3xl` con glow suave. La
   imagen sale de `detail.visual?.src ?? project.image` — `visual` es la portada
-  propia del detail y es opcional; sin ella cae a la imagen de la card.
+  propia del detail y es opcional; sin ella cae a la imagen de la card. El fit
+  es el MISMO `mediaFit` de la card (4.6): `contain` = `object-contain p-3`
+  dentro del `aspect-video` y del fondo existentes, `cover` (default) queda
+  igual que antes. Un diagrama 16:9 entra entero porque el marco tambien es
+  16:9: el inset de 12px es todo el margen que se ve.
 - Links: `variant="inverted"` tamaños `lg` (excepcion al tamano default md).
 - Editorial: `max-w-3xl` con `text-base 2xl:text-lg` (`2xl:text-lg` por
   pantallas ultra-anchas), `leading-relaxed`, hoja de ruta en codigo.
 - Galeria: grid `1/2/3` con `gap-4`; imagenes con `data-tag`? para lightbox.
+  El thumbnail respeta el `mediaFit` de la ficha (4.6), con su `bg-muted` como
+  superficie para el caso `contain`; el visor ya es `object-contain` siempre,
+  asi que la imagen ampliada nunca se recorta en ninguno de los dos modos.
 - CTA final: banda `rounded-3xl border-purple-accent/30 bg-purple-accent/5
   px-6 py-12 md:p-14` con `Volver a proyectos` primary md.
 - Lightbox: `z-[70] bg-black/90`, overlay `touch-pan-y select-none`

@@ -15,7 +15,7 @@
 // diagrama del flujo de estimacion, dibujado para esta ficha; no es una captura
 // del producto y no reusa nada del hub (S7).
 
-import type { ProjectL } from "./types";
+import { MEDIA_FIT_CONTAIN, type ProjectL } from "./types";
 
 export const funkyForge: ProjectL = {
   id: "funky-forge",
@@ -45,6 +45,9 @@ export const funkyForge: ProjectL = {
     es: "Diagrama del flujo de estimacion de funky-forge: artefactos, revision por pares, checklist automatico y motor de precios PERT",
     en: "Diagram of the funky-forge estimation workflow: artifacts, peer review, automated checklist and a PERT pricing engine",
   },
+  // La media es un diagrama con texto legible, no una captura: recortarla corta
+  // el titulo a mitad de palabra. `contain` la ajusta al marco con un inset.
+  mediaFit: MEDIA_FIT_CONTAIN,
   status: "pre-release",
   lineage: "funky-ai",
   links: [],

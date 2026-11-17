@@ -8,6 +8,7 @@ import { StackIcon } from "@/components/icons";
 import { saveHomeScroll } from "@/hooks/use-lenis";
 import { useLanguage } from "@/contexts/language-context";
 import { projectSeal, type ProjectSeal } from "@/lib/projects-catalog";
+import { MEDIA_FIT_CONTAIN, MEDIA_FIT_COVER } from "@/data/projects/types";
 import type { TranslationKey } from "@/data/translations";
 
 export interface Project {
@@ -17,6 +18,8 @@ export interface Project {
   metric: string;
   image: string;
   imageAlt: string;
+  /** Como encaja la media en su marco. Ausente = "cover" (campo de la ficha). */
+  mediaFit?: "cover" | "contain";
   category: string;
   tags?: string[];
   links?: ProjectLink[];
@@ -79,11 +82,26 @@ interface ProjectCardProps {
   project: Project;
 }
 
+/**
+ * Media que hay que LEER ENTERA (diagramas, infografias con texto): `contain`
+ * ajusta la imagen al marco en vez de recortarla, con 12px de inset para que no
+ * toque los bordes. El fondo ya es `bg-muted`, la superficie que la card usa
+ * para la media. Cover sigue siendo el default: una captura de producto llena
+ * el marco y el recorte no quita informacion. El zoom de hover y la geometria
+ * de la card (`aspect-16/10`, radio, sello) no cambian en ninguno de los dos.
+ */
+const IMAGE_FIT_CLASS: Record<NonNullable<Project["mediaFit"]>, string> = {
+  cover: "object-cover",
+  contain: "object-contain p-3",
+};
+
 export function ProjectCard({ project }: ProjectCardProps) {
   const { t } = useLanguage();
   const externalLink = project.links?.find((link) => link.external);
   // Uno o ninguno: la regla vive en `lib/projects-catalog.ts` (pura, testeada).
   const seal = projectSeal(project);
+  // Ausente = "cover": las nueve fichas con captura no cambian de render.
+  const mediaFit = project.mediaFit ?? MEDIA_FIT_COVER;
   return (
     <article
       className={`project-card group relative flex flex-col h-full bg-card border rounded-2xl overflow-hidden cursor-pointer duration-300 ease-out hover:-translate-y-1.5 hover:shadow-lg ${
@@ -110,7 +128,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
             fill
             decoding="async"
             loading="eager"
-            className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+            className={`${IMAGE_FIT_CLASS[mediaFit]} transition-transform duration-500 ease-out group-hover:scale-[1.03]`}
             sizes={CARD_IMAGE_SIZES}
           />
         ) : (

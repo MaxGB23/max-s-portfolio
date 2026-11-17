@@ -100,6 +100,14 @@ export interface ProjectL {
   tags: string[];
   image: string;
   imageAlt: L;
+  /**
+   * Como encaja la media en su marco. Ausente = "cover", que es lo correcto
+   * para una captura de producto: llena el marco y el recorte no quita
+   * contenido. "contain" existe para la media cuyo CONTENIDO hay que leer
+   * entero —diagramas de flujo, infografias con texto—: se ajusta al marco con
+   * un inset sobre la superficie neutra en vez de recortarse.
+   */
+  mediaFit?: "cover" | "contain";
   links: LinkL[];
   /**
    * Superficie donde se muestra la ficha. Es el UNICO eje de curacion: un solo
@@ -180,6 +188,17 @@ export interface ProjectL {
  */
 export const HOME_FEATURED: NonNullable<ProjectL["home"]> = "featured";
 export const HOME_GRID: NonNullable<ProjectL["home"]> = "grid";
+
+/**
+ * Valores del eje de media, como constantes por la MISMA razon que los de
+ * superficie: `scripts/audit-i18n-content.mjs` exime a este archivo de la regla
+ * "string fuera de hoja `L`" (aqui los strings son codigo, no copy), asi que
+ * una ficha que escribiera el literal `mediaFit: "contain"` caeria como
+ * `outside-leaf` — `mediaFit` no esta en `NON_TRANSLATABLE_PROPS`. El valor
+ * vive en una sola fuente, junto al tipo que define la union.
+ */
+export const MEDIA_FIT_COVER: NonNullable<ProjectL["mediaFit"]> = "cover";
+export const MEDIA_FIT_CONTAIN: NonNullable<ProjectL["mediaFit"]> = "contain";
 
 // ---------------------------------------------------------------------------
 // Resolucion de locale
