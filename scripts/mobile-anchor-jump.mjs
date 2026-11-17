@@ -22,6 +22,12 @@
  * section in view AND the `arrive` class applied EXACTLY once (a stale 1600ms
  * backstop or an effect that re-runs when Lenis arrives late would make it two).
  *
+ * Cases E own the OPPOSITE claim: an arrival that a route change already owns
+ * must NOT be announced. `/` parked at `/#proyectos` -> card -> "Volver" (or the
+ * browser back button) returns to the captured position, and the hash arrival
+ * used to re-announce `#proyectos` afterwards and scroll away from it. Asserted
+ * per case: the restored scroll is where the card was, and no cue is added.
+ *
  * Manual on purpose: it needs a production build (`pnpm build && pnpm start`),
  * because dev falsifies the reveal/layout work that competes for frames here.
  * Deliberately NOT wired into `pnpm qa`: a second transport for the same claim
@@ -249,7 +255,8 @@ const ARRIVAL_SETTLE_MS = 3600;
 const arrivalRows = [];
 
 /** Installed in every document of the context (Playwright runs it before any
- *  page script): counts how many times `arrive` is ADDED to `#contacto`.
+ *  page script): counts how many times `arrive` is ADDED to an element, keyed by
+ *  its id, and keeps `#contacto` in its own list for the D cases.
  *  `announceArrival` does remove -> reflow -> add, so a naive observer that reads
  *  `classList` when the callback runs cannot tell one cue from two; the count
  *  therefore compares each record's `oldValue` against the class the NEXT record
@@ -257,7 +264,7 @@ const arrivalRows = [];
  *  one. Rise only: the 2200ms cleanup is a fall, not a cue. */
 async function installCueCounter(ctx) {
   await ctx.addInitScript(() => {
-    window.__cue = { at: [] };
+    window.__cue = { at: [], log: [] };
     const hasArrive = (value) =>
       typeof value === "string" && value.split(/\s+/).includes("arrive");
     const classAfter = (records, i) => {
@@ -270,9 +277,10 @@ async function installCueCounter(ctx) {
       for (let i = 0; i < records.length; i++) {
         const record = records[i];
         if (record.type !== "attributes" || !record.target) continue;
-        if (record.target.id !== "contacto") continue;
         if (!hasArrive(record.oldValue) && hasArrive(classAfter(records, i))) {
-          window.__cue.at.push(Math.round(performance.now()));
+          const id = record.target.id || "(sin id)";
+          window.__cue.log.push({ id, at: Math.round(performance.now()) });
+          if (id === "contacto") window.__cue.at.push(Math.round(performance.now()));
         }
       }
     }).observe(document, {
@@ -310,6 +318,145 @@ async function arrivalState(p) {
       strayArrive: document.querySelector(".arrive") !== null,
     };
   }, CUE_ID);
+}
+
+// --- E: a return that already owns the scroll must NOT announce -------------
+// The bug: `ScrollRestorer` (layout, mounted BEFORE the page) consumes the
+// captured position in its own effect, so by the time `AnchorArrival` (child of
+// the home page) runs, nothing is pending and it announces the hash the URL came
+// back with — `#proyectos` — and scrolls away from the restored card. Both rigs
+// are measured: mobile takes the owned `window.scrollTo` restore, desktop takes
+// the Lenis one (`scrollTo(target, { immediate: true })`).
+const GRID_ID = "proyectos";
+/** The restore is exact (a scroll position, not a tween), so the only slack is
+ *  layout drift between the two paints. The bug shows up in the thousands. */
+const RETURN_TOLERANCE_PX = 16;
+const returnRows = [];
+
+/** Where the card sits right now, plus the cue count this document already
+ *  spent on `#proyectos` (the cold arrival at the section announces once, which
+ *  is legitimate: a hash arrival nobody claimed). */
+function cardState(href) {
+  const link = document.querySelector(`a[href="${href}"]`);
+  const rect = link ? link.getBoundingClientRect() : null;
+  return {
+    y: Math.round(window.scrollY),
+    top: rect ? Math.round(rect.top) : null,
+    fires: window.__cue.log.filter((entry) => entry.id === "proyectos").length,
+    hash: window.location.hash,
+    path: window.location.pathname,
+  };
+}
+
+async function runReturnCases(p, rig) {
+  for (const via of ["volver", "back"]) {
+    const label = `${rig} /#${GRID_ID} -> ${via}`;
+    // A cold arrival at the section, so the URL carries the hash the bug feeds
+    // on and the card list is laid out from scratch.
+    await p.goto("about:blank");
+    await p.goto(BASE + "/#" + GRID_ID, { waitUntil: "load" });
+    await p.waitForTimeout(ARRIVAL_SETTLE_MS);
+
+    const card = await p.evaluate(() => {
+      // A real grid card (`ProjectCard`), not the featured panel's CTA: the
+      // whole-card overlay is what the visitor taps, and its click handler is
+      // the one that captures the position (`saveHomeScroll(window.scrollY)`).
+      const link = document.querySelector('article.project-card a[href^="/proyectos/"]');
+      if (!link) return null;
+      const rect = link.getBoundingClientRect();
+      return { href: link.getAttribute("href"), y: Math.round(rect.top + window.scrollY) };
+    });
+    if (!card) {
+      failures.push(`${label}: la home no ofrecio ninguna card de proyecto`);
+      continue;
+    }
+
+    // Park the page ON the card: this is the position the card click captures
+    // (`saveHomeScroll(window.scrollY)`) and the one the return must restore.
+    await p.evaluate((top) => window.scrollTo({ top: top - 120, behavior: "instant" }), card.y);
+    await p.waitForTimeout(400);
+    const before = await p.evaluate(cardState, card.href);
+    if (before.top === null) {
+      failures.push(`${label}: la card desaparecio antes del click`);
+      continue;
+    }
+    if (before.top < 0 || before.top > 300) {
+      failures.push(`${label}: la card no quedo en vista antes del click (top ${before.top}px)`);
+      continue;
+    }
+
+    // A REAL pointer click at a point inside the card, NOT `locator.click()`:
+    // Playwright scrolls the element into view before clicking, and that scroll
+    // is what `saveHomeScroll` would then capture — the case would restore an
+    // arbitrary position and prove nothing. The hit test makes the click
+    // honest: if the point does not land on the card's own link, the case fails
+    // instead of measuring a page that never navigated.
+    const point = await p.evaluate((href) => {
+      const link = document.querySelector(`a[href="${href}"]`);
+      const rect = link.getBoundingClientRect();
+      const x = Math.round(rect.left + rect.width / 2);
+      const y = Math.round(
+        Math.min(Math.max(rect.top + rect.height / 2, 120), window.innerHeight - 120)
+      );
+      const hit = document.elementFromPoint(x, y);
+      const owner = hit && hit.closest ? hit.closest("a") : null;
+      return { x, y, hitHref: owner ? owner.getAttribute("href") : null };
+    }, card.href);
+    if (point.hitHref !== card.href) {
+      failures.push(
+        `${label}: el click no cae en la card (${point.x},${point.y} -> ${point.hitHref ?? "sin enlace"})`
+      );
+      continue;
+    }
+    await p.mouse.click(point.x, point.y);
+    await p.waitForFunction(() => window.location.pathname.startsWith("/proyectos/"), null, {
+      timeout: 20000,
+    });
+    await p.waitForTimeout(900);
+
+    if (via === "volver") {
+      // The floating "Volver" pill: it consumes the captured position in the
+      // CLICK handler, i.e. before the navigation commits.
+      await p.locator("a.back-btn").first().click();
+    } else {
+      // The browser back button: nothing of ours runs in the click path here,
+      // so this case is the only proof that the `popstate` promoter publishes
+      // the ownership too. Removing that publisher leaves this case red and
+      // the "volver" case green.
+      await p.goBack();
+    }
+    await p.waitForFunction(() => window.location.pathname === "/", null, { timeout: 20000 });
+    await p.waitForTimeout(ARRIVAL_SETTLE_MS);
+    const after = await p.evaluate(cardState, card.href);
+    returnRows.push({
+      rig,
+      via,
+      scrollBefore: before.y,
+      scrollAfter: after.y,
+      cardTopBefore: before.top,
+      cardTopAfter: after.top,
+      cueBefore: before.fires,
+      cueAfter: after.fires,
+      hashAfter: after.hash || "(sin hash)",
+    });
+
+    // Premise of the case: the return really did land on `/` with the hash in
+    // the URL. Without it there is nothing for the arrival to announce and the
+    // case would pass for the wrong reason.
+    if (after.hash !== "#" + GRID_ID) {
+      failures.push(`${label}: la vuelta perdio el hash (URL "${after.hash}")`);
+    }
+    if (after.fires !== before.fires) {
+      failures.push(
+        `${label}: el anillo se disparo al volver (${before.fires} -> ${after.fires}); la llegada con hash piso la posicion restaurada`
+      );
+    }
+    if (after.top === null || Math.abs(after.top - before.top) > RETURN_TOLERANCE_PX) {
+      failures.push(
+        `${label}: el scroll no volvio a la card (scrollY ${before.y} -> ${after.y}, top ${before.top} -> ${after.top})`
+      );
+    }
+  }
 }
 
 function assertArrival(label, state) {
@@ -409,6 +556,7 @@ async function runArrivalCases(p, rig, mobile) {
 }
 
 await runArrivalCases(page, "mobile", true);
+await runReturnCases(page, "mobile");
 
 // The same three cases on the Lenis path: there the trigger waits for the
 // instance (created one commit after mount), which is exactly where a
@@ -421,6 +569,7 @@ const desktopContext = await browser.newContext({
 await installCueCounter(desktopContext);
 const desktopPage = await desktopContext.newPage();
 await runArrivalCases(desktopPage, "desktop", false);
+await runReturnCases(desktopPage, "desktop");
 await desktopContext.close();
 
 const ratio = (mode) => {
@@ -431,6 +580,10 @@ const ratio = (mode) => {
 
 console.table(rows);
 console.table(arrivalRows);
+console.table(returnRows);
+console.log(
+  `retorno a la grilla: ${returnRows.length} casos, ${returnRows.filter((r) => r.cueAfter === r.cueBefore).length} sin anillo extra`
+);
 console.log(
   `arrival cue: ${arrivalRows.length} casos, ${arrivalRows.filter((r) => r.fires === 1).length} con exactamente un aviso`
 );
@@ -450,3 +603,4 @@ if (failures.length) {
 }
 console.log("\nOK: el anillo llega al aterrizar y el viaje no se resuelve en un salto unico.");
 console.log("OK: el anillo se dispara una sola vez tambien al LLEGAR con hash, desde el catalogo y en carga directa.");
+console.log("OK: una vuelta que ya tiene dueno conserva el scroll y NO anuncia el hash de la URL.");

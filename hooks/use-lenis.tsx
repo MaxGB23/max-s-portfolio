@@ -41,12 +41,22 @@ function announceArrival(href: string) {
   const target = document.getElementById(href.slice(1));
   if (!target) return;
 
-  const base = window.location.pathname + window.location.search;
-  // `history.state` se conserva a proposito: Next guarda ahi el arbol de la
-  // navegacion en curso. Pasar `null` lo borra, y si el aviso llega mientras
-  // una transicion esta en vuelo (primera visita, RSC lento) el router no
-  // puede confirmarla: la URL se queda en el ancla y la ficha nunca pinta.
-  window.history.replaceState(window.history.state, "", base + href);
+  const pathname = window.location.pathname;
+  const base = pathname + window.location.search;
+  // Las anclas que este aviso escribe viven SOLO en la home, y este es el mismo
+  // aviso que llega por el backstop de 1600ms. Si la pagina actual es otra
+  // (una ficha, el catalogo), el hash le pertenece a una seccion que no existe
+  // ahi: el anillo se pinta si el id esta en el documento, pero la URL de esta
+  // ruta no se reescribe. No previene el bug historico (`a5a45dc`: la pagina
+  // vieja era `/`, la guarda no habria bloqueado nada); acota quien escribe la
+  // URL, nada mas.
+  if (pathname === "/") {
+    // `history.state` se conserva a proposito: Next guarda ahi el arbol de la
+    // navegacion en curso. Pasar `null` lo borra, y si el aviso llega mientras
+    // una transicion esta en vuelo (primera visita, RSC lento) el router no
+    // puede confirmarla: la URL se queda en el ancla y la ficha nunca pinta.
+    window.history.replaceState(window.history.state, "", base + href);
+  }
 
   target.classList.remove("arrive");
   void target.offsetWidth;
@@ -265,10 +275,35 @@ export function useScrollToTop() {
 // force Lenis to adopt the target with `immediate: true` so its next frame
 // doesn't overwrite what we just set.
 let savedHomeScroll: number | null = null;
+// La ruta en la que se capturo esa posicion. El traspaso siempre devuelve la
+// posicion a la MISMA grilla de la que salio, y solo `/` tiene anclas que
+// anunciar, asi que el dueno de un scroll guardado en `/proyectos` no puede
+// silenciar una llegada con hash a la home.
+let savedHomePath: string | null = null;
 let pendingRestore: number | null = null;
 // Only one arrival can be pending: a newer anchor click supersedes the previous
 // one, so a stale backstop can never announce the wrong destination.
 let arrivalToken = 0;
+
+// --- Dueno del scroll de la proxima navegacion -----------------------------
+// Un cambio de ruta que YA tiene dueno: el click de una card capturo la
+// posicion de la grilla y "Volver" o el boton atras del navegador estan
+// devolviendo al visitante a ella.
+//
+// El traspaso existe porque `AnchorArrival` NO puede observar esa restauracion:
+// `ScrollRestorer` es su hermano y esta montado ANTES (`smooth-scroll.tsx`), y
+// React corre los efectos pasivos de los hermanos en orden de montaje, asi que
+// para cuando corre el efecto de la pagina el restorer ya consumio
+// `pendingRestore`. Una guarda de "hay una posicion pendiente?" ahi lee false y
+// anuncia el hash con el que volvio la URL — `#proyectos`, porque ahi estaba el
+// visitante cuando pulso la card —, pisando la posicion restaurada.
+//
+// Por eso el dueno lo publica el EVENTO que arranca la navegacion
+// (`takeHomeScroll()` en el click de Volver, y el promotor de `popstate` de
+// abajo), los dos ANTES de que la navegacion se confirme, y lo consume una sola
+// vez `AnchorArrival`. El valor es la ruta donde se capturo la posicion: una
+// marca publicada para `/proyectos` no puede silenciar una llegada a `/`.
+let scrollOwnerClaim: string | null = null;
 
 /** Backstop delay — just past where the lerp converges (~1.2-1.5s at 60Hz), so
  *  it only fires when the scroll was interrupted and onComplete never runs. */
@@ -277,16 +312,33 @@ const ARRIVAL_FALLBACK_MS = 1600;
 /** Called on portfolio card clicks: remember where the grid was. */
 export function saveHomeScroll(y: number) {
   savedHomeScroll = y;
+  savedHomePath = window.location.pathname;
 }
 
 /** Volver: consume the captured position and mark it for restoration. */
 export function takeHomeScroll(): number | null {
   const y = savedHomeScroll;
+  const path = savedHomePath;
   savedHomeScroll = null;
+  savedHomePath = null;
   if (y != null) {
     pendingRestore = y;
+    // Publicado ACA, en el click, y no en `ScrollRestorer`: ver la marca de
+    // arriba. Este es el camino del boton "Volver" de la ficha.
+    scrollOwnerClaim = path;
   }
   return y;
+}
+
+/**
+ * Consume la marca del dueno y responde si ESTE cambio de ruta ya tiene el
+ * scroll. Leerla la limpia: una llegada se anuncia como mucho una vez, y una
+ * marca que sobrevive silenciaria una llegada posterior, que si es del aviso.
+ */
+export function consumeAnchorOwnership(): boolean {
+  const owner = scrollOwnerClaim;
+  scrollOwnerClaim = null;
+  return owner !== null && owner === window.location.pathname;
 }
 
 /**
@@ -311,11 +363,18 @@ export function ScrollRestorer() {
   // Any pop (Volver pill, browser back) may mean "return to the grid": promote
   // the captured position before the pathname effect consumes it. The pill
   // path already consumed it via takeHomeScroll(), so it won't double-apply.
+  //
+  // El boton atras del navegador no pasa por el handler del pill, asi que este
+  // es el otro punto que publica el dueno del scroll (ver la marca de arriba):
+  // `popstate` corre antes de que la navegacion se confirme, dentro del efecto
+  // de un hermano montado antes que `AnchorArrival`, no dentro de su efecto.
   useEffect(() => {
     const onPop = () => {
       if (savedHomeScroll != null) {
         pendingRestore = savedHomeScroll;
+        scrollOwnerClaim = savedHomePath;
         savedHomeScroll = null;
+        savedHomePath = null;
       }
     };
     window.addEventListener("popstate", onPop);
