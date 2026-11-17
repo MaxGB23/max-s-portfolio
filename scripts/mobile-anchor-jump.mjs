@@ -15,12 +15,22 @@
  * docs/issues/mobile-menu-scroll-cancelled.md 3) — the Chromium mobile emulator
  * resolves programmatic smooth scrolls without the animation being measured.
  *
+ * It also owns the arrival cue's second entry point (cases D): the cue used to
+ * live only inside the in-page anchor CLICK path, so arriving from `/proyectos`
+ * or on a fresh load of `/#contacto` landed on the section with no ring. The
+ * missing half is the announcement, not the scroll, so case D asserts BOTH: the
+ * section in view AND the `arrive` class applied EXACTLY once (a stale 1600ms
+ * backstop or an effect that re-runs when Lenis arrives late would make it two).
+ *
  * Manual on purpose: it needs a production build (`pnpm build && pnpm start`),
  * because dev falsifies the reveal/layout work that competes for frames here.
  * Deliberately NOT wired into `pnpm qa`: a second transport for the same claim
  * is a growth decision (docs/rfcs/verification-policy.md 5).
  *
- * Usage: node scripts/mobile-anchor-jump.mjs [--url http://localhost:<port>]
+ * Usage: pnpm build && pnpm start  (in another shell)
+ *        node scripts/mobile-anchor-jump.mjs [--url http://localhost:<port>]
+ *        PW_ENGINE=chromium ... separates "the tween paints few frames" from
+ *        "this headless rig paints few frames".
  */
 import { chromium, webkit } from "playwright";
 import { resolveBase } from "./audit-base.mjs";
@@ -54,6 +64,7 @@ const context = await browser.newContext({
   isMobile: true,
   reducedMotion: "no-preference",
 });
+await installCueCounter(context);
 const page = await context.newPage();
 
 /** Runs in the page: samples scrollY per frame, stamps the click, and watches
@@ -153,14 +164,14 @@ function analyze({ samples, clickAt, ringAt }) {
   };
 }
 
-async function reset() {
-  await page.goto("about:blank");
-  await page.goto(BASE + "/", { waitUntil: "load" });
-  await page.waitForTimeout(1400);
+async function reset(p = page) {
+  await p.goto("about:blank");
+  await p.goto(BASE + "/", { waitUntil: "load" });
+  await p.waitForTimeout(1400);
   for (let i = 0; i < RESET_ATTEMPTS; i++) {
-    await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
-    await page.waitForTimeout(300);
-    if ((await page.evaluate(() => window.scrollY)) < 5) return true;
+    await p.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
+    await p.waitForTimeout(300);
+    if ((await p.evaluate(() => window.scrollY)) < 5) return true;
   }
   return false;
 }
@@ -221,6 +232,197 @@ for (const target of TARGETS) {
   if (!stats.ringFired) failures.push(`${target.label}: el toque corto el viaje y el anillo no se disparo`);
 }
 
+// --- D: the arrival cue bound to the URL hash on mount ----------------------
+// Reported defect: from `/proyectos` the navbar Contact CTA navigates to
+// `/#contacto` and the page lands on the section, but the `arrive` class is
+// never applied; a fresh load of `/#contacto` is in the same state. The cue only
+// existed inside the in-page click path (`useScrollToAnchor`), so arriving is
+// not announcing. `components/anchor-arrival.tsx` replays that SAME path once on
+// mount, which makes "exactly once" the assertion that matters: a stale
+// `ARRIVAL_FALLBACK_MS` backstop, or an effect that re-runs when Lenis lands one
+// commit later, would apply the class twice.
+const CUE_ID = "contacto";
+/** Longer than the whole announcement chain: the Lenis tween, the 1600ms
+ *  backstop behind it, and the 2200ms window in which `announceArrival` clears
+ *  the class. A second cue inside this window is a defect, not a slow rig. */
+const ARRIVAL_SETTLE_MS = 3600;
+const arrivalRows = [];
+
+/** Installed in every document of the context (Playwright runs it before any
+ *  page script): counts how many times `arrive` is ADDED to `#contacto`.
+ *  `announceArrival` does remove -> reflow -> add, so a naive observer that reads
+ *  `classList` when the callback runs cannot tell one cue from two; the count
+ *  therefore compares each record's `oldValue` against the class the NEXT record
+ *  for the same element starts from, and against the live class for the last
+ *  one. Rise only: the 2200ms cleanup is a fall, not a cue. */
+async function installCueCounter(ctx) {
+  await ctx.addInitScript(() => {
+    window.__cue = { at: [] };
+    const hasArrive = (value) =>
+      typeof value === "string" && value.split(/\s+/).includes("arrive");
+    const classAfter = (records, i) => {
+      for (let j = i + 1; j < records.length; j++) {
+        if (records[j].target === records[i].target) return records[j].oldValue;
+      }
+      return records[i].target.getAttribute("class");
+    };
+    new MutationObserver((records) => {
+      for (let i = 0; i < records.length; i++) {
+        const record = records[i];
+        if (record.type !== "attributes" || !record.target) continue;
+        if (record.target.id !== "contacto") continue;
+        if (!hasArrive(record.oldValue) && hasArrive(classAfter(records, i))) {
+          window.__cue.at.push(Math.round(performance.now()));
+        }
+      }
+    }).observe(document, {
+      subtree: true,
+      attributes: true,
+      attributeFilter: ["class"],
+      attributeOldValue: true,
+    });
+  });
+}
+
+/** The navbar Contact CTA. Mobile lives in the menu panel, desktop in the
+ *  header row; `[href$="#contacto"]` is the same link in both (`/#contacto`
+ *  outside the home, `#contacto` on it), so only the opening step differs. */
+async function tapContactCta(p, mobile) {
+  if (!mobile) {
+    await p.click('header a[href$="#contacto"]:visible');
+    return;
+  }
+  await p.click('button[aria-controls="mobile-menu"]');
+  await p.waitForTimeout(500);
+  await p.click('#mobile-menu a[href$="#contacto"]');
+}
+
+async function arrivalState(p) {
+  return p.evaluate((id) => {
+    const el = document.getElementById(id);
+    const rect = el ? el.getBoundingClientRect() : null;
+    return {
+      fires: window.__cue.at.length,
+      y: Math.round(window.scrollY),
+      top: rect ? Math.round(rect.top) : null,
+      viewport: window.innerHeight,
+      hash: window.location.hash,
+      strayArrive: document.querySelector(".arrive") !== null,
+    };
+  }, CUE_ID);
+}
+
+function assertArrival(label, state) {
+  if (state.top === null) {
+    failures.push(`${label}: no hay ninguna seccion #${CUE_ID} en el documento`);
+    return;
+  }
+  if (state.fires !== 1) {
+    failures.push(`${label}: el anillo se disparo ${state.fires} veces (esperado exactamente 1)`);
+  }
+  if (state.y < 1000 || state.top < -80 || state.top > state.viewport * 0.5) {
+    failures.push(
+      `${label}: la seccion no quedo en vista (scrollY ${state.y}, top ${state.top}px, viewport ${state.viewport}px)`
+    );
+  }
+}
+
+async function runArrivalCases(p, rig, mobile) {
+  // D1: from the catalogue, the navbar Contact CTA must arrive AND announce.
+  {
+    const label = `${rig} /proyectos -> CTA`;
+    await p.goto("about:blank");
+    await p.goto(BASE + "/proyectos", { waitUntil: "load" });
+    await p.waitForTimeout(1400);
+    const onCatalogue = await p.evaluate(() => ({
+      fires: window.__cue.at.length,
+      cueTarget: document.getElementById("contacto") !== null,
+      strayArrive: document.querySelector(".arrive") !== null,
+    }));
+    // The catalogue has no contact section, so it must not announce anything,
+    // and the case below is only meaningful if the anchor really is missing.
+    if (onCatalogue.fires !== 0 || onCatalogue.strayArrive) {
+      failures.push(`${label}: el anillo se disparo en el catalogo, sin seccion de contacto`);
+    }
+    if (onCatalogue.cueTarget) {
+      failures.push(`${label}: el catalogo tiene un #${CUE_ID}, la premisa del caso no se cumple`);
+    }
+
+    await tapContactCta(p, mobile);
+    await p.waitForTimeout(ARRIVAL_SETTLE_MS);
+    const state = await arrivalState(p);
+    arrivalRows.push({ rig, case: "/proyectos -> CTA", ...state });
+    assertArrival(label, state);
+    if (state.hash !== "#" + CUE_ID) {
+      failures.push(`${label}: el hash quedo en "${state.hash}"`);
+    }
+  }
+
+  // D2: a fresh load of the same URL — same landing, same single cue.
+  {
+    const label = `${rig} fresh load /#${CUE_ID}`;
+    // Through about:blank, so this is a NAVIGATION (a same-URL goto is a
+    // reload, which the browser restores by session position).
+    await p.goto("about:blank");
+    await p.goto(BASE + "/#" + CUE_ID, { waitUntil: "load" });
+    await p.waitForTimeout(ARRIVAL_SETTLE_MS);
+    const state = await arrivalState(p);
+    arrivalRows.push({ rig, case: `fresh load /#${CUE_ID}`, ...state });
+    assertArrival(label, state);
+  }
+
+  // D3: clicking Contacto while ALREADY on the home is the old path, and the
+  // mount trigger must not add a second cue to it.
+  {
+    const label = `${rig} click contacto on home`;
+    if (!(await reset(p))) failures.push(`${label}: la pagina no volvio a scrollY 0`);
+    await tapContactCta(p, mobile);
+    await p.waitForTimeout(ARRIVAL_SETTLE_MS);
+    const state = await arrivalState(p);
+    arrivalRows.push({ rig, case: "click contacto on home", ...state });
+    assertArrival(label, state);
+  }
+
+  // D4: the cue must not exist off the home at all — the detail page has no
+  // navbar and no contact section, so nothing may be announced there.
+  {
+    const label = `${rig} /proyectos/[id]`;
+    await p.goto("about:blank");
+    await p.goto(BASE + "/proyectos", { waitUntil: "load" });
+    await p.waitForTimeout(1000);
+    const detail = await p.evaluate(() => {
+      const link = document.querySelector('a[href^="/proyectos/"]');
+      return link ? link.getAttribute("href") : null;
+    });
+    if (!detail) {
+      failures.push(`${label}: el catalogo no ofrecio ninguna ficha para visitar`);
+    } else {
+      await p.goto(BASE + detail, { waitUntil: "load" });
+      await p.waitForTimeout(1600);
+      const state = await arrivalState(p);
+      arrivalRows.push({ rig, case: "/proyectos/[id]", fires: state.fires, y: state.y });
+      if (state.fires !== 0 || state.strayArrive) {
+        failures.push(`${label}: el anillo se disparo fuera de la home (${state.fires} veces)`);
+      }
+    }
+  }
+}
+
+await runArrivalCases(page, "mobile", true);
+
+// The same three cases on the Lenis path: there the trigger waits for the
+// instance (created one commit after mount), which is exactly where a
+// non-idempotent effect would fire twice or not at all.
+const desktopContext = await browser.newContext({
+  viewport: { width: 1280, height: 800 },
+  deviceScaleFactor: 1,
+  reducedMotion: "no-preference",
+});
+await installCueCounter(desktopContext);
+const desktopPage = await desktopContext.newPage();
+await runArrivalCases(desktopPage, "desktop", false);
+await desktopContext.close();
+
 const ratio = (mode) => {
   const times = rows.filter((r) => r.mode === mode && r.travel > 0).map((r) => r.travelMs);
   if (times.length < 2) return "n/a";
@@ -228,6 +430,10 @@ const ratio = (mode) => {
 };
 
 console.table(rows);
+console.table(arrivalRows);
+console.log(
+  `arrival cue: ${arrivalRows.length} casos, ${arrivalRows.filter((r) => r.fires === 1).length} con exactamente un aviso`
+);
 console.log(`authored spread: ${ratio("authored")} (duracion independiente de la distancia, por diseno)`);
 console.log(`native spread  : ${ratio("native")} (duracion del motor, no de la distancia)`);
 console.log(
@@ -243,3 +449,4 @@ if (failures.length) {
   process.exit(1);
 }
 console.log("\nOK: el anillo llega al aterrizar y el viaje no se resuelve en un salto unico.");
+console.log("OK: el anillo se dispara una sola vez tambien al LLEGAR con hash, desde el catalogo y en carga directa.");

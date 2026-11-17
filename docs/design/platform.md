@@ -89,6 +89,37 @@
   documento actual, y aplica la clase `arrive` con reflow forzado; mobile:
   salto propio, ver el bullet siguiente). NO usa `:target`
   (replaceState no lo actualiza, ver seccion 9).
+- **La llegada con hash anuncia por el MISMO camino que el click
+  (`components/anchor-arrival.tsx`, montado solo en la home).** El aviso vivia
+  unicamente dentro del callback del click, asi que `/proyectos` -> CTA de
+  contacto aterrizaba en la seccion (lo resuelve el navegador/el router) y no
+  anunciaba nada; una carga directa de `/#contacto` quedaba igual, sin la clase
+  `arrive`. El componente lee `location.hash` UNA vez al montar y, si nombra un
+  elemento que existe en el documento, invoca `useScrollToAnchor`: no
+  reimplementa `announceArrival` ni agrega un segundo temporizador. Eso arrastra
+  el token de llegada, y ese `++arrivalToken` del camino compartido es lo que
+  invalida un backstop de 1600 ms rezagado y lo que impide que un montaje con
+  hash mas un backstop viejo pinten dos anillos. Se dispara como maximo una vez
+  por montaje (`announced` se marca ANTES de llamar): el efecto se re-ejecuta
+  cuando Lenis llega una comision despues del montaje (el efecto del hijo corre
+  antes que el del padre) y en el doble efecto de StrictMode, y ninguna de esas
+  corridas es una segunda llegada. En desktop ESPERA a Lenis en vez de anunciar
+  por la rama mobile de una pagina desktop (`(min-width: 768px)` es el mismo
+  gate de `smooth-scroll.tsx`); donde no hay ni habra Lenis (mobile) anuncia en
+  la primera corrida. Antes de viajar llama `lenis.resize()`: Lenis clampea el
+  destino contra el `limit` que midio en la ruta que se ABANDONA
+  (lenis.mjs:860) y su propio ResizeObserver llega un frame tarde, asi que
+  llegar desde el catalogo clampaba el viaje al limite del catalogo y dejaba la
+  seccion 3.087 px fuera de vista (medido en el rig desktop del script, antes
+  del `resize`); es el mismo paso que ya da `ScrollRestorer`. No se monta en
+  `/proyectos` ni en `/proyectos/[id]`, no observa cambios de hash y se rinde si
+  el hash no nombra un elemento de este documento, asi que el click dentro de
+  la home sigue siendo el dueno de todo ancla posterior. **Verificacion**: casos
+  D de `scripts/mobile-anchor-jump.mjs`, en mobile WebKit (390x844) y desktop
+  (1280x800, con Lenis), que exigen la seccion EN VISTA y la clase `arrive`
+  aplicada EXACTAMENTE una vez; el conteo usa las subidas de la clase
+  (`oldValue` registro a registro), asi que el remove -> reflow -> add de un
+  segundo aviso se ve como dos, no como uno.
 - **El salto de ancla en mobile es propio (`animateScrollTo`), no
   `window.scrollTo({ behavior: "smooth" })`.** Medido el 2026-11-03 sobre build
   de produccion 390x844 dpr2 (`node scripts/mobile-anchor-jump.mjs`). El defecto,
@@ -160,24 +191,24 @@
   otra ruta conserva el scroll al tope. Sin pin no hay pin-spacer que esperar:
   recalcula el limite de Lenis (`lenis.resize()`) y hace `scrollTo(target, {
   immediate: true })`.
-- **F5 dentro de una seccion: el ancla de la URL se aplica y la restauracion
-  la pisa. Comportamiento conocido, NO se corrige.** El hash lo escribe
-  `announceArrival` al ATERRIZAR, y no hay ningun spy que lo actualice al
-  scrollear, asi que la URL conserva la ULTIMA ancla pulsada, no la seccion
-  visible. En una recarga el navegador aplica primero el fragmento y acto
-  seguido la posicion restaurada de la sesion: medido el 2026-10-30 (sonda
-  Playwright que muestrea `window.scrollY` por frame con `addInitScript` y
-  luego `page.reload()`; 1600x900, hash `#sobre-mi` con la pagina en
-  `#contacto`) da `53ms -> 742` y `61ms -> 5693`. El estado final SIEMPRE es el
-  correcto; el transitorio dura ~8ms y se lee como un parpadeo de la seccion
-  equivocada. NO se sincroniza el hash con `use-active-section.ts` para
-  eliminarlo: el pago es un frame y el precio es un tercer escritor de la URL
-  justo donde `a5a45dc` ya mato una navegacion en vuelo
-  (`docs/issues/navigation-race.md`). Si se retoma, las guardas no negociables
-  son `replaceState(window.history.state, ...)`, solo en `pathname === "/"`, y
-  solo si `document.getElementById(id)` existe. **Prueba de aceptacion**: la
-  sonda de arriba debe mostrar UNA sola meseta de `scrollY` en el F5, sin el
-  valor intermedio.
+- **F5 dentro de una seccion: manda el ancla de la URL, no la posicion
+  restaurada.** El hash lo escribe `announceArrival` al ATERRIZAR, y no hay
+  ningun spy que lo actualice al scrollear, asi que la URL conserva la ULTIMA
+  ancla pulsada, no la seccion visible. En una recarga el navegador aplica
+  primero el fragmento y acto seguido la posicion restaurada de la sesion:
+  medido el 2026-10-30 (sonda Playwright que muestrea `window.scrollY` por
+  frame con `addInitScript` y luego `page.reload()`; 1600x900, hash `#sobre-mi`
+  con la pagina en `#contacto`) da `53ms -> 742` y `61ms -> 5693`. Desde el
+  montaje con hash de `anchor-arrival.tsx` el viaje al ancla se rehace, asi que
+  el estado final es la seccion del hash y no la posicion de la sesion: si el
+  hash quedo viejo respecto de donde estaba el visitante, la recarga lo lleva al
+  ancla (con el viaje visible). Es el precio de que una llegada con hash se
+  anuncie, que es la mitad que faltaba del defecto `/proyectos` -> contacto. NO
+  se sincroniza el hash con `use-active-section.ts` para eliminarlo del todo: el
+  precio es un tercer escritor de la URL justo donde `a5a45dc` ya mato una
+  navegacion en vuelo (`docs/issues/navigation-race.md`). Si se retoma, las
+  guardas no negociables son `replaceState(window.history.state, ...)`, solo en
+  `pathname === "/"`, y solo si `document.getElementById(id)` existe.
 - **Gate de 768px: decision consciente, NO tocar.** `syncTouch = false` es el
   default de Lenis y el codigo no lo overridea, asi que en touch Lenis es
   pasivo: `onVirtualScroll` retorna temprano (lenis.mjs:649-655, sin

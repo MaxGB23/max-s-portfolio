@@ -294,8 +294,8 @@ export function takeHomeScroll(): number | null {
  * LenisProvider so it survives route changes and can reach the Lenis instance.
  * - Entering a detail page: force scroll to top (Next does this natively, but
  *   Lenis would clobber it with the home page's stale scroll).
- * - Returning to `/` via the Volver pill or the browser back button: land
- *   exactly where the user left the grid.
+ * - Returning to `/` or `/proyectos` via the Volver pill or the browser back
+ *   button: land exactly where the user left that grid.
  * 
  * NOTE: No more GSAP pin, so no pin-spacer growth to wait for. Simple restore.
  */
@@ -354,8 +354,10 @@ export function ScrollRestorer() {
       if (pathname === "/") return;
     }
 
-    // Entering a detail page: force scroll to top. Next does this natively,
-    // but Lenis would clobber it with the home page's stale scroll.
+    // Leaving a grid without a captured position: force scroll to top (a
+    // detail page, or arriving at the catalogue with nothing pending). Next
+    // does this natively, but Lenis would clobber it with the previous page's
+    // stale scroll.
     //
     // Only when the ROUTE CHANGED. On the first run of a given pathname (an
     // initial load or a RELOAD) there is no stale home scroll to clobber, and
