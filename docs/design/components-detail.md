@@ -66,19 +66,13 @@
   `motion.md` 3. El fallback de media vacia (gradiente + `category` en mono)
   sigue intacto cuando `image` esta vacio.
 - **Fit de la media: campo `mediaFit` de la ficha, opt-in por ficha.** Valores
-  `"cover"` y `"contain"`; **ausente = `"cover"`**, asi que las fichas con
-  captura de producto siguen llenando el marco y recortando como siempre.
-  `"contain"` existe para la media cuyo CONTENIDO hay que leer entero
-  (diagramas de flujo, infografias con texto), donde `cover` corta el texto que
-  toca el borde: la imagen se ajusta al marco con `object-contain p-3` (12px de
-  inset para que el diagrama no toque los bordes) sobre el `bg-muted` que la
-  card ya usa para la media. El zoom de hover, el `aspect-16/10`, el radio y el
-  sello NO cambian. Los dos valores viven como constantes en
-  `data/projects/types.ts` (`MEDIA_FIT_COVER`, `MEDIA_FIT_CONTAIN`), por la
-  misma razon que los de superficie: `audit:i18n` marca un literal fuera de hoja
-  `L` si una ficha lo escribe suelto. Hoy la usan funky-forge y funky-secure;
-  esos dos valores llegan a la card por el mapeo de `all-projects.tsx` y de
-  `projects-catalog.tsx`, que la reenvian campo a campo.
+  `"cover"` y `"contain"`; **ausente = `"cover"`**. Solo lo consume la media de
+  la FICHA (4.10): `contain` existe para el contenido que hay que leer entero
+  (diagramas, infografias con texto) y se dibuja como `object-contain p-3` (12px
+  de inset) sobre el `bg-muted` de la ficha. **La tarjeta de la grilla no lo
+  mira**: siempre `object-cover`, porque nueve capturas a sangre y dos con marco
+  se leen como dos cards rotas en la misma fila; el recorte del diagrama en la
+  card es aceptable, la ficha es donde se lee completo.
 - **Sello de estado sobre la media** (T2b, boards `09-badge-destacada.html`
   tratamiento A y `10-destacada-sin-etiqueta.html` specimen 03): pill
   `absolute top-3 left-3` (12px del borde superior e izquierdo, no 16px: el
@@ -255,7 +249,7 @@ margen vertical. Badge `px-3.5 py-1 text-xs 2xl:text-sm`: el `py-1` es
 - Visual principal: `max-w-5xl aspect-video rounded-3xl` con glow suave. La
   imagen sale de `detail.visual?.src ?? project.image` — `visual` es la portada
   propia del detail y es opcional; sin ella cae a la imagen de la card. El fit
-  es el MISMO `mediaFit` de la card (4.6): `contain` = `object-contain p-3`
+  es el `mediaFit` de la ficha (4.6): `contain` = `object-contain p-3`
   dentro del `aspect-video` y del fondo existentes, `cover` (default) queda
   igual que antes. Un diagrama 16:9 entra entero porque el marco tambien es
   16:9: el inset de 12px es todo el margen que se ve.

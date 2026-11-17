@@ -34,7 +34,6 @@ export function AllProjects({ liveMetrics }: { liveMetrics?: LiveMetricValues })
         : localized.metric,
       image: localized.image,
       imageAlt: localized.imageAlt,
-      mediaFit: localized.mediaFit,
       category: localized.category,
       tags: localized.tags,
       links: localized.links,

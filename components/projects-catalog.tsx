@@ -38,7 +38,7 @@ const GROUP_LABEL_KEYS: Record<CatalogGroupKind, TranslationKey> = {
 const GROUP_WRAPPER_CLASS: Record<CatalogGroupKind, string> = {
   family: "",
   projects: "mt-12 md:mt-14",
-  earlier: "mt-16 pt-7 md:mt-20 md:pt-8 border-t border-border",
+  earlier: "mt-16 pt-7 md:mt-20 md:pt-8",
 };
 
 export function ProjectsCatalog() {
@@ -58,7 +58,6 @@ export function ProjectsCatalog() {
         metric: localized.metric,
         image: localized.image,
         imageAlt: localized.imageAlt,
-        mediaFit: localized.mediaFit,
         category: localized.category,
         tags: localized.tags,
         links: localized.links,
