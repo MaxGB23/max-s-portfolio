@@ -152,10 +152,14 @@
   sea sin la ventana donde ocurre la cancelación). La aserción que distingue los
   dos órdenes vive en `scripts/navbar-active.mjs` y corre en `webkit` — instala
   el binario una vez con `npx playwright install webkit`.
-- Handoff home -> detalle: `saveHomeScroll(scrollY)` en el click de las cards;
-  `takeHomeScroll`/`ScrollRestorer` en el retorno. Sin pin no hay pin-spacer que
-  esperar: el restorer recalcula el limite de Lenis (`lenis.resize()`) y hace
-  `scrollTo(target, { immediate: true })`.
+- Handoff grilla -> detalle: `saveHomeScroll(scrollY)` en el click de las cards de
+  la home **y** del catalogo `/proyectos`; `takeHomeScroll`/`ScrollRestorer` en el
+  retorno. El restorer solo aplica la posicion guardada en esas DOS rutas: un
+  `pendingRestore` promovido por `popstate` no sabe a donde vuelve, asi que una
+  puerta por presencia aplicaria una coordenada de grilla a una ficha. Cualquier
+  otra ruta conserva el scroll al tope. Sin pin no hay pin-spacer que esperar:
+  recalcula el limite de Lenis (`lenis.resize()`) y hace `scrollTo(target, {
+  immediate: true })`.
 - **F5 dentro de una seccion: el ancla de la URL se aplica y la restauracion
   la pisa. Comportamiento conocido, NO se corrige.** El hash lo escribe
   `announceArrival` al ATERRIZAR, y no hay ningun spy que lo actualice al
