@@ -176,20 +176,24 @@ El ritmo vertical es un contrato de codigo con fuente unica en
 | Token | Valor | Uso |
 |---|---|---|
 | `SECTION_GAP` | `h-24 md:h-32` (96 / 128px) | Separacion entre secciones top-level (altura del spacer de pagina) |
-| `SECTION_GAP_Y` | `py-12 md:py-16` (48 / 64px) | Padding vertical DENTRO del contenedor interno de `#contacto` (`#contact-content`, excepcion unica, ver nota) |
+| `SECTION_GAP_Y` | `py-12 md:py-16` (48 / 64px) | Padding vertical DENTRO de un contenedor: `#contact-content` y el `Section` del catalogo (ver nota) |
 | `FEATURED_GAP` | `gap-12` (48px) | Gap vertical entre los bloques apilados de un panel destacado (heading opcional <-> grid texto/imagen) |
 | `FEATURED_GAP_LG` | `[@media(min-width:1280px)_and_(min-height:900px)]:gap-30` (120px) | El mismo gap en pantallas altas y anchas |
 | `PAGE_SPACER_CLASSES` | ver tabla | Clase del wrapper por par de secciones (6 pares) |
 
-Excepcion `SECTION_GAP_Y`: contacto es la unica seccion que escribe padding
-vertical propio, y lo hace en su CONTENEDOR INTERNO (`#contact-content`), no en
-el shell. Motivo: su cue de llegada (ring `box-shadow: inset`) se pinta en ese
-hijo directo, y ahi es donde debe tener aire; pintarlo en el shell haria un
-rectangulo del ancho del viewport, en vez de un panel `max-w-6xl` centrado. Los
-dos spacers de pagina que la rodeaban (`pricing-contact` y `contact-footer`) se
-retiraron. El ritmo visual total sigue siendo 96/128px, pero ya no lo aporta
-solo ese padding: se reparte 50/50 entre el spacer de pagina (`SECTION_GAP_HALF`,
-48/64px) y el padding propio de `#contact-content` (`SECTION_GAP_Y`, 48/64px). La regla de 2 niveles (shell + primer hijo) es la que usan tanto
+`SECTION_GAP_Y` tiene hoy dos consumidores:
+
+- **`#contacto`** (`#contact-content`): lo lleva en su CONTENEDOR INTERNO, porque
+  su cue de llegada (ring `box-shadow: inset`) se pinta en ese hijo directo y ahi
+  es donde debe tener aire; pintarlo en el shell haria un rectangulo del ancho
+  del viewport, en vez de un panel `max-w-6xl` centrado. Ahi el ritmo se reparte
+  50/50: `SECTION_GAP_HALF` como spacer de pagina y este padding como mitad
+  interior, y el total visual sigue siendo 96/128px.
+- **El catalogo** (`components/projects-catalog.tsx`): lo lleva en el shell del
+  `Section`; es una ruta de indice sin pares de espaciadores de pagina, asi que
+  ahi el `Section` aporta por si solo el ritmo vertical.
+
+La regla de 2 niveles (shell + primer hijo) es la que usan tanto
 `hooks/use-lenis.tsx` (aterrizaje) como `scripts/section-spacing.mjs` (auditoria)
 para recuperar el blanco visual.
 

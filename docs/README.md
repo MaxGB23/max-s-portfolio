@@ -8,7 +8,7 @@
 ## Cómo se mantiene
 
 - Si buscas algo y no está en el mapa, añade la fila: una por pregunta de usuario, no por consulta del agente. Si una fila ya apunta a esa sección, amplía su vocabulario en vez de duplicarla. El mapa no pasa de 40 filas: al llenarse, fusiona o retira la menos usada.
-- El presupuesto de tamaño lo avisa el gate (`scripts/docs.mjs`, 300 líneas hoy): un doc que lo pase es dos docs. El aviso no bloquea; la partición es deuda declarada, no un mergeo roto.
+- El presupuesto de tamaño lo avisa el gate (`scripts/docs.mjs`, 300 líneas hoy): un doc que lo pase es dos docs. El aviso no bloquea; la partición es deuda declarada, no un mergeo roto. Desviaciones declaradas hoy: `section-animations.md`, `platform.md`, `components-detail.md`, `sections.md` y `tokens.md`. En las cinco el exceso es real; al menos `platform.md` y `tokens.md` sí tienen más de un tema. No se parten todavía porque las citas por número de sección viven en otros docs y el gate solo las valida en las filas de este mapa: un split hoy deja referencias muertas en silencio. El prerrequisito es validarlas; el número no decide.
 - El gate valida además los enlaces (destino y ancla) de los docs VIVO y la sección citada en cada fila de este mapa: un H2 renombrado o renumerado pone el gate en rojo.
 - El gate lo corre el hook `pre-commit` en cada commit que toque `docs/` o `AGENTS.md` (`pnpm hooks:install`, una vez por clon), y `commit-msg` valida el rastro `Docs:`/`Risk:` de `AGENTS.md`. Los hooks viven en `.githooks/` y se saltan a propósito con `git commit --no-verify`.
 - `pnpm lint:docs` antes de cerrar un track; `pnpm docs:toc` regenera los índices.

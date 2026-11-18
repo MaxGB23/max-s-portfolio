@@ -143,7 +143,7 @@
 
 - `Section#contacto` con `insetClassName="px-6"`, `innerId="contact-content"` e
   `innerClassName={`max-w-6xl ${SECTION_GAP_Y}`}` — el padding vertical propio
-  (unica seccion con `py`, el ring de llegada necesita aire) vive en el
+  (el ring de llegada necesita aire) vive en el
   contenedor interno, que es donde se pinta el cue: el ring queda como un panel
   `max-w-6xl` centrado en vez de un rectangulo full-bleed.
 - Badge "Disponible para proyectos": pill `border-purple-accent/25
