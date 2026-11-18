@@ -1,6 +1,7 @@
 "use client";
 
 import { ProjectCard, type Project } from "@/components/project-card";
+import { SECTION_GAP_Y } from "@/lib/rhythm";
 import { Reveal } from "@/components/reveal";
 import { Section } from "@/components/section";
 import { getCatalog, localizeProject } from "@/data/projects";
@@ -88,7 +89,7 @@ export function ProjectsCatalog() {
         </Reveal>
       </Section>
 
-      <Section insetClassName="px-6" className="pt-12 pb-16 md:pt-16 md:pb-24">
+      <Section insetClassName="px-6" className={SECTION_GAP_Y}>
         {groups.map((group) => {
           const headingId = `catalog-group-${group.kind}`;
           return (
