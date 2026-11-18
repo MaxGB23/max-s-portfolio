@@ -350,10 +350,19 @@ export function ProjectDetail({
 
   // Fit de la media de la ficha. Ausente = "cover", el default de las nueve
   // capturas. "contain" es para la media cuyo contenido hay que leer entero
-  // (diagramas, infografias): se ajusta al marco con 12px de inset en vez de
-  // recortarse, sin tocar el `aspect` ni el fondo de cada bloque.
+  // (diagramas, infografias): se ajusta al marco en vez de recortarse, sin
+  // tocar el `aspect` ni el fondo de cada bloque.
+  //
+  // SIN inset. El `p-3` (12px) se penso para la card de la grilla, donde la
+  // media es 4:3 y un diagrama 16:9 letterboxea dentro; en la ficha el marco ya
+  // es `aspect-video` (16:9), el mismo del diagrama, asi que `contain` y
+  // `cover` pintan casi igual y el inset no separaba nada: era un margen
+  // muerto que el dueno leyo como marco vacio (medido: 12px vertical y ~19px
+  // horizontal a 1440; ~21px horizontal a 390). Con el inset fuera, el diagrama
+  // llena el marco y las cuatro caras quedan a 0px, como el resto de las
+  // fichas. `cover` conserva exactamente el render de antes.
   const mediaFit = localized.mediaFit ?? MEDIA_FIT_COVER;
-  const mediaFitClass = mediaFit === MEDIA_FIT_CONTAIN ? "object-contain p-3" : "object-cover";
+  const mediaFitClass = mediaFit === MEDIA_FIT_CONTAIN ? "object-contain" : "object-cover";
 
   // Primary visual image - real screenshot or approved temporary placeholder.
   // Nunca usar un retrato/genérico como si fuera captura del producto (dato falso).

@@ -8,7 +8,6 @@ import { StackIcon } from "@/components/icons";
 import { saveHomeScroll } from "@/hooks/use-lenis";
 import { useLanguage } from "@/contexts/language-context";
 import { projectSeal, type ProjectSeal } from "@/lib/projects-catalog";
-import { MEDIA_FIT_CONTAIN } from "@/data/projects/types";
 import type { TranslationKey } from "@/data/translations";
 
 export interface Project {

@@ -46,7 +46,7 @@ export const funkyForge: ProjectL = {
     en: "Diagram of the funky-forge estimation workflow: artifacts, peer review, automated checklist and a PERT pricing engine",
   },
   // La media es un diagrama con texto legible, no una captura: recortarla corta
-  // el titulo a mitad de palabra. `contain` la ajusta al marco con un inset.
+  // el titulo a mitad de palabra. `contain` la muestra entera, sin recortar.
   mediaFit: MEDIA_FIT_CONTAIN,
   status: "pre-release",
   lineage: "funky-ai",
