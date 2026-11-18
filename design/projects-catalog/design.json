@@ -23,6 +23,20 @@
       "tradeoff": "Pone los tres tratamientos del enlace sobre la misma fila final de la grilla y el mismo ritmo, así que se juzgan en contexto: el discreto compite con el «Caso de estudio» del pie de cada ficha, la franja agrega la única caja llena de la sección y el del encabezado deja de verse al bajar. El precio es que la grilla se repite tres veces —3666 px, sin la fila de arriba ni la sección siguiente—, así que el enlace no se mide contra «Precios».",
       "width": 1440,
       "height": 3666
+    },
+    {
+      "file": "09-badge-destacada.html",
+      "title": "Ficha destacada · dónde vive la etiqueta, tres tratamientos",
+      "tradeoff": "Los tres tratamientos de la etiqueta —sello sobre la media, fila de etiquetas junto al índice y sello doble en la esquina— sobre el mismo panel destacado y el mismo ritmo: 3366 px, así que se juzgan en contexto y no como piezas sueltas. El copy y los datos son los reales de funky-forge (categoría, métrica, estado pre-release y media vacía con el fallback de gradiente), así que el precio está en la colocación, no en el contenido: A y C compiten con el badge del número que ya vive en la imagen, y B deja la imagen intacta pero carga dos etiquetas sobre una fila que debería ser secundaria.",
+      "width": 1440,
+      "height": 3366
+    },
+    {
+      "file": "10-destacada-sin-etiqueta.html",
+      "title": "Ficha destacada · la tarjeta sin etiqueta, en contexto",
+      "tradeoff": "La destacada de hoy contra la misma tarjeta sin la píldora de categoría y sin el índice duplicado, y el sello de estado sobre la grilla del catálogo: 2882 px, así que la comparación se juzga en el mismo panel y no como piezas aisladas. El precio es que el sello altera la fila de metadatos de cada ficha de la grilla, y ese cambio no se puede juzgar sin la destacada al lado.",
+      "width": 1440,
+      "height": 2882
     }
   ]
 }
