@@ -9,7 +9,15 @@
  */
 import { spawnSync } from "node:child_process";
 
-const guards = ["navbar-deep-link-bg.mjs", "about-reveal-order.mjs"];
+// `rsc-slow-arrival.mjs` is the only one here that also needs a PRODUCTION
+// build (`pnpm build && pnpm start`): its claim is the router committing a
+// transition while the RSC payload is delayed, which dev serves differently.
+const guards = [
+  "navbar-deep-link-bg.mjs",
+  "about-reveal-order.mjs",
+  "measure-rhythm.mjs",
+  "rsc-slow-arrival.mjs",
+];
 const flags = process.argv.slice(2);
 const failed = [];
 
