@@ -523,3 +523,23 @@ mientras tanto.
 4. **Diseno de las featured**: al usuario no le gusta. Idea suya, sin confirmar:
 un badge de tipo encima de la imagen, en la esquina. Se cruza con T2b (chip de
 estado): una sola decision de diseno puede resolver los dos.
+5. **Pase de docs**: ejecutado el 2026-11-18 sobre el plan
+   `odd/tasks/docs-pass.plan.md` (juicio de plan 2 rondas; la ronda 2 refuto
+   tres decisiones). Decision del dueno: **opcion A**, sin partir archivos.
+   - Cerrado: `SECTION_GAP_Y` ya no es "excepcion unica de contacto" (el catalogo
+     es el segundo consumidor) en `tokens.md`, `components-detail.md` y el
+     comentario de `lib/rhythm.ts`; `docs/README.md` declara las cinco
+     desviaciones de tamano con su motivo real.
+   - Descartado con evidencia: corregir el "250" del RFC (esta congelado:
+     `docs/rfcs/docs-lifecycle.md`, "una correccion futura es otro RFC"), hacer
+     que los docs apunten a `scripts/docs.mjs` (la politica vive en los docs), y
+     partir `platform.md` / `components-detail.md`.
+   - Verificado: `pnpm lint:docs` 0 bloqueantes (5 avisos C4), `pnpm typecheck` 0.
+     Commit `2121904`.
+   - Deuda declarada: partir `platform.md` exige primero que el gate valide las
+     citas por numero de seccion fuera de las filas del mapa; hoy solo ahi se
+     validan, asi que un split deja referencias muertas en silencio.
+6. **Tamano de la entrega**: `origin/main..HEAD` = 22 commits, 8063 lineas, de
+   las cuales ~4223 son los tableros de fase 0 (`design/**`, incluye
+   `design/system.md`). El codigo ronda las 3800 lineas: la entrega es la PR
+   unica acordada (D13), no una PR pequena.
