@@ -6,16 +6,19 @@
 // ordena y traduce ese material; la `en` va al lado. No se reescribe la ficha
 // del hub (S6).
 //
-// SIN CIFRAS (S9): el borrador solo trae un "~50% faster" que el propio
-// documento firma como "author estimate ... not externally benchmarked". Una
-// estimacion del autor no es una medicion, asi que `detail.metrics` va VACIO:
-// el array vacio es render-safe y honesto, un porcentaje sin medicion no.
+// CIFRAS: desde la publicacion de la `0.2.0` (2026-11-11) la fuente de los
+// numeros es `docs/projects/candidatos/portfolio-npm-launch-forge.md`, revisado
+// contra el registro y el repo el 2026-11-18. Siguen fuera las estimaciones del
+// autor (S9): el borrador del producto solo traia un "~50% faster" que el propio
+// documento firma como estimacion, no como medicion. Las cuatro metricas son
+// hechos medidos: fases del metodo, archivos del paquete, tests de la suite y
+// credenciales.
 //
 // SIN `home` (S2): forge vive en el catalogo y no en la home. La media es el
 // diagrama del flujo de estimacion, dibujado para esta ficha; no es una captura
 // del producto y no reusa nada del hub (S7).
 
-import { MEDIA_FIT_CONTAIN, type ProjectL } from "./types";
+import { MEDIA_FIT_CONTAIN, linkLabelCode, type ProjectL } from "./types";
 
 export const funkyForge: ProjectL = {
   id: "funky-forge",
@@ -48,9 +51,25 @@ export const funkyForge: ProjectL = {
   // La media es un diagrama con texto legible, no una captura: recortarla corta
   // el titulo a mitad de palabra. `contain` la muestra entera, sin recortar.
   mediaFit: MEDIA_FIT_CONTAIN,
-  status: "pre-release",
+  // Publicado: `funky-forge@0.2.0` esta en el registro desde el 2026-11-11, asi
+  // que el estado vuelve al default (`active`) y no lleva sello. `pre-release`
+  // describia la etapa previa a publicar; hoy seria un claim falso en la UI.
   lineage: "funky-ai",
-  links: [],
+  links: [
+    {
+      label: linkLabelCode,
+      kind: "code",
+      url: "https://github.com/MaxGB23/funky-forge",
+      external: true,
+    },
+    {
+      // Sin `kind`: no es un demo ni un landing, y un kind desconocido cae al
+      // icono generico de enlace externo (project-detail, `linkIcon`).
+      label: { es: "Ver en npm", en: "View on npm" },
+      url: "https://www.npmjs.com/package/funky-forge",
+      external: true,
+    },
+  ],
   detail: {
     headline: {
       es: "De la idea difusa al plan con costos, antes de escribir código",
@@ -61,8 +80,50 @@ export const funkyForge: ProjectL = {
       // La copia ES no lleva pares `**`: el EN tampoco los inventa (docs/i18n.md:25).
       en: "funky-forge structures the pre-code phase into a sequence of commands, and each one produces a Markdown artifact that can be reviewed: the project and infrastructure canvases first, then the architecture review with its decision record, and finally the infrastructure cost guide with cost factors, buffers and TCO. The CLI prepares the material and does not pretend to judge architecture or pricing: the review and the pricing conversation happen in an AI session guided by the generated prompts, and the outcomes live in living decision files. Existing decisions are never overwritten automatically, and `pipeline` shares the state between assess and estimate for team work or for work spread across several sessions.",
     },
-    // Vacio a proposito: el borrador no trae una cifra medida (ver cabecera).
-    metrics: [],
+    // metrics[0] = metrica RAIZ del detail (nodo raiz de la topologia).
+    metrics: [
+      {
+        value: {
+          // Cifra pura: se traduce por identidad.
+          es: "4",
+          en: "4",
+        },
+        label: {
+          es: "fases con compuertas: problema, diseño, estimación y propuesta",
+          en: "gated phases: problem, design, estimation and proposal",
+        },
+      },
+      {
+        value: {
+          es: "39",
+          en: "39",
+        },
+        label: {
+          es: "archivos en el paquete publicado, versión 0.2.0",
+          en: "files in the published package, version 0.2.0",
+        },
+      },
+      {
+        value: {
+          es: "289",
+          en: "289",
+        },
+        label: {
+          es: "tests en 24 archivos, sin skips, sin relojes ni azar",
+          en: "tests across 24 files, no skips, no clocks, no randomness",
+        },
+      },
+      {
+        value: {
+          es: "0",
+          en: "0",
+        },
+        label: {
+          es: "credenciales en el repositorio y en los secretos de Actions",
+          en: "credentials in the repository and in the Actions secrets",
+        },
+      },
+    ],
     problem: {
       es: "La planificación es donde más proyectos se tuercen en silencio: una idea vaga salta directo al código sin una definición acordada de qué se construye ni para quién; la discusión de arquitectura no deja registro de decisiones; y los costos de infraestructura se adivinan tarde, cuando el stack ya está elegido. El resultado es un stack que nadie revisó, costos que nadie estimó y decisiones que nadie escribió.",
       en: "Planning is where most projects quietly go wrong: a vague idea jumps straight into code with no agreed definition of what is being built or for whom; the architecture discussion leaves no decision record; and infrastructure costs are guessed late, after the stack has already been chosen. The result is a stack nobody reviewed, costs nobody estimated, and decisions nobody wrote down.",

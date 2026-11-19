@@ -136,13 +136,16 @@ test('status: "finished" es exactamente 2 y son Grinchmas Kart y Cumyxel', () =>
   );
 });
 
-test('status: "pre-release" solo lo declaran las 2 fichas nuevas de la familia', () => {
+// `funky-forge` quedo publicado (`0.2.0`, 2026-11-11), asi que su estado es el
+// default (`active`) y no lleva sello. `pre-release` describe solo a Secure
+// mientras no haya release.
+test('status: "pre-release" solo lo declara funky-secure', () => {
   const preRelease = topLevelStringProps(fichaFiles(), "status").filter(
     (entry) => entry.value === "pre-release",
   );
   assert.deepEqual(
     preRelease.map((entry) => entry.file),
-    ["data/projects/funky-forge.ts", "data/projects/funky-secure.ts"],
+    ["data/projects/funky-secure.ts"],
   );
 });
 
