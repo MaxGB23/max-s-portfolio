@@ -87,6 +87,11 @@ pagina, `scripts/section-spacing.mjs` compensa el padding propio de
 
 - `fixed h-16`; nav interior `max-w-7xl px-6`; links: Inicio `/`, Sobre mi
   `#sobre-mi`, Proyectos `#proyectos`, Precios `#precios`.
+- Ruta y ancla (`resolveHref`): fuera de `/` ninguna ancla existe en el
+  documento, asi que se vuelven absolutas (`/#sobre-mi`, `/#precios`,
+  `/#contacto`) para volver a la home; `#proyectos` se resuelve al catalogo
+  `/proyectos`, que es una ruta y no una seccion. En la home el `href` queda
+  igual que siempre. El CTA de contacto usa el mismo destino (`contactHref`).
 - Con scroll (umbral 20px, `setScrolled(currentY > 20)`): `bg-nav
   backdrop-blur-none md:backdrop-blur-md border-b border-border shadow-sm`.
   OJO: `SCROLL_THRESHOLD = 8` NO es este umbral — alimenta el auto-hide/show del
@@ -124,7 +129,10 @@ pagina, `scripts/section-spacing.mjs` compensa el padding propio de
   ambas ramas (sin `/60` ni 1.5px); estado `hovered` en navbar.tsx, limpiado
   al cerrar el menu mobile. Mismo estilo en desktop y mobile;
   `all-projects` enciende "Proyectos" via `SECTION_ALIAS`; `contacto` y
-  `footer` (sin link en navLinks) no encienden ninguno.
+  `footer` (sin link en navLinks) no encienden ninguno. En una ruta que no es
+  `/` el spy no decide: manda el `pathname`, y `/proyectos` marca "Proyectos"
+  con `aria-current="page"` aunque no observe ninguna seccion; "Inicio" nunca
+  se marca por ruta (en la home lo limpia la hero).
 - Mobile: menu hamburguesa auto-ocultable (`hover:bg-secondary`), links en
   su propio grupo `flex-col gap-3` (12px) con `py-2.5` → target de 44px
   (Apple HIG) y ritmo texto-a-texto de 56px (= el gap-8 historico, decision

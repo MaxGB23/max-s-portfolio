@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -18,6 +19,11 @@ const navLinks = [
   { key: "nav.projects", href: "#proyectos" },
   { key: "nav.pricing", href: "#precios" },
 ] as const;
+
+// El catalogo es la unica seccion que es una RUTA, no un ancla de la home. En
+// cualquier otra ruta `#proyectos` lleva ahi; en la home sigue siendo el ancla.
+const CATALOGUE_PATH = "/proyectos";
+const CATALOGUE_ANCHOR = "#proyectos";
 
 // Secciones del scroll-spy en orden documental (D2): se observan TODAS las
 // secciones de la home, incluida la hero. `#inicio` limpia el estado (arriba
@@ -48,6 +54,8 @@ const SCROLL_THRESHOLD = 14; // px acumulados en la misma dirección
 
 export function Navbar() {
   const { t } = useLanguage();
+  const pathname = usePathname();
+  const isHome = pathname === "/";
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [visible, setVisible] = useState(true);
@@ -60,12 +68,27 @@ export function Navbar() {
   // Estado compartido desktop + mobile: mismo spy, mismo underline (D3).
   const activeSection = useActiveSection(spySections);
 
-  // Un link está activo si su href ancla coincide con la sección activa
-  // (directa o vía SECTION_ALIAS). El link "Inicio" ("/") nunca coincide:
-  // la hero limpia el estado (D2).
-  const isActiveLink = (href: string) => {
-    if (!href.startsWith("#")) return false;
-    const id = href.slice(1);
+  // Fuera de la home ninguna ancla existe en el documento: si se dejaran como
+  // `#precios`, el click quedaria en la ruta actual apuntando a un id que no
+  // esta. Se vuelven absolutas para volver a la home, y `#proyectos` se
+  // convierte en el catalogo, que si es una ruta.
+  const resolveHref = (href: string) => {
+    if (!href.startsWith("#")) return href;
+    if (isHome) return href;
+    return href === CATALOGUE_ANCHOR ? CATALOGUE_PATH : `/${href}`;
+  };
+
+  // El CTA de contacto acompaña a los links: mismo destino absoluto fuera de la
+  // home, para no quedar apuntando a un id que esa ruta no tiene.
+  const contactHref = resolveHref("#contacto");
+
+  // Un link esta activo si su ancla coincide con la seccion activa (directa o
+  // via SECTION_ALIAS). En otra ruta manda el pathname: el catalogo se marca
+  // por ruta, no por scroll. El link "Inicio" ("/") nunca se marca por ruta:
+  // en la home la hero limpia el estado (D2).
+  const isActiveLink = (resolved: string) => {
+    if (!resolved.startsWith("#")) return pathname !== "/" && resolved === pathname;
+    const id = resolved.slice(1);
     if (activeSection === id) return true;
     return activeSection != null && SECTION_ALIAS[activeSection] === id;
   };
@@ -266,15 +289,16 @@ export function Navbar() {
         {/* Desktop nav links */}
         <nav className="hidden nav:flex items-center gap-8" aria-label={t("nav.aria.sections")}>
           {navLinks.map((link) => {
-            const active = isActiveLink(link.href);
+            const href = resolveHref(link.href);
+            const active = isActiveLink(href);
             return (
               <Link
                 key={link.key}
-                href={link.href}
+                href={href}
                 aria-current={active ? "page" : undefined}
                 onClick={(e) => {
-                  handleAnchorClick(e, link.href);
-                  handleHomeClick(e, link.href);
+                  handleAnchorClick(e, href);
+                  handleHomeClick(e, href);
                 }}
                 onMouseEnter={() => setHovered(link.href)}
                 onMouseLeave={() => setHovered((h) => (h === link.href ? null : h))}
@@ -293,8 +317,8 @@ export function Navbar() {
           <LanguageToggle />
           <Button asChild variant="primary" shape="pill" size="sm">
             <Link
-              href="#contacto"
-              onClick={(e) => handleAnchorClick(e, "#contacto")}
+              href={contactHref}
+              onClick={(e) => handleAnchorClick(e, contactHref)}
             >
               {t("nav.contact")}
             </Link>
@@ -344,15 +368,16 @@ export function Navbar() {
                   con él (un token, `mt-6`, en vez de sumar gap + margen). */}
               <div className="flex flex-col gap-3">
                 {navLinks.map((link) => {
-                  const active = isActiveLink(link.href);
+                  const href = resolveHref(link.href);
+                  const active = isActiveLink(href);
                   return (
                     <Link
                       key={link.key}
-                      href={link.href}
+                      href={href}
                       aria-current={active ? "page" : undefined}
                       onClick={(e) => {
-                        handleAnchorClick(e, link.href);
-                        handleHomeClick(e, link.href);
+                        handleAnchorClick(e, href);
+                        handleHomeClick(e, href);
                       }}
                       onMouseEnter={() => setHovered(link.href)}
                       onMouseLeave={() => setHovered((h) => (h === link.href ? null : h))}
@@ -381,8 +406,8 @@ export function Navbar() {
                 className="text-base py-2.5 mt-6"
               >
                 <Link
-                  href="#contacto"
-                  onClick={(e) => handleAnchorClick(e, "#contacto")}
+                  href={contactHref}
+                  onClick={(e) => handleAnchorClick(e, contactHref)}
                 >
                   {t("nav.contact")}
                 </Link>
