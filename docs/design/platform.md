@@ -88,7 +88,15 @@
   ver `docs/issues/navigation-race.md`; aborta si el ancla no existe en el
   documento actual, y aplica la clase `arrive` con reflow forzado; mobile:
   salto propio, ver el bullet siguiente). NO usa `:target`
-  (replaceState no lo actualiza, ver seccion 9).
+  (replaceState no lo actualiza, ver seccion 9). La URL solo se reescribe en la
+  home (`location.pathname === "/"`): las anclas que el aviso escribe viven solo
+  ahi, y el backstop puede llegar cuando la pagina actual ya es otra (el anillo
+  se pinta si el id existe, la URL de esa ruta no se toca). **CI**:
+  `scripts/anchor-state-guards.test.mjs` (corre en `pnpm test`) recorre las
+  llamadas a `replaceState` de `hooks/` y `components/` y falla si alguna pasa
+  `null` como PRIMER argumento (el bug de `a5a45dc`); sus casos de fixture
+  prueban que el detector discrimina y que un `history.state` conservado no es un
+  hallazgo.
 - **La llegada con hash anuncia por el MISMO camino que el click
   (`components/anchor-arrival.tsx`, montado solo en la home).** El aviso vivia
   unicamente dentro del callback del click, asi que `/proyectos` -> CTA de
@@ -120,6 +128,32 @@
   aplicada EXACTAMENTE una vez; el conteo usa las subidas de la clase
   (`oldValue` registro a registro), asi que el remove -> reflow -> add de un
   segundo aviso se ve como dos, no como uno.
+- **Una llegada con hash que ya tiene dueno NO se anuncia
+  (`scrollOwnerClaim`).** `/` aparcada en `/#proyectos` -> card -> ficha ->
+  "Volver" (o el boton atras del navegador) devuelve al visitante a la posicion
+  capturada, y la URL vuelve con `#proyectos`; sin marca, `anchor-arrival.tsx`
+  monta, encuentra el hash y anuncia el ancla, pisando el scroll restaurado. La
+  guarda NO puede ser un "hay una posicion pendiente?" dentro de
+  `AnchorArrival`: `ScrollRestorer` es su HERMANO y esta montado antes
+  (`smooth-scroll.tsx`), y React corre los efectos pasivos de los hermanos en
+  orden de montaje, asi que cuando corre el efecto de la pagina el restorer ya
+  consumio `pendingRestore` y esa guarda lee false. El dueno lo publica el EVENTO
+  que arranca la navegacion (`takeHomeScroll()` en el click de Volver y el
+  promotor de `popstate`, los dos antes de que la navegacion se confirme) en una
+  variable de modulo con getter y limpiador exportados
+  (`consumeAnchorOwnership()`), y `AnchorArrival` la consulta y la limpia ANTES de
+  decidir: sin dependencia de orden y sin tocar el efecto del restorer. La marca
+  guarda la RUTA donde se capturo la posicion (`savedHomePath`, escrito por
+  `saveHomeScroll`), asi que un scroll guardado en `/proyectos` no silencia una
+  llegada legitima a la home. **Verificacion**: casos E de
+  `scripts/mobile-anchor-jump.mjs` (mobile WebKit 390x844 y desktop 1280x800), en
+  el mismo flujo por el pill y por el boton atras, que exigen el scroll restaurado
+  (tolerancia 16px) y el conteo de anillos sin subir; medido antes del arreglo:
+  mobile 4191 -> 1732 y desktop 3176 -> 1382, con el anillo 1 -> 2 en los cuatro
+  casos; despues: 4191 -> 4191 y 3176 -> 3176, anillo 1 -> 1. El caso "back" es
+  el que prueba el promotor de `popstate` (el pill publica desde
+  `takeHomeScroll`): desactivar esa linea deja verdes los casos "volver" y rojos
+  solo los "back".
 - **El salto de ancla en mobile es propio (`animateScrollTo`), no
   `window.scrollTo({ behavior: "smooth" })`.** Medido el 2026-11-03 sobre build
   de produccion 390x844 dpr2 (`node scripts/mobile-anchor-jump.mjs`). El defecto,
@@ -190,7 +224,9 @@
   puerta por presencia aplicaria una coordenada de grilla a una ficha. Cualquier
   otra ruta conserva el scroll al tope. Sin pin no hay pin-spacer que esperar:
   recalcula el limite de Lenis (`lenis.resize()`) y hace `scrollTo(target, {
-  immediate: true })`.
+  immediate: true })`. `saveHomeScroll` guarda tambien la RUTA donde se capturo
+  (`savedHomePath`): es el valor que publican `takeHomeScroll` y el promotor de
+  `popstate` en la marca del bullet de la llegada con hash.
 - **F5 dentro de una seccion: manda el ancla de la URL, no la posicion
   restaurada.** El hash lo escribe `announceArrival` al ATERRIZAR, y no hay
   ningun spy que lo actualice al scrollear, asi que la URL conserva la ULTIMA

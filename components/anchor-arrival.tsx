@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
-import { useLenis, useScrollToAnchor } from "@/hooks/use-lenis";
+import { consumeAnchorOwnership, useLenis, useScrollToAnchor } from "@/hooks/use-lenis";
 
 /**
  * Same navbar offset every anchor caller passes (`navbar.tsx`,
@@ -49,6 +49,16 @@ const LENIS_QUERY = "(min-width: 768px)";
  *    in-page click path stays the owner of every later anchor, exactly as
  *    today.
  * 4. It is never mounted off the home, and it never watches for hash changes.
+ *
+ * And it announces only a hash that NOBODY claimed. A return to a grid position
+ * ("Volver", or the browser back button) arrives with the hash the visitor had
+ * when they clicked the card, so the URL alone cannot tell an arrival from a
+ * return. `ScrollRestorer` cannot be asked either: it is a sibling mounted
+ * BEFORE this component, and React runs siblings' passive effects in mount
+ * order, so it has already consumed the pending position here. The ownership is
+ * therefore published by the event that starts the navigation
+ * (`takeHomeScroll`, the `popstate` promoter) and read once, here — see
+ * `scrollOwnerClaim` in `hooks/use-lenis.tsx`.
  */
 export function AnchorArrival() {
   const pathname = usePathname();
@@ -65,6 +75,9 @@ export function AnchorArrival() {
     // so nothing is announced. Marked done, matching the click path's own
     // abort (`announceArrival` returns when the target is missing).
     if (!hash || hash.length < 2 || !document.getElementById(hash.slice(1))) {
+      // Una llegada sin ancla tambien termina la marca del dueno, si la habia:
+      // nadie la va a consumir despues y silenciaria la proxima llegada.
+      consumeAnchorOwnership();
       announced.current = true;
       return;
     }
@@ -72,6 +85,15 @@ export function AnchorArrival() {
     // Lenis is created by the parent's effect, after this one. Wait for it
     // rather than announcing from the mobile branch of a desktop page.
     if (!lenis && window.matchMedia(LENIS_QUERY).matches) return;
+
+    // Un cambio de ruta que YA tiene el scroll no es una llegada. Se consulta y
+    // se limpia ANTES de decidir: el dueno lo publico el evento que arranco la
+    // navegacion, asi que no depende del orden de los efectos, y una llegada
+    // que nadie reclamo (`/#contacto` desde el catalogo, una carga directa de
+    // `/#contacto`) sigue anunciando.
+    const owned = consumeAnchorOwnership();
+    announced.current = true;
+    if (owned) return;
 
     // Lenis clamps every tween target against a scroll `limit` it measured on
     // the route we just LEFT (lenis.mjs:860), and its own ResizeObserver only
@@ -82,7 +104,6 @@ export function AnchorArrival() {
     // dimensions and resyncs to the current position; it does not scroll.
     lenis?.resize();
 
-    announced.current = true;
     scrollToAnchor(hash);
   }, [lenis, pathname, scrollToAnchor]);
 
