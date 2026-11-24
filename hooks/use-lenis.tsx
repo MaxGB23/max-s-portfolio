@@ -326,21 +326,32 @@ export function ScrollRestorer() {
     const prevPathname = lastPathname.current;
     lastPathname.current = pathname;
 
-    // Home: restore the captured position.
-    if (pathname === "/") {
+    // The two routes that own a grid handing a position to a detail page: the
+    // home portfolio grid and the catalogue grid. Both capture on card click
+    // (`saveHomeScroll`) and come back through the Volver pill or the browser
+    // back button. Any OTHER route keeps the force-to-top below: the popstate
+    // promotion above runs before this effect and does not know where the pop
+    // lands, so a bare `pendingRestore != null` gate could apply a grid
+    // coordinate to a detail route.
+    if (pathname === "/" || pathname === "/proyectos") {
       const target = pendingRestore;
-      if (target == null) return;
-      pendingRestore = null;
+      if (target != null) {
+        pendingRestore = null;
 
-      // No GSAP pin anymore — no pin-spacer growth to wait for.
-      // Simple: recalc Lenis limits and scroll to target.
-      if (lenis) {
-        lenis.resize(); // recalc the scroll limit against the final layout
-        lenis.scrollTo(target, { immediate: true });
-      } else {
-        window.scrollTo(0, target);
+        // No GSAP pin anymore — no pin-spacer growth to wait for.
+        // Simple: recalc Lenis limits and scroll to target.
+        if (lenis) {
+          lenis.resize(); // recalc the scroll limit against the final layout
+          lenis.scrollTo(target, { immediate: true });
+        } else {
+          window.scrollTo(0, target);
+        }
+        return;
       }
-      return;
+      // Nothing captured: the home keeps today's behaviour (on a reload the
+      // browser's own restore is the authority, not a forced top), while an
+      // arrival at the catalogue still falls through to the top below.
+      if (pathname === "/") return;
     }
 
     // Entering a detail page: force scroll to top. Next does this natively,
