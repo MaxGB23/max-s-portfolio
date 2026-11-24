@@ -9,12 +9,13 @@
  *
  * SECTION_GAP_Y — the INSIDE half of SECTION_GAP (same values as
  * SECTION_GAP_HALF, NOT SECTION_GAP), applied as padding INSIDE a section that
- * owns its spacing instead of as a spacer at page level. Contact is the only
- * consumer: its arrival cue (`box-shadow: inset` ring on `#contacto`) is drawn
- * at the section box border, so the ring needs air INSIDE the box. The rhythm
- * there is split 50/50 — SECTION_GAP_HALF as the page spacer plus SECTION_GAP_Y
- * as this padding — so the visual total stays SECTION_GAP. Consumed by
- * `components/contact-section.tsx`.
+ * owns its spacing instead of as a spacer at page level. Two consumers:
+ * `components/contact-section.tsx`, where the arrival cue (`box-shadow: inset`
+ * ring on `#contacto`) is drawn at the section box border, so the ring needs air
+ * INSIDE the box, and the rhythm there is split 50/50 — SECTION_GAP_HALF as the
+ * page spacer plus SECTION_GAP_Y as this padding — so the visual total stays
+ * SECTION_GAP; and `components/projects-catalog.tsx`, an index route without
+ * page spacer pairs, where the section supplies its own vertical rhythm.
  *
  * FEATURED_GAP / FEATURED_GAP_LG — vertical gap between the stacked blocks of a
  * featured panel: 48px (`gap-12`), growing to 120px (`gap-30`) on tall×wide

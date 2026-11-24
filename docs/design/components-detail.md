@@ -45,8 +45,9 @@
   (titulo del documento) con el patron de dos spans de la home, `text-fluid-
   section`, `gap-2 md:gap-3` y acento `text-purple-accent brightness-110`; las
   cabeceras de grupo son `h2`.
-- Catalogo: `Section insetClassName="px-6" className="pt-12 pb-16 md:pt-16
-  md:pb-24"`. Cabecera de grupo `flex items-center gap-3 md:gap-4 mb-5 md:mb-6`
+- Catalogo: `Section insetClassName="px-6" className={SECTION_GAP_Y}`
+  (`py-12 md:py-16` = 48/64, el mismo par que ya usaba el top; antes el bottom
+  era `pb-16 md:pb-24`, un numero suelto fuera del sistema). Cabecera de grupo `flex items-center gap-3 md:gap-4 mb-5 md:mb-6`
   con etiqueta `text-fluid-eyebrow` (15px a 375, 19px desde 1588) `font-semibold uppercase tracking-[0.12em]` y regla
   `flex-1 h-px bg-border`; 48/56px entre grupos; "Trabajo anterior" con
   `mt-16 pt-7 md:mt-20 md:pt-8 border-t`; grid `1/2/3` con `gap-6`.
@@ -142,7 +143,7 @@
 
 - `Section#contacto` con `insetClassName="px-6"`, `innerId="contact-content"` e
   `innerClassName={`max-w-6xl ${SECTION_GAP_Y}`}` — el padding vertical propio
-  (unica seccion con `py`, el ring de llegada necesita aire) vive en el
+  (el ring de llegada necesita aire) vive en el
   contenedor interno, que es donde se pinta el cue: el ring queda como un panel
   `max-w-6xl` centrado en vez de un rectangulo full-bleed.
 - Badge "Disponible para proyectos": pill `border-purple-accent/25
