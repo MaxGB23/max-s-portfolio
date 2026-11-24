@@ -105,7 +105,7 @@ export interface ProjectL {
    * para una captura de producto: llena el marco y el recorte no quita
    * contenido. "contain" existe para la media cuyo CONTENIDO hay que leer
    * entero —diagramas de flujo, infografias con texto—: se ajusta al marco con
-   * un inset sobre la superficie neutra en vez de recortarse.
+   * la imagen entera sobre la superficie neutra en vez de recortarse.
    */
   mediaFit?: "cover" | "contain";
   links: LinkL[];

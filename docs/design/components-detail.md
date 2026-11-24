@@ -68,11 +68,16 @@
 - **Fit de la media: campo `mediaFit` de la ficha, opt-in por ficha.** Valores
   `"cover"` y `"contain"`; **ausente = `"cover"`**. Solo lo consume la media de
   la FICHA (4.10): `contain` existe para el contenido que hay que leer entero
-  (diagramas, infografias con texto) y se dibuja como `object-contain p-3` (12px
-  de inset) sobre el `bg-muted` de la ficha. **La tarjeta de la grilla no lo
-  mira**: siempre `object-cover`, porque nueve capturas a sangre y dos con marco
-  se leen como dos cards rotas en la misma fila; el recorte del diagrama en la
-  card es aceptable, la ficha es donde se lee completo.
+  (diagramas, infografias con texto) y se dibuja como `object-contain` sobre el
+  `bg-muted`, SIN inset: llena el marco igual que `cover`. El `p-3` (12px) era
+  para una card 4:3 con un diagrama 16:9 dentro, donde el letterbox necesita
+  aire; en la ficha el marco ya es `aspect-video` (16:9), asi que el inset era
+  margen muerto (medido 12px vertical y ~19px horizontal a 1440, ~21px a 390;
+  sin inset, 0px en las cuatro caras) y se leia como marco vacio.
+  **La tarjeta de la grilla no lo mira**: siempre `object-cover`, porque nueve
+  capturas a sangre y dos con marco se leen como dos cards rotas en la misma
+  fila; el recorte del diagrama en la card es aceptable, la ficha es donde se
+  lee completo.
 - **Sello de estado sobre la media** (T2b, boards `09-badge-destacada.html`
   tratamiento A y `10-destacada-sin-etiqueta.html` specimen 03): pill
   `absolute top-3 left-3` (12px del borde superior e izquierdo, no 16px: el
@@ -249,10 +254,11 @@ margen vertical. Badge `px-3.5 py-1 text-xs 2xl:text-sm`: el `py-1` es
 - Visual principal: `max-w-5xl aspect-video rounded-3xl` con glow suave. La
   imagen sale de `detail.visual?.src ?? project.image` — `visual` es la portada
   propia del detail y es opcional; sin ella cae a la imagen de la card. El fit
-  es el `mediaFit` de la ficha (4.6): `contain` = `object-contain p-3`
+  es el `mediaFit` de la ficha (4.6): `contain` = `object-contain` (sin inset)
   dentro del `aspect-video` y del fondo existentes, `cover` (default) queda
   igual que antes. Un diagrama 16:9 entra entero porque el marco tambien es
-  16:9: el inset de 12px es todo el margen que se ve.
+  16:9: no hay margen visible entre la imagen y el borde redondeado, que es lo
+  que hace que las tres fichas se lean igual.
 - Links: `variant="inverted"` tamaños `lg` (excepcion al tamano default md).
 - Editorial: `max-w-3xl` con `text-base 2xl:text-lg` (`2xl:text-lg` por
   pantallas ultra-anchas), `leading-relaxed`, hoja de ruta en codigo.
