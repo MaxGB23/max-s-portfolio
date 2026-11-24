@@ -61,6 +61,8 @@ export function ProjectsCatalog() {
         category: localized.category,
         tags: localized.tags,
         links: localized.links,
+        // Ciclo de vida: lo consume el sello de la card, no el borde.
+        status: localized.status,
         // El `featured` de la card es su PROPIA API (borde destacado): se
         // deriva de la superficie de la ficha, igual que en la home.
         featured: localized.home === "featured",

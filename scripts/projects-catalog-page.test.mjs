@@ -12,7 +12,7 @@
 
 import assert from "node:assert/strict";
 import test from "node:test";
-import { groupCatalog } from "../lib/projects-catalog.ts";
+import { groupCatalog, projectSeal } from "../lib/projects-catalog.ts";
 
 /**
  * Las 11 fichas del catalogo con el orden real del array (contrato de layout):
@@ -134,4 +134,33 @@ test("el orden del array se conserva dentro de cada grupo", () => {
     const positions = group.projects.map((project) => input.indexOf(project));
     assert.deepEqual(positions, [...positions].sort((a, b) => a - b));
   }
+});
+
+// ---------------------------------------------------------------------------
+// Sello de la tarjeta (T2b)
+//
+// El sello aparece solo cuando dice algo que el contexto no dice. Tres casos
+// visibles en el catalogo: `pre-release` gana, `featured` aplica solo, y una
+// ficha terminada o activa sin superficie destacada no lleva sello. La entrada
+// de la regla es el shape de la tarjeta (`status` + `featured`), no la ficha
+// cruda: `featured` es la API propia de la card.
+// ---------------------------------------------------------------------------
+
+test("pre-release gana sobre featured cuando aplican los dos", () => {
+  assert.equal(projectSeal({ status: "pre-release", featured: true }), "pre-release");
+});
+
+test("featured aplica solo cuando no hay pre-release", () => {
+  assert.equal(projectSeal({ status: "active", featured: true }), "featured");
+  assert.equal(projectSeal({ featured: true }), "featured");
+});
+
+test("una ficha terminada no lleva sello", () => {
+  assert.equal(projectSeal({ status: "finished" }), null);
+  assert.equal(projectSeal({ status: "finished", featured: false }), null);
+});
+
+test("una ficha activa sin superficie destacada no lleva sello", () => {
+  assert.equal(projectSeal({ status: "active" }), null);
+  assert.equal(projectSeal({}), null);
 });

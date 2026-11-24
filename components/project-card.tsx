@@ -7,6 +7,8 @@ import type { ProjectLink } from "@/data/projects";
 import { StackIcon } from "@/components/icons";
 import { saveHomeScroll } from "@/hooks/use-lenis";
 import { useLanguage } from "@/contexts/language-context";
+import { projectSeal, type ProjectSeal } from "@/lib/projects-catalog";
+import type { TranslationKey } from "@/data/translations";
 
 export interface Project {
   id: string;
@@ -18,10 +20,37 @@ export interface Project {
   category: string;
   tags?: string[];
   links?: ProjectLink[];
+  /** Ciclo de vida de la ficha. Lo lee el sello, no el borde de la card. */
+  status?: "active" | "pre-release" | "finished";
   /** API PROPIA de la card (borde destacado). Quien la pase la deriva de la
       superficie de la ficha (`home === "featured"`), no de un flag del modelo. */
   featured?: boolean;
 }
+
+/**
+ * Sello de la media: etiqueta de cada estado en su hoja de traduccion. El tipo
+ * `Record<ProjectSeal, ...>` es el checklist: un sello nuevo sin etiqueta no
+ * compila.
+ */
+const SEAL_LABEL_KEYS: Record<ProjectSeal, TranslationKey> = {
+  "pre-release": "section.projects.seal.preRelease",
+  featured: "section.projects.seal.featured",
+};
+
+/**
+ * Geometria del sello, tomada del tratamiento A de `09-badge-destacada.html` y
+ * del specimen 03 de `10-destacada-sin-etiqueta.html` (board 09 lo dibuja a
+ * 16px; el board 10, sobre la card real de la grilla, a 12px - gana 12px).
+ *
+ * El velo `rgb(0 0 0 / .55)` con `blur(6px)` es lo que hace que el sello no
+ * dependa de la media: blanco sobre ese velo pasa con cualquier imagen. El
+ * borde `rgb(255 255 255 / .18)` y el punto morado son decorativos.
+ */
+const SEAL_CLASS =
+  "absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-full border border-[rgb(255_255_255_/_0.18)] bg-[rgb(0_0_0_/_0.55)] px-2.5 py-1 text-[10px] font-bold uppercase leading-[1.6] tracking-[0.1em] text-white backdrop-blur-[6px]";
+
+/** Punto morado de 5px: decorativo, por eso `aria-hidden`. */
+const SEAL_DOT_CLASS = "size-[5px] flex-none rounded-full bg-purple-accent";
 
 /**
  * Sizes of the card image.
@@ -53,10 +82,12 @@ interface ProjectCardProps {
 export function ProjectCard({ project }: ProjectCardProps) {
   const { t } = useLanguage();
   const externalLink = project.links?.find((link) => link.external);
+  // Uno o ninguno: la regla vive en `lib/projects-catalog.ts` (pura, testeada).
+  const seal = projectSeal(project);
   return (
     <article
       className={`project-card group relative flex flex-col h-full bg-card border rounded-2xl overflow-hidden cursor-pointer duration-300 ease-out hover:-translate-y-1.5 hover:shadow-lg ${
-        project.featured ? "border-purple-accent/40 ring-1 ring-purple-accent/20" : "border-border"
+        "border-border"
       }`}
       aria-labelledby={`project-title-${project.id}`}
     >
@@ -89,6 +120,16 @@ export function ProjectCard({ project }: ProjectCardProps) {
             </span>
           </div>
         )}
+
+        {/* Sello: sobre la media, a 12px del borde superior izquierdo. Es
+            decorativo respecto de la card (no es un enlace ni una region), pero
+            su texto se lee: no lleva `aria-hidden` en el contenedor. */}
+        {seal ? (
+          <span className={SEAL_CLASS}>
+            <span aria-hidden="true" className={SEAL_DOT_CLASS} />
+            {t(SEAL_LABEL_KEYS[seal])}
+          </span>
+        ) : null}
       </div>
 
       {/* Body */}
