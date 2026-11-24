@@ -1,4 +1,5 @@
 import { Navbar } from "@/components/navbar";
+import { AnchorArrival } from "@/components/anchor-arrival";
 import { HeroSection } from "@/components/hero-section";
 import { AboutSection } from "@/components/about-section";
 import { FeaturedProjects } from "@/components/featured-projects";
@@ -21,6 +22,10 @@ export default async function Home() {
 
   return (
     <main className="min-h-screen bg-background text-foreground overflow-x-hidden">
+      {/* La llegada con hash (`/#contacto`) se anuncia una vez al montar: el
+          mismo camino que el click de un ancla, no un segundo aviso. Solo en la
+          home, que es la unica ruta con estas secciones. */}
+      <AnchorArrival />
       <ScrollProgress />
       <Navbar />
 
