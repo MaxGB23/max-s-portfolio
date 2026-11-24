@@ -19,6 +19,7 @@ aquí obligaría a eximir el propio canon que la explica.
 | `FadeIn`, `FadeInStagger`, `FadeInItem`, `motion-primitives.tsx` | 2026-10-19 | `Reveal` | [motion.md](motion.md) 5 |
 | `FEATURED_STACK_GATE`, pin de GSAP del featured | 2026-10 | one-slide rule | [sections.md](sections.md) 4.4 |
 | `next-themes`, `ThemeProvider` | 2026-10-19 | `class="dark"` en el layout | [platform.md](platform.md) 7 |
+| `styles/globals.css` | 2026-11-07 | ninguno: nunca estuvo importado | [tokens.md](tokens.md) |
 
 ## Por qué C3 no se marca a sí mismo
 
