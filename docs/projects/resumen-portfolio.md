@@ -27,6 +27,8 @@ Atajo de lectura para no abrir `projects.ts` ni los candidatos. No es canon: el 
 | Sistema de Gestión Clínica | Plataforma en producción con agenda, pacientes, pagos y dashboard | Next.js, React, TypeScript, PostgreSQL, Prisma | +10 meses en producción sin caídas |
 | Gestión de Apoyos Sociales | Plataforma con solicitudes, PDFs legales y dashboards en tiempo real | Next.js, React, TypeScript, PostgreSQL, Prisma | 100% digitalización del flujo |
 | Funky AI | CLI modular con 10 comandos para planificar y endurecer proyectos | Node.js, TypeScript, CLI, Vitest, pnpm | 443 tests en verde |
+| Funky Forge | CLI que convierte una idea difusa en plan con arquitectura costeada | Node.js, TypeScript, CLI, pnpm, Markdown | `pre-release`: sin cifras verificadas |
+| Funky Secure | CLI que endurece la postura de dependencias de un repo pnpm | Node.js, TypeScript, CLI, pnpm | `pre-release`: sin cifras verificadas |
 | Grinchmas Kart | Kart racing 3D con IA rival y físicas arcade | Unity, C#, Blender, ML-Agents | IA rival con Reinforcement Learning |
 | Cumyxel 2D | Plataformero pixel-art con gameplay escrito desde cero | Unity, C#, Blender | Premio Mejor Videojuego Expo Proyectos 2024 |
 | One Click Ti — PWA | App instalable con catálogo, leads y panel de gestión | Laravel, Vue 3, Inertia.js, MySQL, PHP | 5 módulos CRUD + 4 meses de soporte |
