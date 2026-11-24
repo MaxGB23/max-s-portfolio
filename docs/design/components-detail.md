@@ -47,7 +47,7 @@
   cabeceras de grupo son `h2`.
 - Catalogo: `Section insetClassName="px-6" className="pt-12 pb-16 md:pt-16
   md:pb-24"`. Cabecera de grupo `flex items-center gap-3 md:gap-4 mb-5 md:mb-6`
-  con etiqueta `text-[13px] font-semibold uppercase tracking-[0.12em]` y regla
+  con etiqueta `text-fluid-eyebrow` (15px a 375, 19px desde 1588) `font-semibold uppercase tracking-[0.12em]` y regla
   `flex-1 h-px bg-border`; 48/56px entre grupos; "Trabajo anterior" con
   `mt-16 pt-7 md:mt-20 md:pt-8 border-t`; grid `1/2/3` con `gap-6`.
 - Entrada: `Reveal delayEnter` para el `h1` y cada cabecera, `earlyOnMobile` por
@@ -65,6 +65,14 @@
   con `loading="eager"` (no lazy): la politica y sus numeros estan en
   `motion.md` 3. El fallback de media vacia (gradiente + `category` en mono)
   sigue intacto cuando `image` esta vacio.
+- **Fit de la media: campo `mediaFit` de la ficha, opt-in por ficha.** Valores
+  `"cover"` y `"contain"`; **ausente = `"cover"`**. Solo lo consume la media de
+  la FICHA (4.10): `contain` existe para el contenido que hay que leer entero
+  (diagramas, infografias con texto) y se dibuja como `object-contain p-3` (12px
+  de inset) sobre el `bg-muted` de la ficha. **La tarjeta de la grilla no lo
+  mira**: siempre `object-cover`, porque nueve capturas a sangre y dos con marco
+  se leen como dos cards rotas en la misma fila; el recorte del diagrama en la
+  card es aceptable, la ficha es donde se lee completo.
 - **Sello de estado sobre la media** (T2b, boards `09-badge-destacada.html`
   tratamiento A y `10-destacada-sin-etiqueta.html` specimen 03): pill
   `absolute top-3 left-3` (12px del borde superior e izquierdo, no 16px: el
@@ -240,11 +248,18 @@ margen vertical. Badge `px-3.5 py-1 text-xs 2xl:text-sm`: el `py-1` es
   deduplicar uno contra otro.
 - Visual principal: `max-w-5xl aspect-video rounded-3xl` con glow suave. La
   imagen sale de `detail.visual?.src ?? project.image` — `visual` es la portada
-  propia del detail y es opcional; sin ella cae a la imagen de la card.
+  propia del detail y es opcional; sin ella cae a la imagen de la card. El fit
+  es el `mediaFit` de la ficha (4.6): `contain` = `object-contain p-3`
+  dentro del `aspect-video` y del fondo existentes, `cover` (default) queda
+  igual que antes. Un diagrama 16:9 entra entero porque el marco tambien es
+  16:9: el inset de 12px es todo el margen que se ve.
 - Links: `variant="inverted"` tamaños `lg` (excepcion al tamano default md).
 - Editorial: `max-w-3xl` con `text-base 2xl:text-lg` (`2xl:text-lg` por
   pantallas ultra-anchas), `leading-relaxed`, hoja de ruta en codigo.
 - Galeria: grid `1/2/3` con `gap-4`; imagenes con `data-tag`? para lightbox.
+  El thumbnail respeta el `mediaFit` de la ficha (4.6), con su `bg-muted` como
+  superficie para el caso `contain`; el visor ya es `object-contain` siempre,
+  asi que la imagen ampliada nunca se recorta en ninguno de los dos modos.
 - CTA final: banda `rounded-3xl border-purple-accent/30 bg-purple-accent/5
   px-6 py-12 md:p-14` con `Volver a proyectos` primary md.
 - Lightbox: `z-[70] bg-black/90`, overlay `touch-pan-y select-none`

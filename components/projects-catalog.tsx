@@ -38,7 +38,7 @@ const GROUP_LABEL_KEYS: Record<CatalogGroupKind, TranslationKey> = {
 const GROUP_WRAPPER_CLASS: Record<CatalogGroupKind, string> = {
   family: "",
   projects: "mt-12 md:mt-14",
-  earlier: "mt-16 pt-7 md:mt-20 md:pt-8 border-t border-border",
+  earlier: "mt-16 pt-7 md:mt-20 md:pt-8",
 };
 
 export function ProjectsCatalog() {
@@ -97,7 +97,7 @@ export function ProjectsCatalog() {
                 <div className="flex items-center gap-3 md:gap-4 mb-5 md:mb-6">
                   <h2
                     id={headingId}
-                    className="text-[13px] font-semibold uppercase tracking-[0.12em] text-foreground"
+                    className="text-fluid-eyebrow font-semibold uppercase tracking-[0.12em] text-foreground"
                   >
                     {t(GROUP_LABEL_KEYS[group.kind])}
                   </h2>
