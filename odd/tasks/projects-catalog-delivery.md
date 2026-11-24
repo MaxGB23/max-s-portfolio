@@ -79,6 +79,7 @@ Presupuesto = líneas cambiadas del rango, con `git diff --shortstat <base> <tip
 - Cada PR declara en el cuerpo: inicio, fin, dependencia, trabajo posterior, fuera de alcance, y el diagrama de dependencia con 📍 en el PR actual.
 - La base del PR es la rama padre de la tabla. Cuando el padre se mergea, el hijo se retargetea a `main` antes de revisarse, para que su diff traiga solo su unidad.
 - Gates locales: una pasada completa por lote (`typecheck`, `test`, `lint:docs`, `audit:i18n`, `build`) sobre la última rama del lote, más CI de GitHub por PR. Cada rama del lote es prefijo de la última, y CI cubre lo que la pasada única no puede afirmar.
+- Cada pasada de gates empieza con `.next` limpio. El worktree comparte la caché de build entre ramas y los tipos generados de una ruta que el corte todavía no tiene tumban `typecheck` y `build` con un error que esa rama no causó; pasó en el lote A.
 - Merge commits siempre; squash y rebase-and-merge, nunca.
 - Push por lote con aprobación explícita: el push es deploy (S5).
 
@@ -138,3 +139,5 @@ Ninguna fila fue refutada. Las afirmaciones sobre cortes, contigüidad, bases, o
 B anotó sin fila que 274 y 287 no tenían puente explícito; la fila 18 declara ahora un presupuesto aproximado para no perseguir el largo de este documento.
 
 Las tres correcciones de este cierre **no se sometieron a una tercera ronda**: el protocolo topa en dos rondas juzgadas por artefacto y la tercera es decisión humana.
+
+**L6** (2026-11-24, gates del lote A). Pasada completa sobre `slice/04-project-entries`, la última del lote: `pnpm test` 79/79, `pnpm lint:docs` 0 bloqueantes (4 avisos C4 preexistentes), `pnpm audit:i18n` 0 problemas en 642 hojas L, y con `.next` limpio `pnpm typecheck` 0 y `pnpm build` 0 (rutas `ƒ /`, `ƒ /_not-found`, `ƒ /proyectos/[id]`). La primera pasada falló en `typecheck` y `build` por tipos generados de `/proyectos` que quedaron en `.next` de otra rama; de ahí la regla de `.next` limpio.
