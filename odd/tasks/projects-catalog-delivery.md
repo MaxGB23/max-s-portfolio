@@ -8,7 +8,7 @@ Plan de entrega de la feature `projects-catalog` en el worktree `M:/worktrees/ma
 - **S2.** «tenemos suscripcion dedicada, por lo que las requests no son problema, trabaja sin limitaciones.» (2026-11-24)
 - **S3.** «Crea el plan para trabajar en este proceso, apoyate de funky judge para juzgar el plan y afirmaciones, comencemos» (2026-11-24)
 - **S4.** Regla del dueño del 2026-11-18, guardada textual en Engram #1809: «No seguir agregando features hasta pagar esta deuda: rebanar la rama en PRs coherentes de ~400 lineas y congelar el resultado actual antes de tocar nada».
-- **S5.** `AGENTS.md` del repo: «Avoid squash merging: preserve history whenever possible» y «Push = deploy. ... Se pide aprobación y se agrupa por lote de work units, nunca uno por commit».
+- **S5.** «Push = deploy. ... Se pide aprobación y se agrupa por lote de work units, nunca uno por commit» (`AGENTS.md` del repo) y «Avoid squash merging: preserve history whenever possible» (`AGENTS.md` global del usuario, `C:/Users/cb147/.pi/agent/AGENTS.md`).
 - **S6.** `AGENTS.md` del repo: antes de pushear corren `pnpm typecheck`, `pnpm test`, `pnpm lint:docs`, `pnpm audit:i18n` y `pnpm build`; CI corre en cada PR.
 
 Criterio de aceptación de S1, verificable: las author date de los 24 commits del tag congelado aparecen intactas en `main` al terminar los merges, y ningún commit del rango fue reescrito (mismo hash y misma fecha de creación).
@@ -19,9 +19,9 @@ Tomadas el 2026-11-24 en el worktree, contra `origin/main` (no contra `main` loc
 
 | Dato | Valor | Comando |
 |---|---|---|
-| Commits a entregar | 24 | `git rev-list --count origin/main..HEAD` |
-| Diff total | 57 archivos, +8151/−257 = **8408** líneas | `git diff --shortstat origin/main...HEAD` |
-| `design/` | 4223 líneas = 50.2 % del diff | `git diff --numstat origin/main...HEAD` filtrado |
+| Commits a entregar | 24, hasta `1d4ca2c` | `git rev-list --count origin/main..1d4ca2c` |
+| Diff total | 57 archivos, +8151/−257 = **8408** líneas | `git diff --shortstat origin/main...1d4ca2c` |
+| `design/` | 4223 líneas = 50.2 % del diff | `git diff --numstat origin/main...1d4ca2c` filtrado |
 | `scripts/` | 1760 líneas | idem |
 | `odd/tasks/` | 810 líneas | idem |
 | Divergencia | ahead 24, behind 39 | `git status -sb` |
@@ -30,7 +30,9 @@ Tomadas el 2026-11-24 en el worktree, contra `origin/main` (no contra `main` loc
 | Fechas | 2026-11-06 → 2026-11-18; author date == committer date en los 24 | `git log --format='%ad %cd' --date=short` |
 | GitHub permite | merge, rebase y squash (los tres en `true`) | `gh api repos/MaxGB23/max-s-portfolio` |
 
-La suma de presupuestos por corte (8522) supera el diff total (8408) en 114 líneas: es churn entre cortes, no un error. Un corte posterior borra líneas que uno anterior agregó, y cada corte se mide por líneas cambiadas (+ y −), no por el neto.
+El rango entregado son los 24 commits hasta `1d4ca2c`. Los commits de la fila 18 son nuevos (2026-11-24) y no entran en estas medidas.
+
+La suma de presupuestos de los 17 cortes sobre esos 24 commits (8522) supera su diff total (8408) en 114 líneas: es churn entre cortes, no un error. Un corte posterior borra líneas que uno anterior agregó, y cada corte se mide por líneas cambiadas (+ y −), no por el neto.
 
 ## Decisión: la historia no se reescribe
 
@@ -64,13 +66,13 @@ Presupuesto = líneas cambiadas del rango, con `git diff --shortstat <base> <tip
 | 15 | `slice/15-measurement-scripts` | `2ba6290` | 734 | `slice/14` | scripts de medición de ritmo y RSC — `size:exception` |
 | 16 | `slice/16-live-docs` | `13aaf00`, `2121904`, `bdc5d61` | 69 | `slice/15` | corregir afirmaciones vivas + registro del pase |
 | 17 | `slice/17-forge-data` | `1d4ca2c` | 90 | `slice/16` | datos medidos de la ficha Forge |
-| 18 | `slice/18-delivery-record` | commit nuevo | ~360 | `slice/17` | este plan + `odd/tasks/docs-pass.plan.md` |
+| 18 | `slice/18-delivery-record` | commits nuevos | 287 | `slice/17` | este plan (131) + `odd/tasks/docs-pass.plan.md` (156) |
 
 **Excepciones de tamaño (5).** El presupuesto cede en cinco cortes, con motivo:
 
-- 03 y 13: tableros HTML de `design/` (4965 de las 8408 líneas). Son artefactos de canvas, no código que se revise línea a línea.
+- 03 y 13: suman 4965 líneas, de las cuales 4223 son `design/` (tableros y `design/system.md`) y 742 son los registros ODD que viajan con ellos (`odd/tasks/projects-catalog.md`, dos planes de navegación y `.gitignore`). Los tableros son artefactos de canvas, no código que se revise línea a línea.
 - 06 y 12: una ruta con su test y un fix con sus guards. Partirlos separaría el test de lo que verifica.
-- 15: dos scripts de medición. Partirlos exige reescribir el commit y renunciar al author date.
+- 15: dos scripts de medición independientes. Partirlos exige reescribir el commit: el author date se conservaría con `--date`, pero el hash y la committer date cambiarían, y el corte dejaría de caer en fronteras.
 
 ## Reglas de entrega
 
@@ -102,7 +104,7 @@ Presupuesto = líneas cambiadas del rango, con `git diff --shortstat <base> <tip
 
 **L2** (2026-11-24, verbatim): «te cuento que no contamos con free tier ahora, tenemos suscripcion dedicada, por lo que las requests no son problema, trabaja sin limitaciones. Crea el plan para trabajar en este proceso, apoyate de funky judge para juzgar el plan y afirmaciones, comencemos»
 
-**L3** (2026-11-24, medición). Los números de la tabla de Medidas salen de este bloque, ejecutado en el worktree:
+**L3** (2026-11-24, medición). Los números de la tabla de Medidas salen de este bloque, ejecutado en el worktree con `HEAD` = `1d4ca2c`, antes de este commit:
 
 ```
 git rev-list --count origin/main..HEAD                    -> 24
@@ -115,4 +117,15 @@ gh api repos/MaxGB23/max-s-portfolio --jq ...             -> {"merge":true,"reba
 
 Los presupuestos por corte salen de `git diff --shortstat <base> <tip>` en la misma corrida, en el orden de la tabla.
 
-**L4** (2026-11-24, adjudicación): pendiente de la ronda de jueces de T2.
+**L4** (2026-11-24, adjudicación de la ronda 1). Jueces `jd-judge-a` y `jd-judge-b`, PAIR ciego sobre el sha256 `3181cb9e…` del commit `d33b072` (118 líneas). A devolvió 6 filas; B, 1; ambas coinciden en el defecto de S5. Ganaron las seis, todas deterministas y verificadas con el comando que cada una traía:
+
+| Fila | Qué era falso | Corrección |
+|---|---|---|
+| JD-A-001 | `origin/main..HEAD` da 25 después de este commit; 24 corresponde a `1d4ca2c` | las filas de Medidas nombran `1d4ca2c` |
+| JD-A-002 | mismo `HEAD`: el diff total da 8269 si incluye este documento | idem, más la nota de que la fila 18 queda fuera de las medidas |
+| JD-A-003 | «4965 de las 8408»: en `design/` hay 4223; los 742 restantes son registros ODD | justificación de 03 y 13 reescrita |
+| JD-A-004 | la fila 15 decía «renunciar al author date», que el propio plan conserva con `--date` | el costo declarado pasa a ser el hash y la committer date |
+| JD-A-005 = JD-B-001 | la regla de no-squash vive en el `AGENTS.md` global, no en el del repo | atribución corregida en S5 |
+| JD-A-006 | la fila 18 declaraba ~360 líneas y son 274 | presupuesto corregido |
+
+Ninguna fila fue refutada. Las afirmaciones sobre cortes, contigüidad, bases, orden de dependencias, mecanismo de fechas, ajustes de GitHub y gates quedaron sin fila, que en este protocolo es el resultado limpio.
