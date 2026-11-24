@@ -66,11 +66,11 @@ Presupuesto = líneas cambiadas del rango, con `git diff --shortstat <base> <tip
 | 15 | `slice/15-measurement-scripts` | `2ba6290` | 734 | `slice/14` | scripts de medición de ritmo y RSC — `size:exception` |
 | 16 | `slice/16-live-docs` | `13aaf00`, `2121904`, `bdc5d61` | 69 | `slice/15` | corregir afirmaciones vivas + registro del pase |
 | 17 | `slice/17-forge-data` | `1d4ca2c` | 90 | `slice/16` | datos medidos de la ficha Forge |
-| 18 | `slice/18-delivery-record` | commits nuevos | 287 | `slice/17` | este plan (131) + `odd/tasks/docs-pass.plan.md` (156) |
+| 18 | `slice/18-delivery-record` | commits nuevos | ~300 | `slice/17` | este plan + `odd/tasks/docs-pass.plan.md`; crece con cada corrección de este documento |
 
 **Excepciones de tamaño (5).** El presupuesto cede en cinco cortes, con motivo:
 
-- 03 y 13: suman 4965 líneas, de las cuales 4223 son `design/` (tableros y `design/system.md`) y 742 son los registros ODD que viajan con ellos (`odd/tasks/projects-catalog.md`, dos planes de navegación y `.gitignore`). Los tableros son artefactos de canvas, no código que se revise línea a línea.
+- 03 y 13: suman 4965 líneas, de las cuales 4223 son `design/` (tableros, `design/system.md` y los `design.json`/`comments.json` de la fase 0) y 742 son los registros ODD que viajan con ellos (`odd/tasks/projects-catalog.md` y dos planes de navegación) más el cambio en `.gitignore`. Los tableros son artefactos de canvas, no código que se revise línea a línea.
 - 06 y 12: una ruta con su test y un fix con sus guards. Partirlos separaría el test de lo que verifica.
 - 15: dos scripts de medición independientes. Partirlos exige reescribir el commit: el author date se conservaría con `--date`, pero el hash y la committer date cambiarían, y el corte dejaría de caer en fronteras.
 
@@ -122,10 +122,19 @@ Los presupuestos por corte salen de `git diff --shortstat <base> <tip>` en la mi
 | Fila | Qué era falso | Corrección |
 |---|---|---|
 | JD-A-001 | `origin/main..HEAD` da 25 después de este commit; 24 corresponde a `1d4ca2c` | las filas de Medidas nombran `1d4ca2c` |
-| JD-A-002 | mismo `HEAD`: el diff total da 8269 si incluye este documento | idem, más la nota de que la fila 18 queda fuera de las medidas |
+| JD-A-002 | mismo `HEAD`: con este documento dentro del rango el total pasa a 8526 (+8269/−257) | idem, más la nota de que la fila 18 queda fuera de las medidas |
 | JD-A-003 | «4965 de las 8408»: en `design/` hay 4223; los 742 restantes son registros ODD | justificación de 03 y 13 reescrita |
 | JD-A-004 | la fila 15 decía «renunciar al author date», que el propio plan conserva con `--date` | el costo declarado pasa a ser el hash y la committer date |
 | JD-A-005 = JD-B-001 | la regla de no-squash vive en el `AGENTS.md` global, no en el del repo | atribución corregida en S5 |
 | JD-A-006 | la fila 18 declaraba ~360 líneas y son 274 | presupuesto corregido |
 
 Ninguna fila fue refutada. Las afirmaciones sobre cortes, contigüidad, bases, orden de dependencias, mecanismo de fechas, ajustes de GitHub y gates quedaron sin fila, que en este protocolo es el resultado limpio.
+
+**L5** (2026-11-24, ronda 2 y cierre). Segunda ronda de `jd-judge-a` y `jd-judge-b` sobre el sha256 `2582fa18…` (commit `7695089`, 131 líneas), limitada a las seis correcciones. R1–R6 confirmadas por ambos; R7 parcial por A. Dos filas nuevas, deterministas, corregidas aquí:
+
+- JD-A-007: la restitución de JD-A-002 arrastraba el sustantivo equivocado (8269 son inserciones; con este documento dentro del rango el total es 8526).
+- JD-A-008: las 742 líneas restantes no son todas «registros ODD» (`.gitignore` no lo es) y el glosario de `design/` omitía los JSON de la fase 0.
+
+B anotó sin fila que 274 y 287 no tenían puente explícito; la fila 18 declara ahora un presupuesto aproximado para no perseguir el largo de este documento.
+
+Las tres correcciones de este cierre **no se sometieron a una tercera ronda**: el protocolo topa en dos rondas juzgadas por artefacto y la tercera es decisión humana.
