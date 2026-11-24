@@ -81,6 +81,7 @@ Presupuesto = líneas cambiadas del rango, con `git diff --shortstat <base> <tip
 - Gates locales: una pasada completa por lote (`typecheck`, `test`, `lint:docs`, `audit:i18n`, `build`) sobre la última rama del lote, más CI de GitHub por PR. Cada rama del lote es prefijo de la última, y CI cubre lo que la pasada única no puede afirmar.
 - Cada pasada de gates empieza con `.next` limpio. El worktree comparte la caché de build entre ramas y los tipos generados de una ruta que el corte todavía no tiene tumban `typecheck` y `build` con un error que esa rama no causó; pasó en el lote A.
 - Merge commits siempre; squash y rebase-and-merge, nunca.
+- Destino vigente: la rama remota `feat/projects-catalog`. `main` solo cuando el dueño lo autorice (L7). Como los 18 cortes son prefijos de esa misma línea de historia, no hay nada que mergear hacia ella.
 - Push por lote con aprobación explícita: el push es deploy (S5).
 
 ## Tasks
@@ -141,3 +142,5 @@ B anotó sin fila que 274 y 287 no tenían puente explícito; la fila 18 declara
 Las tres correcciones de este cierre **no se sometieron a una tercera ronda**: el protocolo topa en dos rondas juzgadas por artefacto y la tercera es decisión humana.
 
 **L6** (2026-11-24, gates del lote A). Pasada completa sobre `slice/04-project-entries`, la última del lote: `pnpm test` 79/79, `pnpm lint:docs` 0 bloqueantes (4 avisos C4 preexistentes), `pnpm audit:i18n` 0 problemas en 642 hojas L, y con `.next` limpio `pnpm typecheck` 0 y `pnpm build` 0 (rutas `ƒ /`, `ƒ /_not-found`, `ƒ /proyectos/[id]`). La primera pasada falló en `typecheck` y `build` por tipos generados de `/proyectos` que quedaron en `.next` de otra rama; de ahí la regla de `.next` limpio.
+
+**L7** (2026-11-24, cambio de destino). El dueño decidió que la entrega **no** va a `main` todavía: es una feature grande y no debe llegar a producción. El destino es la rama remota `feat/projects-catalog`, que ya contiene los 24 commits y los de registro. Los 18 PRs quedan como material de revisión, `main` no se toca y los issues #54–#57 siguen abiertos, porque su criterio de cierre es el comportamiento en `main`. Cuando el dueño lo autorice, se mergea a `main` con merge commits, en el orden de la tabla.
