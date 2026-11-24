@@ -41,7 +41,7 @@ export const caf: ProjectL = {
     es: "Dashboard principal y agenda del Sistema de Gestión Clínica",
     en: "Main dashboard and appointment calendar of the Clinical Management System",
   },
-  featured: true,
+  home: "featured",
   links: [
     {
       label: linkLabelCode,

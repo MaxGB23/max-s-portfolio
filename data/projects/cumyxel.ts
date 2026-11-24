@@ -46,6 +46,7 @@ export const cumyxel: ProjectL = {
     es: "Gameplay de Cumyxel: juego de plataformas 2D pixel-art con enemigos y salto variable",
     en: "Cumyxel gameplay: 2D pixel-art platformer with enemies and variable jump height",
   },
+  home: "grid",
   links: [
     {
       label: {

@@ -44,6 +44,7 @@ export const autoshop: ProjectL = {
     es: "Hero de la landing de AutoShop Taller: logo, eslogan y navegación principal",
     en: "Hero of the AutoShop Taller landing page: logo, tagline and main navigation",
   },
+  home: "grid",
   links: [],
   detail: {
     headline: {

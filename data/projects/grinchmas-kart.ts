@@ -47,6 +47,7 @@ export const grinchmasKart: ProjectL = {
     es: "Gameplay de Grinchmas Kart: kart 3D en pista navideña con IA rival",
     en: "Grinchmas Kart gameplay: 3D kart on a Christmas track with a rival AI",
   },
+  home: "grid",
   links: [
     {
       label: linkLabelCode,

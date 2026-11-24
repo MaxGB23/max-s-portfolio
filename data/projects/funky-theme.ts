@@ -60,7 +60,7 @@ export const funkyTheme: ProjectL = {
     es: "Captura de VS Code con el tema funky-theme aplicado a un editor",
     en: "Screenshot of VS Code with the funky-theme theme applied to an editor",
   },
-  featured: true,
+  home: "featured",
   // La cifra de descargas se lee de los registries (cache de 24 h) y se publica
   // como SUMA: 5,104 en Open VSX + 1,711 en Zed (medidas el 6 nov 2026). El
   // valor de `detail.metrics[0]` queda como respaldo si alguna API no responde.

@@ -45,6 +45,7 @@ export const funkyAi: ProjectL = {
     es: "Terminal del CLI de funky-ai mostrando el pipeline SDD",
     en: "funky-ai CLI terminal showing the SDD pipeline",
   },
+  home: "grid",
   links: [
     {
       label: linkLabelCode,

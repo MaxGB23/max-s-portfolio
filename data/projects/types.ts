@@ -101,7 +101,24 @@ export interface ProjectL {
   image: string;
   imageAlt: L;
   links: LinkL[];
-  featured?: boolean;
+  /**
+   * Superficie donde se muestra la ficha. Es el UNICO eje de curacion: un solo
+   * campo responde la pregunta "donde aparece esto", en vez de dos booleanos
+   * (ej. `listed`, descartado) que pueden contradecirse. Ausente = solo
+   * catalogo, que no es "lo que no entra en la home" sino todas las fichas.
+   */
+  home?: "featured" | "grid";
+  /**
+   * Id del proyecto padre, como RELACION y no como anidamiento de rutas: un
+   * spin-off puede superar a su padre sin redirect y el catalogo no necesita
+   * recorrer un arbol.
+   */
+  lineage?: string;
+  /**
+   * Ciclo de vida. Ausente = "active". `finished` ordena al final del catalogo:
+   * no existe una seccion de archivados.
+   */
+  status?: "active" | "pre-release" | "finished";
   /**
    * Metrica que se lee de registries en vez de una medicion fija: la ficha
    * muestra la cifra viva y este bloque dice de donde sale. El valor escrito en
@@ -151,6 +168,18 @@ export interface ProjectL {
    */
   architecture?: NodeL;
 }
+
+/**
+ * Valores del eje de superficie como constantes, para que los selectores de
+ * `data/projects.ts` comparen contra ellos en vez de repetir literales. El
+ * porque no es cosmetico: `scripts/audit-i18n-content.mjs` exime a este archivo
+ * de la regla "string fuera de hoja `L`" (aqui los strings son codigo, no
+ * copy), mientras que un literal suelto en `data/projects.ts` cae como
+ * `outside-leaf`. Junto al tipo que define la union, ademas, el valor vive en
+ * una sola fuente.
+ */
+export const HOME_FEATURED: NonNullable<ProjectL["home"]> = "featured";
+export const HOME_GRID: NonNullable<ProjectL["home"]> = "grid";
 
 // ---------------------------------------------------------------------------
 // Resolucion de locale
